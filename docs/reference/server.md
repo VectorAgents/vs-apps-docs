@@ -2,7 +2,7 @@
 title: Server reference
 ---
 
-Reference for `@vectoragents/vs-apps/server` 0.4.0. This page covers the one symbol of the subpath that reaches out to [Space](../glossary.md#vector-space): `pingManifests`. It tells Space that your [manifests](../glossary.md#manifest) changed, so Space does not wait for a staff refresh.
+Reference for `@vectoragents/vs-apps/server` 0.4.0. This page covers the one symbol of the subpath that reaches out to [Vector Space](../glossary.md#vector-space): `pingManifests`. It tells Vector Space that your [manifests](../glossary.md#manifest) changed, so Vector Space does not wait for a staff refresh.
 
 Every symbol below follows one layout: signature, behaviour, example. Each example is a complete file and is typechecked against the installed package.
 
@@ -10,11 +10,11 @@ Every symbol below follows one layout: signature, behaviour, example. Each examp
 
 - `@vectoragents/vs-apps` installed with a registry token.
 - A server that builds its manifests with `buildManifests`, covered in the [app definition guide](../app-definition.md). `buildManifests` takes the agent catalog that [`readExtractedAgentCatalog`](./extract.md) reads.
-- The origin of a Space the server can reach, for example `https://space.example.com`.
+- The origin of a Vector Space the server can reach, for example `https://space.example.com`.
 
 ## `pingManifests`
 
-Sends Space the current hash of each manifest at boot.
+Sends Vector Space the current hash of each manifest at boot.
 
 ### Signature
 
@@ -28,7 +28,7 @@ function pingManifests(options: {
 
 | Option | Meaning |
 | --- | --- |
-| `spaceBaseUrl` | The Space origin, with no `/api` suffix. One trailing `/` is removed. |
+| `spaceBaseUrl` | The Vector Space origin, with no `/api` suffix. One trailing `/` is removed. |
 | `manifests` | The record that `buildManifests` returns, keyed by app key. |
 | `log` | Receives each failure message. Defaults to `console.warn`. |
 
@@ -36,10 +36,10 @@ function pingManifests(options: {
 
 - Call it once at boot, after `buildManifests`. A server that runs `createAppPlatform` calls `platform.pingManifests()` instead. It sends the same ping with the platform's own `spaceBaseUrl` and `manifests`, and does nothing while the platform holds a dev issuer.
 - Sends `POST {spaceBaseUrl}/api/apps/manifest-ping` once for each manifest. The body is JSON with `appKey` and `manifestHash`, the SHA-256 hex digest of the manifest as the server serves it.
-- Space re-pulls the manifest of each app whose hash changed.
-- Stops on a status from 200 to 299 or on `429`, which means Space is already pulling that app.
+- Vector Space re-pulls the manifest of each app whose hash changed.
+- Stops on a status from 200 to 299 or on `429`, which means Vector Space is already pulling that app.
 - Tries a failing ping up to 3 times, at 0, 5 and 15 seconds after the call. It logs each failure.
-- Never throws. Failures go to `log`, so call it without `await`. A manual refresh in Space remains the fallback.
+- Never throws. Failures go to `log`, so call it without `await`. A manual refresh in Vector Space remains the fallback.
 - Resolves after every manifest has either succeeded or used its 3 attempts.
 - Sends no credentials. The body holds a hash and an app key, not manifest data.
 
@@ -75,7 +75,7 @@ if (process.env.SPACE_API_URL) {
 
 ## Result
 
-A boot step that tells Space the hash of every manifest, and does nothing when no Space URL is set.
+A boot step that tells Vector Space the hash of every manifest, and does nothing when no Vector Space URL is set.
 
 ## Next step
 

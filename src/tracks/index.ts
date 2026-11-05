@@ -16,7 +16,7 @@ export const tracks: Track[] = [
   {
     id: 'first-app-in-space',
     title: 'Hello world app',
-    goal: 'Run hello world in a Space, then add a page that a capability gates.',
+    goal: 'Run hello world in a space, then add an app page that a capability gates.',
     steps: [
       { label: 'Quickstart', to: '/quickstart' },
       { label: 'Add a page and a capability', to: '/recipes/add-page-and-capability' },
@@ -35,7 +35,7 @@ export const tracks: Track[] = [
   {
     id: 'gate-by-capability',
     title: 'Gate by capability',
-    goal: 'Limit pages, navigation and server routes to users who hold a capability.',
+    goal: 'Limit app pages, navigation and server routes to users who hold a capability.',
     steps: [
       { label: 'Quickstart', to: '/quickstart' },
       { label: 'Add a page and a capability', to: '/recipes/add-page-and-capability' },
@@ -46,7 +46,7 @@ export const tracks: Track[] = [
   {
     id: 'agent-actions',
     title: 'Expose agent actions',
-    goal: 'Let the Space agent call an action on your page while the page is open.',
+    goal: 'Let the space agent call an action on your app page while the app page is open.',
     steps: [
       { label: 'Quickstart', to: '/quickstart' },
       { label: 'Expose agent actions on a page', to: '/recipes/expose-agent-actions' },

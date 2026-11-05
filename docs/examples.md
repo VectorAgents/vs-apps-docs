@@ -2,20 +2,20 @@
 title: Example app definitions
 ---
 
-Two complete [app definitions](./glossary.md#app-definition) to copy into your own project: a sales outreach app with several pages and a customer support app with channel [connector slots](./glossary.md#connector-slot).
+Two complete [app definitions](./glossary.md#app-definition) to copy into your own project: a sales outreach app with several [app pages](./glossary.md#app-page) and a customer support app with [connector slots](./glossary.md#connector-slot) for messaging services.
 
 Prerequisites: `@vectoragents/vs-apps` 0.4.0 installed. Copy one file into your project as `src/app.definition.ts`.
 
 ## Sales outreach app: pages, capabilities and a model slot
 
-Four [pages](./glossary.md#app-page), each gated by one [capability](./glossary.md#capability), and one [model slot](./glossary.md#model-slot) the space manager points at a model.
+Four app pages, each gated by one [capability](./glossary.md#capability), and one [model slot](./glossary.md#model-slot) the space manager points at a model.
 
 ```ts title="src/app.definition.ts" file="src/examples/sdr.definition.ts"
 ```
 
 ## Customer support app: model slots and connector slots
 
-Two model slots and two connector slots. Each connector declares `eventHandlers`, the handlers a space admin routes its event types to.
+Two model slots and two connector slots. Each connector declares `eventHandlers`, the handlers a space manager routes its event types to.
 
 ```ts title="src/app.definition.ts" file="src/examples/csr.definition.ts"
 ```

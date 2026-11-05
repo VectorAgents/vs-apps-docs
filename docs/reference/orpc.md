@@ -2,7 +2,7 @@
 title: oRPC reference
 ---
 
-Reference for `@vectoragents/vs-apps/orpc` 0.4.0. The subpath binds the SDK to [oRPC](https://orpc.unnoq.com), the contract library that an app server shares with its client. It holds the routes every app server exposes, a contract builder that marks a route for the Space agent, and the function that lists those routes for the [manifest](../glossary.md#manifest).
+Reference for `@vectoragents/vs-apps/orpc` 0.4.0. The subpath binds the SDK to [oRPC](https://orpc.unnoq.com), the contract library that an app server shares with its client. It holds the routes every app server exposes, a contract builder that marks a route for the space agent, and the function that lists those routes for the [manifest](../glossary.md#manifest).
 
 Every symbol below follows one layout: signature, behaviour, example. Each example is a complete file and is typechecked against the installed package.
 
@@ -38,7 +38,7 @@ interface AgentRouteMeta {
 - Use `agentOc` in place of `oc` for every route that the agent may call. A route built with plain `oc` stays out of the catalog.
 - `.meta({ agent: { description } })` marks the route. A route without it is not listed.
 - The route needs `method` and `path`, set with `.route(...)`. `buildEndpoints` throws without them.
-- The agent calls the route with a user token that Space mints, so the guard of your server still applies.
+- The agent calls the route with a user token that Vector Space mints, so the guard of your server still applies.
 
 ### Example
 
@@ -119,7 +119,7 @@ export const manifests = buildManifests([leads], {
 
 ## `appPlatformContract`
 
-The routes that every app server exposes to its own client: a health check, and the `app.*` routes that forward calls to Space.
+The routes that every app server exposes to its own client: a health check, and the `app.*` routes that forward calls to Vector Space.
 
 ### Signature
 

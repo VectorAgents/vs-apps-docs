@@ -67,7 +67,7 @@ export const coreFieldRules: FieldRule[] = [
 ];
 
 export const resourceFieldRules: FieldRule[] = [
-  { path: 'resources', required: false, rule: 'Object. Declares what the app needs from each Space.' },
+  { path: 'resources', required: false, rule: 'Object. Declares what the app needs from each space.' },
   { path: 'resources.modules[].key', required: true, rule: 'Non-empty string. Unique within modules.' },
   { path: 'resources.modules[].required', required: true, rule: 'Boolean.' },
   { path: 'resources.modules[].label', required: false, rule: 'Display label.' },
