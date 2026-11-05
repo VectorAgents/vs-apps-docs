@@ -2,17 +2,17 @@
 title: Quickstart
 ---
 
-Run a small app inside a [Space](./glossary.md#vector-space) and see the same user token verified in the browser and on your server.
+Run a small app in a space, a shared place for one team in [Vector Space](./glossary.md#vector-space), and see the same user token verified in the browser and on your server.
 
 import DiagramControls from '@site/src/components/DiagramControls';
 
 ## Goal
 
-You scaffold a working app with one command, run it in the [harness](./glossary.md#harness) on your machine, then ask Vector to register it so you can open it in a real Space. The app has one page, and only users who hold the `hello:view` capability, a permission that Space grants to a user, can see it.
+You scaffold a working app with one command, run it in the [harness](./glossary.md#harness) on your machine, then ask Vector to register it so you can open it in a real space. The app has one app page, a screen that Vector Space lists in its navigation. Only users who hold the `hello:view` capability, a permission that Vector Space grants to a user, can see it.
 
-Space signs a short-lived token, the user token, for the person who opens the page, and your app checks that token before it trusts anything in it.
+Vector Space signs a short-lived token, the user token, for the person who opens the app page, and your app checks that token before it trusts anything in it.
 
-After Part 1, the page runs in the harness on your machine. After Part 2, the `hello-app` page is open in a Space. It shows your user id and space id from the verified token.
+After Part 1, the app page runs in the harness on your machine. After Part 2, the app page of `hello-app` is open in a space. It shows your user id and space id from the verified token.
 
 <DiagramControls>
 
@@ -37,7 +37,7 @@ sequenceDiagram
 
 </DiagramControls>
 
-Space mints the token and posts it to your client. Your client sends it to your server, and the server verifies it against the Space key set, the public keys that Space publishes. Only the server check protects data. Anyone can change what runs in a browser.
+Vector Space mints the token and posts it to your client. Your client sends it to your server, and the server verifies it against the Vector Space key set, the public keys that Vector Space publishes. Only the server check protects data. Anyone can change what runs in a browser.
 
 ## Prerequisites
 
@@ -166,13 +166,13 @@ hello-app/
 
 ### 2. Run the app in the harness
 
-The harness stands in for Space on your machine. `npm run dev` starts the server on port 3101 and Vite on port 5173 with the harness values, and it needs no `.env`. Vite serves the client and forwards requests under `/api` to the server.
+The harness stands in for Vector Space on your machine. `npm run dev` starts the server on port 3101 and Vite on port 5173 with the harness values, and it needs no `.env`. Vite serves the client and forwards requests under `/api` to the server.
 
 ```bash
 npm run dev
 ```
 
-Open `http://localhost:5173/harness.html`. The harness stands in for Space: it asks the [dev issuer](./glossary.md#dev-issuer) in your server for a token for the user `dev-user` and posts the token to your page. The address `http://localhost:5173` alone stays on `Waiting for Space.`, because only the harness or Space sends a token.
+Open `http://localhost:5173/harness.html`. The harness stands in for Vector Space: it asks the [dev issuer](./glossary.md#dev-issuer) in your server for a token for the user `dev-user` and posts the token to your app page. The address `http://localhost:5173` alone stays on `Waiting for Space.`, because only the harness or Vector Space sends a token.
 
 <DiagramControls>
 
@@ -198,7 +198,7 @@ sequenceDiagram
 
 Step (3) in the diagram produces `Verified in the browser`. Steps (5) and (6) produce `Verified on the server`.
 
-**Check**: the page inside the harness shows three lines.
+**Check**: the app page inside the harness shows three lines.
 
 ```text
 Verified in the browser: user dev-user in space 1.
@@ -206,17 +206,17 @@ Capabilities: hello:view
 Verified on the server: space 1, user dev-user
 ```
 
-The run proves your page and your server, but not your registration or Space access. Part 2 covers those.
+The run proves your app page and your server, but not your registration or Vector Space access. Part 2 covers those.
 
 ### 3. Read the app definition
 
-The page in step 2 shows three lines. Steps 3 to 5 read the part of the app behind each line:
+The app page in step 2 shows three lines. Steps 3 to 5 read the part of the app behind each line:
 
 - Step 3, the app definition: declares `hello:view`, the capability in `Capabilities: hello:view`.
 - Step 4, the server: produces `Verified on the server`.
-- Step 5, the page: produces `Verified in the browser` and `Capabilities`.
+- Step 5, the app page: produces `Verified in the browser` and `Capabilities`.
 
-The [app definition](./glossary.md#app-definition) names the app and lists its pages and capabilities. The server check and the page both import `CAPABILITY`. They use one capability key, `hello:view`.
+The [app definition](./glossary.md#app-definition) names the app and lists its app pages and capabilities. The server check and the app page both import `CAPABILITY`. They use one capability key, `hello:view`.
 
 ```ts title="shared/src/index.ts" starter
 import { defineApp } from '@vectoragents/vs-apps';
@@ -239,11 +239,11 @@ export const definition = defineApp({
 });
 ```
 
-`capability` on the page must match a capability `key` exactly.
+`capability` on the app page must match a capability `key` exactly.
 
 ### 4. Verify the token on the server
 
-Before any user token exists, Space and your client need facts about your app. The server answers two routes for them first. `buildManifests` turns the definition into a manifest, a JSON document that tells Space what your app contains. The server serves it to Space at `GET /api/manifest/hello-app`. Space sends a provisioning token, which proves the request comes from Space.
+Before any user token exists, Vector Space and your client need facts about your app. The server answers two routes for them first. `buildManifests` turns the definition into a manifest, a JSON document that tells Vector Space what your app contains. The server serves it to Vector Space at `GET /api/manifest/hello-app`. Vector Space sends a provisioning token, which proves the request comes from Vector Space.
 
 ```ts title="server/src/manifests.ts" starter
 import { readExtractedAgentCatalog } from '@vectoragents/vs-apps/extract';
@@ -256,12 +256,12 @@ export const manifests = buildManifests([definition], {
 });
 ```
 
-`readExtractedAgentCatalog` reads `agent-catalog.json`, the [agent catalog](./glossary.md#agent-catalog) file, and `catalog` takes its content. The Hello app has no agent pages or actions. The starter ships it empty.
+`readExtractedAgentCatalog` reads `agent-catalog.json`, the [agent catalog](./glossary.md#agent-catalog) file, and `catalog` takes its content. The Hello app has no app page descriptions or agent actions. The starter ships it empty.
 
 <!-- flavour node -->
-The server runs one app platform, built with `createAppPlatform` from `@vectoragents/vs-apps/server`. The platform is the code of the SDK that serves every route that Space and your client call: the manifest, `GET /api/client-config`, the two provisioning routes and, in harness mode, the dev routes. You write none of them. It answers Fetch requests, and `main.ts` bridges each `node:http` request to one.
+The server runs one app platform, built with `createAppPlatform` from `@vectoragents/vs-apps/server`. The platform is the code of the SDK that serves every route that Vector Space and your client call: the manifest, `GET /api/client-config`, the two provisioning routes and, in harness mode, the dev routes. You write none of them. It answers Fetch requests, and `main.ts` bridges each `node:http` request to one.
 
-The platform needs three things from you: the origins and key set it trusts, the manifests, and a credential store. It keeps the secret that Space sends at provisioning in the store. The store below keeps the secrets in memory and loses them on restart, so implement `AppCredentialStore` over your own storage before production.
+The platform needs three things from you: the origins and key set it trusts, the manifests, and a credential store. It keeps the secret that Vector Space sends at provisioning in the store. The store below keeps the secrets in memory and loses them on restart, so implement `AppCredentialStore` over your own storage before production.
 
 ```ts title="server/src/credential-store.ts" starter
 import type { AppCredentialStore } from '@vectoragents/vs-apps/server';
@@ -284,7 +284,7 @@ export class MemoryCredentialStore implements AppCredentialStore {
 }
 ```
 
-The `devIssuer` option turns on the dev issuer: `npm run dev` sets `VA_DEV_ISSUER` to `true`, and `npm run dev:space` leaves it unset. While it is on, the platform verifies tokens against the dev issuer, serves its key set at `/api/__dev/jwks.json`, and reports that address in `GET /api/client-config`. Otherwise it verifies against the Space key set at `SPACE_JWKS_URL`, which Part 2 sets. The platform needs the origin of Space, so the code removes `/api` from `SPACE_API_URL`.
+The `devIssuer` option turns on the dev issuer: `npm run dev` sets `VA_DEV_ISSUER` to `true`, and `npm run dev:space` leaves it unset. While it is on, the platform verifies tokens against the dev issuer, serves its key set at `/api/__dev/jwks.json`, and reports that address in `GET /api/client-config`. Otherwise it verifies against the Vector Space key set at `SPACE_JWKS_URL`, which Part 2 sets. The platform needs the origin of Vector Space, so the code removes `/api` from `SPACE_API_URL`.
 
 ```ts title="server/src/platform.ts" starter
 export const platform = createAppPlatform({
@@ -329,9 +329,9 @@ export async function requireCapability(req: IncomingMessage, capability: string
 
 A check that fails throws an `AppAuthError`. The server replies with status 401 when the token is missing or invalid, and 403 when the token lacks the capability. `GET /api/hello` returns the claims of a verified user token.
 
-`GET /api/client-config` tells the client which parent origin and which key set to trust. Space calls `POST /api/provision` and `DELETE /api/deprovision` when a space manager, the person who adds apps to a Space, adds or removes the app. The harness run does not call them.
+`GET /api/client-config` tells the client which parent origin and which key set to trust. Vector Space calls `POST /api/provision` and `DELETE /api/deprovision` when a space manager, the person who adds apps to a space, adds or removes the app. The harness run does not call them.
 
-The client configuration also returns `SPACE_API_URL` as `spaceApiUrl`, the Space API address that your page can use. When the server starts, it also tells Space which manifests it holds. `platform.pingManifests` sends the hash of each manifest to Space, and Space reads again a manifest that changed, so a restart refreshes the manifest in Space. The platform skips the ping while it holds a dev issuer, so the harness run sends no ping.
+The client configuration also returns `SPACE_API_URL` as `spaceApiUrl`, the Vector Space API address that your app page can use. When the server starts, it also tells Vector Space which manifests it holds. `platform.pingManifests` sends the hash of each manifest to Vector Space, and Vector Space reads again a manifest that changed, so a restart refreshes the manifest in Vector Space. The platform skips the ping while it holds a dev issuer, so the harness run sends no ping.
 
 ```ts title="server/src/main.ts" starter
 void platform.pingManifests();
@@ -358,7 +358,7 @@ export class HelloController {
 }
 ```
 
-The module takes its settings from the environment. The `devIssuer` option turns on the dev issuer: `npm run dev` sets `VA_DEV_ISSUER` to `true`, and `npm run dev:space` leaves it unset. The module needs the origin of Space, so the code removes `/api` from `SPACE_API_URL`. When the server starts, the module also tells Space which manifests it holds, so a restart refreshes the manifest in Space.
+The module takes its settings from the environment. The `devIssuer` option turns on the dev issuer: `npm run dev` sets `VA_DEV_ISSUER` to `true`, and `npm run dev:space` leaves it unset. The module needs the origin of Vector Space, so the code removes `/api` from `SPACE_API_URL`. When the server starts, the module also tells Vector Space which manifests it holds, so a restart refreshes the manifest in Vector Space.
 
 ```ts title="server/src/app.module.ts" starter
 import { Module } from '@nestjs/common';
@@ -387,7 +387,7 @@ import { manifests } from './manifests';
 export class AppModule {}
 ```
 
-Space calls `POST /api/provision` and `DELETE /api/deprovision` when a space manager, the person who adds apps to a Space, adds or removes the app. The module stores the secret that Space sends in the credential store you pass to `forRoot`. The store below keeps the secrets in memory and loses them on restart, so implement `AppCredentialStore` over your own storage before production. The harness run does not call these routes.
+Vector Space calls `POST /api/provision` and `DELETE /api/deprovision` when a space manager, the person who adds apps to a space, adds or removes the app. The module stores the secret that Vector Space sends in the credential store you pass to `forRoot`. The store below keeps the secrets in memory and loses them on restart, so implement `AppCredentialStore` over your own storage before production. The harness run does not call these routes.
 
 ```ts title="server/src/credential-store.ts" starter
 import { Injectable } from '@nestjs/common';
@@ -430,9 +430,9 @@ bootstrap();
 <!-- /flavour -->
 
 <!-- flavour react -->
-### 5. Read the token in the page
+### 5. Read the token in the app page
 
-The page needs the token to call your server. It also reads the claims from that token to show the browser lines. `loadAppClientConfig` fetches `GET /api/client-config`. `AppProvider` starts the iframe bridge, the channel on which Space sends tokens, verifies each token Space sends and exposes the claims. `BootGate` shows `fallback` and does not show the page until the first verified token arrives.
+The app page needs the token to call your server. It also reads the claims from that token to show the browser lines. `loadAppClientConfig` fetches `GET /api/client-config`. `AppProvider` starts the iframe bridge, the channel on which Vector Space sends tokens, verifies each token Vector Space sends and exposes the claims. `BootGate` shows `fallback` and does not show the app page until the first verified token arrives.
 
 ```tsx title="client/src/App.tsx" starter
 import { loadAppClientConfig } from '@vectoragents/vs-apps/browser';
@@ -478,7 +478,7 @@ export async function fetchHello(): Promise<{ sub?: string; spaceId: number }> {
 }
 ```
 
-The page reads the claims with `useApp`. `RequireCapability` hides the content from a user who lacks `hello:view`. This client check is display only. The server check from step 4 decides.
+The app page reads the claims with `useApp`. `RequireCapability` hides the content from a user who lacks `hello:view`. This client check is display only. The server check from step 4 decides.
 
 ```tsx title="client/src/HelloPage.tsx" starter
 import { useEffect, useState } from 'react';
@@ -510,31 +510,31 @@ export function HelloPage() {
 ```
 <!-- /flavour -->
 
-## Part 2: Add the app to a Space
+## Part 2: Add the app to a space
 
-Part 2 puts the app in a real Space. Only Vector can register the app. You send the request in step 2 and cannot start step 4 until Vector confirms. Stop after Part 1 if you have no Space access. Steps 3, 4, 5 and 6 run in the Space UI.
+Part 2 puts the app in a real space. Only Vector can register the app. You send the request in step 2 and cannot start step 4 until Vector confirms. Stop after Part 1 if you have no Vector Space access. Steps 3, 4, 5 and 6 run in the Vector Space app.
 
 ### Before you start
 
-A real Space needs these things in place. Check them before step 1.
+A real space needs these things in place. Check them before step 1.
 
 - [ ] A Vector representative, the person at Vector who registers apps, to send the registration request to.
 - [ ] A space to add the app to.
 - [ ] An Organization admin, a member who sees **Organization** under **Settings**, to do [step 3](#3-publish-the-space-agent). A space manager to do steps 4 and 5. Anyone with Edit level on the space, the access level that lets a member edit it, and any Organization admin, is a space manager.
-- [ ] The Space server can reach your server. It needs a public URL that forwards to port `3101` (`SERVER_PORT`). Keep the URL the same until Vector confirms the registration.
+- [ ] The Vector Space server can reach your server. It needs a public URL that forwards to port `3101` (`SERVER_PORT`). Keep the URL the same until Vector confirms the registration.
 
-### 1. Point the app at your Space
+### 1. Point the app at Vector Space
 
-Space reaches your server over the network. The server needs real addresses instead of the harness values. Stop the harness with Ctrl-C. Copy the example file, then replace the example values with your own.
+Vector Space reaches your server over the network. The server needs real addresses instead of the harness values. Stop the harness with Ctrl-C. Copy the example file, then replace the example values with your own.
 
 ```bash
 cp .env.example .env
 ```
 
-- `SPACE_JWKS_URL` is the address of the Space key set. The server uses it to check that a token comes from Space. It is the origin of the Space API followed by `/api/.well-known/apps/jwks.json`.
-- `SPACE_API_URL` is the address of the Space API. The server uses it to ping Space at start, and the client configuration passes it to your page. It is the origin of the Space API followed by `/api`, for example `https://space-api.example.com/api`. Write it with no trailing slash.
-- `ALLOWED_PARENT_ORIGIN` is the origin of the Space web client that embeds your page, for example `https://space.example.com`. Write it with no trailing slash and no path: the client accepts messages from an exact match only.
-- `PUBLIC_BASE_URL` is the origin where the Space server reaches your server, for example `https://hello-app.example.com`. The server writes it into each `{publicBaseUrl}` placeholder in the manifest. The Hello app has no placeholder. You reuse this origin in step 2 for the manifest URL.
+- `SPACE_JWKS_URL` is the address of the Vector Space key set. The server uses it to check that a token comes from Vector Space. It is the origin of the Vector Space API followed by `/api/.well-known/apps/jwks.json`.
+- `SPACE_API_URL` is the address of the Vector Space API. The server uses it to ping Vector Space at start, and the client configuration passes it to your app page. It is the origin of the Vector Space API followed by `/api`, for example `https://space-api.example.com/api`. Write it with no trailing slash.
+- `ALLOWED_PARENT_ORIGIN` is the origin of the Vector Space web client that embeds your app page, for example `https://space.example.com`. Write it with no trailing slash and no path: the client accepts messages from an exact match only.
+- `PUBLIC_BASE_URL` is the origin where the Vector Space server reaches your server, for example `https://hello-app.example.com`. The server writes it into each `{publicBaseUrl}` placeholder in the manifest. The Hello app has no placeholder. You reuse this origin in step 2 for the manifest URL.
 - `SERVER_PORT` is the port your server listens on.
 - `CLIENT_PORT` is the port Vite serves the client on.
 
@@ -544,7 +544,7 @@ cp .env.example .env
 npm run dev:space
 ```
 
-With `SPACE_API_URL` set, the server pings Space each time it starts. `npm run dev` clears `SPACE_API_URL`, so only `npm run dev:space` sends the ping.
+With `SPACE_API_URL` set, the server pings Vector Space each time it starts. `npm run dev` clears `SPACE_API_URL`, so only `npm run dev:space` sends the ping.
 If the ping fails, the server logs a line such as `manifest ping for "hello-app" got 500` and tries again after 5 seconds and after 15 seconds. The server keeps running in every case.
 
 **Check**: in a second terminal, run this command. It prints the HTTP status and the first 9 characters of the response.
@@ -561,13 +561,13 @@ node --env-file=.env -e "fetch(process.env.SPACE_JWKS_URL).then((r) => r.text().
 
 ### 2. Ask Vector to register the app
 
-Only Vector registers an app and allows it in an organization license. Send the request now, then do step 3 while you wait. Keep `npm run dev:space` running. Space fetches the manifest when Vector registers the app. Send Vector this information:
+Only Vector registers an app and allows it in an organization license. Send the request now, then do step 3 while you wait. Keep `npm run dev:space` running. Vector Space fetches the manifest when Vector registers the app. Send Vector this information:
 
-- The manifest URL: `PUBLIC_BASE_URL` followed by `/api/manifest/hello-app`. The Space server fetches it, so it must work from the Space server's network.
+- The manifest URL: `PUBLIC_BASE_URL` followed by `/api/manifest/hello-app`. The Vector Space server fetches it, so it must work from the Vector Space server's network.
 - The iframe URL: `http://localhost:` followed by `CLIENT_PORT`. Your browser loads it, so `localhost` is your own machine. It is the client origin, not the server origin.
 - The name of your organization.
 
-Space fetches the manifest with a provisioning token. Your server verifies that token before it answers.
+Vector Space fetches the manifest with a provisioning token. Your server verifies that token before it answers.
 
 Contact your Vector representative. Vector creates the [app registration](./glossary.md#app-registration), enables it and allows it in your organization license.
 
@@ -577,46 +577,46 @@ Contact your Vector representative. Vector creates the [app registration](./glos
 
 **Role**: Organization admin.
 
-The space switcher, the menu in which a member picks a space, lists a space only when its agent has a published version. Until then Space shows "No spaces yet" and you cannot reach your app. A new space holds a draft agent that you publish as it is. An Organization admin opens an unpublished space from the list of spaces in the organization settings.
+The space switcher, the menu in which a member picks a space, lists a space only when its agent has a published version. Until then Vector Space shows "No spaces yet" and you cannot reach your app. A new space holds a draft agent that you publish as it is. An Organization admin opens an unpublished space from the list of spaces in the organization settings.
 
 1. Choose **Settings**, **Organization**, then **Spaces**. Choose your space.
 2. Choose **Agent Studio**, then **Canvas**. If the canvas already shows **Published** and has no **Publish All** button, skip item 3.
 3. Choose **Publish All**. In the **Review Changes Before Publishing** dialog, choose **Publish All**.
 
-**Check**: Space shows the toast `All published`. The canvas shows **Published** and the date. After a reload, the space appears in the space switcher of its members.
+**Check**: Vector Space shows the toast `All published`. The canvas shows **Published** and the date. After a reload, the space appears in the space switcher of its members.
 
 ### 4. Add the app to a space
 
 **Role**: space manager.
 
-Adding the app makes Space call your server. Your server must accept that call.
+Adding the app makes Vector Space call your server. Your server must accept that call.
 
 1. Choose **Settings**, **Space**, **Context Hub**, then **Resources**.
 2. Choose **Add resource**, then **App**. In the **Add an app** dialog, choose **Add** next to **Hello app**.
 
-The call is `POST /api/provision`. The body holds `serviceSecret`, a secret that Space creates for each pair of app and space. Your server uses it to prove its identity when it calls Space. Space treats a status outside 200 to 299, no reply within 10 seconds, or a network error as a failure, and the add fails.
+The call is `POST /api/provision`. The body holds `serviceSecret`, a secret that Vector Space creates for each pair of app and space. Your server uses it to prove its identity when it calls Vector Space. Vector Space treats a status outside 200 to 299, no reply within 10 seconds, or a network error as a failure, and the add fails.
 
-**Check**: Space shows the toast `App enabled`. **Resources** lists a **Hello app** row with type **App** and status **Active**. The **Configure Hello app** sheet opens. Close it.
+**Check**: Vector Space shows the toast `App enabled`. **Resources** lists a **Hello app** row with type **App** and status **Active**. The **Configure Hello app** sheet opens. Close it.
 
-If the toast starts with `App secret provisioning failed`, the add failed. A number after it is the status your server sent: check that the manifest URL Vector registered is the one from step 2. No number means Space did not reach your server: check that `npm run dev:space` still runs and that the public URL still points to port `3101`.
+If the toast starts with `App secret provisioning failed`, the add failed. A number after it is the status your server sent: check that the manifest URL Vector registered is the one from step 2. No number means Vector Space did not reach your server: check that `npm run dev:space` still runs and that the public URL still points to port `3101`.
 
 ### 5. Share the app with a user
 
 **Role**: space manager.
 
-A user sees the page only after the space manager shares the app with that user. **Direct access** lists only members of the space. Add the user to the space first. Skip this step if you are the space manager who added the app. You already have access.
+A user sees the app page only after the space manager shares the app with that user. **Direct access** lists only members of the space. Add the user to the space first. Skip this step if you are the space manager who added the app. You already have access.
 
 1. Choose **Settings**, **Space**, then **Access**. Under **Members**, choose **Add** and pick the user.
 2. Choose **Context Hub**, then **Resources**. On the **Hello app** row, open the row menu and choose **Access**.
-3. In **Direct access**, choose **Add people, roles or groups…** and pick the user. Keep the access level at **View**, which is enough for the page. Choose **Save changes**.
+3. In **Direct access**, choose **Add people, roles or groups…** and pick the user. Keep the access level at **View**, which is enough for the app page. Choose **Save changes**.
 
-**Check**: Space shows the toasts `Member added` and `Access saved`. Open the row menu and choose **Access** again. **Direct access** lists the user.
+**Check**: Vector Space shows the toasts `Member added` and `Access saved`. Open the row menu and choose **Access** again. **Direct access** lists the user.
 
-### 6. Open the page
+### 6. Open the app page
 
-Space renders the page in an iframe at the iframe URL. It sends a user token over `postMessage`. The page shows what the token and your server say. Open the Space. Expand the **Apps** group in the sidebar and choose **Hello app**.
+Vector Space renders the app page in an iframe at the iframe URL. It sends a user token over `postMessage`. The app page shows what the token and your server say. Open the space. Expand the **Apps** group in the sidebar and choose **Hello app**.
 
-**Check**: the page shows three lines, also for a user you shared the app with at the **View** level. The two user ids are equal, and the two space ids are equal.
+**Check**: the app page shows three lines, also for a user you shared the app with at the **View** level. The two user ids are equal, and the two space ids are equal.
 
 ```text
 Verified in the browser: user <id> in space <id>.
@@ -624,14 +624,14 @@ Capabilities: hello:view
 Verified on the server: space <id>, user <id>
 ```
 
-If the page stays on `Waiting for Space.`, check three things. `ALLOWED_PARENT_ORIGIN` must be the exact origin of the Space web client, as in step 1. The iframe URL that Vector registered must be your client origin from step 2. Open the page from the **Apps** group in Space, not by its address. If the browser console shows `[apps] token verification failed`, check `SPACE_JWKS_URL`.
+If the app page stays on `Waiting for Space.`, check three things. `ALLOWED_PARENT_ORIGIN` must be the exact origin of the Vector Space web client, as in step 1. The iframe URL that Vector registered must be your client origin from step 2. Open the app page from the **Apps** group in the space, not by its address. If the browser console shows `[apps] token verification failed`, check `SPACE_JWKS_URL`.
 
 ## Result
 
-The `hello-app` page is open in a Space. It shows the same three lines as the last Check. Both user ids come from the one token that Space sends. Your server verified that token against the Space key set before it answered.
+The app page of `hello-app` is open in a space. It shows the same three lines as the last Check. Both user ids come from the one token that Vector Space sends. Your server verified that token against the Vector Space key set before it answered.
 
 ## Next steps
 
 - [App definition](./app-definition.md): learn what each definition field does.
-- [Recipes](/category/recipes): add a page, a capability or an agent action to this app.
+- [Recipes](/category/recipes): add an app page, a capability or an agent action to this app.
 - [Harness reference](./reference/harness.md): wire the harness into an app that is not built from the starter.
