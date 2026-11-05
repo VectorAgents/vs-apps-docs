@@ -2,7 +2,7 @@
 
 What each claim in these docs rests on. A ticket or spec named below without a link rests on a `.scratch/` folder that no longer exists, so the claim cannot be traced further.
 
-The sections below follow the page folders: Quickstart, Guides, How a Vector App works and Why Vector Apps are under `docs/vector-apps/`. App definition, Reference, SDK overview and Choose your path are under `docs/sdk/`.
+The sections below follow the page folders: Why Vector Space and Vector Space at a glance are under `docs/vector-space/`. Quickstart, Guides, How a Vector App works and Why Vector Apps are under `docs/vector-apps/`. App definition, Reference, SDK overview and Choose your path are under `docs/sdk/`.
 
 ## Sources
 
@@ -129,6 +129,22 @@ Source paths are in the sibling `vector-spaces` repo, under `docs/systems/apps/`
 | Diagram style: true 30 degree isometric, three face tones, `plug` the one accent, position and badge as the signals besides colour, a visible legend with the SVG `title` and `desc`. | Spec section 7 and the diagram tickets of the hub structure map, with no link. The palette is the one of the variant A prototype. |
 | In forced colors Chromium keeps SVG fill and stroke from author CSS, so the page sets system colours for the diagram. SVG `title`, `desc` and `text` are indexed by the search plugin as part of the section. | Checked in Edge with forced-colors emulation, and by reading `search-index.json` of a build. `scripts/build-check/iso-diagram.test.mjs` pins the second. |
 | No placeholder example app (Hiring, SDR, CSR) and no Vector Module name appears in the diagram or the page. | The two examples `sdr` and `csr` exist as SDK example definitions in `src/examples/`. A Hiring app appears only in the SDK README. The product knows two Vector Modules, `omnibox` and `contacts` (`product/GLOSSARY.md`), not a calendar. |
+
+## Why Vector Space and Vector Space at a glance
+
+Source paths are in the sibling `vector-spaces` repo, under `docs/`. The product docs hold no `APPS.md`, so `product/OVERVIEW.md` and `product/GLOSSARY.md` are the sources.
+
+| Claim | Rests on |
+| --- | --- |
+| Vector Space is where the people and AI agents of an organization work on the organization's own data, in spaces. Each run follows the access rules of the organization, is paid through its own AI provider accounts and records who it ran as. | `product/OVERVIEW.md` ("What it is"). |
+| The three platform rules: one access model, one AI gateway, one record of work. The page words the access rule as roles, shares, blocks and conditions, which is the product's "roles, shares, blocks and Conditions". | `product/OVERVIEW.md` ("What holds it together"). |
+| An organization is the tenant. A space is the unit of work, binds one orchestrator agent, and resolves access inside it for each member and action. | `product/OVERVIEW.md` ("How it fits"), `product/GLOSSARY.md` (Organization, Space, Agent). |
+| The diagram parts: orchestrator agent, resource pool, members, space pages, Command Center, Vector Apps, with an A2A agent and an MCP connector outside. A space page is a grid of widgets and documents. The Command Center holds what an agent or app waits on a person for. | `product/OVERVIEW.md` ("The product's layers"), `product/GLOSSARY.md` (Page, Widget, Document, Agent, Ask). The picture is variant A of the hub structure map prototype, with the Calendar module and the example apps of the prototype left out. |
+| An MCP connector is an MCP server bound into a space. An A2A agent is a remote agent that the orchestrator agent delegates to. | `product/GLOSSARY.md` (Provider, Connector), `systems/STUDIO.md` (Transport: an A2A leaf is a remote agent card). The pages name both as interfaces and have no page for either. |
+| Governance shows what ran, as whom, what it cost and what it was allowed to spend. An Organization admin reads it across the organization. | `product/OVERVIEW.md` (the Governance layer, "Who uses it"). |
+| A Vector Module is a first-party product over connector data, activated on a space next to its apps. The page names no module and links the Platform limits table. | `product/GLOSSARY.md` (Vector Module). The product knows two modules, `omnibox` and `contacts`, not three and not a calendar, so the three names of the prototype were dropped. |
+| The roles: members, an Organization admin (one per organization, every one a space manager), space managers (Edit level), staff (tenancy, the credential vault and the app registry) and machines (API keys, A2A and channels, as a user or a service account). | `product/OVERVIEW.md` ("Who uses it"), `product/GLOSSARY.md` (Organization admin, Service account, Staff). |
+| The page names no resource tiers. | The hub structure spec lists "resource tiers" for the picture, but no product doc names tiers of resources. The resource pool is one list. |
 
 ## Why Vector Apps
 

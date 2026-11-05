@@ -55,8 +55,8 @@ test('Glossary is the last item of each section', () => {
   assert.equal(idOf(sidebars.sdk.at(-1)), 'sdk/glossary');
 });
 
-test('the Vector Space sidebar lists the Glossary and nothing else', () => {
-  assert.deepEqual(topLevel('vectorSpace'), ['vector-space/glossary']);
+test('the Vector Space sidebar runs Why Vector Space, Vector Space at a glance, Glossary', () => {
+  assert.deepEqual(topLevel('vectorSpace'), ['vector-space/why-vector-space', 'vector-space/vector-space-at-a-glance', 'vector-space/glossary']);
 });
 
 test('the Guides section lists the open-route, connector-events, call-a-model and Call Space guides', () => {

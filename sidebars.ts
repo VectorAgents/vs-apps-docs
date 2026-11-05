@@ -1,7 +1,7 @@
 import type { SidebarsConfig } from '@docusaurus/plugin-content-docs';
 
 const sidebars: SidebarsConfig = {
-  vectorSpace: ['vector-space/glossary'],
+  vectorSpace: ['vector-space/why-vector-space', 'vector-space/vector-space-at-a-glance', 'vector-space/glossary'],
   vectorApps: [
     'vector-apps/why-vector-apps',
     'vector-apps/how-a-vector-app-works',
