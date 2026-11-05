@@ -157,7 +157,7 @@ test('gate-by-capability Nest block registers the controller in AppModule and us
 
 test('gate-by-capability closes by sharing one fallback across at least two pages', () => {
   const steps = section(gate.text, 'Steps').split(/^### /m).slice(1);
-  assert.match(steps.at(-1), /^\d+\. Share one fallback across pages\n/);
+  assert.match(steps.at(-1), /^\d+\. Share one fallback across app pages\n/);
   assert.equal([...steps.at(-1).matchAll(/^```tsx title="client\/src\/\w+\.tsx"/gm)].length >= 2, true);
   assert.ok([...gate.text.matchAll(/<GatedPage\b/g)].length >= 2);
   assert.equal([...gate.text.matchAll(/fallback=/g)].length, 2);
@@ -192,7 +192,7 @@ test('expose-agent-actions names the catalog command, its entry file and the dev
 
 test('expose-agent-actions limits description and mounted-action claims to the SDK', () => {
   assert.doesNotMatch(expose.text, /only guidance/);
-  assert.match(expose.text, /The SDK puts it in the manifest, which Space reads\./);
+  assert.match(expose.text, /The SDK puts it in the manifest, which \[Vector Space\]\([^)]*\) reads\./);
   assert.match(expose.text, /After each successful call, the SDK reports the mounted actions\./);
   assert.doesNotMatch(expose.text, /agent sees `leads/);
 });
@@ -299,8 +299,8 @@ test('add-page-and-capability restart step says the starter tells Space and keep
 });
 
 test('add-page-and-capability links between pages without a reload through navigate and one shared pages array', () => {
-  const step = addPageSteps().find((s) => /^\d+\. Link between pages without a reload\n/.test(s));
-  assert.ok(step, 'a step named "Link between pages without a reload"');
+  const step = addPageSteps().find((s) => /^\d+\. Link between app pages without a reload\n/.test(s));
+  assert.ok(step, 'a step named "Link between app pages without a reload"');
   assert.match(step, /iframe/);
   assert.match(step, /history\.pushState\(/);
   assert.match(step, /<AppProvider[^>]*\bnavigate=|\bnavigate=\{navigate\}/);
@@ -322,7 +322,7 @@ test('each call-a-model tree links the glossary at the first model slot and says
     const body = text.replace(/^---\n[\s\S]*?\n---\n/, '');
     assert.equal(body.search(/model slot/i), body.indexOf('[model slot](') + 1);
     assert.match(body, /\[model slot\]\([./]+\/glossary\.md#model-slot\)/);
-    assert.match(body, /If no one sets the slot, Space refuses the call with status `409`/);
+    assert.match(body, /If no one sets the slot, Vector Space refuses the call with status `409`/);
   }
 });
 
