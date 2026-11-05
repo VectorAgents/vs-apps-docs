@@ -107,11 +107,11 @@ export function validateDraft(draft: Draft): { errors: Issue[]; warnings: Issue[
     } else if (!capabilityKeys.includes(page.capability)) {
       warnings.push({
         path: `pages[${i}].capability`,
-        message: `Capability "${page.capability}" is not declared. defineApp accepts it, and the page stays ungated by any real capability.`,
+        message: `Capability "${page.capability}" is not declared. defineApp accepts it, and the app page stays ungated by any real capability.`,
       });
     }
   });
-  checkUnique(draft.pages.map((p) => p.key), 'pages', 'page key', errors);
+  checkUnique(draft.pages.map((p) => p.key), 'pages', 'app page key', errors);
   if (draft.defaultPageKey && !draft.pages.some((p) => p.key === draft.defaultPageKey)) {
     fail('defaultPageKey', ruleText('defaultPageKey'));
   }
