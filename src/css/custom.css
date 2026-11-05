@@ -196,6 +196,218 @@
   }
 }
 
+/* Three face tones per kind, lit from the top left. `plug` is the one accent, for the pluggable parts. */
+:root {
+  --iso-slab-top: #eef1f0;
+  --iso-slab-left: #d9dfdd;
+  --iso-slab-right: #c6cecb;
+  --iso-core-top: #dde4ea;
+  --iso-core-left: #c4cfd8;
+  --iso-core-right: #adbac5;
+  --iso-plug-top: #cdebdc;
+  --iso-plug-left: #9fd3b9;
+  --iso-plug-right: #7fbf9f;
+  --iso-hi: #ffffff;
+  --iso-edge: #5d6b66;
+  --iso-link: #2e8555;
+  --iso-link-ink: #ffffff;
+  --iso-ink: #1c1e21;
+  --iso-badge-bg: #1c1e21;
+  --iso-badge-ink: #ffffff;
+}
+
+[data-theme='dark'] {
+  --iso-slab-top: #3a3e42;
+  --iso-slab-left: #2b2e31;
+  --iso-slab-right: #212326;
+  --iso-core-top: #4a5560;
+  --iso-core-left: #3a444d;
+  --iso-core-right: #2d353c;
+  --iso-plug-top: #1f7a60;
+  --iso-plug-left: #17604b;
+  --iso-plug-right: #124c3b;
+  --iso-hi: #8ff0d4;
+  --iso-edge: #9aa5a1;
+  --iso-link: #25c2a0;
+  --iso-link-ink: #0b2a22;
+  --iso-ink: #f2f2f2;
+  --iso-badge-bg: #f2f2f2;
+  --iso-badge-ink: #1b1b1d;
+}
+
+.iso-diagram {
+  margin: 1.5rem 0;
+}
+
+.iso-diagram figure {
+  margin: 0;
+}
+
+.iso-diagram svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.iso-top.tone-slab { fill: var(--iso-slab-top); }
+.iso-left.tone-slab { fill: var(--iso-slab-left); }
+.iso-right.tone-slab { fill: var(--iso-slab-right); }
+.iso-top.tone-core { fill: var(--iso-core-top); }
+.iso-left.tone-core { fill: var(--iso-core-left); }
+.iso-right.tone-core { fill: var(--iso-core-right); }
+.iso-top.tone-plug { fill: var(--iso-plug-top); }
+.iso-left.tone-plug { fill: var(--iso-plug-left); }
+.iso-right.tone-plug { fill: var(--iso-plug-right); }
+
+.iso-face {
+  stroke: var(--iso-edge);
+  stroke-width: 1;
+  stroke-linejoin: round;
+}
+
+.iso-hi {
+  fill: none;
+  stroke: var(--iso-hi);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+[data-theme='dark'] .iso-glow {
+  filter: drop-shadow(0 0 5px rgb(37 194 160 / 50%));
+}
+
+.iso-link {
+  fill: none;
+  stroke: var(--iso-link);
+  stroke-width: 2;
+}
+
+.iso-remote {
+  stroke-dasharray: 6 5;
+}
+
+.iso-arrow {
+  fill: var(--iso-link);
+}
+
+.iso-label {
+  fill: var(--iso-ink);
+  font-family: var(--ifm-font-family-base);
+  font-weight: 700;
+}
+
+.iso-slab-label {
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.iso-badge {
+  fill: var(--iso-badge-bg);
+}
+
+.iso-badge-text {
+  fill: var(--iso-badge-ink);
+  font-family: var(--ifm-font-family-base);
+  font-size: 14px;
+  font-weight: 700;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+.iso-badge-link .iso-badge {
+  fill: var(--iso-link);
+}
+
+.iso-badge-link .iso-badge-text {
+  fill: var(--iso-link-ink);
+}
+
+.iso-diagram figcaption {
+  border-top: 1px solid var(--ifm-color-emphasis-300);
+  color: var(--ifm-color-emphasis-700);
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  margin-top: 0.25rem;
+  padding-top: 0.4rem;
+  text-transform: uppercase;
+}
+
+.iso-legend-title {
+  font-weight: 700;
+  margin: 1rem 0 0.25rem;
+}
+
+.iso-legend-list {
+  list-style: none;
+  margin: 0 0 0.5rem;
+  padding: 0;
+}
+
+.iso-legend-list li {
+  margin: 0.25rem 0;
+}
+
+.iso-key {
+  background: var(--iso-badge-bg);
+  border-radius: 50%;
+  color: var(--iso-badge-ink);
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  height: 1.4em;
+  line-height: 1.4em;
+  margin-right: 0.5rem;
+  text-align: center;
+  width: 1.4em;
+}
+
+.iso-key-link {
+  background: var(--iso-link);
+  color: var(--iso-link-ink);
+}
+
+/* Chromium keeps SVG fill and stroke from author CSS in forced colors, so a light-theme face stays light on a dark Canvas. Only the outline weight tells a plug part apart. */
+@media (forced-colors: active) {
+  .iso-diagram .iso-face {
+    fill: Canvas;
+    stroke: CanvasText;
+  }
+
+  .iso-diagram .iso-face.tone-plug {
+    stroke-width: 2.5;
+  }
+
+  .iso-diagram .iso-glow {
+    filter: none;
+  }
+
+  .iso-diagram .iso-hi {
+    stroke: CanvasText;
+  }
+
+  .iso-diagram .iso-label,
+  .iso-diagram .iso-badge {
+    fill: CanvasText;
+  }
+
+  .iso-diagram .iso-badge-text,
+  .iso-diagram .iso-badge-link .iso-badge-text {
+    fill: Canvas;
+  }
+
+  .iso-diagram .iso-link {
+    stroke: LinkText;
+  }
+
+  .iso-diagram .iso-arrow,
+  .iso-diagram .iso-badge-link .iso-badge {
+    fill: LinkText;
+  }
+}
+
 .flavour-picker {
   position: relative;
 }
