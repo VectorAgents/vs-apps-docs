@@ -19,11 +19,11 @@ After Part 1, the app page runs in the harness on your machine. After Part 2, th
 ```mermaid
 sequenceDiagram
   accTitle: How the token travels
-  accDescr: Space mints a token and posts it to the client. The client sends it to the app server, which verifies it against the Space key set.
-  participant H as Space host
+  accDescr: Vector Space mints a token and posts it to the client. The client sends it to the app server, which verifies it against the Vector Space key set.
+  participant H as Vector Space host
   participant C as Client (iframe)
   participant S as App server
-  participant K as Space key set
+  participant K as Vector Space key set
   C->>S: (1) GET /api/client-config
   S-->>C: parent origin, SPACE_JWKS_URL
   C->>H: (2) apps:ready (postMessage)
