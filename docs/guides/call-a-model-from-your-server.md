@@ -78,12 +78,12 @@ The store keeps the secrets in memory and loses them on restart. `AppCredentialS
 ### 3. Call the model
 
 <!-- flavour node -->
-`platform.ai(appId, spaceId, slot)` resolves to `{ provider, baseUrl, apiKey, model, expiresAt }`. `expiresAt` is a time in seconds since 1970. Do not store the configuration: call `platform.ai` on each request. The platform reuses a ticket until one minute before it expires.
+`platform.ai(appId, spaceId, slot)` resolves to `{ provider, baseUrl, apiKey, model, expiresAt }`. `expiresAt` is a time in seconds since 1970. Do not store the configuration: call `platform.ai` on each request. The platform reuses a ticket until one minute before it expires, for the same space, slot, run and trace only.
 
 The key works for this slot only. `model` is the slot's alias, not the model name that the space manager picked. Send it as it is.
 <!-- /flavour -->
 <!-- flavour nest -->
-`getClientConfig(appId, spaceId, slot)` returns `{ provider, baseUrl, apiKey, model, expiresAt }`. `expiresAt` is a time in seconds since 1970. Do not store the configuration: call `getClientConfig` on each request. The service reuses a ticket until one minute before it expires.
+`getClientConfig(appId, spaceId, slot)` returns `{ provider, baseUrl, apiKey, model, expiresAt }`. `expiresAt` is a time in seconds since 1970. Do not store the configuration: call `getClientConfig` on each request. The service reuses a ticket until one minute before it expires, for the same space, slot, run and trace only.
 
 The key works for this slot only. `model` is the slot's alias, not the model name that the space manager picked. Send it as it is.
 <!-- /flavour -->

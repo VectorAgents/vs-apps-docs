@@ -169,7 +169,7 @@ The secret Space creates for each pair of app and space and pushes to the app at
 
 ### app token
 
-A short-lived token that Space issues in exchange for the service secret. Space limits it to what the app may do, with no user involved.
+A short-lived token that Space issues in exchange for the service secret. The SDK calls it a service token. A plain exchange gives a token limited to what the app may do, with no user involved. An exchange that names a `userId` gives a user token under that member's own access, with `viaServer: true`. Space refuses it unless the space admits that user.
 
 - Maps to: `createSpaceS2s` and `SpaceS2sService`.
 - Owner: Space issues it. The SDK requests it.
