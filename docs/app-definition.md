@@ -6,7 +6,7 @@ import DiagramControls from '@site/src/components/DiagramControls';
 
 ## What an app definition is
 
-An app definition is one TypeScript object, built with `defineApp`, that describes your app to [Space](./glossary.md#space).
+An app definition is one TypeScript object, built with `defineApp`, that describes your app to [Space](./glossary.md#vector-space).
 You write it once: your server and client import it, and your server builds the [manifest](./glossary.md#manifest) that Space reads from it.
 
 It declares the app `key`, its pages (one screen each, with a path), the [capabilities](./glossary.md#capability) it can be granted and the resources it needs. It does not read environment variables, so the server and the client import the same object.

@@ -8,6 +8,23 @@ What each claim in these docs rests on. A ticket or spec named below without a l
 - Every code snippet typechecks against the installed package, except the quickstart's `starter` code blocks. The starter's CI typechecks those excerpts ([ADR 0003](adr/0003-quickstart-runs-create-app-from-github-packages.md)). The stamp at the foot of each page shows the version and date of the last run.
 - Space-side claims come from Space-side documentation, except the checks under [Verified in a local Space](#verified-in-a-local-space). This covers registration, the pending review, auto-apply, navigation entries, grants and the configuration sheet.
 
+- Glossary terms rest on the product glossary of the sibling `vector-spaces` repo (`docs/product/GLOSSARY.md`), with `docs/systems/apps/BINDINGS.md` for the app settings. A published page never names either file.
+
+## Glossary term mapping
+
+The glossary uses the published word where the product glossary uses an internal one.
+
+| Published term | Product term | Note |
+| --- | --- | --- |
+| allowed resources | Ceiling (`access.app_binding_resources`) | The resources a space manager attaches to an app. `ceiling` does not occur in `docs/`. |
+| the member's access | Floor | The overlap rule: an action runs only on resources that are allowed for the app and open to the member. |
+| resource pool | Pool | Vector Space lists it under Context Hub as **Resources**. |
+| knowledge source | Source | Vector Space shows knowledge sources in the settings of an app. |
+| space page | Page (`pages.pages`) | A grid of widgets. `app page` names the SDK `pages[]` entry. |
+| capability grant | Grant | The noun only. The product grant is a standing approval, a different thing. |
+| Vector Space, space | Space | The platform is Vector Space. The workspace is a space. |
+| app token | service token | The SDK README calls it a service token. |
+
 ## SDK gaps
 
 - The SDK declares no `engines` field. The docs name the current Node.js LTS release, which the starter CI tests (`lts/*`). Vite 8 accepts every LTS from 22.12.

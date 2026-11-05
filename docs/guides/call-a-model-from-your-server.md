@@ -3,7 +3,7 @@ title: Call a model from your server
 start: leads-app
 ---
 
-Ask [Space](../glossary.md#space) for a model from your server and call it.
+Ask [Space](../glossary.md#vector-space) for a model from your server and call it.
 
 <!-- flavour node -->
 The guide uses `platform.ai` from the `@vectoragents/vs-apps/server` subpath of the [SDK](../glossary.md#sdk) on a `node:http` server.

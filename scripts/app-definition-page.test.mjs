@@ -96,7 +96,7 @@ test('leaves deferred fields undocumented', () => {
 });
 
 test('links each glossary term at first use only', () => {
-  for (const term of ['manifest', 'Space', 'capability', 'model slot', 'connector slot']) {
+  for (const term of ['manifest', 'Vector Space', 'capability', 'model slot', 'connector slot']) {
     const slug = term.toLowerCase().replaceAll(' ', '-');
     const links = text.split(`](./glossary.md#${slug})`).length - 1;
     assert.equal(links, 1, `${term} linked ${links} times`);

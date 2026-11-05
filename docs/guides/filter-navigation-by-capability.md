@@ -4,7 +4,7 @@ start: leads-app
 ---
 
 <!-- flavour react -->
-Advanced configuration of the app navigation: build your own [page](../glossary.md#page) list from the definition and show only the pages a member may open.
+Advanced configuration of the app navigation: build your own [page](../glossary.md#app-page) list from the definition and show only the pages a member may open.
 
 ## Goal
 

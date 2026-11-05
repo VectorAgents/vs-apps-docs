@@ -8,7 +8,7 @@ Prerequisites: `@vectoragents/vs-apps` 0.4.0 installed. Copy one file into your 
 
 ## Sales outreach app: pages, capabilities and a model slot
 
-Four [pages](./glossary.md#page), each gated by one [capability](./glossary.md#capability), and one [model slot](./glossary.md#model-slot) the space manager points at a model.
+Four [pages](./glossary.md#app-page), each gated by one [capability](./glossary.md#capability), and one [model slot](./glossary.md#model-slot) the space manager points at a model.
 
 ```ts title="src/app.definition.ts" file="src/examples/sdr.definition.ts"
 ```

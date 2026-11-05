@@ -3,7 +3,7 @@ title: Add a page and a capability
 ---
 
 <!-- flavour react -->
-Grow the `hello-app` definition by two [pages](../glossary.md#page) and the [capabilities](../glossary.md#capability) that gate them, link the pages without a reload, then see them in a [Space](../glossary.md#space).
+Grow the `hello-app` definition by two [pages](../glossary.md#app-page) and the [capabilities](../glossary.md#capability) that gate them, link the pages without a reload, then see them in a [Space](../glossary.md#vector-space).
 
 ## Goal
 

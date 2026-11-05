@@ -3,7 +3,7 @@ title: Call Space from your server
 start: leads-app
 ---
 
-Make your server call [Space](../glossary.md#space) in two ways: as the signed-in user, and as the app itself.
+Make your server call [Space](../glossary.md#vector-space) in two ways: as the signed-in user, and as the app itself.
 
 <!-- flavour node -->
 Both use the `@vectoragents/vs-apps/server` subpath of the [SDK](../glossary.md#sdk) on a plain `node:http` server.

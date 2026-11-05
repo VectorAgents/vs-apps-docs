@@ -18,7 +18,7 @@ End with a header component that reads the verified user, the [space](../glossar
 
 ### 1. Read the context
 
-`useApp` returns the token claims and the [granted](../glossary.md#grant) capabilities. `claims` is `null` until the handshake completes, so mount the component under `BootGate`.
+`useApp` returns the token claims and the [granted](../glossary.md#capability-grant) capabilities. `claims` is `null` until the handshake completes, so mount the component under `BootGate`.
 
 ```tsx title="client/src/SdrHeader.tsx"
 import { useApp } from '@vectoragents/vs-apps/react';

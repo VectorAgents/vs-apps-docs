@@ -3,7 +3,7 @@ title: Gate a page and an endpoint by capability
 start: leads-app
 ---
 
-Hide a [page](../glossary.md#page) from members who lack a [capability](../glossary.md#capability) and refuse the same members on the server. The example gates the `leads` page of `hello-app` with `lead:manage`.
+Hide a [page](../glossary.md#app-page) from members who lack a [capability](../glossary.md#capability) and refuse the same members on the server. The example gates the `leads` page of `hello-app` with `lead:manage`.
 
 ## Goal
 
@@ -27,7 +27,7 @@ cd leads-app
 ```
 <!-- /flavour -->
 
-- A member who holds the capability and one who does not. A [space manager](../glossary.md#space-manager) [grants](../glossary.md#grant) capabilities in [Space](../glossary.md#space).
+- A member who holds the capability and one who does not. A [space manager](../glossary.md#space-manager) [grants](../glossary.md#capability-grant) capabilities in [Space](../glossary.md#vector-space).
 - Background: [`RequireCapability` on the client](../reference/react.md#requirecapability).
 
 ## Steps

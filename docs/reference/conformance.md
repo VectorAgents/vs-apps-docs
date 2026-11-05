@@ -2,7 +2,7 @@
 title: Conformance reference
 ---
 
-Reference for `@vectoragents/vs-apps/conformance` 0.4.0. The subpath is a test kit for your server. A fake [Space](../glossary.md#space) signs every kind of token, and a list of cases drives the routes that Space calls on your server and checks each answer. The cases hold one rule each, such as refusing a token that Space did not sign.
+Reference for `@vectoragents/vs-apps/conformance` 0.4.0. The subpath is a test kit for your server. A fake [Space](../glossary.md#vector-space) signs every kind of token, and a list of cases drives the routes that Space calls on your server and checks each answer. The cases hold one rule each, such as refusing a token that Space did not sign.
 
 Every symbol below follows one layout: signature, behaviour, example. Each example is a complete file and is typechecked against the installed package.
 

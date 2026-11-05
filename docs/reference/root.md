@@ -13,7 +13,7 @@ Every symbol below follows one layout: signature, behaviour, example. Each examp
 
 ## `defineAgentPage`
 
-Declares a [page](../glossary.md#page) the Space agent can read, and returns the factory for its [agent actions](../glossary.md#agent-action).
+Declares a [page](../glossary.md#app-page) the Space agent can read, and returns the factory for its [agent actions](../glossary.md#agent-action).
 
 ### Signature
 
