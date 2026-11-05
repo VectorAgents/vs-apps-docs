@@ -9,8 +9,8 @@ export const appsOverview: IsoDiagramData = {
   caption: 'How a Vector App fits in a space',
   legendTitles: { places: 'Places', parts: 'Parts', links: 'Token path' },
   slabs: [
-    { id: 'space', label: 'Vector Space', text: 'Hosts your app and embeds each app page in an iframe.', tone: 'slab', c: 0, r: 0, w: 9, d: 8, h: TOP, z: 0, labelAt: 'front' },
-    { id: 'origin', label: 'Your origin', text: 'Where your app runs. You deploy and own it.', tone: 'slab', c: 12, r: 0, w: 7, d: 8, h: TOP, z: 0, labelAt: 'front' },
+    { id: 'space', label: 'Vector Space', text: 'Hosts your app and embeds each app page in an iframe.', tone: 'slab', c: 0, r: 0, w: 9, d: 8, h: TOP, z: 0 },
+    { id: 'origin', label: 'Your origin', text: 'Where your app runs. You deploy and own it.', tone: 'slab', c: 12, r: 0, w: 7, d: 8, h: TOP, z: 0 },
   ],
   parts: [
     { id: 'client', badge: 1, label: 'Your client', text: 'Runs in the iframe and shows your app pages.', tone: 'plug', c: 1.5, r: 0.9, w: 4, d: 0.8, h: 18, z: TOP },

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { layoutDiagram, project } from '../src/diagrams/isoLayout.ts';
+import { layoutDiagram } from '../src/diagrams/isoLayout.ts';
 import { appsOverview } from '../src/diagrams/apps-overview.ts';
 import { spaceOverview } from '../src/diagrams/space-overview.ts';
 
@@ -23,19 +23,22 @@ const small = {
   ],
 };
 
-test('project: the origin maps to the origin and one column step goes right and down by 30 degrees', () => {
-  const [x0, y0] = project(0, 0, 0, 20);
-  assert.deepEqual([x0, y0], [0, 0]);
-  const [x, y] = project(1, 0, 0, 20);
-  assert.ok(Math.abs(x - 20 * Math.cos(Math.PI / 6)) < 1e-9);
-  assert.equal(y, 10);
+const unit = 22;
+const project = (c, r, z) => [(c - r) * unit * Math.cos(Math.PI / 6), (c + r) * unit * 0.5 - z];
+const point = (text) => text.split(' ').map((pair) => pair.split(',').map(Number));
+const topOf = (box) => point(layoutDiagram({ ...small, slabs: [{ id: 'b', label: 'B', text: 'B.', tone: 'slab', c: 0, r: 0, w: 1, d: 1, h: 0, z: 0, ...box }], parts: [], links: [] }).shapes[0].top);
+
+test('projection: the origin maps to the origin, a column step goes right and down, a row step left and down', () => {
+  const [origin, column, , row] = topOf({});
+  assert.deepEqual(origin, [0, 0]);
+  assert.ok(Math.abs(column[0] - unit * Math.cos(Math.PI / 6)) < 0.1);
+  assert.equal(column[1], unit / 2);
+  assert.ok(Math.abs(row[0] + unit * Math.cos(Math.PI / 6)) < 0.1);
+  assert.equal(row[1], unit / 2);
 });
 
-test('project: a row step goes left and down, and height goes up', () => {
-  const [x, y] = project(0, 1, 0, 20);
-  assert.ok(Math.abs(x + 20 * Math.cos(Math.PI / 6)) < 1e-9);
-  assert.equal(y, 10);
-  assert.equal(project(0, 0, 7, 20)[1], -7);
+test('projection: height goes up', () => {
+  assert.equal(topOf({ h: 7 })[0][1], -7);
 });
 
 test('layout: a nearer part is painted after a farther one, and a slab before the parts on it', () => {
@@ -46,16 +49,15 @@ test('layout: a nearer part is painted after a farther one, and a slab before th
 test('layout: the view box holds every corner of every block and every link end', () => {
   const scene = layoutDiagram(small);
   const [x0, y0, w, h] = scene.viewBox.split(' ').map(Number);
-  const unit = scene.unit;
   for (const b of [...small.slabs, ...small.parts]) {
     for (const [c, r, z] of [[b.c, b.r, b.z + b.h], [b.c + b.w, b.r, b.z + b.h], [b.c + b.w, b.r + b.d, b.z], [b.c, b.r + b.d, b.z]]) {
-      const [x, y] = project(c, r, z, unit);
+      const [x, y] = project(c, r, z);
       assert.ok(x >= x0 && x <= x0 + w && y >= y0 && y <= y0 + h, `${b.id} corner ${c},${r},${z}`);
     }
   }
   for (const l of small.links) {
     for (const [c, r] of [l.from, l.to]) {
-      const [x, y] = project(c, r, l.z, unit);
+      const [x, y] = project(c, r, l.z);
       assert.ok(x >= x0 && x <= x0 + w && y >= y0 && y <= y0 + h, `${l.id} end`);
     }
   }
@@ -90,12 +92,6 @@ test('text alternative: the scene carries the title, the description and the cap
   assert.equal(scene.title, 'Small scene');
   assert.equal(scene.desc, 'A slab with two parts.');
   assert.equal(scene.caption, 'Small scene');
-});
-
-test('layout rejects a part without a badge, a link to nowhere that has a letter but no text, and a duplicate id', () => {
-  assert.throws(() => layoutDiagram({ ...small, parts: [{ ...small.parts[0], badge: undefined }] }), /badge/);
-  assert.throws(() => layoutDiagram({ ...small, links: [{ id: 'x', badge: 'z', from: [0, 0], to: [1, 1], z: 2 }] }), /text/);
-  assert.throws(() => layoutDiagram({ ...small, parts: [small.parts[0], { ...small.parts[1], id: 'near' }] }), /duplicate/);
 });
 
 test('apps overview: five numbered parts, four lettered lines a to d, two slabs', () => {

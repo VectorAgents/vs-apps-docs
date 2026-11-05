@@ -45,7 +45,7 @@ Three kinds of code plug into a space.
 Five roles work with Vector Space.
 
 - **members** work in spaces. They chat with agents, build space pages and answer what agents ask them.
-- **Organization admin** is one person who manages the users, spaces and AI provider accounts of an organization. This person also sets up each connector provider. Every [Organization admin](./glossary.md#organization-admin) is a space manager.
+- **Organization admin** is one person who manages the users, spaces and [AI](./glossary.md#ai) provider accounts of an organization. This person also sets up each connector provider. Every [Organization admin](./glossary.md#organization-admin) is a space manager.
 - **space managers** manage one space: its members, roles, resources, agent and apps. A [space manager](./glossary.md#space-manager) holds [Edit level](./glossary.md#edit-level) in that space.
 - **staff** are Vector employees who run the platform across organizations. They set up organizations, run the credential vault and register apps. The [glossary entry](./glossary.md#staff) lists what only staff can do.
 - **machines** call in without a person at the keyboard. They use API keys, A2A or a [channel](./glossary.md#channel), as a user or as a service account. A service account is a user that is not a person.

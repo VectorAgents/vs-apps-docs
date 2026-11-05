@@ -3,7 +3,7 @@ title: Why Vector Space
 description: What Vector Space is for, who it is for and the three rules that every part of it follows.
 ---
 
-[Vector Space](./glossary.md#vector-space) is the platform where an organization's people and AI agents work on the organization's own data. This page says what it is for, who it is for and the three rules that every part of it follows.
+[Vector Space](./glossary.md#vector-space) is the platform where an organization's people and [AI](./glossary.md#ai) agents work on the organization's own data. This page says what it is for, who it is for and the three rules that every part of it follows.
 
 ## What Vector Space is for
 

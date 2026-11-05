@@ -13,7 +13,7 @@ const walk = (dir) =>
 
 const markerLike = /^<!--\s*\/?flavour\b/;
 
-/** Splits a page into shared text and flavour blocks; syntax problems go to `errors` as `where:line: message`. */
+/** Syntax problems go to `errors` as `where:line: message`. */
 function parse(text, where, knownFlavour, errors) {
   const parts = [{ lines: [] }];
   let open = null;
@@ -70,29 +70,12 @@ function prefixHeadingIds(lines, flavour, taken) {
   });
 }
 
-/** Every value combination of the axes in `names`, as objects of axis to flavour. */
 export const combinations = (axes, names) =>
   names.reduce((acc, axis) => acc.flatMap((c) => Object.keys(axes[axis]).map((f) => ({ ...c, [axis]: f }))), [{}]);
 
-const splitFrontMatter = (text) => {
-  const m = /^---\n[\s\S]*?\n---\n/.exec(text);
-  return m ? { front: m[0], body: text.slice(m[0].length) } : { front: '', body: text };
-};
-
-/** `text` with `key: value` added to its front matter, which is created when the page has none. */
-const withFrontMatter = (text, entry) => {
-  const { front, body } = splitFrontMatter(text);
-  return front ? front.replace(/\n---\n$/, `\n${entry}\n---\n`) + body : `---\n${entry}\n---\n${body}`;
-};
-
-/** Route of the page at `rel`: no extension, and a folder index sits at its folder. */
 const urlOf = (rel) => `/${rel.replace(/\.mdx?$/, '').replace(/(^|\/)index$/, '')}`;
 
-/**
- * Writes two trees under `config.outDir` from the source pages under `config.docsRoot`. `site/` is what Docusaurus
- * publishes: one page per source, every flavour block wrapped and labelled, a neutral page flagged in front matter.
- * `pairs/<client>/<server>/` holds one copy of each flavoured page per pair, for checks only.
- */
+/** `site/` is what Docusaurus publishes. `pairs/<client>/<server>/` is for checks only. */
 export function generate({ root, config }) {
   const { axes } = config;
   const axisOrder = Object.keys(axes);
@@ -186,12 +169,8 @@ export function generate({ root, config }) {
   const manifest = [];
   for (const [rel, { text, parts, used }] of pages) {
     if (!used.length) {
-      if (text === null) {
-        mkdirSync(dirname(join(out, 'site', rel)), { recursive: true });
-        copyFileSync(join(source, rel), join(out, 'site', rel));
-      } else {
-        emit(`site/${rel}`, withFrontMatter(text, 'neutral: true'));
-      }
+      mkdirSync(dirname(join(out, 'site', rel)), { recursive: true });
+      copyFileSync(join(source, rel), join(out, 'site', rel));
       continue;
     }
     todos += parts.filter((p) => p.todo).length;

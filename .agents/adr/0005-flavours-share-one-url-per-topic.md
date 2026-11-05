@@ -7,14 +7,13 @@ A flavoured page is published once, at one plain URL such as `/vector-apps/quick
 ## Decision
 
 - **URL rule.** One URL per page. The URL has no flavour segment, so a flavoured page has no stub and no redirect. Old flavour-tree URLs and `/nest/...` addresses may break; `onBrokenLinks: 'throw'` guards internal links.
-- **Merged page.** The generator wraps each flavour block in an element with `data-axis` and `data-flavour` and a visible label. A `<head>` script sets `data-client` and `data-server` on `<html>` before paint, from the address parameters or the saved choice. CSS shows the matching blocks. Without JavaScript every block shows, labelled.
-- **Parameters.** `?client=react&server=nest`, one parameter per axis, named after the axis. A parameter in a shared link overwrites the saved choice. Picking a flavour changes the saved choice only and leaves the address alone. Share and heading-copy actions build the full link with every axis.
-- **Anchors.** A heading inside a block has the id `<flavour>-<slug>`, so ids never collide across blocks. A bare anchor whose id names a flavour switches to that flavour. Headings outside blocks keep plain ids.
-- **Saved choice.** The choice lives in `localStorage` and starts as `react` + `node`. The picker shows on pages with blocks and is hidden on neutral pages, which the generator flags in front matter.
-- **Links.** Authors write relative links and the generator leaves them as written. One sidebar and the stock paginator serve every flavour.
-- **Gaps.** A `todo` block renders a notice, "Not yet written for <flavour>", with a button that switches to the written flavour and scrolls to its block. It still counts against `todoCap`.
-- **Search.** One global index. A hit in the reader's flavour ranks first. A hit in another flavour is flagged where the search plugin allows; otherwise its anchor carries the flavour prefix, so opening it switches the flavour. The search plugin runs with its stock options.
-- **Generator outputs.** `docs-gen/site/` holds the merged pages that Docusaurus publishes. `docs-gen/pairs/<client>/<server>/` holds one copy of each flavoured page per pair, with only that pair's blocks, for `check-snippets`, `starter-sync` and the page tests. Nothing under `pairs/` is published.
+- **Merged page.** The generator wraps each flavour block with its axis, its flavour and a visible label. A `<head>` script and CSS show the reader's blocks before paint. Mechanics: `.agents/flavours.md`, Generator and Reader view.
+- **Parameters.** `?client=react&server=nest`, one parameter per axis, named after the axis. Which source wins, and what a pick or a copied link carries: `.agents/flavours.md`, Reader view.
+- **Anchors.** A heading inside a block has the id `<flavour>-<slug>`, so ids never collide across blocks. Headings outside blocks keep plain ids.
+- **Saved choice.** The choice lives in `localStorage`, so it follows the reader to the next page. The defaults start it (`flavours.config.json`).
+- **Links.** Authors write relative links and they stay as written. One sidebar and the stock paginator serve every flavour.
+- **Gaps.** A `todo` block renders a notice and a button to the written flavour. It still counts against `todoCap`.
+- **Search.** One global index, not one per pair, from the search plugin with its stock options. Ranking and flagging: `.agents/flavours.md`, Search.
 
 ## Considered options
 
@@ -24,6 +23,6 @@ A flavoured page is published once, at one plain URL such as `/vector-apps/quick
 ## Consequences
 
 - A flavoured page's static HTML is as long as all its flavours together. A reader without JavaScript sees every block.
-- The right-hand table of contents lists headings of hidden blocks unless CSS on the prefixed ids, or a swizzled `TOC`, hides them.
+- Without JavaScript the right-hand contents lists the headings of every block.
 - A page shared without parameters opens in the reader's saved flavour, so two readers of one URL can see different text.
 - The pair views under `docs-gen/pairs/` keep the checks per pair, so the snippet typecheck, the starter check and the page tests still cover every pair.

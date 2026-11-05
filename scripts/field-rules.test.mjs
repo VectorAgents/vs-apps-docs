@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import { defineApp } from '@vectoragents/vs-apps';
-import { coreFieldRules, resourceFieldRules } from '../src/data/field-rules.ts';
+import { connectorProviders, coreFieldRules, modalities, modelCapabilities, modelProviders, resourceFieldRules } from '../src/data/field-rules.ts';
 
 const base = {
   key: 'demo-app',
@@ -72,8 +73,24 @@ test('each rule has a path and a rule sentence', () => {
   }
 });
 
-test('no rule contains a Markdown link', () => {
+const limitsLink = /\]\(\.\/reference\/platform-limits\.md#([a-z-]+)\)/g;
+const limitsPage = new URL('../docs/sdk/reference/platform-limits.md', import.meta.url);
+
+test('a rule links only to a section of the platform limits page', () => {
+  const sections = [...readFileSync(limitsPage, 'utf8').matchAll(/^## (.+)$/gm)].map((m) =>
+    m[1].toLowerCase().replaceAll(' ', '-'),
+  );
   for (const rule of [...coreFieldRules, ...resourceFieldRules]) {
-    assert.ok(!rule.rule.includes(']('), `${rule.path}: ${rule.rule}`);
+    const links = rule.rule.match(/\]\(/g)?.length ?? 0;
+    const anchors = [...rule.rule.matchAll(limitsLink)].map((m) => m[1]);
+    assert.equal(anchors.length, links, `${rule.path}: ${rule.rule}`);
+    for (const anchor of anchors) assert.ok(sections.includes(anchor), `${rule.path}: #${anchor}`);
+  }
+});
+
+test('no rule lists a value of a closed list', () => {
+  const closed = [...modalities, ...modelProviders, ...modelCapabilities, ...connectorProviders];
+  for (const rule of [...coreFieldRules, ...resourceFieldRules]) {
+    for (const value of closed) assert.ok(!rule.rule.includes(value), `${rule.path} lists ${value}`);
   }
 });

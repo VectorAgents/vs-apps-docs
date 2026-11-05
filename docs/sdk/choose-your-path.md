@@ -16,7 +16,7 @@ Each column is one path. Each row is one thing that you build or that Vector Spa
 | Who sets it up | [Staff](../vector-space/glossary.md#staff) register it. A [space manager](../vector-space/glossary.md#space-manager) adds and configures it. | A space manager adds the agent card to the space. | A member of the space adds it as a connector. |
 | Knows the calling member | Yes. The user token identifies the member and lists their capabilities. | No. Vector Space does not pass the member on. | No. Vector Space does not pass the member on. |
 | Reads platform data | Yes. The [allowed resources](../vector-apps/glossary.md#allowed-resources) of the space, and the member list. | No. | No. |
-| Model calls | Yes, through a [model slot](../vector-apps/glossary.md#model-slot), on the AI accounts of the organization. | Your own, outside Vector Space. | Your own, outside Vector Space. |
+| Model calls | Yes, through a [model slot](../vector-apps/glossary.md#model-slot), on the [AI](../vector-space/glossary.md#ai) accounts of the organization. | Your own, outside Vector Space. | Your own, outside Vector Space. |
 | App approvals and acts | Yes. You declare [approvals](../vector-apps/glossary.md#approvals) and [acts](../vector-apps/glossary.md#acts). | No. | No. |
 
 To call a space from your own server instead, see [Call Vector Space from your server](../vector-apps/guides/call-space-from-your-server.md).

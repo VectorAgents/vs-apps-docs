@@ -76,7 +76,7 @@ export interface BuildOutput {
 
 const rules = new Map([...coreFieldRules, ...resourceFieldRules].map((r) => [r.path, r]));
 const matches = (rulePath: string, value: string): boolean => new RegExp(rules.get(rulePath)!.pattern!).test(value);
-const ruleText = (rulePath: string): string => rules.get(rulePath)!.rule;
+const ruleText = (rulePath: string): string => rules.get(rulePath)!.rule.replace(/\[([^\]]+)\]\([^)]*\)/g, '$1');
 const oneOf = (value: string, options: readonly string[]): boolean => options.includes(value);
 
 function checkUnique(keys: string[], base: string, noun: string, errors: Issue[]): void {

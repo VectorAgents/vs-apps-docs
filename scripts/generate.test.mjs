@@ -37,12 +37,12 @@ const server = (extra = '') => `---\ntitle: Server page\n---\n\nShared prose.\n\
 const hook = '<!-- flavour react -->\nREACT\n<!-- /flavour -->\n';
 const both = '<!-- flavour react -->\nR\n<!-- /flavour -->\n<!-- flavour node -->\nN\n<!-- /flavour -->\n<!-- flavour nest -->\nS\n<!-- /flavour -->\n';
 
-test('a neutral page goes to site/ with a neutral flag in its front matter and has no pair copy', () => {
+test('a neutral page goes to site/ unchanged and has no pair copy', () => {
   const page = '---\ntitle: Plain\n---\n\nSee [other](./other.md#part).\n';
   const { files, read } = run({ 'plain.md': page, 'other.md': '# Other\n' });
   assert.deepEqual(files(), ['site/other.md', 'site/plain.md']);
-  assert.equal(read('site/plain.md'), '---\ntitle: Plain\nneutral: true\n---\n\nSee [other](./other.md#part).\n');
-  assert.equal(read('site/other.md'), '---\nneutral: true\n---\n# Other\n');
+  assert.equal(read('site/plain.md'), page);
+  assert.equal(read('site/other.md'), '# Other\n');
 });
 
 test('a file that is not a page is copied to site/ byte for byte', () => {
@@ -60,7 +60,7 @@ test('the site page keeps the shared text and wraps each flavour block with its 
   const page = read('site/guides/call.md');
   assert.match(page, /^---\ntitle: Server page\n---\n/);
   assert.match(page, /Shared prose\./);
-  assert.doesNotMatch(page, /<!-- \/?flavour|neutral/);
+  assert.doesNotMatch(page, /<!-- \/?flavour/);
   assert.match(
     page,
     /<div className="flavour-block" data-axis="server" data-flavour="node">\n\n<p className="flavour-label">Node\.js \+ TypeScript<\/p>\n\nNODE BODY\n\n<\/div>/,
@@ -226,7 +226,7 @@ test('flavours.json lists each flavoured page with its URL, axes and the pair co
   ]);
 });
 
-test('the shipped config writes a page without a flavour marker to site/ unchanged but for the neutral flag, and lists the others', () => {
+test('the shipped config writes a page without a flavour marker to site/ unchanged, and lists the others', () => {
   const repo = join(dirname(fileURLToPath(import.meta.url)), '..');
   const shipped = JSON.parse(readFileSync(join(repo, 'flavours.config.json'), 'utf8'));
   const out = mkdtempSync(join(tmpdir(), 'generate-site-'));
@@ -239,7 +239,6 @@ test('the shipped config writes a page without a flavour marker to site/ unchang
     const rel = relative(join(repo, shipped.docsRoot), join(entry.parentPath, entry.name));
     const text = readFileSync(join(repo, shipped.docsRoot, rel), 'utf8');
     if (/^<!-- flavour /m.test(text)) flavoured.push(rel);
-    else if (/\.mdx?$/.test(rel)) assert.match(readFileSync(join(out, 'site', rel), 'utf8'), /^---\n(?:[\s\S]*?\n)?neutral: true\n---\n/, rel);
     else assert.deepEqual(readFileSync(join(out, 'site', rel), 'utf8'), text, rel);
   }
   assert.deepEqual(JSON.parse(readFileSync(join(out, 'flavours.json'), 'utf8')).pages.map((page) => page.source).sort(), flavoured.sort());
