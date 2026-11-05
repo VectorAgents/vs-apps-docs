@@ -69,8 +69,8 @@ Source text between `<!-- flavour <name> -->` and `<!-- /flavour -->`. `todo` af
 
 ### neutral page
 
-A page with no flavour block. The generator flags it with `neutral: true` in front matter, and the picker does not change it.
+A page with no flavour block. The picker does not change it.
 
-- Maps to: a page that `scripts/generate.mjs` writes to `docs-gen/site/` with the flag and no pair copy.
+- Maps to: a page that `scripts/generate.mjs` copies to `docs-gen/site/` as written, with no pair copy.
 - Owner: docs.
 

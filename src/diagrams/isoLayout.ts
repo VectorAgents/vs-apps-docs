@@ -1,4 +1,4 @@
-/** Tone of a block. `slab` and `core` are neutral, `plug` is the one accent for pluggable parts. */
+/** `plug` is the one accent, for pluggable parts. `slab` and `core` are neutral. */
 export type IsoTone = 'slab' | 'core' | 'plug';
 
 /** A box on the grid: column `c`, row `r`, height above ground `z`, then width `w`, depth `d` and height `h`. */
@@ -13,12 +13,6 @@ interface IsoBox {
   d: number;
   h: number;
   z: number;
-}
-
-/** A ground plate. Its name is drawn on the picture and listed unmarked in the legend. */
-export interface IsoSlab extends IsoBox {
-  /** `corner` writes the name under the left corner, `front` centres it under the front corner. */
-  labelAt?: 'corner' | 'front';
 }
 
 /** A numbered part. The badge in the picture and the legend marker are the same number. */
@@ -42,11 +36,10 @@ export interface IsoDiagramData {
   desc: string;
   caption: string;
   legendTitles: { places: string; parts: string; links: string };
-  slabs: IsoSlab[];
+  /** Ground plates. Each name is drawn under its front corner and listed unmarked in the legend. */
+  slabs: IsoBox[];
   parts: IsoPart[];
   links: IsoLink[];
-  /** Screen pixels of one grid cell, default 22. A smaller unit makes badges larger against the picture. */
-  unit?: number;
 }
 
 export interface IsoLegendItem {
@@ -56,14 +49,13 @@ export interface IsoLegendItem {
 }
 
 export type IsoShape =
-  | { kind: 'block'; id: string; tone: IsoTone; slab: boolean; glow: boolean; highlight: string | null; top: string; left: string; right: string }
+  | { kind: 'block'; id: string; tone: IsoTone; glow: boolean; highlight: string | null; top: string; left: string; right: string }
   | { kind: 'slabLabel'; id: string; text: string; x: number; y: number; anchor: 'start' | 'middle' }
   | { kind: 'badge'; id: string; text: string; x: number; y: number; link: boolean }
   | { kind: 'link'; id: string; line: string; head: string; remote: boolean };
 
 /** Plain geometry and text for one diagram, in paint order. The component only maps it to elements. */
 export interface IsoScene {
-  unit: number;
   viewBox: string;
   title: string;
   desc: string;
@@ -73,7 +65,8 @@ export interface IsoScene {
 }
 
 const COS30 = Math.cos(Math.PI / 6);
-const DEFAULT_UNIT = 22;
+/** Screen pixels of one grid cell. */
+const UNIT = 22;
 /** Radius of a badge circle, in grid-free screen units. */
 export const BADGE_RADIUS = 11;
 const HEAD_LENGTH = 9;
@@ -82,28 +75,26 @@ const PAD = 28;
 const LABEL_DROP = 18;
 
 /** True 30 degree isometric: column steps go right and down, row steps go left and down, height goes up. */
-export const project = (c: number, r: number, z: number, unit: number): [number, number] => [(c - r) * unit * COS30, (c + r) * unit * 0.5 - z];
+const project = (c: number, r: number, z: number): [number, number] => [(c - r) * UNIT * COS30, (c + r) * UNIT * 0.5 - z];
 
 const round = (n: number): number => Math.round(n * 10) / 10;
 const points = (list: [number, number][]): string => list.map(([x, y]) => `${round(x)},${round(y)}`).join(' ');
 const depth = (b: IsoBox): number => b.c + b.w + b.r + b.d;
 
-function block(b: IsoBox, slab: boolean, unit: number): IsoShape {
+function block(b: IsoBox, slab: boolean): IsoShape {
   const top = b.z + b.h;
-  const at = (c: number, r: number, z: number) => project(c, r, z, unit);
-  const a = at(b.c, b.r, top);
-  const bb = at(b.c + b.w, b.r, top);
-  const c = at(b.c + b.w, b.r + b.d, top);
-  const d = at(b.c, b.r + b.d, top);
-  const cb = at(b.c + b.w, b.r + b.d, b.z);
-  const bbb = at(b.c + b.w, b.r, b.z);
-  const db = at(b.c, b.r + b.d, b.z);
+  const a = project(b.c, b.r, top);
+  const bb = project(b.c + b.w, b.r, top);
+  const c = project(b.c + b.w, b.r + b.d, top);
+  const d = project(b.c, b.r + b.d, top);
+  const cb = project(b.c + b.w, b.r + b.d, b.z);
+  const bbb = project(b.c + b.w, b.r, b.z);
+  const db = project(b.c, b.r + b.d, b.z);
   const accent = b.tone === 'plug' && !slab;
   return {
     kind: 'block',
     id: b.id,
     tone: b.tone,
-    slab,
     glow: accent,
     highlight: accent ? points([d, a, bb]) : null,
     top: points([a, bb, c, d]),
@@ -112,9 +103,9 @@ function block(b: IsoBox, slab: boolean, unit: number): IsoShape {
   };
 }
 
-function link(l: IsoLink, unit: number): IsoShape[] {
-  const [x1, y1] = project(l.from[0], l.from[1], l.z, unit);
-  const [x2, y2] = project(l.to[0], l.to[1], l.z, unit);
+function link(l: IsoLink): IsoShape[] {
+  const [x1, y1] = project(l.from[0], l.from[1], l.z);
+  const [x2, y2] = project(l.to[0], l.to[1], l.z);
   const length = Math.hypot(x2 - x1, y2 - y1);
   const [ux, uy] = [(x2 - x1) / length, (y2 - y1) / length];
   const [bx, by] = [x2 - ux * HEAD_LENGTH, y2 - uy * HEAD_LENGTH];
@@ -124,41 +115,23 @@ function link(l: IsoLink, unit: number): IsoShape[] {
   return shapes;
 }
 
-function check(data: IsoDiagramData): void {
-  const seen = new Set<string>();
-  for (const id of [...data.slabs, ...data.parts, ...data.links].map((item) => item.id)) {
-    if (seen.has(id)) throw new Error(`duplicate id ${id}`);
-    seen.add(id);
-  }
-  for (const part of data.parts) if (!Number.isInteger(part.badge)) throw new Error(`part ${part.id} needs a badge number`);
-  for (const l of data.links) if (l.badge && !l.text) throw new Error(`link ${l.id} has a badge and needs text for the legend`);
-}
-
-/** Turns typed data into scene geometry and legend. A change to the architecture is a change to the data. */
 export function layoutDiagram(data: IsoDiagramData): IsoScene {
-  check(data);
-  const unit = data.unit ?? DEFAULT_UNIT;
   const boxes = [...data.slabs.map((b) => ({ box: b as IsoBox, slab: true })), ...data.parts.map((b) => ({ box: b as IsoBox, slab: false }))];
   boxes.sort((a, b) => a.box.z - b.box.z || depth(a.box) - depth(b.box));
 
   const shapes: IsoShape[] = [];
   for (const { box, slab } of boxes) {
-    shapes.push(block(box, slab, unit));
+    shapes.push(block(box, slab));
     if (!slab) {
-      const [x, y] = project(box.c + box.w / 2, box.r + box.d / 2, box.z + box.h, unit);
+      const [x, y] = project(box.c + box.w / 2, box.r + box.d / 2, box.z + box.h);
       shapes.push({ kind: 'badge', id: box.id, text: String((box as IsoPart).badge), x: round(x), y: round(y), link: false });
     }
   }
   for (const slab of data.slabs) {
-    if (slab.labelAt === 'front') {
-      const [x, y] = project(slab.c + slab.w, slab.r + slab.d, slab.z, unit);
-      shapes.push({ kind: 'slabLabel', id: slab.id, text: slab.label, x: round(x), y: round(y + LABEL_DROP), anchor: 'middle' });
-    } else {
-      const [x, y] = project(slab.c, slab.r + slab.d, slab.z, unit);
-      shapes.push({ kind: 'slabLabel', id: slab.id, text: slab.label, x: round(x + 6), y: round(y + LABEL_DROP), anchor: 'start' });
-    }
+    const [x, y] = project(slab.c + slab.w, slab.r + slab.d, slab.z);
+    shapes.push({ kind: 'slabLabel', id: slab.id, text: slab.label, x: round(x), y: round(y + LABEL_DROP), anchor: 'middle' });
   }
-  for (const l of data.links) shapes.push(...link(l, unit));
+  for (const l of data.links) shapes.push(...link(l));
   // A link badge is drawn after every line, so no line runs over it.
   shapes.sort((a, b) => Number(a.kind === 'badge' && a.link) - Number(b.kind === 'badge' && b.link));
 
@@ -166,14 +139,14 @@ export function layoutDiagram(data: IsoDiagramData): IsoScene {
   const ys: number[] = [];
   for (const b of [...data.slabs, ...data.parts]) {
     for (const [c, r, z] of [[b.c, b.r, b.z + b.h], [b.c + b.w, b.r, b.z + b.h], [b.c + b.w, b.r + b.d, b.z], [b.c, b.r + b.d, b.z]] as const) {
-      const [x, y] = project(c, r, z, unit);
+      const [x, y] = project(c, r, z);
       xs.push(x);
       ys.push(y);
     }
   }
   for (const l of data.links) {
     for (const [c, r] of [l.from, l.to]) {
-      const [x, y] = project(c, r, l.z, unit);
+      const [x, y] = project(c, r, l.z);
       xs.push(x);
       ys.push(y);
     }
@@ -185,7 +158,6 @@ export function layoutDiagram(data: IsoDiagramData): IsoScene {
 
   const item = (label: string, text: string, marker: string | null): IsoLegendItem => ({ marker, text: `${label}. ${text}` });
   return {
-    unit,
     viewBox: [x0, y0, width, height].map(round).join(' '),
     title: data.title,
     desc: data.desc,

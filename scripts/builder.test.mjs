@@ -87,6 +87,12 @@ test('a bad page key reports its format and uniqueness, not where it is checked'
   );
 });
 
+test('an error message is plain text with no Markdown link', () => {
+  for (const [name, mutate] of Object.entries(invalid)) {
+    for (const { message } of buildOutput(mutate(rich())).errors) assert.doesNotMatch(message, /\]\(/, name);
+  }
+});
+
 test('a page capability that is not declared warns but does not reject', () => {
   const draft = clone(presets.minimal);
   draft.pages[0].capability = 'ghost:view';

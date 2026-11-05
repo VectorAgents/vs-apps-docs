@@ -42,9 +42,9 @@ test('treesOf names both axes for a both-axis page', () => {
   assert.ok(trees.every(({ text }) => /REACT/.test(text)));
 });
 
-test('treesOf returns the single site copy of a neutral page, with its neutral flag', () => {
+test('treesOf returns the single site copy of a neutral page', () => {
   const trees = treesOf('plain.md', { genDir });
-  assert.deepEqual(trees, [{ tree: '', text: '---\nneutral: true\n---\nPLAIN\n' }]);
+  assert.deepEqual(trees, [{ tree: '', text: 'PLAIN\n' }]);
 });
 
 test('treesOf names the generator when the trees are missing', () => {

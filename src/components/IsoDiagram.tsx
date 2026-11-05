@@ -63,9 +63,8 @@ function Legend({ title, items, link, id }: { title: string; items: IsoLegendIte
 }
 
 /**
- * An isometric diagram drawn as inline SVG from typed data, with a visible legend under it that carries the same facts as text.
- * Colours come from the `--iso-*` tokens in `custom.css`, so the picture follows the theme with no second file.
- * The search plugin indexes SVG text, so a space sits between the text elements to keep their words apart.
+ * The legend under the picture carries the same facts as text. Colours come from the `--iso-*` tokens in `custom.css`,
+ * so the picture follows the theme. The search plugin indexes SVG text, so a space sits between the text elements to keep their words apart.
  */
 export default function IsoDiagram({ diagram, figure = 1 }: { diagram: IsoDiagramData; figure?: number }): ReactElement {
   const scene = layoutDiagram(diagram);

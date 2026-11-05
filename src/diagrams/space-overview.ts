@@ -11,8 +11,8 @@ export const spaceOverview: IsoDiagramData = {
   caption: 'An organization, a space and what plugs into it',
   legendTitles: { places: 'Places', parts: 'Parts', links: 'Links' },
   slabs: [
-    { id: 'organization', label: 'Organization', text: 'The tenant. Every user, key, resource and space belongs to one.', tone: 'slab', c: 0, r: 0, w: 12, d: 12, h: ORG_TOP, z: 0, labelAt: 'front' },
-    { id: 'space', label: 'Space', text: 'The unit of work. Access is resolved inside it, for each member and action.', tone: 'slab', c: 1.5, r: 1.5, w: 9, d: 9, h: SPACE_TOP - ORG_TOP, z: ORG_TOP, labelAt: 'front' },
+    { id: 'organization', label: 'Organization', text: 'The tenant. Every user, key, resource and space belongs to one.', tone: 'slab', c: 0, r: 0, w: 12, d: 12, h: ORG_TOP, z: 0 },
+    { id: 'space', label: 'Space', text: 'The unit of work. Access is resolved inside it, for each member and action.', tone: 'slab', c: 1.5, r: 1.5, w: 9, d: 9, h: SPACE_TOP - ORG_TOP, z: ORG_TOP },
   ],
   parts: [
     { id: 'orchestrator', badge: 1, label: 'Orchestrator agent', text: 'The one agent that runs the space. It delegates to other agents.', tone: 'core', c: 4.5, r: 5.3, w: 2, d: 2, h: 30, z: SPACE_TOP },

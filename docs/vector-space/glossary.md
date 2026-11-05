@@ -104,3 +104,10 @@ Agent2Agent. An open protocol that lets one agent find another through an agent 
 
 - Maps to: `agents[]` in the definition, and `buildAppAgentCard` and `createA2aRequestHandler` in `@vectoragents/vs-apps/server`.
 - Owner: SDK declares it. Vector Space calls it.
+
+### AI
+
+Artificial intelligence. In these docs it means a model that reads and writes language, such as a chat model, and the agents that run on it.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.

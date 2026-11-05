@@ -152,6 +152,8 @@ export const definition = defineApp({
 | `description` | optional | String. |
 | `effect` | required | `"read"` or `"write"`. |
 
+`effect` is a label for the person who grants the capability. Access never reads it: a member holds the capabilities they are granted, whether the `effect` is `"read"` or `"write"`.
+
 ### Resources
 
 `resources` is optional and declares what the app needs from each space: modules, model slots and connector slots. Each of `modules`, `models` and `connectors` is optional. Unknown keys are rejected. Each slot or module `key` is unique within its list. The closed lists that these fields accept, such as connector providers, are on the [platform limits](./reference/platform-limits.md) page.
@@ -199,12 +201,12 @@ export const definition = defineApp({
 | Field | Required | Rule |
 | --- | --- | --- |
 | `key` | required | Lower kebab-case slot key. |
-| `modality` | required | Kind of model: `"chat"`, `"vision"`, `"embed"` or `"rerank"`. |
-| `providers` | required | At least one of `ANTHROPIC`, `AZURE_OPENAI`, `COHERE`, `AZURE_DOCUMENT_INTELLIGENCE`. |
+| `modality` | required | One of the [modalities](./reference/platform-limits.md#modalities). |
+| `providers` | required | At least one of the [model providers](./reference/platform-limits.md#model-providers). |
 | `label` | optional | Display label. Falls back to the slot key. |
 | `description` | optional | String. |
 | `models` | optional | Exact model identifiers, as the provider names them. At least one when set. |
-| `capabilities` | optional | Each one of `toolCalling`, `structuredOutput`, `reasoningOutput`, `promptCaching`, `streaming`. |
+| `capabilities` | optional | Each one of the [capability filters](./reference/platform-limits.md#capability-filters). |
 | `required` | required | Boolean. |
 
 #### `resources.connectors[]`
@@ -214,7 +216,7 @@ A slot takes one connector.
 | Field | Required | Rule |
 | --- | --- | --- |
 | `key` | required | Lower kebab-case slot key. |
-| `provider` | required | One of `REST`, `GRAPHQL`, `MCP`, `GOOGLE`, `CLICKUP`, `EXA`, `FIRECRAWL`, `INSTANTLY`, `UNIPILE`, `APOLLO`, `META`. |
+| `provider` | required | One of the [connector providers](./reference/platform-limits.md#connector-providers). |
 | `label` | optional | Display label. Falls back to the slot key. |
 | `required` | required | Boolean. |
 | `eventHandlers` | optional | At least one handler when set. See the next table. |

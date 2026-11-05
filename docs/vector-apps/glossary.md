@@ -51,7 +51,7 @@ The share of a declared capability with users or roles, made by a space manager.
 
 ### model slot
 
-A named AI model requirement. The app declares the slot and the space manager picks the model. No slot is inherited, and an unset slot runs nothing.
+A named [AI](../vector-space/glossary.md#ai) model requirement. The app declares the slot and the space manager picks the model. No slot is inherited, and an unset slot runs nothing.
 
 - Maps to: `resources.models[]` in the definition.
 - Owner: SDK declares it. Vector Space stores the choice.

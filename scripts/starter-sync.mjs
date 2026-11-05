@@ -18,7 +18,6 @@ export const installedSdkVersion = () => readJson(join(root, 'node_modules', SDK
 export const codeBlocksOf = (text) =>
   [...text.matchAll(/^```(\w+)([^\n]*)\n([\s\S]*?)^```/gm)].map(([, lang, meta, body]) => ({ lang, meta, body }));
 
-/** Fails for every pin of the SDK in the generated project that differs from the installed version. */
 export function checkSdkPin(starterDir, installed) {
   const problems = [];
   let pins = 0;
@@ -35,10 +34,9 @@ export function checkSdkPin(starterDir, installed) {
   return problems;
 }
 
-const VERSION_PAGES = ['vector-apps/quickstart.md', 'sdk/reference/harness.md'];
+export const VERSION_PAGES = ['vector-apps/quickstart.md', 'sdk/reference/harness.md', 'sdk/overview.md'];
 const SDK_VERSION_STRING = /@vectoragents\/vs-apps(?:\/[\w-]+)*(?:@|`? )(\d+\.\d+\.\d+)/g;
 
-/** Fails for every SDK version string on the pages that differs from the installed version. */
 export function checkPageVersions(pages, installed) {
   return Object.entries(pages).flatMap(([path, text]) =>
     [...text.matchAll(SDK_VERSION_STRING)]
@@ -47,7 +45,7 @@ export function checkPageVersions(pages, installed) {
   );
 }
 
-/** Fails for every `starter` code block that is not a verbatim substring of the starter file its title names. */
+/** A `starter` block may be an excerpt, but it must appear verbatim in the starter file its title names. */
 export function checkCodeBlocks(pageText, starterDir) {
   const problems = [];
   for (const codeBlock of codeBlocksOf(pageText).filter((codeBlock) => isStarterCodeBlock(codeBlock.meta))) {
@@ -81,7 +79,6 @@ export function pageTreePaths(pageText) {
   return paths;
 }
 
-/** Fails for every path of the page tree that the starter lacks. */
 export function checkTree(pageText, starterDir) {
   return pageTreePaths(pageText)
     .filter((path) => !existsSync(join(starterDir, path)))
@@ -101,7 +98,7 @@ function sliceToHeading(text) {
   return (end === -1 ? lines : lines.slice(0, end)).join('\n');
 }
 
-/** Fails when the run step lacks `port N` for the `SERVER_PORT` or `CLIENT_PORT` in the starter's env preset. */
+/** The run step names `port N` for each of `SERVER_PORT` and `CLIENT_PORT` as the starter's env preset sets them. */
 export function checkPorts(pageText, starterDir) {
   const start = RUN_STEP_HEADING.exec(pageText);
   if (!start) return ['the page has no run step'];
@@ -133,7 +130,6 @@ const SHELL_LANGS = new Set(['bash', 'sh', 'shell', 'env', 'dotenv']);
 const ENV_PAGE_DIRS = ['vector-apps/recipes', 'vector-apps/guides'];
 const RUN_STEP_PAGE = 'vector-apps/quickstart.md';
 
-/** Names that a page assigns (`NAME=` in a shell or env code block). */
 function assignedEnvNames(text) {
   const shell = codeBlocksOf(text).filter((codeBlock) => SHELL_LANGS.has(codeBlock.lang));
   return shell.flatMap((codeBlock) => [...codeBlock.body.matchAll(new RegExp(`(?:^|[\\s'"])(?:export\\s+)?(${ENV_NAME})=`, 'gm'))].map((m) => m[1]));
@@ -149,10 +145,7 @@ export function usedEnvNames(text) {
 
 const readNames = (path, pattern) => (existsSync(path) ? [...readFileSync(path, 'utf8').matchAll(pattern)].map((m) => m[1]) : []);
 
-/**
- * Fails for every environment variable that a recipe or guide uses when neither the starter nor the page defines it.
- * The starter defines a name in `.env.example` (`NAME=`) or `.npmrc` (`${NAME}`); the page defines it with `NAME=` in a shell code block.
- */
+/** The starter defines a name in `.env.example` (`NAME=`) or `.npmrc` (`${NAME}`); a page defines one with `NAME=` in a shell code block. */
 export function checkEnvVars(pages, starterDir) {
   const known = new Set([...readNames(join(starterDir, '.env.example'), /^(?:export\s+)?([A-Z][A-Z0-9_]*)=/gm), ...readNames(join(starterDir, '.npmrc'), /\$\{([A-Z][A-Z0-9_]*)\}/g)]);
   return Object.entries(pages).flatMap(([path, text]) => {
@@ -165,14 +158,12 @@ export function checkEnvVars(pages, starterDir) {
 
 const gitClone = (url, dir, ref) => execFileSync('git', ['clone', '--depth', '1', '--branch', ref, url, dir], { stdio: 'pipe' });
 
-/** Command that runs the CLI non-interactively: the checkout's own CLI for a local `starterDir`, else the published one at `ref`. */
 export function cliCommand({ starterDir, dir, client, server, start, ref = DEFAULT_REF }) {
   const flags = [dir, '--client', client, '--server', server, '--start', start];
   if (starterDir) return { command: process.execPath, args: [join(starterDir, 'packages/create-app/bin/create-app.mjs'), ...flags, '--starter', starterDir, '--no-install'] };
   return { command: 'npm', args: ['exec', '--yes', `--package=${CLI_PACKAGE}@latest`, '--', 'create-app', ...flags, '--ref', ref, '--no-install'] };
 }
 
-/** A `scaffold({ dir, client, server, start })` that runs the CLI and throws its error output on failure. */
 export const scaffoldWith = ({ starterDir, ref }) => (project) => {
   const { command, args } = cliCommand({ starterDir, ref, ...project });
   try {
@@ -182,7 +173,7 @@ export const scaffoldWith = ({ starterDir, ref }) => (project) => {
   }
 };
 
-/** `{ row, name }` of every template directory that holds a `flavour.json`; the name is the directory suffix after `<row>-`. */
+/** A template directory is named `<row>-<name>` and holds a `flavour.json`. */
 export function readTemplates(starterDir) {
   const templates = join(starterDir, 'templates');
   return readdirSync(templates, { withFileTypes: true })
@@ -193,10 +184,7 @@ export function readTemplates(starterDir) {
     });
 }
 
-/**
- * Fails for every flavour a flavoured page names that no template names, and for every template
- * that a flavoured page of its axis has no block or `todo` for. `pages` are the generator manifest pages.
- */
+/** The flavours a page names and the templates of their axis must match one to one. `pages` are the generator manifest pages. */
 export function checkFlavourSet(pages, templates) {
   return pages.flatMap(({ source, axes, trees }) =>
     axes.flatMap((axis) => {
@@ -242,7 +230,6 @@ function readManifest(config) {
   return readJson(file);
 }
 
-/** The checks that read a page against the generated project it describes. */
 function checkPage({ source, path, text }, project, installed) {
   const named = { 'the page': text };
   return [

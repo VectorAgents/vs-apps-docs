@@ -3,7 +3,7 @@ import { cpSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'nod
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { test } from 'node:test';
-import { checkCodeBlocks, checkEnvExamples, checkEnvVars, checkFlavourSet, checkPageVersions, checkPorts, checkSdkPin, checkTree, cliCommand, installedSdkVersion, main, pageTreePaths, readPages, readTemplates, startOf, usedEnvNames } from './starter-sync.mjs';
+import { checkCodeBlocks, checkEnvExamples, checkEnvVars, checkFlavourSet, checkPageVersions, checkPorts, checkSdkPin, checkTree, cliCommand, installedSdkVersion, main, pageTreePaths, readPages, readTemplates, startOf, usedEnvNames, VERSION_PAGES } from './starter-sync.mjs';
 
 const tree = ['hello-app/', '├── .env.example', '├── client/', '│   ├── index.html', '│   └── src/', '│       └── main.tsx', '└── shared/', '    └── src/', '        └── index.ts'].join('\n');
 const page = [
@@ -384,8 +384,9 @@ test('page versions: fails for each string that names another version', () => {
   assert.match(problems[1], /docs\/sdk\/reference\/harness\.md/);
 });
 
-test('page versions: the real quickstart and harness pages name the installed version', () => {
-  const pages = Object.fromEntries(['vector-apps/quickstart.md', 'sdk/reference/harness.md'].map((file) => [file, readFileSync(new URL(`../docs/${file}`, import.meta.url), 'utf8')]));
+test('page versions: the quickstart, harness and SDK overview pages name the installed version', () => {
+  assert.deepEqual(VERSION_PAGES, ['vector-apps/quickstart.md', 'sdk/reference/harness.md', 'sdk/overview.md']);
+  const pages = Object.fromEntries(VERSION_PAGES.map((file) => [file, readFileSync(new URL(`../docs/${file}`, import.meta.url), 'utf8')]));
   assert.deepEqual(checkPageVersions(pages, installedSdkVersion()), []);
 });
 
@@ -465,6 +466,7 @@ test('pages: neutral pages take the default pair and their own start; flavoured 
   const root = docsRoot({
     'docs/vector-apps/quickstart.md': 'quick',
     'docs/sdk/reference/harness.md': 'harness',
+    'docs/sdk/overview.md': 'overview',
     'docs/vector-apps/recipes/a.md': '---\nstart: leads-app\n---\nrecipe',
     'docs/vector-apps/guides/x.md': 'flavoured source',
     'docs-gen/pairs/react/nest/vector-apps/guides/x.md': 'nest tree',
@@ -473,7 +475,7 @@ test('pages: neutral pages take the default pair and their own start; flavoured 
   const manifest = { pages: [flavourPage('vector-apps/guides/x.md', ['server'], [{ server: 'node' }, { server: 'nest' }])] };
   const pages = readPages({ root, config, manifest });
   const by = (path) => pages.find((p) => p.path === path);
-  assert.equal(pages.length, 5);
+  assert.equal(pages.length, 6);
   assert.deepEqual(by('docs/vector-apps/recipes/a.md').pair, { client: 'react', server: 'node' });
   assert.equal(by('docs/vector-apps/recipes/a.md').start, 'leads-app');
   assert.equal(by('docs/vector-apps/quickstart.md').start, 'hello');
@@ -484,7 +486,7 @@ test('pages: neutral pages take the default pair and their own start; flavoured 
 });
 
 test('pages: a flavoured page without a generated pair copy is an error', () => {
-  const root = docsRoot({ 'docs/vector-apps/quickstart.md': 'quick', 'docs/sdk/reference/harness.md': 'harness' });
+  const root = docsRoot({ 'docs/vector-apps/quickstart.md': 'quick', 'docs/sdk/reference/harness.md': 'harness', 'docs/sdk/overview.md': 'overview' });
   const manifest = { pages: [flavourPage('vector-apps/guides/x.md', ['server'], [{ server: 'node' }])] };
   assert.throws(() => readPages({ root, config, manifest }), /node\/vector-apps\/guides\/x\.md/);
 });

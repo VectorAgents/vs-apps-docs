@@ -6,7 +6,7 @@ import { test } from 'node:test';
 const sections = {
   'vector-space': [
     'Vector Space', 'space', 'space manager', 'Organization admin', 'Edit level', 'space page', 'staff', 'resource pool',
-    'knowledge source', 'Context Hub', 'ask', 'channel', 'MCP', 'A2A',
+    'knowledge source', 'Context Hub', 'ask', 'channel', 'MCP', 'A2A', 'AI',
   ],
   'vector-apps': [
     'app', 'app registration', 'manifest', 'app page', 'capability', 'capability grant', 'model slot', 'connector slot',

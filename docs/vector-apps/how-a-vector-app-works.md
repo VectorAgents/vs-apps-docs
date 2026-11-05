@@ -10,7 +10,7 @@ An [app](./glossary.md#app) is a web app that runs on its own origin and that a 
 
 ## The parts of an app
 
-You write three parts: a client, a server and a [manifest](./glossary.md#manifest). Your client runs in an iframe inside the space. Your server runs on your own origin and serves the manifest. Vector Space supplies the other two parts that your app uses: platform data and the AI gateway.
+You write three parts: a client, a server and a [manifest](./glossary.md#manifest). Your client runs in an iframe inside the space. Your server runs on your own origin and serves the manifest. Vector Space supplies the other two parts that your app uses: platform data and the [AI](../vector-space/glossary.md#ai) gateway.
 
 <IsoDiagram diagram={appsOverview} figure={1} />
 
@@ -73,6 +73,8 @@ Two kinds go with interfaces that your app can offer. [A2A](../vector-space/glos
 | Events token | Sent with a connector event or with the decision on an approval. | 5 minutes |
 
 The user token identifies the member and the space. It lists the capabilities that the member holds in your app.
+
+Only the user token that Vector Space posts to your client carries the name and picture of the member. The user token for an agent's call to your endpoint, and the one your server gets for a `userId`, carry neither.
 
 ## Where to go next
 

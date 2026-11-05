@@ -44,7 +44,7 @@ An operation an app page registers so the Vector Space agent can call it while t
 
 ### agent catalog
 
-The build-time list of app page descriptions and agent actions. The server merges it into the manifest at boot. Vector Space ingests it per app.
+The build-time list of app page descriptions and agent actions. The server merges it into the manifest at boot. Vector Space ingests it per app and names each entry `<appId>.<id>`, with the id of the app registration as `appId`.
 
 - Maps to: `defineAgentPage` and the `agent-catalog.json` file.
 - Owner: SDK builds it. Vector Space ingests it.

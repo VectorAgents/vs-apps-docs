@@ -35,7 +35,7 @@ test('every link resolves, and the page links How a Vector App works, the quicks
 });
 
 test('the space gives an app member identity, platform data, model access and the record of work', () => {
-  const given = section(text, 'What a space gives an app');
+  const given = section(text, 'What a space gives an app').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1');
   for (const term of ['identifies the member', 'allowed resources', 'model slot', 'AI gateway', 'acts', 'approvals']) assert.ok(given.includes(term), term);
 });
 

@@ -1,6 +1,5 @@
 import { chooseFlavours } from './head-script.mjs';
 
-/** The label of the flavour that an anchor names when it is not the one the reader has, else null. */
 export function otherFlavourLabel(hash, { axes, defaults }, shown) {
   const { save } = chooseFlavours({ search: '', hash, saved: {}, axes, defaults });
   for (const [axis, flavour] of Object.entries(save ?? {})) {
@@ -10,9 +9,8 @@ export function otherFlavourLabel(hash, { axes, defaults }, shown) {
 }
 
 /**
- * `results` with the hits of the reader's flavour first, in their order, then those of another flavour, each with
- * its flavour in front of the page title, which the hit line cuts last. A hit belongs to a flavour by its anchor: a
- * heading id inside a block starts with `<flavour>-`. `markTrees` sets the tree flags, which depend on the order.
+ * Hits in the reader's flavour first, then the others with `only in <label> · ` before the page title, which the
+ * hit line cuts last. `markTrees` runs after the reorder because the tree flags depend on the order.
  */
 export function rankByFlavour(results, site, shown, markTrees) {
   const labelled = results.map((result) => ({ result, label: otherFlavourLabel(result.document.h ?? '', site, shown) }));

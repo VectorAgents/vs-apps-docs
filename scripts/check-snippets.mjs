@@ -10,7 +10,6 @@ const titleRoots = /^(client|server|shared)\//;
 const titleFolders = /^vector-apps\/(recipes|guides)\//;
 const codeBlock = /^```(ts|tsx)\b([^\n]*)\n([\s\S]*?)^```/gm;
 
-/** True when the code block meta has the `starter` word outside its title. */
 export const isStarterCodeBlock = (meta) => /(^|\s)starter(\s|$)/.test(meta.replace(/title="[^"]*"/, ''));
 
 function docFiles(dir) {
@@ -21,7 +20,6 @@ function docFiles(dir) {
   });
 }
 
-// Compiler options a flavour adds to every project that shows it.
 const flavourOptions = { nest: { experimentalDecorators: true, emitDecoratorMetadata: true } };
 
 const baseOptions = {
@@ -35,7 +33,7 @@ const baseOptions = {
   types: ['node'],
 };
 
-/** Typechecks the ts/tsx code blocks: neutral pages once from `docsDir`, flavoured pages once per pair from `genDir/pairs`. Writes `stampFile` only on a clean pass. */
+/** Neutral pages typecheck once, flavoured pages once per pair. Writes `stampFile` only on a clean pass. */
 export function checkSnippets({
   docsDir = join(root, 'docs'),
   genDir = join(root, 'docs-gen'),
@@ -65,7 +63,6 @@ export function checkSnippets({
       return { ok: false, count: 0, failed: [], output };
     }
 
-    /** Writes the blocks of `pages` into the project folder `name`. */
     const writeProject = (name, pages) => {
       for (const [fileIndex, { file, doc }] of pages.entries()) {
         let index = 0;
@@ -101,7 +98,6 @@ export function checkSnippets({
     const projects = [];
     projects.push({ name: 'neutral', pages: sources.filter(({ doc }) => !flavouredSources.has(doc)) });
 
-    // A pair project holds the pair's copy of every flavoured page.
     for (const pair of combinations(config.axes, Object.keys(config.axes))) {
       const dir = ['pairs', ...Object.keys(config.axes).map((axis) => pair[axis])].join('/');
       const pages = flavouredPages.map((page) => ({ file: join(genDir, dir, page.source), doc: `${dir}/${page.source}` }));
