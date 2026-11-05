@@ -40,7 +40,8 @@ export function headScript(axes, defaults) {
 
 /**
  * The inline `<head>` style. Rules apply only once the head script has set the attribute, so a reader without
- * JavaScript sees every block. A contents entry hides with its heading: heading ids in a block start `<flavour>-`.
+ * JavaScript sees every block and no picker or switch button that could do nothing. A contents entry hides with
+ * its heading: heading ids in a block start `<flavour>-`.
  */
 export function flavourStyle(axes) {
   const rules = [];
@@ -51,6 +52,7 @@ export function flavourStyle(axes) {
       rules.push(`${other} .table-of-contents li:has(> a[href^="#${flavour}-"]){display:none}`);
     }
   }
-  rules.push(`${Object.keys(axes).map((axis) => `html:not([data-${axis}]) .flavour-picker`).join(',')}{display:none}`);
+  const unset = Object.keys(axes).flatMap((axis) => [`html:not([data-${axis}]) .flavour-picker`, `html:not([data-${axis}]) .flavour-todo-switch`]);
+  rules.push(`${unset.join(',')}{display:none}`);
   return rules.join('\n');
 }

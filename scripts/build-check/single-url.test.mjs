@@ -46,3 +46,18 @@ test('the site has one search index and no per-pair index', () => {
   assert.ok(files.includes('search-index.json'));
   assert.deepEqual(files.filter((f) => /^search-index-.+\.json$/.test(f)), []);
 });
+
+test('the search bar and the results page ask for hits through the flavour ranking', () => {
+  const scripts = join(root, 'build/assets/js');
+  const bundles = readdirSync(scripts).filter((f) => f.endsWith('.js')).map((f) => readFileSync(join(scripts, f), 'utf8'));
+  assert.ok(bundles.some((code) => /`only in \$\{[a-z]\} (\\xb7|·) /.test(code)), 'rankByFlavour is in the client bundle');
+});
+
+test('the index keeps the anchor of a heading in a flavour block prefixed with its flavour', () => {
+  const flavours = Object.values(config.axes).flatMap((flavoured) => Object.keys(flavoured));
+  const [titles, headings] = JSON.parse(readFileSync(join(root, 'build/search-index.json'), 'utf8'));
+  const flavoured = new Set(pages.map((page) => page.url));
+  const hashes = headings.documents.filter((doc) => flavoured.has(doc.u) && doc.h).map((doc) => doc.h.slice(1));
+  assert.ok(titles.documents.length > 0);
+  assert.ok(hashes.some((hash) => flavours.some((flavour) => hash.startsWith(`${flavour}-`))));
+});

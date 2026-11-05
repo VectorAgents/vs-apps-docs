@@ -22,6 +22,7 @@ const config: Config = {
     { tagName: 'style', attributes: {}, innerHTML: flavourStyle(flavours.axes) },
     { tagName: 'script', attributes: {}, innerHTML: headScript(flavours.axes, flavours.defaults) },
   ],
+  plugins: ['./src/plugins/flavour-search.mjs'],
   presets: [
     [
       'classic',

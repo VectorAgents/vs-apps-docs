@@ -1,6 +1,6 @@
 import siteConfig from '@generated/docusaurus.config';
 import type { FlavourSite } from './useFlavours';
-import { followAnchor, readShown } from './useFlavours';
+import { followAnchor, pickFlavours, readShown } from './useFlavours';
 import { shareUrl } from './resolve.mjs';
 
 const site = siteConfig.customFields!.flavourSite as FlavourSite;
@@ -20,6 +20,9 @@ export function onRouteDidUpdate({ location }: { location: { hash: string } }): 
   if (JSON.stringify(readShown(site)) !== before) anchorOf(location.hash)?.scrollIntoView();
 }
 
+const todoSwitch = (event: Event): HTMLButtonElement | null =>
+  event.target instanceof Element ? event.target.closest<HTMLButtonElement>('.flavour-todo-switch') : null;
+
 const headingLink = (event: Event): HTMLAnchorElement | null =>
   event.target instanceof Element ? event.target.closest<HTMLAnchorElement>('a.hash-link') : null;
 
@@ -34,6 +37,12 @@ if (typeof document !== 'undefined') {
   document.addEventListener('pointerover', refresh);
   document.addEventListener('focusin', refresh);
   document.addEventListener('click', (event) => {
+    const button = todoSwitch(event);
+    if (button) {
+      pickFlavours({ [button.dataset.axis!]: button.dataset.flavour! });
+      document.getElementById(button.dataset.target!)?.scrollIntoView();
+      return;
+    }
     const link = headingLink(event);
     if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     event.preventDefault();

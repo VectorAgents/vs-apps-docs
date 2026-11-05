@@ -140,17 +140,46 @@ export function generate({ root, config }) {
   if (errors.length) throw new Error(errors.join('\n'));
 
   const notice = (flavour) => [':::warning', `Not yet written for ${axes[axisOf(flavour)][flavour]}.`, ':::'];
-  const wrapped = (p, taken) => [
-    '',
-    `<div className="flavour-block" data-axis="${axisOf(p.flavour)}" data-flavour="${p.flavour}">`,
-    '',
-    `<p className="flavour-label">${axes[axisOf(p.flavour)][p.flavour]}</p>`,
-    '',
-    ...(p.todo ? notice(p.flavour) : prefixHeadingIds(p.lines, p.flavour, taken)),
-    '',
-    '</div>',
-    '',
-  ];
+
+  /**
+   * The id of each block that a todo button scrolls to, as `<flavour>-block-<n>` with n counting the blocks of that
+   * flavour on the page, and for each todo block the part it points at: the next written block of its axis in
+   * another flavour, else the last one before it. A todo with no such block gets no button.
+   */
+  function switchTargets(parts) {
+    const count = new Map();
+    const ids = new Map();
+    for (const p of parts) {
+      if (!p.flavour) continue;
+      count.set(p.flavour, (count.get(p.flavour) ?? 0) + 1);
+      ids.set(p, `${p.flavour}-block-${count.get(p.flavour)}`);
+    }
+    const targets = new Map();
+    parts.forEach((p, at) => {
+      if (!p.todo) return;
+      const written = (q) => q.flavour && !q.todo && axisOf(q.flavour) === axisOf(p.flavour) && q.flavour !== p.flavour;
+      targets.set(p, parts.slice(at + 1).find(written) ?? parts.slice(0, at).findLast(written));
+    });
+    return { ids, targets };
+  }
+
+  const wrapped = (p, taken, { ids, targets }) => {
+    const target = targets.get(p);
+    const targeted = [...targets.values()].includes(p);
+    const switcher = (q) =>
+      `<button type="button" className="button button--secondary flavour-todo-switch" data-axis="${axisOf(q.flavour)}" data-flavour="${q.flavour}" data-target="${ids.get(q)}">Switch to ${axes[axisOf(q.flavour)][q.flavour]}</button>`;
+    return [
+      '',
+      `<div className="flavour-block" data-axis="${axisOf(p.flavour)}" data-flavour="${p.flavour}"${targeted ? ` id="${ids.get(p)}"` : ''}>`,
+      '',
+      `<p className="flavour-label">${axes[axisOf(p.flavour)][p.flavour]}</p>`,
+      '',
+      ...(p.todo ? [...notice(p.flavour).slice(0, -1), ...(target ? ['', switcher(target)] : []), ':::'] : prefixHeadingIds(p.lines, p.flavour, taken)),
+      '',
+      '</div>',
+      '',
+    ];
+  };
 
   // Counts source blocks, so a second client flavour does not double a gap.
   let todos = 0;
@@ -167,7 +196,8 @@ export function generate({ root, config }) {
     }
     todos += parts.filter((p) => p.todo).length;
     const taken = new Map();
-    emit(`site/${rel}`, parts.flatMap((p) => (p.flavour ? wrapped(p, taken) : p.lines)).join('\n'));
+    const switches = switchTargets(parts);
+    emit(`site/${rel}`, parts.flatMap((p) => (p.flavour ? wrapped(p, taken, switches) : p.lines)).join('\n'));
     for (const pair of pairs) {
       const body = parts
         .filter((p) => !p.flavour || Object.values(pair).includes(p.flavour))
