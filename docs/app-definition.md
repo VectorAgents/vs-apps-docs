@@ -78,9 +78,9 @@ flowchart TB
 4. **List agent-callable routes.** The server lists the routes it marks as agent-callable, with `buildEndpoints` from `@vectoragents/vs-apps/orpc`, and passes them to `buildManifests` as `endpoints`. They are listed in the manifest at boot.
 5. **Merge the [agent catalog](./glossary.md#agent-catalog).** At boot, the build-time agent catalog is merged into the manifest, joined on page keys.
 6. **Keep the server's app registry.** The registry is the list of definitions you pass to `buildManifests`. A duplicate `key` throws at boot.
-7. **Check the token.** Your server compares the `appKey` in a Space token with the definition `key` before it answers.
+7. **Check the token.** `verifyS2sToken` and `verifyEventsToken` compare the `appKey` in a Space token with the app key of the route that was called. They refuse a token for another app. The user token check does not read `appKey`.
 8. **Receive connector events.** A [connector slot](./glossary.md#connector-slot) can declare handler keys in the definition. If it does, the manifest gets an `eventsUrl`, and Space sends events to that address. Your server must answer at that address.
-9. **Look up a model slot.** Code asks Space for a model by [model slot](./glossary.md#model-slot) key. The [software development kit (SDK)](./glossary.md#sdk) refuses a slot that the manifest does not declare. If no one sets a slot, the SDK refuses it too.
+9. **Look up a model slot.** Code asks Space for a model by [model slot](./glossary.md#model-slot) key. The [software development kit (SDK)](./glossary.md#sdk) passes the slot key to Space. Space refuses a slot that the manifest does not declare. Space also refuses a slot that no one set. The SDK passes each refusal on as a `SpaceActionError`.
 
 ### In Space
 
@@ -246,13 +246,13 @@ Space reads the manifest again when Vector asks it to and when the app announces
 
 - Import check: [use 1](#on-import-and-in-the-client).
 - Manifest build and serving: [use 3](#in-your-server).
-- Model slot lookup: [use 9](#in-your-server).
 
 ### Space-side
 
 - Registration, the pending review and auto-apply.
 - Navigation entries and the capability filter on them.
 - Grants, model choices and connector attachment.
+- Model slot lookup: [use 9](#in-your-server). Space refuses an undeclared or unset slot.
 
 ## Next steps
 
