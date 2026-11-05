@@ -200,6 +200,11 @@
   position: relative;
 }
 
+/* A neutral page, the entry page included, holds no flavour block, so the picker has nothing to pick. */
+html:not(:has(.flavour-block)) .flavour-picker {
+  display: none;
+}
+
 .flavour-picker__trigger {
   display: inline-flex;
   align-items: center;

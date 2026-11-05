@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { dirname, join, relative } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { codeOf, linksOf, nextLinks, section, snippetsOf, titledSnippets, treesOf } from './page-helpers.mjs';
 
 const docs = join(dirname(fileURLToPath(import.meta.url)), '..', 'docs');
+const site = join(dirname(fileURLToPath(import.meta.url)), '..', 'docs-gen', 'site');
 // The Next-step chain order of the five client recipes.
 const recipeNames = ['add-page-and-capability', 'gate-by-capability', 'read-app-context', 'list-members', 'expose-agent-actions'];
 const openRouteGuide = 'open-route-and-read-caller';
@@ -80,7 +81,8 @@ test('every #anchor link from a recipe or guide targets a heading that exists', 
   let checked = 0;
   for (const { path, name, text } of all) {
     for (const [, target, anchor] of text.matchAll(/\]\((\.[^)#]*\.md)#([^)]+)\)/g)) {
-      const file = join(dirname(path), target);
+      // A heading inside a flavour block has the id <flavour>-<slug>, set on the generated site page.
+      const file = join(site, relative(docs, join(dirname(path), target)));
       assert.ok(anchorsOf(readFileSync(file, 'utf8')).has(anchor), `${name}: ${target}#${anchor}`);
       checked += 1;
     }

@@ -13,7 +13,7 @@ End with an owners list built with `useUsers`, a member picker built with the di
 
 - The app from the [quickstart](../quickstart.md), added to a space (Part 2) and run with `npm run dev:space`. The harness has no directory, because `npm run dev` clears `SPACE_API_URL`.
 - `SPACE_API_URL` in `.env`, set to the [Vector Space](../glossary.md#vector-space) API origin followed by `/api`, for example `https://space-api.example.com/api`. The starter returns it as `spaceApiUrl` in `/api/client-config`. Without it, `useApp().directory` is `null`.
-- Background: [`useUsers`](../reference/react.md#useusers), [`DirectoryUser` and `DirectoryGroup`](../reference/browser.md#directoryuser).
+- Background: [`useUsers`](../reference/react.md#react-useusers), [`DirectoryUser` and `DirectoryGroup`](../reference/browser.md#directoryuser).
 
 ## Steps
 
