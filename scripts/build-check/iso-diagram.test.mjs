@@ -41,3 +41,14 @@ test('search indexes the SVG text and the words of neighbouring SVG elements sta
   assert.match(text, /Vector Space Your origin/);
   assert.doesNotMatch(text, /spaceVector|SpaceYour|\d{3,}/);
 });
+
+const glance = readFileSync(join(root, 'build/vector-space/vector-space-at-a-glance/index.html'), 'utf8');
+
+test('the Space diagram is Fig. 1 on the glance page, with eight numbered parts and no lettered line', () => {
+  const figure = glance.match(/<div class="iso-diagram">[\s\S]*?<\/figure>/)?.[0] ?? '';
+  assert.match(figure, /<svg [^>]*role="img"/);
+  assert.match(figure.replaceAll('<!-- -->', ''), /<figcaption>Fig\. 1 · [^<]+<\/figcaption>/);
+  const legend = glance.match(/<div class="iso-legend">[\s\S]*?<\/div>/)[0];
+  const keys = [...legend.matchAll(/<span class="iso-key[^"]*">([^<]+)<\/span>/g)].map((m) => m[1]);
+  assert.deepEqual(keys, ['1', '2', '3', '4', '5', '6', '7', '8']);
+});
