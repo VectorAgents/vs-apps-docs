@@ -20,7 +20,7 @@ test('the diagram is inline SVG with a name and a description from its own title
 });
 
 test('the figure carries a Fig. 1 caption', () => {
-  assert.match(diagram, /<figcaption>Fig\. 1 · [^<]+<\/figcaption>/);
+  assert.match(diagram.replaceAll('<!-- -->', ''), /<figcaption>Fig\. 1 · [^<]+<\/figcaption>/);
 });
 
 test('the legend lists five numbered parts and the four token-path letters under the diagram', () => {
