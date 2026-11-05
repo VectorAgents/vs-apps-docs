@@ -85,6 +85,19 @@ Rows marked "Starter claim" describe the starter repo. The starter's own CI and 
 | The SDK puts an action and a page `description` in the manifest, and the bridge attaches the mounted actions to each successful dispatch. The pages claim nothing about how the Space agent uses them. | The installed 0.4.0 dist (`server/manifests/manifest.util.js`, `agent-catalog/agent-catalog-definitions.util.js`, `browser/app-session/app-session-bridge.util.js`). The Space agent prompt is Space-side and not read, [research 01, E6 and E10](../.scratch/recipes-review/research/01-recipe-claims-vs-sdk.md). |
 | `pingManifests` posts `{ appKey, manifestHash }` to `{spaceBaseUrl}/api/apps/manifest-ping`, retries at 0, 5 and 15 seconds, stops on 2xx or 429, and never throws. | The installed 0.4.0 dist (`server/manifests/manifest.util.js`, `types/server/manifests/manifest.util.d.ts`). What Space does with the ping is Space-side and not observed. |
 
+## SDK overview and Platform limits
+
+| Claim | Rests on |
+| --- | --- |
+| The SDK has nine subpaths: `.`, `server`, `browser`, `nest`, `react`, `react/harness`, `orpc`, `extract` and `conformance`. Each one's purpose and peer package. | The `exports` of the installed `package.json` (0.4.0) and the README table "Subpaths" and "Install". `scripts/sdk-overview.test.mjs` compares the table with `exports`. |
+| `server` and `browser` use only Web-standard APIs. `nest`, `extract` and `conformance` need Node.js. The `vs-apps` command runs extraction. | The README of 0.4.0 and its `bin` entry. |
+| Access: the package is on GitHub Packages and needs a token with `read:packages`. Pages tell the reader to ask Vector staff, and publish no form, address or promise of availability. | The README "Install" and `publishConfig` of 0.4.0, and the audience decision in `.scratch/hub-structure/issues/10-hub-audience-and-visibility.md`. |
+| The connector providers, Meta messaging services, model providers and model capability filters. | `app-config/app-config.constant.ts` in `packages/apps` of `vector-spaces` (0.4.0), exported from the package root as `APP_CONNECTOR_PROVIDERS`, `APP_CONNECTOR_SERVICES`, `APP_AI_PROVIDERS` and `APP_MODEL_CAPABILITIES`. `scripts/platform-limits.test.mjs` compares the tables with the installed exports. |
+| A Meta messaging service is read from the `service` field of a connector list entry, `null` for every other provider. `defineApp` does not read it. | `src/actions/actions.schema.ts` (`connectorRegistryEntrySchema`). |
+| The modalities `chat`, `vision`, `embed` and `rerank`, and the act measure units `count`, `ms` and `bytes`, all whole numbers. | `appModelSlotSchema` and `appActMeasureSchema` in `manifest/manifest.schema.ts` (the TSDoc on the measure says there is no float unit). |
+| A model passes a capability filter unless Vector Space records that it lacks the ability. | The TSDoc of `appModelSlotSchema`. The record itself is Vector Space side and not observed. |
+| The first-party Vector Modules are `omnibox` and `contacts`. The SDK takes any non-empty string as a module key. | No SDK source. Vector Space docs `systems/context-hub/MODULES.md` and `product/GLOSSARY.md` (Vector Module), and the `ModuleKey` enum in `packages/types`. `defineApp` accepted an unlisted module key in a run against the installed dist. |
+
 ## Guides
 
 | Claim | Rests on |

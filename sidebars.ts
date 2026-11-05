@@ -40,6 +40,7 @@ const sidebars: SidebarsConfig = {
     'vector-apps/glossary',
   ],
   sdk: [
+    'sdk/overview',
     'sdk/app-definition',
     { type: 'link', label: 'Definition builder', href: '/sdk/builder' },
     'sdk/examples',
@@ -60,6 +61,7 @@ const sidebars: SidebarsConfig = {
         'sdk/reference/orpc',
         'sdk/reference/extract',
         'sdk/reference/conformance',
+        'sdk/reference/platform-limits',
       ],
     },
   ],
