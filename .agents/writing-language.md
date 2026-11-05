@@ -54,7 +54,7 @@ Precedence: rules here win over any reference. A page-type section wins over the
 
 ## Tutorial page
 
-Scope: `docs/quickstart.md` only. `scripts/voice.mjs` checks the TU1 hard cap, TU2 and TU3 outside code.
+Scope: `docs/vector-apps/quickstart.md` only. `scripts/voice.mjs` checks the TU1 hard cap, TU2 and TU3 outside code.
 
 - **TU1 Sentence.** Target 30 words. Hard cap 40. Replaces L3 on this page.
 - **TU2 Paragraph.** 5 sentences or fewer. Replaces L4 on this page.
@@ -66,7 +66,7 @@ Scope: `docs/quickstart.md` only. `scripts/voice.mjs` checks the TU1 hard cap, T
 
 ## Recipe page
 
-Scope: `docs/recipes/`.
+Scope: `docs/vector-apps/recipes/`.
 
 - **R1 Sorting rule.** A recipe starts from a project the starter CLI generates (`--start hello`, or an overlay such as `--start leads-app`) and ends with something you run. If the page needs a result from an earlier page, it is a guide.
 - **R2 Layout.** Front matter `title`, an opening paragraph, then the sections Goal, Prerequisites, Steps, Result, Next step, in that order.
@@ -79,7 +79,7 @@ Scope: `docs/recipes/`.
 
 ## Guide page
 
-Scope: `docs/guides/`.
+Scope: `docs/vector-apps/guides/`.
 
 - **G1 Sorting rule.** A guide starts from the result of a prior recipe. Its Prerequisites name that recipe. If the page starts from the starter app, it is a recipe.
 - **G2 Layout.** Same as R2.

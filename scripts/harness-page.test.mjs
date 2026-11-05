@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { section, treesOf } from './page-helpers.mjs';
 
-const trees = treesOf('reference/harness.md');
+const trees = treesOf('sdk/reference/harness.md');
 const text = trees.find(({ tree }) => tree === 'node').text;
 const nestText = trees.find(({ tree }) => tree === 'nest').text;
 

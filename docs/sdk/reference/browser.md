@@ -2,7 +2,7 @@
 title: Browser reference
 ---
 
-Reference for `@vectoragents/vs-apps/browser` 0.4.0. The subpath is the framework-free browser runtime of an [app](../glossary.md#app). It holds the boot config loader, the user directory types, and the embed session, iframe bridge and token verifier that [`AppProvider`](./react.md) drives. An app imports `loadAppClientConfig`, `DirectoryUser` and `DirectoryGroup` from it, and `AppClientConfig` from the package root. An app without React also calls `startAppSession`.
+Reference for `@vectoragents/vs-apps/browser` 0.4.0. The subpath is the framework-free browser runtime of an [app](../../vector-apps/glossary.md#app). It holds the boot config loader, the user directory types, and the embed session, iframe bridge and token verifier that [`AppProvider`](./react.md) drives. An app imports `loadAppClientConfig`, `DirectoryUser` and `DirectoryGroup` from it, and `AppClientConfig` from the package root. An app without React also calls `startAppSession`.
 
 Every symbol below follows one layout: signature, behaviour, example. Each example is a complete file and is typechecked against the installed package.
 
@@ -72,7 +72,7 @@ interface AppClientConfig {
 | Field | Meaning |
 | --- | --- |
 | `allowedParentOrigin` | The one origin the iframe bridge accepts messages from. |
-| `spaceJwksUrl` | Where the browser fetches [Vector Space](../glossary.md#vector-space) signing keys to verify a token. |
+| `spaceJwksUrl` | Where the browser fetches [Vector Space](../../vector-apps/glossary.md#vector-space) signing keys to verify a token. |
 | `tokenIssuer` | The expected `iss` claim of a token. |
 | `spaceApiUrl` | The Vector Space API base. Setting it enables the user directory. |
 
@@ -98,7 +98,7 @@ export const config = loadAppClientConfig({ baked });
 
 ## `startAppSession`
 
-Runs the app side of the embed protocol for one [app page](../glossary.md#app-page) and exposes its state as an external store. [`AppProvider`](./react.md) calls it for a React tree. Call it yourself on another framework.
+Runs the app side of the embed protocol for one [app page](../../vector-apps/glossary.md#app-page) and exposes its state as an external store. [`AppProvider`](./react.md) calls it for a React tree. Call it yourself on another framework.
 
 ### Signature
 

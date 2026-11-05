@@ -28,7 +28,7 @@ cd leads-guide
 ```
 <!-- /flavour -->
 
-- Background: the [server primitives](../reference/root.md), the [quickstart](../quickstart.md) that registers the app in Vector Space, and the [`/server` reference](../reference/server.md).
+- Background: the [server primitives](../../sdk/reference/root.md), the [quickstart](../quickstart.md) that registers the app in Vector Space, and the [`/server` reference](../../sdk/reference/server.md).
 
 ## Steps
 

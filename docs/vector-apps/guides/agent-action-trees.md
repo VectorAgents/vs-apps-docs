@@ -11,7 +11,7 @@ End with a child action `leads.export_leads` that the agent can call only after 
 ## Prerequisites
 
 - The app from [`expose-agent-actions`](../recipes/expose-agent-actions.md), with the `leads` app page, the action `leads.open_lead_list` and the [agent catalog](../glossary.md#agent-catalog) that lists it.
-- Background: [`defineAgentPage`](../reference/root.md#defineagentpage) and [`AgentActionRegistryProvider`](../reference/react.md). The [quickstart](../quickstart.md) covers the app setup.
+- Background: [`defineAgentPage`](../../sdk/reference/root.md#defineagentpage) and [`AgentActionRegistryProvider`](../../sdk/reference/react.md). The [quickstart](../quickstart.md) covers the app setup.
 
 ## Steps
 
@@ -88,7 +88,7 @@ export function LeadsPageHarness() {
 }
 ```
 
-To trigger an action in such a test, read the registry with `useAgentActionRegistry` and call `dispatch('leads.open_lead_list', { leadListId: 'll-1' })`. `dispatch` never throws, and returns `{ ok: false, code }` on failure. The [root reference](../reference/root.md#createagentactionregistry) lists the registry methods.
+To trigger an action in such a test, read the registry with `useAgentActionRegistry` and call `dispatch('leads.open_lead_list', { leadListId: 'll-1' })`. `dispatch` never throws, and returns `{ ok: false, code }` on failure. The [root reference](../../sdk/reference/root.md#createagentactionregistry) lists the registry methods.
 
 ## Result
 
@@ -96,4 +96,4 @@ The agent sees `leads.export_leads` only after it opens a Lead List, and the app
 
 ## Next step
 
-Look up every registry symbol in the [react reference](../reference/react.md).
+Look up every registry symbol in the [react reference](../../sdk/reference/react.md).

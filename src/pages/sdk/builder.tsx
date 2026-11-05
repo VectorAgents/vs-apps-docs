@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import type { ReactElement, ReactNode } from 'react';
 import Layout from '@theme/Layout';
-import { buildOutput } from '../builder/index.ts';
-import { connectorProviders, modalities, modelCapabilities, modelProviders } from '../data/field-rules.ts';
+import { buildOutput } from '../../builder/index.ts';
+import { connectorProviders, modalities, modelCapabilities, modelProviders } from '../../data/field-rules.ts';
 import type {
   CapabilityDraft,
   ConnectorDraft,
@@ -12,9 +12,9 @@ import type {
   ModelDraft,
   ModuleDraft,
   PageDraft,
-} from '../builder/index.ts';
-import { presets } from '../builder/presets.ts';
-import type { PresetName } from '../builder/presets.ts';
+} from '../../builder/index.ts';
+import { presets } from '../../builder/presets.ts';
+import type { PresetName } from '../../builder/presets.ts';
 
 type Messages = Map<string, Issue[]>;
 

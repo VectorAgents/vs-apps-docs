@@ -5,7 +5,7 @@ import { CLI_PACKAGE } from './starter-source.mjs';
 import { voiceViolations } from './voice.mjs';
 
 const SCAFFOLD = `npm create ${CLI_PACKAGE.replace('/create-', '/')}`;
-const trees = treesOf('quickstart.md');
+const trees = treesOf('vector-apps/quickstart.md');
 
 test('the quickstart is emitted once per pair, react with node and with nest', () => {
   assert.deepEqual(trees.map(({ tree }) => tree), ['react/node', 'react/nest']);
@@ -380,7 +380,7 @@ for (const { tree, text } of trees) {
   });
 
   t('links the six glossary terms, the concept page and the harness reference', () => {
-    assert.ok(targets.includes('app-definition.md'));
+    assert.ok(targets.includes('sdk/app-definition.md'));
     const links = targets.filter((l) => l.startsWith('glossary.md#')).map((l) => l.slice('glossary.md#'.length));
     assert.deepEqual([...links].sort(), ['agent-catalog', 'app-definition', 'app-registration', 'dev-issuer', 'harness', 'vector-space']);
     assert.ok(linksOf(section(text, 'Next steps')).map(bare).some((link) => link.endsWith('reference/harness.md')));

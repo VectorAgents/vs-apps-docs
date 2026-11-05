@@ -3,7 +3,7 @@ title: React reference
 ---
 
 <!-- flavour react -->
-Reference for `@vectoragents/vs-apps/react` 0.4.0. The subpath binds the [browser runtime](./browser.md) of an [app](../glossary.md#app) to React: the provider that completes the handshake with [Vector Space](../glossary.md#vector-space), the hooks that read the result, two gates, and the bindings that let the space agent drive an [app page](../glossary.md#app-page) through [agent actions](../glossary.md#agent-action). The [harness](./harness.md) is the `@vectoragents/vs-apps/react/harness` subpath.
+Reference for `@vectoragents/vs-apps/react` 0.4.0. The subpath binds the [browser runtime](./browser.md) of an [app](../../vector-apps/glossary.md#app) to React: the provider that completes the handshake with [Vector Space](../../vector-apps/glossary.md#vector-space), the hooks that read the result, two gates, and the bindings that let the space agent drive an [app page](../../vector-apps/glossary.md#app-page) through [agent actions](../../vector-apps/glossary.md#agent-action). The [harness](./harness.md) is the `@vectoragents/vs-apps/react/harness` subpath.
 
 Every symbol below follows one layout: signature, behaviour, example. Each example is a complete file and is typechecked against the installed package.
 
@@ -11,7 +11,7 @@ Every symbol below follows one layout: signature, behaviour, example. Each examp
 
 - `@vectoragents/vs-apps` installed with a registry token.
 - React 19 with TypeScript.
-- An [app definition](../glossary.md#app-definition) that declares the [capability](../glossary.md#capability) the examples check, `leads:read`.
+- An [app definition](../../vector-apps/glossary.md#app-definition) that declares the [capability](../../vector-apps/glossary.md#capability) the examples check, `leads:read`.
 - An action declared with `defineAgentPage`, covered in the [root reference](./root.md), for the agent action examples.
 - `zod` version 3, installed with `npm install zod@3`, for the parameter schema of an action. Zod 4 gives an empty `paramsJsonSchema`, so the agent sees no parameters.
 
@@ -46,7 +46,7 @@ interface AppProviderProps {
 - Verifies each token Vector Space sends against its signing keys. A token that fails verification is logged to the console and ignored, so `useApp().claims` stays `null`.
 - Opens the user directory on the first verified token, when the config sets `spaceApiUrl`.
 - Reports the document height to Vector Space through a `ResizeObserver`.
-- Registers [agent actions](../glossary.md#agent-action) by wrapping the tree in `AgentActionRegistryProvider`. Do not add a second one.
+- Registers [agent actions](../../vector-apps/glossary.md#agent-action) by wrapping the tree in `AgentActionRegistryProvider`. Do not add a second one.
 - Restarts the session when `config` changes, so create `config` once.
 - A config promise that rejects is logged to the console. No token ever arrives, so a `BootGate` stays on its fallback.
 
@@ -95,7 +95,7 @@ interface AppSessionState {
 | Field | Meaning |
 | --- | --- |
 | `claims` | The verified token claims, or `null` before the handshake completes. Includes `sub` (user id), `spaceId`, `organizationId`, `appKey` and `capabilities`. |
-| `capabilities` | The capabilities [granted](../glossary.md#capability-grant) to the current user. Empty before the handshake. |
+| `capabilities` | The capabilities [granted](../../vector-apps/glossary.md#capability-grant) to the current user. Empty before the handshake. |
 | `hasCapability` | `true` when `capabilities` holds the given name. |
 | `requestRefresh` | Asks Vector Space to send a fresh token. A no-op before the bridge starts. |
 | `directory` | The user directory, or `null` before the first token or when the config has no `spaceApiUrl`. |
@@ -322,7 +322,7 @@ export function LeadListsPage() {
 }
 ```
 
-In an app the definition lives in a shared `actions.ts`, so the [agent catalog](../glossary.md#agent-catalog) extractor and the component import the same handle.
+In an app the definition lives in a shared `actions.ts`, so the [agent catalog](../../vector-apps/glossary.md#agent-catalog) extractor and the component import the same handle.
 
 ## `AgentActionRegistryProvider`
 

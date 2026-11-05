@@ -39,7 +39,7 @@ cd leads-guide
 
 - The app is added to a space as in Part 2 of the [quickstart](../quickstart.md).
 - A space manager who can reach at least one Anthropic model in that space.
-- Background: the [`/server` reference](../reference/server.md).
+- Background: the [`/server` reference](../../sdk/reference/server.md).
 
 ## Steps
 
@@ -60,7 +60,7 @@ export const leadSummarySlot = {
 } satisfies AppModelSlot;
 ```
 
-Add the slot to the definition in `shared/src/index.ts`. Import `leadSummarySlot` from `./lead-summary-slot`, and add `resources: { models: [leadSummarySlot] }` to the object that `defineApp` takes. The slot key is lower kebab-case, as in the [definition fields](../app-definition.md#resourcesmodels).
+Add the slot to the definition in `shared/src/index.ts`. Import `leadSummarySlot` from `./lead-summary-slot`, and add `resources: { models: [leadSummarySlot] }` to the object that `defineApp` takes. The slot key is lower kebab-case, as in the [definition fields](../../sdk/app-definition.md#resourcesmodels).
 
 ### 2. Keep the service secret
 
@@ -208,7 +208,7 @@ controllers: [HelloController, LeadSummaryController],
 **Role**: space manager. Restart `npm run dev:space`.
 
 <!-- flavour node -->
-A change to the manifest reaches Vector Space through [`pingManifests`](../reference/server.md#pingmanifests) or a manual refresh in Vector Space. Then open the configuration of the app and choose a model for **Lead summary**. Remove the app from the space and add it again, so that Vector Space pushes the secret to the credential store.
+A change to the manifest reaches Vector Space through [`pingManifests`](../../sdk/reference/server.md#pingmanifests) or a manual refresh in Vector Space. Then open the configuration of the app and choose a model for **Lead summary**. Remove the app from the space and add it again, so that Vector Space pushes the secret to the credential store.
 <!-- /flavour -->
 <!-- flavour nest -->
 The module pings Vector Space with the new manifest at start. In Vector Space, open the configuration of the app and choose a model for **Lead summary**. Remove the app from the space and add it again, so that Vector Space pushes the secret to the credential store.
@@ -228,4 +228,4 @@ curl -s -o /dev/null -w '%{http_code}\n' http://localhost:<SERVER_PORT>/api/summ
 
 ## Next step
 
-Change which models a space manager can pick for the slot with the [`resources.models[]` fields](../app-definition.md#resourcesmodels).
+Change which models a space manager can pick for the slot with the [`resources.models[]` fields](../../sdk/app-definition.md#resourcesmodels).

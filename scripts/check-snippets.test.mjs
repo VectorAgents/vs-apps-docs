@@ -62,7 +62,7 @@ test('fails a decorator snippet on a neutral page', () => {
 });
 
 test('fails a decorator snippet on a recipe page', () => {
-  const { docs, stamp } = pageIn('recipes', decorated);
+  const { docs, stamp } = pageIn('vector-apps/recipes', decorated);
   assert.equal(checkSnippets({ docsDir: docs, stampFile: stamp }).ok, false);
 });
 
@@ -93,7 +93,7 @@ test('isStarterCodeBlock reads the starter word in the code block meta, not in a
 
 test('resolves @hello-app/shared to the shared/src/index.ts block of the same recipe page', () => {
   const { docs, stamp } = pageIn(
-    'recipes',
+    'vector-apps/recipes',
     `${ticks}ts title="shared/src/index.ts"\nexport type PagePath = '/leads';\n${ticks}\n\n` +
       `${ticks}ts title="client/src/use.ts"\nimport type { PagePath } from '@hello-app/shared';\nexport const p: PagePath = '/leads';\n${ticks}\n`,
   );
@@ -103,7 +103,7 @@ test('resolves @hello-app/shared to the shared/src/index.ts block of the same re
 
 test('fails a recipe snippet that misuses a type from @hello-app/shared', () => {
   const { docs, stamp } = pageIn(
-    'recipes',
+    'vector-apps/recipes',
     `${ticks}ts title="shared/src/index.ts"\nexport type PagePath = '/leads';\n${ticks}\n\n` +
       `${ticks}ts title="client/src/use.ts"\nimport type { PagePath } from '@hello-app/shared';\nexport const p: PagePath = '/icp';\n${ticks}\n`,
   );
@@ -112,14 +112,14 @@ test('fails a recipe snippet that misuses a type from @hello-app/shared', () => 
 
 function pageIn(folder, body) {
   const { docs, stamp } = docsDir('');
-  mkdirSync(join(docs, folder));
+  mkdirSync(join(docs, folder), { recursive: true });
   writeFileSync(join(docs, folder, 'page.md'), body);
   generate({ root: join(docs, '..'), config });
   return { docs, stamp };
 }
 
 test('fails a recipe or guide snippet whose title is outside client, server and shared, and writes no stamp', () => {
-  for (const folder of ['recipes', 'guides']) {
+  for (const folder of ['vector-apps/recipes', 'vector-apps/guides']) {
     const { docs, stamp } = pageIn(folder, `${ticks}ts title="src/actions.ts"\nexport const a = 1;\n${ticks}\n`);
     const result = checkSnippets({ docsDir: docs, stampFile: stamp });
     assert.equal(result.ok, false);
@@ -130,16 +130,16 @@ test('fails a recipe or guide snippet whose title is outside client, server and 
 
 test('passes a guide snippet titled under client, server or shared', () => {
   for (const title of ['client/src/a.ts', 'server/src/a.ts', 'shared/src/a.ts']) {
-    const { docs, stamp } = pageIn('guides', `${ticks}ts title="${title}"\nexport const a = 1;\n${ticks}\n`);
+    const { docs, stamp } = pageIn('vector-apps/guides', `${ticks}ts title="${title}"\nexport const a = 1;\n${ticks}\n`);
     const result = checkSnippets({ docsDir: docs, stampFile: stamp });
     assert.equal(result.ok, true, result.output);
   }
 });
 
 test('skips untitled code blocks and code blocks outside recipes and guides', () => {
-  const untitled = pageIn('recipes', `${ticks}ts\nexport const a = 1;\n${ticks}\n`);
+  const untitled = pageIn('vector-apps/recipes', `${ticks}ts\nexport const a = 1;\n${ticks}\n`);
   assert.equal(checkSnippets({ docsDir: untitled.docs, stampFile: untitled.stamp }).ok, true);
-  const reference = pageIn('reference', `${ticks}ts title="src/a.ts"\nexport const a = 1;\n${ticks}\n`);
+  const reference = pageIn('sdk/reference', `${ticks}ts title="src/a.ts"\nexport const a = 1;\n${ticks}\n`);
   assert.equal(checkSnippets({ docsDir: reference.docs, stampFile: reference.stamp }).ok, true);
 });
 
@@ -184,7 +184,7 @@ test('decorators typecheck in the Nest project and fail in the Node project', ()
 
 test('a client-only snippet is checked in every pair that shows it', () => {
   const page = `<!-- flavour react -->\n${bad}\n<!-- /flavour -->\n`;
-  const { docs, stamp } = project({ 'recipes/list.md': page });
+  const { docs, stamp } = project({ 'vector-apps/recipes/list.md': page });
   assert.deepEqual(checkSnippets({ docsDir: docs, stampFile: stamp }).failed, ['react+node', 'react+nest']);
 });
 
@@ -203,16 +203,16 @@ test('counts each snippet once per project that checks it', () => {
 
 test('title prefixes are checked on the source page, markers included', () => {
   const page = flavoured(`${ticks}ts title="src/a.ts"\nexport const a = 1;\n${ticks}`, good);
-  const { docs, stamp } = project({ 'recipes/page.md': page });
+  const { docs, stamp } = project({ 'vector-apps/recipes/page.md': page });
   const result = checkSnippets({ docsDir: docs, stampFile: stamp });
   assert.equal(result.ok, false);
-  assert.match(result.output, /recipes\/page\.md: src\/a\.ts/);
+  assert.match(result.output, /vector-apps\/recipes\/page\.md: src\/a\.ts/);
 });
 
 test('titled blocks of one tree page resolve each other and the shared package', () => {
   const sharedBlock = `${ticks}ts title="shared/src/index.ts"\nexport const name = 'x';\n${ticks}`;
   const serverBlock = `${ticks}ts title="server/src/a.ts"\nimport { name } from '@hello-app/shared';\nexport const n: string = name;\n${ticks}`;
-  const { docs, stamp } = project({ 'recipes/page.md': flavoured(`${sharedBlock}\n\n${serverBlock}`, `${sharedBlock}\n\n${serverBlock}`) });
+  const { docs, stamp } = project({ 'vector-apps/recipes/page.md': flavoured(`${sharedBlock}\n\n${serverBlock}`, `${sharedBlock}\n\n${serverBlock}`) });
   const result = checkSnippets({ docsDir: docs, stampFile: stamp });
   assert.equal(result.ok, true, result.output);
 });

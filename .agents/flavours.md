@@ -28,7 +28,7 @@ How to write a page that differs by flavour. Terms: axis, flavour, pair, flavour
 - Links stay as written. Every page keeps its source path, so a relative link resolves in `site/`.
 - `pnpm start` generates once at launch. After an edit to `docs/`, restart it: the dev server does not watch `docs/`.
 - `flavours.config.json` holds `docsRoot` (the source folder), `outDir`, the `axes` with their flavour names and labels, the `defaults` and `todoCap` (the most `todo` blocks allowed).
-- The generator fails on a marker error, on a flavour name that equals a top-level folder of `docs/` and when the `todo` blocks exceed `todoCap`. `pnpm check`, `pnpm test`, `pnpm build` and `pnpm start` run it first.
+- The generator fails on a marker error, on a flavour name that equals a top-level folder of `docs/` (`vector-apps`, `sdk`) and when the `todo` blocks exceed `todoCap`. `pnpm check`, `pnpm test`, `pnpm build` and `pnpm start` run it first.
 - The sidebar lists each page once and the paginator is the stock one.
 
 ## Reader view
@@ -39,7 +39,7 @@ How to write a page that differs by flavour. Terms: axis, flavour, pair, flavour
 - `src/components/FlavourPicker.tsx` (navbar) sets the attributes and saves the pick through `src/flavours/useFlavours.ts`. It leaves the address alone. `src/css/custom.css` hides the picker on a page with no flavour block.
 - `src/flavours/client.ts` follows a bare anchor after a navigation inside the site and gives a heading link every axis (`shareUrl` in `src/flavours/resolve.mjs`), so a copied heading link opens on the same flavours.
 - A todo notice's button names the next written block of the same axis in another flavour, else the last one before it. The generator gives that block an id `<flavour>-block-<n>`, n counting the blocks of that flavour on the page. A click picks that flavour, saves it and scrolls to the block (`src/flavours/client.ts`). The style hides the button until the head script has run. A todo with no such block gets no button. A pair copy holds the plain notice.
-- The generator gives a heading inside a block the id `<flavour>-<slug>`. Link to such a heading with that id, for example `../reference/react.md#react-useapp`.
+- The generator gives a heading inside a block the id `<flavour>-<slug>`. Link to such a heading with that id, for example `../../sdk/reference/react.md#react-useapp`.
 
 ## Search
 

@@ -632,6 +632,6 @@ The app page of `hello-app` is open in a space. It shows the same three lines as
 
 ## Next steps
 
-- [App definition](./app-definition.md): learn what each definition field does.
-- [Recipes](/category/recipes): add an app page, a capability or an agent action to this app.
-- [Harness reference](./reference/harness.md): wire the harness into an app that is not built from the starter.
+- [App definition](../sdk/app-definition.md): learn what each definition field does.
+- [Recipes](/vector-apps/category/recipes): add an app page, a capability or an agent action to this app.
+- [Harness reference](../sdk/reference/harness.md): wire the harness into an app that is not built from the starter.

@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
 const internalUrl = new URL('../.agents/glossary-internal.md', import.meta.url);
-const publishedUrl = new URL('../docs/glossary.md', import.meta.url);
+const publishedUrl = new URL('../docs/vector-apps/glossary.md', import.meta.url);
 
 const names = (text) => text.split(/^### /m).slice(1).map((block) => block.split('\n')[0].replace(/\s*\{#.*\}\s*$/, '').trim().toLowerCase());
 const internal = readFileSync(internalUrl, 'utf8');

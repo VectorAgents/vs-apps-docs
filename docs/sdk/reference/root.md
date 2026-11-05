@@ -2,7 +2,7 @@
 title: Root reference
 ---
 
-Reference for `@vectoragents/vs-apps` 0.4.0, the package root. The root holds the [app definition](../glossary.md#app-definition) and the schemas shared by client and server. A client imports three symbols from it: `defineAgentPage`, `appPages` and `createAgentActionRegistry`. `defineApp` is covered in the [app definition guide](../app-definition.md).
+Reference for `@vectoragents/vs-apps` 0.4.0, the package root. The root holds the [app definition](../../vector-apps/glossary.md#app-definition) and the schemas shared by client and server. A client imports three symbols from it: `defineAgentPage`, `appPages` and `createAgentActionRegistry`. `defineApp` is covered in the [app definition guide](../app-definition.md).
 
 Every symbol below follows one layout: signature, behaviour, example. Each example is a complete file and is typechecked against the installed package.
 
@@ -13,7 +13,7 @@ Every symbol below follows one layout: signature, behaviour, example. Each examp
 
 ## `defineAgentPage`
 
-Declares an [app page](../glossary.md#app-page) the space agent can read, and returns the factory for its [agent actions](../glossary.md#agent-action).
+Declares an [app page](../../vector-apps/glossary.md#app-page) the space agent can read, and returns the factory for its [agent actions](../../vector-apps/glossary.md#agent-action).
 
 ### Signature
 
@@ -147,7 +147,7 @@ export function AppHome() {
 
 ## `createAgentActionRegistry`
 
-Creates the registry that holds the [agent actions](../glossary.md#agent-action) that are mounted now and dispatches calls to their handlers.
+Creates the registry that holds the [agent actions](../../vector-apps/glossary.md#agent-action) that are mounted now and dispatches calls to their handlers.
 
 ### Signature
 

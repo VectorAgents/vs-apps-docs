@@ -16,7 +16,7 @@ End with two routes on the server of the quickstart app: `GET /api/open`, which 
 ## Prerequisites
 
 - The Nest.js app from Part 1 of the [quickstart](../quickstart.md), running with `npm run dev:space`. Part 2, step 1 of the quickstart sets up the `.env` file that command reads.
-- Background: the [server primitives](../reference/root.md) that the adapter wraps.
+- Background: the [server primitives](../../sdk/reference/root.md) that the adapter wraps.
 
 ## Steps
 

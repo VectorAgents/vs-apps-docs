@@ -35,7 +35,7 @@ export function checkSdkPin(starterDir, installed) {
   return problems;
 }
 
-const VERSION_PAGES = ['quickstart.md', 'reference/harness.md'];
+const VERSION_PAGES = ['vector-apps/quickstart.md', 'sdk/reference/harness.md'];
 const SDK_VERSION_STRING = /@vectoragents\/vs-apps(?:\/[\w-]+)*(?:@|`? )(\d+\.\d+\.\d+)/g;
 
 /** Fails for every SDK version string on the pages that differs from the installed version. */
@@ -130,8 +130,8 @@ const INLINE_NAME = '[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)+';
 // Inline code that is an UPPER_SNAKE name but an error code of the SDK, not an environment variable.
 const ERROR_CODES = new Set(['UNAVAILABLE_ACTION', 'INVALID_PARAMS']);
 const SHELL_LANGS = new Set(['bash', 'sh', 'shell', 'env', 'dotenv']);
-const ENV_PAGE_DIRS = ['recipes', 'guides'];
-const RUN_STEP_PAGE = 'quickstart.md';
+const ENV_PAGE_DIRS = ['vector-apps/recipes', 'vector-apps/guides'];
+const RUN_STEP_PAGE = 'vector-apps/quickstart.md';
 
 /** Names that a page assigns (`NAME=` in a shell or env code block). */
 function assignedEnvNames(text) {

@@ -13,7 +13,7 @@ End with a navigation component that lists the app pages of the `hello-app` defi
 ## Prerequisites
 
 - The app from [`expose-agent-actions`](../recipes/expose-agent-actions.md), which starts from the `leads-app` start of the starter, scaffolded with `npm create @vectoragents/app leads-app -- --client react --server node --start leads-app` (`--server nest` for a Nest.js server). Its definition declares the `leads` app page and the `lead:manage` and `icp:manage` capabilities.
-- Background: [`appPages`](../reference/root.md#apppages), and the [quickstart](../quickstart.md).
+- Background: [`appPages`](../../sdk/reference/root.md#apppages), and the [quickstart](../quickstart.md).
 
 ## Steps
 

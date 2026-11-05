@@ -6,10 +6,10 @@ import DiagramControls from '@site/src/components/DiagramControls';
 
 ## What an app definition is
 
-An app definition is one TypeScript object, built with `defineApp`, that describes your app to [Vector Space](./glossary.md#vector-space).
-You write it once: your server and client import it, and your server builds the [manifest](./glossary.md#manifest) that Vector Space reads from it.
+An app definition is one TypeScript object, built with `defineApp`, that describes your app to [Vector Space](../vector-apps/glossary.md#vector-space).
+You write it once: your server and client import it, and your server builds the [manifest](../vector-apps/glossary.md#manifest) that Vector Space reads from it.
 
-It declares the app `key`, its [app pages](./glossary.md#app-page) (one screen each, with a path), the [capabilities](./glossary.md#capability) it can be granted and the resources it needs. It does not read environment variables, so the server and the client import the same object.
+It declares the app `key`, its [app pages](../vector-apps/glossary.md#app-page) (one screen each, with a path), the [capabilities](../vector-apps/glossary.md#capability) it can be granted and the resources it needs. It does not read environment variables, so the server and the client import the same object.
 
 One page gated by one capability.
 
@@ -76,11 +76,11 @@ flowchart TB
 
 3. **Generate and serve the manifest.** `buildManifests` turns each definition into a manifest at boot. The server serves it each time Vector Space reads the manifest.
 4. **List agent-callable routes.** The server lists the routes it marks as agent-callable, with `buildEndpoints` from `@vectoragents/vs-apps/orpc`, and passes them to `buildManifests` as `endpoints`. They are listed in the manifest at boot.
-5. **Merge the [agent catalog](./glossary.md#agent-catalog).** At boot, the build-time agent catalog is merged into the manifest, joined on page keys.
+5. **Merge the [agent catalog](../vector-apps/glossary.md#agent-catalog).** At boot, the build-time agent catalog is merged into the manifest, joined on page keys.
 6. **Keep the server's app registry.** The registry is the list of definitions you pass to `buildManifests`. A duplicate `key` throws at boot.
 7. **Check the token.** `verifyS2sToken` and `verifyEventsToken` compare the `appKey` in a Vector Space token with the app key of the route that was called. They refuse a token for another app. The user token check does not read `appKey`.
-8. **Receive connector events.** A [connector slot](./glossary.md#connector-slot) can declare handler keys in the definition. If it does, the manifest gets an `eventsUrl`, and Vector Space sends events to that address. Your server must answer at that address.
-9. **Look up a model slot.** Code asks Vector Space for a model by [model slot](./glossary.md#model-slot) key. The [software development kit (SDK)](./glossary.md#sdk) passes the slot key to Vector Space. Vector Space refuses a slot that the manifest does not declare. Vector Space also refuses a slot that no one set. The SDK passes each refusal on as a `SpaceActionError`.
+8. **Receive connector events.** A [connector slot](../vector-apps/glossary.md#connector-slot) can declare handler keys in the definition. If it does, the manifest gets an `eventsUrl`, and Vector Space sends events to that address. Your server must answer at that address.
+9. **Look up a model slot.** Code asks Vector Space for a model by [model slot](../vector-apps/glossary.md#model-slot) key. The [software development kit (SDK)](../vector-apps/glossary.md#sdk) passes the slot key to Vector Space. Vector Space refuses a slot that the manifest does not declare. Vector Space also refuses a slot that no one set. The SDK passes each refusal on as a `SpaceActionError`.
 
 ### In Vector Space
 
@@ -89,9 +89,9 @@ flowchart TB
     | Manifest field | Vector Space shows |
     | --- | --- |
     | Pages | Navigation entries |
-    | Capabilities | The capabilities a [space manager](./glossary.md#space-manager) can grant |
+    | Capabilities | The capabilities a [space manager](../vector-apps/glossary.md#space-manager) can grant |
     | Resources | A configuration sheet |
-    | Agents and [Model Context Protocol (MCP)](./glossary.md#mcp) servers | Subagents and connectors |
+    | Agents and [Model Context Protocol (MCP)](../vector-apps/glossary.md#mcp) servers | Subagents and connectors |
 
 See [How it reflects in Vector Space](#how-it-reflects-in-vector-space).
 
@@ -99,7 +99,7 @@ See [How it reflects in Vector Space](#how-it-reflects-in-vector-space).
 
 Prerequisites: `@vectoragents/vs-apps` 0.4.0 installed.
 
-To fill in a definition from a form instead, use the [definition builder](/builder).
+To fill in a definition from a form instead, use the [definition builder](/sdk/builder).
 
 ### Core fields
 
@@ -238,7 +238,7 @@ Vector registers your manifest URL in Vector Space. After that:
 - The app page shows in the navigation of the space, for users who hold the page's capability.
 - A space manager grants the declared capabilities. Only declared capabilities can be granted.
 - A space manager picks a model for each model slot and attaches one connector to each connector slot. If no one sets a slot, the app cannot use it.
-- A manifest change waits as a pending review. Vector applies it before it goes live, unless auto-apply is on for the [app registration](./glossary.md#app-registration).
+- A manifest change waits as a pending review. Vector applies it before it goes live, unless auto-apply is on for the [app registration](../vector-apps/glossary.md#app-registration).
 
 Vector Space reads the manifest again when Vector asks it to and when the app announces that it started.
 
@@ -251,7 +251,7 @@ Vector Space reads the manifest again when Vector asks it to and when the app an
 
 - Registration, the pending review and auto-apply.
 - Navigation entries and the capability filter on them.
-- [Capability grants](./glossary.md#capability-grant), model choices and connector attachment.
+- [Capability grants](../vector-apps/glossary.md#capability-grant), model choices and connector attachment.
 - Model slot lookup: [use 9](#in-your-server). Vector Space refuses an undeclared or unset slot.
 
 ## Next steps
@@ -259,5 +259,5 @@ Vector Space reads the manifest again when Vector asks it to and when the app an
 You now know which behavior the SDK guarantees and which behavior Vector Space owns.
 
 - [Example app definitions](./examples.md): copy a complete definition into your project.
-- [Recipes](/category/recipes): add a page, a capability or an agent action to your app.
-- [Reference](/category/reference): look up the signature of each export, and the glossary terms.
+- [Recipes](/vector-apps/category/recipes): add a page, a capability or an agent action to your app.
+- [Reference](/sdk/category/reference): look up the signature of each export, and the glossary terms.

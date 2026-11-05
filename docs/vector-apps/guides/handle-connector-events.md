@@ -16,7 +16,7 @@ End with a handler for the inbound events of one connector slot. The handler rep
 ## Prerequisites
 
 - The Nest.js app from Part 1 of the [quickstart](../quickstart.md), running with `npm run dev:space`. Part 2, step 1 of the quickstart sets up the `.env` file that command reads.
-- Background: the [server primitives](../reference/root.md) and the [connector slot fields](../app-definition.md#resourcesconnectors) of the app definition. The framework-free `/server` subpath serves the events route and holds the handler registry, `platform.connectorEvents`, but this guide has no Node.js version yet.
+- Background: the [server primitives](../../sdk/reference/root.md) and the [connector slot fields](../../sdk/app-definition.md#resourcesconnectors) of the app definition. The framework-free `/server` subpath serves the events route and holds the handler registry, `platform.connectorEvents`, but this guide has no Node.js version yet.
 
 ## Steps
 

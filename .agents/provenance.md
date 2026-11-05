@@ -2,6 +2,8 @@
 
 What each claim in these docs rests on. A ticket or spec named below without a link rests on a `.scratch/` folder that no longer exists, so the claim cannot be traced further.
 
+The sections below follow the page folders: Quickstart and Guides are under `docs/vector-apps/`, App definition and Reference under `docs/sdk/`.
+
 ## Sources
 
 - SDK behaviour rests on the installed `@vectoragents/vs-apps` 0.4.0 dist (compiled output and type declarations) and its README. The SDK source in `packages/apps` of the sibling `vector-spaces` repo settles a claim that the dist leaves open.
@@ -42,7 +44,7 @@ Labels and toasts drift with the Space UI.
 
 ## Not yet verified
 
-- The Space-side behaviour listed in the [app definition](../docs/app-definition.md) page is a statement of the Space documentation, not an observation.
+- The Space-side behaviour listed in the [app definition](../docs/sdk/app-definition.md) page is a statement of the Space documentation, not an observation.
 - No page has run against a hosted Space.
 
 ## Quickstart

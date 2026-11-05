@@ -10,9 +10,9 @@ import TrackList from '@site/src/components/TrackList';
 
 # Build apps for Vector Space
 
-A Vector app is a TypeScript package with a React client and a Node server that runs in a [space](/glossary#space) of [Vector Space](/glossary#vector-space). One [app definition](/glossary#app-definition) lists the [app pages](/glossary#app-page) and [capabilities](/glossary#capability) of your app. Vector Space shows an app page only to users who hold the page's capability.
+A Vector app is a TypeScript package with a React client and a Node server that runs in a [space](/vector-apps/glossary#space) of [Vector Space](/vector-apps/glossary#vector-space). One [app definition](/vector-apps/glossary#app-definition) lists the [app pages](/vector-apps/glossary#app-page) and [capabilities](/vector-apps/glossary#capability) of your app. Vector Space shows an app page only to users who hold the page's capability.
 
-<Link className="button button--primary button--lg landing-start" to="/quickstart">Start Quickstart</Link>
+<Link className="button button--primary button--lg landing-start" to="/vector-apps/quickstart">Start Quickstart</Link>
 
 ```ts title="shared/src/index.ts"
 import { defineApp } from '@vectoragents/vs-apps';
@@ -31,9 +31,9 @@ export const definition = defineApp({
 
 <nav className="landing-reference" aria-label="Reference">
   <ul>
-    <li><Link to="/glossary">Glossary</Link></li>
-    <li><Link to="/reference/root">Root reference</Link></li>
-    <li><Link to="/builder">Definition builder</Link></li>
-    <li><Link to="/examples">Example app definitions</Link></li>
+    <li><Link to="/vector-apps/glossary">Glossary</Link></li>
+    <li><Link to="/sdk/reference/root">Root reference</Link></li>
+    <li><Link to="/sdk/builder">Definition builder</Link></li>
+    <li><Link to="/sdk/examples">Example app definitions</Link></li>
   </ul>
 </nav>
