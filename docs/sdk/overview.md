@@ -36,7 +36,7 @@ The starter app includes the harness. Run it in development only and keep it out
 
 ## Get access
 
-The package is on GitHub Packages, the package registry of GitHub. GitHub Packages answers only a request that carries a token. The token is a GitHub personal access token (classic) with the `read:packages` scope. To get access to the package, ask Vector [staff](../vector-space/glossary.md#staff).
+The package is on GitHub Packages, the package registry of GitHub. GitHub Packages answers only a request that carries a token. The token is a GitHub personal access token (classic) with the `read:packages` scope. To get access to the package, ask Vector staff.
 
 The [quickstart](../vector-apps/quickstart.md#0-set-up-access-to-the-package-registry) shows the two `.npmrc` lines that give `npm` your token.
 
