@@ -25,13 +25,14 @@ for (const { url, axes } of pages) {
     assert.doesNotMatch(page, /<!-- \/?flavour/);
   });
 
-  test(`${url} has an active sidebar link, an open category, breadcrumbs and pagination`, () => {
+  test(`${url} has an active sidebar link, an open category when it sits in one, breadcrumbs and pagination`, () => {
     const page = html(url);
     assert.match(page, new RegExp(`aria-current="page"[^>]*href="${url}"`));
-    const category = page.split(CATEGORY).find((part) => part.includes('aria-current="page"'));
-    assert.ok(category, 'the active link sits in a category');
-    assert.doesNotMatch(category.slice(0, category.indexOf('>')), /menu__list-item--collapsed/);
-    assert.ok((page.match(/class="breadcrumbs__item/g) ?? []).length >= 3, 'home, section and page');
+    // Part 0 holds the navbar and the items before the first category, so only the parts after a category opening count.
+    const category = page.split(CATEGORY).slice(1).find((part) => part.includes('aria-current="page"'));
+    if (category) assert.doesNotMatch(category.slice(0, category.indexOf('>')), /menu__list-item--collapsed/);
+    // Home and page, plus the category when the page sits in one.
+    assert.ok((page.match(/class="breadcrumbs__item/g) ?? []).length >= (category ? 3 : 2), 'breadcrumbs');
     assert.match(page, /pagination-nav__link--(prev|next)/);
   });
 }

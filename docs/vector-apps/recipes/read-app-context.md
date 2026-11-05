@@ -12,7 +12,7 @@ End with a header component that reads the verified user, the [space](../glossar
 ## Prerequisites
 
 - The app from the [quickstart](../quickstart.md), with `AppProvider` and `BootGate` mounted.
-- Background: [`useApp`](../reference/react.md#react-useapp).
+- Background: [`useApp`](../../sdk/reference/react.md#react-useapp).
 
 ## Steps
 

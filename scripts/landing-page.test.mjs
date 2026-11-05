@@ -7,7 +7,7 @@ const body = text.replace(/^---\n[\s\S]*?\n---\n/, '');
 const outsideCodeBlocks = body.replace(/^```[\s\S]*?^```/gm, '');
 
 test('the page links to Quickstart', () => {
-  assert.match(outsideCodeBlocks, /<Link\b[^>]*\bto="\/quickstart"/);
+  assert.match(outsideCodeBlocks, /<Link\b[^>]*\bto="\/vector-apps\/quickstart"/);
 });
 
 test('the page has a single top-level heading', () => {

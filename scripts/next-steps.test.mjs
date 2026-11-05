@@ -1,20 +1,20 @@
 import assert from 'node:assert/strict';
 import { existsSync, globSync, readFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 
 const { default: sidebars } = await import(join(dirname(fileURLToPath(import.meta.url)), '..', 'sidebars.ts'));
-const slugs = sidebars.docs.map((item) => item.link?.slug).filter(Boolean);
+const slugs = Object.values(sidebars).flat().map((item) => item.link?.slug).filter(Boolean);
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const pages = {
-  'quickstart.md': ['app-definition.md', '/category/recipes', 'reference/harness.md'],
-  'examples.md': ['app-definition.md', '/category/recipes', '/builder'],
-  'app-definition.md': ['examples.md', '/category/recipes', '/category/reference'],
+  'vector-apps/quickstart.md': ['../sdk/app-definition.md', '/vector-apps/category/recipes', '../sdk/reference/harness.md'],
+  'sdk/examples.md': ['app-definition.md', '/vector-apps/category/recipes', '/sdk/builder'],
+  'sdk/app-definition.md': ['examples.md', '/vector-apps/category/recipes', '/sdk/category/reference'],
 };
 
-const withLead = new Set(['app-definition.md', 'examples.md']);
+const withLead = new Set(['sdk/app-definition.md', 'sdk/examples.md']);
 
 const block = (text) => text.split(/^## /m).slice(1).filter((s) => s.startsWith('Next steps\n'));
 
@@ -34,8 +34,8 @@ for (const [file, targets] of Object.entries(pages)) {
     const links = items.map((l) => l.match(/\]\(([^)]+)\)/)[1]);
     assert.deepEqual(links.map((l) => l.replace(/^\.\//, '')), targets);
     for (const l of links) {
-      if (l.startsWith('./')) assert.ok(existsSync(join(root, 'docs', l)), l);
-      if (l.startsWith('/category/')) assert.ok(slugs.includes(l), l);
+      if (l.startsWith('./') || l.startsWith('../')) assert.ok(existsSync(resolve(root, 'docs', dirname(file), l)), l);
+      if (l.includes('/category/')) assert.ok(slugs.includes(l), l);
     }
   });
 }

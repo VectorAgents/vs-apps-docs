@@ -2,7 +2,7 @@
 title: oRPC reference
 ---
 
-Reference for `@vectoragents/vs-apps/orpc` 0.4.0. The subpath binds the SDK to [oRPC](https://orpc.unnoq.com), the contract library that an app server shares with its client. It holds the routes every app server exposes, a contract builder that marks a route for the space agent, and the function that lists those routes for the [manifest](../glossary.md#manifest).
+Reference for `@vectoragents/vs-apps/orpc` 0.4.0. The subpath binds the SDK to [oRPC](https://orpc.unnoq.com), the contract library that an app server shares with its client. It holds the routes every app server exposes, a contract builder that marks a route for the space agent, and the function that lists those routes for the [manifest](../../vector-apps/glossary.md#manifest).
 
 Every symbol below follows one layout: signature, behaviour, example. Each example is a complete file and is typechecked against the installed package.
 

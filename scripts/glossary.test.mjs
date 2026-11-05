@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { test } from 'node:test';
 
-const text = readFileSync(new URL('../docs/glossary.md', import.meta.url), 'utf8');
+const text = readFileSync(new URL('../docs/vector-apps/glossary.md', import.meta.url), 'utf8');
 const entries = text
   .split(/^### /m)
   .slice(1)

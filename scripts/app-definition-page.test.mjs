@@ -6,7 +6,7 @@ import { test } from 'node:test';
 import { checkSnippets } from './check-snippets.mjs';
 import { coreFieldRules, resourceFieldRules } from '../src/data/field-rules.ts';
 
-const pageUrl = new URL('../docs/app-definition.md', import.meta.url);
+const pageUrl = new URL('../docs/sdk/app-definition.md', import.meta.url);
 const text = readFileSync(pageUrl, 'utf8');
 const headings = [...text.matchAll(/^#{2,3} (.+)$/gm)].map((m) => m[1]);
 
@@ -23,7 +23,7 @@ test('states each of the ten uses once, in order', () => {
     'Type navigation and routes',
     'Generate and serve the manifest',
     'List agent-callable routes',
-    'Merge the [agent catalog](./glossary.md#agent-catalog)',
+    'Merge the [agent catalog](../vector-apps/glossary.md#agent-catalog)',
     "Keep the server's app registry",
     'Check the token',
     'Receive connector events',
@@ -98,13 +98,13 @@ test('leaves deferred fields undocumented', () => {
 test('links each glossary term at first use only', () => {
   for (const term of ['manifest', 'Vector Space', 'capability', 'model slot', 'connector slot']) {
     const slug = term.toLowerCase().replaceAll(' ', '-');
-    const links = text.split(`](./glossary.md#${slug})`).length - 1;
+    const links = text.split(`](../vector-apps/glossary.md#${slug})`).length - 1;
     assert.equal(links, 1, `${term} linked ${links} times`);
   }
 });
 
 test('links the builder', () => {
-  assert.match(text, /\]\(\/builder\)/);
+  assert.match(text, /\]\(\/sdk\/builder\)/);
 });
 
 test('follows the writing standard', () => {

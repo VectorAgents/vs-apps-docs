@@ -1,6 +1,6 @@
 # Internal glossary
 
-Terms only the Vector team needs. Docusaurus does not publish this file. A term lives here or in `docs/glossary.md`, never in both. See `.agents/domain.md` for the publish rule.
+Terms only the Vector team needs. Docusaurus does not publish this file. A term lives here or in `docs/vector-apps/glossary.md`, never in both. See `.agents/domain.md` for the publish rule.
 
 ## Terms
 

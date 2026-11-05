@@ -7,7 +7,7 @@ import { combinations } from './generate.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const titleRoots = /^(client|server|shared)\//;
-const titleFolders = /^(recipes|guides)\//;
+const titleFolders = /^vector-apps\/(recipes|guides)\//;
 const codeBlock = /^```(ts|tsx)\b([^\n]*)\n([\s\S]*?)^```/gm;
 
 /** True when the code block meta has the `starter` word outside its title. */

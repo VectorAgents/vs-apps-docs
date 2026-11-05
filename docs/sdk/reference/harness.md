@@ -2,7 +2,7 @@
 title: Harness reference
 ---
 
-Reference for `@vectoragents/vs-apps/react/harness` 0.4.0. The [harness](../glossary.md#harness) is a local stand-in for [Vector Space](../glossary.md#vector-space). The starter includes the harness already wired. This page is the manual-wiring guide for an app that is not built from the starter. An app does not need the harness to ship.
+Reference for `@vectoragents/vs-apps/react/harness` 0.4.0. The [harness](../../vector-apps/glossary.md#harness) is a local stand-in for [Vector Space](../../vector-apps/glossary.md#vector-space). The starter includes the harness already wired. This page is the manual-wiring guide for an app that is not built from the starter. An app does not need the harness to ship.
 
 Every symbol below follows one layout: signature, behaviour, example. Each example is a complete file and is typechecked against the installed package.
 
@@ -25,7 +25,7 @@ function VectorAppsHarness(): JSX.Element;
 
 ### Behaviour
 
-- Fetches `/api/__dev/manifests` from the app server to build the sidebar of apps and [app pages](../glossary.md#app-page).
+- Fetches `/api/__dev/manifests` from the app server to build the sidebar of apps and [app pages](../../vector-apps/glossary.md#app-page).
 - Mints a token for the chosen identity and capabilities through `POST /api/__dev/token`, and sends it to the iframe. Changing the capability set in the dev panel re-mints it.
 - Shows an error with the `VA_DEV_ISSUER=true` hint when the manifests request fails.
 - Keeps the selected app, page, capabilities, theme and identity in the page query string, so a reload restores them.
@@ -77,7 +77,7 @@ Returns status `200` and a JSON array with one entry per app in the server. The 
 | --- | --- | --- |
 | `appKey` | string | The `key` of the app definition. |
 | `appId` | UUID | The fixed dev id, `DEV_APP_ID` from `@vectoragents/vs-apps`. |
-| `manifest` | object | The [manifest](../glossary.md#manifest) that `buildManifests` returns for the app. |
+| `manifest` | object | The [manifest](../../vector-apps/glossary.md#manifest) that `buildManifests` returns for the app. |
 
 ### `POST /api/__dev/token`
 

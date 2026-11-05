@@ -49,7 +49,7 @@ test('a file-embedded code block is typechecked as pasted', () => {
 });
 
 test('the examples page embeds both files and the build check covers them', () => {
-  const page = readFileSync(join(root, 'docs/examples.md'), 'utf8');
+  const page = readFileSync(join(root, 'docs/sdk/examples.md'), 'utf8');
   for (const { file } of examples) assert.match(page, new RegExp(`file="${file}"`));
   assert.equal(checkSnippets({ stampFile: join(mkdtempSync(join(tmpdir(), 'st-')), 's.json') }).ok, true);
 });

@@ -19,7 +19,7 @@ npm create @vectoragents/app leads-app -- --client react --server node --start l
 cd leads-app
 ```
 
-- Background: [`defineAgentPage`](../reference/root.md#defineagentpage), and [`useAgentAction`](../reference/react.md). `AppProvider` already mounts the action registry.
+- Background: [`defineAgentPage`](../../sdk/reference/root.md#defineagentpage), and [`useAgentAction`](../../sdk/reference/react.md). `AppProvider` already mounts the action registry.
 
 ## Steps
 

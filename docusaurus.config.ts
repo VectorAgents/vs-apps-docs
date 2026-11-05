@@ -41,7 +41,9 @@ const config: Config = {
     navbar: {
       title: 'Vector Apps docs',
       items: [
-        { to: '/builder', label: 'Definition builder', position: 'left' },
+        { type: 'docSidebar', sidebarId: 'vectorApps', label: 'Vector Apps', position: 'left' },
+        { type: 'docSidebar', sidebarId: 'sdk', label: 'vs-apps SDK', position: 'left' },
+        { to: '/sdk/builder', label: 'Definition builder', position: 'left' },
         { type: 'custom-flavourPicker', position: 'right' },
         { type: 'html', position: 'right', value: `<span class="sdk-version">@vectoragents/vs-apps ${sdkVersion}</span>` },
       ],

@@ -4,7 +4,7 @@ import { test } from 'node:test';
 import { section, treesOf } from './page-helpers.mjs';
 
 const read = (name) => {
-  const url = new URL(`../docs/reference/${name}.md`, import.meta.url);
+  const url = new URL(`../docs/sdk/reference/${name}.md`, import.meta.url);
   return existsSync(url) ? readFileSync(url, 'utf8') : '';
 };
 
@@ -25,7 +25,7 @@ test('the description sentence states SDK guarantees only', () => {
   assert.match(read('root'), /reports the mounted actions/);
 });
 
-const serverTrees = treesOf('reference/server.md');
+const serverTrees = treesOf('sdk/reference/server.md');
 const serverTree = (name) => serverTrees.find(({ tree }) => tree === name).text;
 
 test('the server reference is emitted once for each server', () => {
@@ -52,5 +52,5 @@ test('the server reference documents pingManifests', () => {
     assert.ok(ping.includes(term), term);
   }
   assert.match(ping, /never throws/i);
-  assert.match(text, /\]\((\.\.\/)+glossary\.md#manifest\)/);
+  assert.match(text, /\]\((\.\.\/)+vector-apps\/glossary\.md#manifest\)/);
 });

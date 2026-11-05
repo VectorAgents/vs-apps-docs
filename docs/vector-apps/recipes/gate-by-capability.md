@@ -28,7 +28,7 @@ cd leads-app
 <!-- /flavour -->
 
 - A member who holds the capability and one who does not. A [space manager](../glossary.md#space-manager) [grants](../glossary.md#capability-grant) capabilities in [Vector Space](../glossary.md#vector-space).
-- Background: [`RequireCapability` on the client](../reference/react.md#react-requirecapability).
+- Background: [`RequireCapability` on the client](../../sdk/reference/react.md#react-requirecapability).
 
 ## Steps
 
@@ -136,7 +136,7 @@ Run `npm run dev` and open `http://localhost:5173/harness.html`. Choose the Lead
 
 In the dev panel, remove `lead:manage` from the capability set. The app page shows the fallback text. Add `lead:manage` back, and the app page shows the heading.
 
-For the server, mint a development token without `lead:manage` through the [harness token route](../reference/harness.md). Call `GET /api/leads` with it. The server answers `403` with `Missing capability: lead:manage`. A token that holds the capability gets `200`.
+For the server, mint a development token without `lead:manage` through the [harness token route](../../sdk/reference/harness.md). Call `GET /api/leads` with it. The server answers `403` with `Missing capability: lead:manage`. A token that holds the capability gets `200`.
 
 <!-- flavour react -->
 ### 5. Share one fallback across app pages

@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { test } from 'node:test';
 
-const quickstartPage = 'quickstart.md';
+const quickstartPage = 'vector-apps/quickstart.md';
 
 // `allow` is the path prefix of the pages that may use a term.
 const banned = [
@@ -30,13 +30,13 @@ test('published pages name no stack outside the baseline', () => {
 });
 
 test('Nest terms are allowed on any page', () => {
-  assert.deepEqual(bannedIn('uses NestJS, @nestjs/core, @Injectable, @Controller and experimentalDecorators', 'guides/page.md'), []);
-  assert.deepEqual(bannedIn("import from '@vectoragents/vs-apps/nest'", 'recipes/page.md'), []);
+  assert.deepEqual(bannedIn('uses NestJS, @nestjs/core, @Injectable, @Controller and experimentalDecorators', 'vector-apps/guides/page.md'), []);
+  assert.deepEqual(bannedIn("import from '@vectoragents/vs-apps/nest'", 'vector-apps/recipes/page.md'), []);
 });
 
 test('only the quickstart may name Vite', () => {
   assert.deepEqual(bannedIn('uses Vite', quickstartPage), []);
-  assert.notDeepEqual(bannedIn('uses Vite', 'guides/page.md'), []);
+  assert.notDeepEqual(bannedIn('uses Vite', 'vector-apps/guides/page.md'), []);
 });
 
 test('guard flags each banned term and allows npm', () => {

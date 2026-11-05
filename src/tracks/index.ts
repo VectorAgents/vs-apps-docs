@@ -18,8 +18,8 @@ export const tracks: Track[] = [
     title: 'Hello world app',
     goal: 'Run hello world in a space, then add an app page that a capability gates.',
     steps: [
-      { label: 'Quickstart', to: '/quickstart' },
-      { label: 'Add an app page and a capability', to: '/recipes/add-page-and-capability' },
+      { label: 'Quickstart', to: '/vector-apps/quickstart' },
+      { label: 'Add an app page and a capability', to: '/vector-apps/recipes/add-page-and-capability' },
     ],
   },
   {
@@ -27,9 +27,9 @@ export const tracks: Track[] = [
     title: 'Build an app definition',
     goal: 'Write an app definition from a form or a working example.',
     steps: [
-      { label: 'App definition', to: '/app-definition' },
-      { label: 'Definition builder', to: '/builder' },
-      { label: 'Example app definitions', to: '/examples' },
+      { label: 'App definition', to: '/sdk/app-definition' },
+      { label: 'Definition builder', to: '/sdk/builder' },
+      { label: 'Example app definitions', to: '/sdk/examples' },
     ],
   },
   {
@@ -37,10 +37,10 @@ export const tracks: Track[] = [
     title: 'Gate by capability',
     goal: 'Limit app pages, navigation and server routes to users who hold a capability.',
     steps: [
-      { label: 'Quickstart', to: '/quickstart' },
-      { label: 'Add an app page and a capability', to: '/recipes/add-page-and-capability' },
-      { label: 'Gate an app page and an endpoint by capability', to: '/recipes/gate-by-capability' },
-      { label: 'Filter navigation by capability', to: '/guides/filter-navigation-by-capability' },
+      { label: 'Quickstart', to: '/vector-apps/quickstart' },
+      { label: 'Add an app page and a capability', to: '/vector-apps/recipes/add-page-and-capability' },
+      { label: 'Gate an app page and an endpoint by capability', to: '/vector-apps/recipes/gate-by-capability' },
+      { label: 'Filter navigation by capability', to: '/vector-apps/guides/filter-navigation-by-capability' },
     ],
   },
   {
@@ -48,8 +48,8 @@ export const tracks: Track[] = [
     title: 'Expose agent actions',
     goal: 'Let the space agent call an action on your app page while the app page is open.',
     steps: [
-      { label: 'Quickstart', to: '/quickstart' },
-      { label: 'Expose agent actions on an app page', to: '/recipes/expose-agent-actions' },
+      { label: 'Quickstart', to: '/vector-apps/quickstart' },
+      { label: 'Expose agent actions on an app page', to: '/vector-apps/recipes/expose-agent-actions' },
     ],
   },
 ];

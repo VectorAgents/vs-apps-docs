@@ -9,15 +9,15 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const gen = join(root, 'docs-gen');
 const { pages } = JSON.parse(readFileSync(join(gen, 'flavours.json'), 'utf8'));
 
-// Pages whose body is React-specific. reference/browser stays neutral: the /browser subpath has no React code.
+// Pages whose body is React-specific. sdk/reference/browser stays neutral: the /browser subpath has no React code.
 const clientOnly = [
-  'recipes/add-page-and-capability',
-  'recipes/read-app-context',
-  'recipes/list-members',
-  'guides/filter-navigation-by-capability',
-  'reference/react',
+  'vector-apps/recipes/add-page-and-capability',
+  'vector-apps/recipes/read-app-context',
+  'vector-apps/recipes/list-members',
+  'vector-apps/guides/filter-navigation-by-capability',
+  'sdk/reference/react',
 ];
-const neutral = ['reference/browser', 'reference/root', 'glossary', 'app-definition', 'examples'];
+const neutral = ['sdk/reference/browser', 'sdk/reference/root', 'vector-apps/glossary', 'sdk/app-definition', 'sdk/examples'];
 
 for (const name of clientOnly) {
   test(`${name} is client-only: one react tree, one site page with only a client block`, () => {

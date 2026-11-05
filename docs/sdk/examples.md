@@ -2,13 +2,13 @@
 title: Example app definitions
 ---
 
-Two complete [app definitions](./glossary.md#app-definition) to copy into your own project: a sales outreach app with several [app pages](./glossary.md#app-page) and a customer support app with [connector slots](./glossary.md#connector-slot) for messaging services.
+Two complete [app definitions](../vector-apps/glossary.md#app-definition) to copy into your own project: a sales outreach app with several [app pages](../vector-apps/glossary.md#app-page) and a customer support app with [connector slots](../vector-apps/glossary.md#connector-slot) for messaging services.
 
 Prerequisites: `@vectoragents/vs-apps` 0.4.0 installed. Copy one file into your project as `src/app.definition.ts`.
 
 ## Sales outreach app: pages, capabilities and a model slot
 
-Four app pages, each gated by one [capability](./glossary.md#capability), and one [model slot](./glossary.md#model-slot) the space manager points at a model.
+Four app pages, each gated by one [capability](../vector-apps/glossary.md#capability), and one [model slot](../vector-apps/glossary.md#model-slot) the space manager points at a model.
 
 ```ts title="src/app.definition.ts" file="src/examples/sdr.definition.ts"
 ```
@@ -25,5 +25,5 @@ Two model slots and two connector slots. Each connector declares `eventHandlers`
 Each file passes `defineApp` as pasted, so change only the `key`, page paths and slot keys to match your app.
 
 - [App definition](./app-definition.md): learn what each field does.
-- [Recipes](/category/recipes): add a page, a capability or an agent action to your app.
-- [Definition builder](/builder): load an example and edit it in a form.
+- [Recipes](/vector-apps/category/recipes): add a page, a capability or an agent action to your app.
+- [Definition builder](/sdk/builder): load an example and edit it in a form.

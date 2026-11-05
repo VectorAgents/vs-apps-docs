@@ -116,12 +116,12 @@ test('tree: fails for each listed path that is missing from the starter', () => 
 });
 
 test('the real page has a tree that checkTree can read', () => {
-  const real = readFileSync(new URL('../docs/quickstart.md', import.meta.url), 'utf8');
+  const real = readFileSync(new URL('../docs/vector-apps/quickstart.md', import.meta.url), 'utf8');
   const paths = pageTreePaths(real);
   for (const path of ['.env.example', 'client/harness.html', 'server/src/auth.ts', 'shared/src/index.ts']) assert.ok(paths.includes(path), path);
 });
 
-const real = readFileSync(new URL('../docs/quickstart.md', import.meta.url), 'utf8');
+const real = readFileSync(new URL('../docs/vector-apps/quickstart.md', import.meta.url), 'utf8');
 const runStep = (text) => ['### 2. Run the app in the harness', '', text, ''].join('\n');
 
 test('ports: passes when the run step names the starter server and client ports', () => {
@@ -198,7 +198,7 @@ test('env example: the real page origins are in the starter example', () => {
 
 const envStarter = (example) => starter({ '.env.example': example });
 const codeBlock = (lang, ...lines) => ['```' + lang, ...lines, '```'].join('\n');
-const docPage = (...parts) => ({ 'docs/guides/x.md': parts.join('\n\n') });
+const docPage = (...parts) => ({ 'docs/vector-apps/guides/x.md': parts.join('\n\n') });
 
 test('env vars: pass when inline code and process.env names are in the starter .env.example', () => {
   const pages = docPage('Set `SPACE_API_URL` in `.env`.', codeBlock('ts', 'const u = process.env.PUBLIC_BASE_URL;'));
@@ -208,7 +208,7 @@ test('env vars: pass when inline code and process.env names are in the starter .
 test('env vars: fail for an inline-code name the starter lacks, and name the page and the variable', () => {
   const problems = checkEnvVars(docPage('Set `SPACE_BASE_URL` in `.env`.'), envStarter('SPACE_API_URL=a\n'));
   assert.equal(problems.length, 1);
-  assert.match(problems[0], /docs\/guides\/x\.md/);
+  assert.match(problems[0], /docs\/vector-apps\/guides\/x\.md/);
   assert.match(problems[0], /SPACE_BASE_URL/);
 });
 
@@ -223,7 +223,7 @@ test('env vars: a name that the page assigns in a shell code block needs no star
 });
 
 test('env vars: a name that another page assigns does not count', () => {
-  const pages = { ...docPage('Read `MODEL_API_KEY`.'), 'docs/guides/y.md': codeBlock('bash', 'MODEL_API_KEY=1') };
+  const pages = { ...docPage('Read `MODEL_API_KEY`.'), 'docs/vector-apps/guides/y.md': codeBlock('bash', 'MODEL_API_KEY=1') };
   assert.equal(checkEnvVars(pages, envStarter('')).length, 1);
 });
 
@@ -238,7 +238,7 @@ test('env vars: placeholders in code blocks, error codes and plain words are not
 });
 
 test('env vars: the real pages use names that the extractor finds', () => {
-  const names = usedEnvNames(readFileSync(new URL('../docs/guides/call-space-from-your-server.md', import.meta.url), 'utf8'));
+  const names = usedEnvNames(readFileSync(new URL('../docs/vector-apps/guides/call-space-from-your-server.md', import.meta.url), 'utf8'));
   assert.ok(names.includes('SPACE_API_URL'));
 });
 
@@ -275,7 +275,7 @@ function fakeScaffold(projects = {}) {
   return { scaffold, calls };
 }
 
-const record = (over = {}) => ({ source: 'quickstart.md', path: 'docs/quickstart.md', text: page, pair: { client: 'react', server: 'node' }, start: 'hello', ...over });
+const record = (over = {}) => ({ source: 'vector-apps/quickstart.md', path: 'docs/vector-apps/quickstart.md', text: page, pair: { client: 'react', server: 'node' }, start: 'hello', ...over });
 const noPages = { pages: [] };
 const run = (over = {}) => main({ env: { STARTER_DIR: starterRepo() }, config, manifest: noPages, pages: [record()], sdkVersion: '0.2.4', ...fakeScaffold(), ...silent, ...over });
 
@@ -308,18 +308,18 @@ test('main: a pair whose flavour has no template is not scaffolded', async () =>
 
 test('main: a page that asks for the overlay is checked against the overlay project', async () => {
   const { scaffold, calls } = fakeScaffold({ 'react+node+leads-app': { 'client/src/LeadsPage.tsx': 'export {};\n' } });
-  const leads = record({ source: 'guides/leads.md', path: 'docs/guides/leads.md', start: 'leads-app', text: '```tsx title="client/src/LeadsPage.tsx" starter\nexport {};\n```\n' });
+  const leads = record({ source: 'vector-apps/guides/leads.md', path: 'docs/vector-apps/guides/leads.md', start: 'leads-app', text: '```tsx title="client/src/LeadsPage.tsx" starter\nexport {};\n```\n' });
   assert.equal(await run({ scaffold, pages: [leads] }), 0);
   assert.ok(calls.includes('react+node+leads-app'));
-  const stale = record({ source: 'guides/leads.md', path: 'docs/guides/leads.md', start: 'leads-app', text: '```tsx title="client/src/LeadsPage.tsx" starter\nother\n```\n' });
+  const stale = record({ source: 'vector-apps/guides/leads.md', path: 'docs/vector-apps/guides/leads.md', start: 'leads-app', text: '```tsx title="client/src/LeadsPage.tsx" starter\nother\n```\n' });
   assert.equal(await run({ scaffold, pages: [stale] }), 1);
 });
 
 test('main: problems name the page and the pair', async () => {
   const errors = [];
-  const stale = record({ path: 'docs-gen/pairs/react/nest/quickstart.md', pair: { client: 'react', server: 'nest' }, text: page.replace('port 3101', 'port 3001') });
+  const stale = record({ path: 'docs-gen/pairs/react/nest/vector-apps/quickstart.md', pair: { client: 'react', server: 'nest' }, text: page.replace('port 3101', 'port 3001') });
   assert.equal(await run({ pages: [stale], error: (m) => errors.push(m) }), 1);
-  assert.match(errors.join('\n'), /docs-gen\/pairs\/react\/nest\/quickstart\.md \(react\+nest\).*port 3101/);
+  assert.match(errors.join('\n'), /docs-gen\/pairs\/react\/nest\/vector-apps\/quickstart\.md \(react\+nest\).*port 3101/);
 });
 
 test('main: every pair is checked for the SDK pin, even without a page', async () => {
@@ -340,7 +340,7 @@ test('main: a CLI failure exits 1 and names the pair', async () => {
 });
 
 test('main: the flavour-set drift check fails the run', async () => {
-  const manifest = { pages: [{ source: 'recipes/x.md', axes: ['server'], trees: [{ flavours: { server: 'node' } }, { flavours: { server: 'nest' } }] }] };
+  const manifest = { pages: [{ source: 'vector-apps/recipes/x.md', axes: ['server'], trees: [{ flavours: { server: 'node' } }, { flavours: { server: 'nest' } }] }] };
   assert.equal(await run({ manifest, env: { STARTER_DIR: starterRepo(['client-react', 'server-node']) } }), 1);
   assert.equal(await run({ manifest }), 0);
 });
@@ -356,36 +356,36 @@ test('main: a page with a stale SDK version exits 1', async () => {
 
 test('main: only recipes and guides are checked for env vars', async () => {
   const text = 'Set `SPACE_BASE_URL`.';
-  assert.equal(await run({ pages: [record({ source: 'guides/x.md', path: 'docs/guides/x.md', text })] }), 1);
-  assert.equal(await run({ pages: [record({ source: 'reference/x.md', path: 'docs/reference/x.md', text })] }), 0);
+  assert.equal(await run({ pages: [record({ source: 'vector-apps/guides/x.md', path: 'docs/vector-apps/guides/x.md', text })] }), 1);
+  assert.equal(await run({ pages: [record({ source: 'sdk/reference/x.md', path: 'docs/sdk/reference/x.md', text })] }), 0);
 });
 
 test('main: the run step is checked on the quickstart only', async () => {
-  const stale = record({ source: 'guides/x.md', path: 'docs/guides/x.md', text: runStep('port 1.') });
+  const stale = record({ source: 'vector-apps/guides/x.md', path: 'docs/vector-apps/guides/x.md', text: runStep('port 1.') });
   assert.equal(await run({ pages: [stale] }), 0);
 });
 
 test('page versions: passes when every SDK version string on the pages is the installed version', () => {
   const pages = {
-    'docs/quickstart.md': '└── @vectoragents/vs-apps@0.2.4 deduped',
-    'docs/reference/harness.md': 'Reference for `@vectoragents/vs-apps/react/harness` 0.2.4.',
+    'docs/vector-apps/quickstart.md': '└── @vectoragents/vs-apps@0.2.4 deduped',
+    'docs/sdk/reference/harness.md': 'Reference for `@vectoragents/vs-apps/react/harness` 0.2.4.',
   };
   assert.deepEqual(checkPageVersions(pages, '0.2.4'), []);
 });
 
 test('page versions: fails for each string that names another version', () => {
   const pages = {
-    'docs/quickstart.md': '├── @vectoragents/vs-apps@0.2.3\n└── @vectoragents/vs-apps@0.2.4',
-    'docs/reference/harness.md': 'Reference for `@vectoragents/vs-apps/react/harness` 0.2.3.',
+    'docs/vector-apps/quickstart.md': '├── @vectoragents/vs-apps@0.2.3\n└── @vectoragents/vs-apps@0.2.4',
+    'docs/sdk/reference/harness.md': 'Reference for `@vectoragents/vs-apps/react/harness` 0.2.3.',
   };
   const problems = checkPageVersions(pages, '0.2.4');
   assert.equal(problems.length, 2);
-  assert.match(problems[0], /docs\/quickstart\.md/);
-  assert.match(problems[1], /docs\/reference\/harness\.md/);
+  assert.match(problems[0], /docs\/vector-apps\/quickstart\.md/);
+  assert.match(problems[1], /docs\/sdk\/reference\/harness\.md/);
 });
 
 test('page versions: the real quickstart and harness pages name the installed version', () => {
-  const pages = Object.fromEntries(['quickstart.md', 'reference/harness.md'].map((file) => [file, readFileSync(new URL(`../docs/${file}`, import.meta.url), 'utf8')]));
+  const pages = Object.fromEntries(['vector-apps/quickstart.md', 'sdk/reference/harness.md'].map((file) => [file, readFileSync(new URL(`../docs/${file}`, import.meta.url), 'utf8')]));
   assert.deepEqual(checkPageVersions(pages, installedSdkVersion()), []);
 });
 
@@ -400,10 +400,10 @@ const templates = [
   { row: 'server', name: 'node' },
   { row: 'server', name: 'nest' },
 ];
-const serverPage = flavourPage('guides/x.md', ['server'], [{ server: 'node' }, { server: 'nest' }]);
+const serverPage = flavourPage('vector-apps/guides/x.md', ['server'], [{ server: 'node' }, { server: 'nest' }]);
 
 test('flavour set: passes when templates and the flavours of every flavoured page match', () => {
-  assert.deepEqual(checkFlavourSet([serverPage, flavourPage('quickstart.md', ['client', 'server'], [{ client: 'react', server: 'node' }, { client: 'react', server: 'nest' }])], templates), []);
+  assert.deepEqual(checkFlavourSet([serverPage, flavourPage('vector-apps/quickstart.md', ['client', 'server'], [{ client: 'react', server: 'node' }, { client: 'react', server: 'nest' }])], templates), []);
 });
 
 test('flavour set: fails when a flavour a page names has no template', () => {
@@ -413,14 +413,14 @@ test('flavour set: fails when a flavour a page names has no template', () => {
 });
 
 test('flavour set: fails when a server template has no block or todo on a flavoured page', () => {
-  const only = flavourPage('guides/x.md', ['server'], [{ server: 'node' }]);
+  const only = flavourPage('vector-apps/guides/x.md', ['server'], [{ server: 'node' }]);
   const problems = checkFlavourSet([only], templates);
   assert.equal(problems.length, 1);
   assert.match(problems[0], /server-nest.*no block or todo.*guides\/x\.md/);
 });
 
 test('flavour set: a template of an axis the page does not use needs no block', () => {
-  const clientOnly = flavourPage('recipes/y.md', ['client'], [{ client: 'react' }]);
+  const clientOnly = flavourPage('vector-apps/recipes/y.md', ['client'], [{ client: 'react' }]);
   assert.deepEqual(checkFlavourSet([clientOnly], templates), []);
 });
 
@@ -463,30 +463,30 @@ function docsRoot(files) {
 
 test('pages: neutral pages take the default pair and their own start; flavoured pages come from the pair copies', () => {
   const root = docsRoot({
-    'docs/quickstart.md': 'quick',
-    'docs/reference/harness.md': 'harness',
-    'docs/recipes/a.md': '---\nstart: leads-app\n---\nrecipe',
-    'docs/guides/x.md': 'flavoured source',
-    'docs-gen/pairs/react/nest/guides/x.md': 'nest tree',
-    'docs-gen/pairs/react/node/guides/x.md': 'node tree',
+    'docs/vector-apps/quickstart.md': 'quick',
+    'docs/sdk/reference/harness.md': 'harness',
+    'docs/vector-apps/recipes/a.md': '---\nstart: leads-app\n---\nrecipe',
+    'docs/vector-apps/guides/x.md': 'flavoured source',
+    'docs-gen/pairs/react/nest/vector-apps/guides/x.md': 'nest tree',
+    'docs-gen/pairs/react/node/vector-apps/guides/x.md': 'node tree',
   });
-  const manifest = { pages: [flavourPage('guides/x.md', ['server'], [{ server: 'node' }, { server: 'nest' }])] };
+  const manifest = { pages: [flavourPage('vector-apps/guides/x.md', ['server'], [{ server: 'node' }, { server: 'nest' }])] };
   const pages = readPages({ root, config, manifest });
   const by = (path) => pages.find((p) => p.path === path);
   assert.equal(pages.length, 5);
-  assert.deepEqual(by('docs/recipes/a.md').pair, { client: 'react', server: 'node' });
-  assert.equal(by('docs/recipes/a.md').start, 'leads-app');
-  assert.equal(by('docs/quickstart.md').start, 'hello');
-  assert.equal(by('docs-gen/pairs/react/nest/guides/x.md').text, 'nest tree');
-  assert.deepEqual(by('docs-gen/pairs/react/nest/guides/x.md').pair, { client: 'react', server: 'nest' });
-  assert.equal(by('docs-gen/pairs/react/nest/guides/x.md').source, 'guides/x.md');
-  assert.equal(pages.some((p) => p.path === 'docs/guides/x.md'), false);
+  assert.deepEqual(by('docs/vector-apps/recipes/a.md').pair, { client: 'react', server: 'node' });
+  assert.equal(by('docs/vector-apps/recipes/a.md').start, 'leads-app');
+  assert.equal(by('docs/vector-apps/quickstart.md').start, 'hello');
+  assert.equal(by('docs-gen/pairs/react/nest/vector-apps/guides/x.md').text, 'nest tree');
+  assert.deepEqual(by('docs-gen/pairs/react/nest/vector-apps/guides/x.md').pair, { client: 'react', server: 'nest' });
+  assert.equal(by('docs-gen/pairs/react/nest/vector-apps/guides/x.md').source, 'vector-apps/guides/x.md');
+  assert.equal(pages.some((p) => p.path === 'docs/vector-apps/guides/x.md'), false);
 });
 
 test('pages: a flavoured page without a generated pair copy is an error', () => {
-  const root = docsRoot({ 'docs/quickstart.md': 'quick', 'docs/reference/harness.md': 'harness' });
-  const manifest = { pages: [flavourPage('guides/x.md', ['server'], [{ server: 'node' }])] };
-  assert.throws(() => readPages({ root, config, manifest }), /node\/guides\/x\.md/);
+  const root = docsRoot({ 'docs/vector-apps/quickstart.md': 'quick', 'docs/sdk/reference/harness.md': 'harness' });
+  const manifest = { pages: [flavourPage('vector-apps/guides/x.md', ['server'], [{ server: 'node' }])] };
+  assert.throws(() => readPages({ root, config, manifest }), /node\/vector-apps\/guides\/x\.md/);
 });
 
 // STARTER_DIR names a starter checkout; the CLI runs for real.
@@ -502,7 +502,7 @@ test('the real CLI and templates pass main for a flavoured page that asks for th
   const starterDir = process.env.STARTER_DIR;
   const excerpt = readFileSync(join(starterDir, 'overlays/leads-app/client/src/LeadsPage.tsx'), 'utf8').split('\n').slice(0, 3).join('\n');
   const text = `---\nstart: leads-app\n---\n\`\`\`tsx title="client/src/LeadsPage.tsx" starter\n${excerpt}\n\`\`\`\n`;
-  const pages = ['node', 'nest'].map((server) => record({ source: 'guides/leads.md', path: `docs-gen/pairs/react/${server}/guides/leads.md`, pair: { client: 'react', server }, start: startOf(text), text }));
-  const manifest = { pages: [flavourPage('guides/leads.md', ['client', 'server'], [{ client: 'react', server: 'node' }, { client: 'react', server: 'nest' }])] };
+  const pages = ['node', 'nest'].map((server) => record({ source: 'vector-apps/guides/leads.md', path: `docs-gen/pairs/react/${server}/vector-apps/guides/leads.md`, pair: { client: 'react', server }, start: startOf(text), text }));
+  const manifest = { pages: [flavourPage('vector-apps/guides/leads.md', ['client', 'server'], [{ client: 'react', server: 'node' }, { client: 'react', server: 'nest' }])] };
   assert.equal(await main({ env: { STARTER_DIR: starterDir }, config, manifest, pages, ...silent }), 0);
 });
