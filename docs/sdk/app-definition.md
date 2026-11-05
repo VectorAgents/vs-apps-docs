@@ -154,7 +154,7 @@ export const definition = defineApp({
 
 ### Resources
 
-`resources` is optional and declares what the app needs from each space: modules, model slots and connector slots. Each of `modules`, `models` and `connectors` is optional. Unknown keys are rejected. Each slot or module `key` is unique within its list.
+`resources` is optional and declares what the app needs from each space: modules, model slots and connector slots. Each of `modules`, `models` and `connectors` is optional. Unknown keys are rejected. Each slot or module `key` is unique within its list. The closed lists that these fields accept, such as connector providers, are on the [platform limits](./reference/platform-limits.md) page.
 
 ```ts title="src/app.definition.ts"
 import { defineApp } from '@vectoragents/vs-apps';

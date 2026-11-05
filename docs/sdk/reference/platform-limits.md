@@ -4,7 +4,7 @@ title: Platform limits
 
 Reference for the closed lists of `@vectoragents/vs-apps` 0.4.0. A closed list is a fixed set of values. Other pages name the kind of value and link here, so this page is the only place that holds a list.
 
-Each list below carries the SDK version it holds for. A later version can add or remove a value. [`defineApp`](../app-definition.md) rejects a value that is not in the list of its version, except where a section says otherwise.
+Each list below carries the version of the [SDK](../../vector-apps/glossary.md#sdk) it holds for. A later version can add or remove a value. [`defineApp`](../app-definition.md) rejects a value that is not in the list of its version, except where a section says otherwise.
 
 ## Connector providers
 
@@ -14,7 +14,7 @@ Holds for `@vectoragents/vs-apps` 0.4.0. The value of `provider` in each entry o
 | --- | --- |
 | `REST` | A REST API |
 | `GRAPHQL` | A GraphQL API |
-| `MCP` | A Model Context Protocol (MCP) server |
+| `MCP` | A [Model Context Protocol (MCP)](../../vector-apps/glossary.md#mcp) server |
 | `GOOGLE` | Google |
 | `CLICKUP` | ClickUp |
 | `EXA` | Exa |
@@ -26,7 +26,7 @@ Holds for `@vectoragents/vs-apps` 0.4.0. The value of `provider` in each entry o
 
 ## Meta messaging services
 
-Holds for `@vectoragents/vs-apps` 0.4.0. The service of a `META` connector. The list of connectors that Vector Space returns to your server reports it in the `service` field. The field is `null` for every other provider.
+Holds for `@vectoragents/vs-apps` 0.4.0. The service of a `META` connector. The list of connectors that [Vector Space](../../vector-apps/glossary.md#vector-space) returns to your server reports it in the `service` field. The field is `null` for every other provider.
 
 `defineApp` does not read this list, because a definition cannot name a service.
 
@@ -60,7 +60,7 @@ Holds for `@vectoragents/vs-apps` 0.4.0. The value of `modality` in each entry o
 
 ## Capability filters
 
-Holds for `@vectoragents/vs-apps` 0.4.0. The values of `capabilities` in each entry of `resources.models[]`. Each value narrows the models that a space manager can choose for the slot. These are model abilities, not app [capabilities](../../vector-apps/glossary.md#capability).
+Holds for `@vectoragents/vs-apps` 0.4.0. The values of `capabilities` in each entry of `resources.models[]`. Each value narrows the models that a [space manager](../../vector-apps/glossary.md#space-manager) can choose for the slot. These are model abilities, not app [capabilities](../../vector-apps/glossary.md#capability).
 
 A model passes a filter unless Vector Space records that the model lacks the ability. A model with no record for an ability passes.
 
