@@ -2,7 +2,7 @@
 title: Example app definitions
 ---
 
-Two complete [app definitions](../vector-apps/glossary.md#app-definition) to copy into your own project: a sales outreach app with several [app pages](../vector-apps/glossary.md#app-page) and a customer support app with [connector slots](../vector-apps/glossary.md#connector-slot) for messaging services.
+Two complete [app definitions](./glossary.md#app-definition) to copy into your own project: a sales outreach app with several [app pages](../vector-apps/glossary.md#app-page) and a customer support app with [connector slots](../vector-apps/glossary.md#connector-slot) for messaging services.
 
 Prerequisites: `@vectoragents/vs-apps` 0.4.0 installed. Copy one file into your project as `src/app.definition.ts`.
 

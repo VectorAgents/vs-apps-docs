@@ -7,7 +7,7 @@ Show who is signed in, branch on a [capability](../glossary.md#capability) and r
 
 ## Goal
 
-End with a header component that reads the verified user, the [space](../glossary.md#space) and the capabilities from `useApp`.
+End with a header component that reads the verified user, the [space](../../vector-space/glossary.md#space) and the capabilities from `useApp`.
 
 ## Prerequisites
 

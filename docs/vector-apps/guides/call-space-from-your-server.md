@@ -3,13 +3,13 @@ title: Call Vector Space from your server
 start: leads-app
 ---
 
-Make your server call [Vector Space](../glossary.md#vector-space) in two ways: as the signed-in user, and as the app itself.
+Make your server call [Vector Space](../../vector-space/glossary.md#vector-space) in two ways: as the signed-in user, and as the app itself.
 
 <!-- flavour node -->
-Both use the `@vectoragents/vs-apps/server` subpath of the [SDK](../glossary.md#sdk) on a plain `node:http` server.
+Both use the `@vectoragents/vs-apps/server` subpath of the [SDK](../../sdk/glossary.md#sdk) on a plain `node:http` server.
 <!-- /flavour -->
 <!-- flavour nest -->
-Both use the `@vectoragents/vs-apps/nest` subpath of the [SDK](../glossary.md#sdk) on a Nest.js server.
+Both use the `@vectoragents/vs-apps/nest` subpath of the [SDK](../../sdk/glossary.md#sdk) on a Nest.js server.
 <!-- /flavour -->
 
 A call as the user carries the user's token, so Vector Space limits it to what that user may do. A call as the app carries a short-lived token that Vector Space issues in exchange for a [service secret](../glossary.md#service-secret). Vector Space limits it to what the app may do, with no user present.
@@ -55,7 +55,7 @@ The app platform of the starter, `platform` in `server/src/platform.ts`, holds t
 - `platform.spaceActions` has one method for each Vector Space action. Each method takes a bearer token as its first argument.
 - `platform.s2s(appId, spaceId)` exchanges the service secret for a short-lived [app token](../glossary.md#app-token). It asks the store for the secret on every exchange and caches only the token.
 
-The store of the starter keeps the secrets in memory and loses them on restart. `AppCredentialStore` is the one interface you implement over your own storage, so plan a persistent store before production. After a restart, `platform.s2s` fails until the binding secret is rotated in Vector Space, which pushes it again.
+The store of the starter keeps the secrets in memory and loses them on restart. `AppCredentialStore` is the one interface you implement over your own storage, so plan a persistent store before production. After a restart, `platform.s2s` fails until the secret of the [binding](../glossary.md#binding) is rotated in Vector Space, which pushes it again.
 
 ### 3. Add the handlers
 
@@ -101,7 +101,7 @@ A failed call throws `SpaceActionError`, which has a `status` and an optional `c
 - `AppActionsService` wraps `SpaceActionsService` for a caller. It reads the token and the `spaceId` from the request, so you pass only the request and the input.
 - `SpaceS2sService` exchanges the service secret for a short-lived [app token](../glossary.md#app-token). Vector Space creates the secret for each pair of app and space and pushes it to the credential store, `MemoryCredentialStore` in `server/src/credential-store.ts`.
 
-The store keeps the secrets in memory and loses them on restart. `AppCredentialStore` is the one interface you implement over your own storage, so plan a persistent store before production. After a restart, `getToken` fails until the binding secret is rotated in Vector Space, which pushes it again.
+The store keeps the secrets in memory and loses them on restart. `AppCredentialStore` is the one interface you implement over your own storage, so plan a persistent store before production. After a restart, `getToken` fails until the secret of the [binding](../glossary.md#binding) is rotated in Vector Space, which pushes it again.
 
 ### 3. Add the routes
 

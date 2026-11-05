@@ -17,7 +17,7 @@ const clientOnly = [
   'vector-apps/guides/filter-navigation-by-capability',
   'sdk/reference/react',
 ];
-const neutral = ['sdk/reference/browser', 'sdk/reference/root', 'vector-apps/glossary', 'sdk/app-definition', 'sdk/examples'];
+const neutral = ['sdk/reference/browser', 'sdk/reference/root', 'vector-space/glossary', 'vector-apps/glossary', 'sdk/glossary', 'sdk/app-definition', 'sdk/examples'];
 
 for (const name of clientOnly) {
   test(`${name} is client-only: one react tree, one site page with only a client block`, () => {

@@ -63,7 +63,7 @@ for (const { tree, text } of trees) {
     assert.match(text, /^---\ntitle: Quickstart\n/);
     const opening = text.replace(/^---\n[\s\S]*?\n---\n/, '').trim().split('\n\n')[0];
     assert.doesNotMatch(opening, /^#/);
-    assert.match(opening, /\]\((\.\.?\/)+glossary\.md#vector-space\)/);
+    assert.match(opening, /\]\((\.\.?\/)+vector-space\/glossary\.md#vector-space\)/);
   });
 
   t('Goal names both end states and ends with the Mermaid diagram and its caption', () => {
@@ -381,8 +381,15 @@ for (const { tree, text } of trees) {
 
   t('links the six glossary terms, the concept page and the harness reference', () => {
     assert.ok(targets.includes('sdk/app-definition.md'));
-    const links = targets.filter((l) => l.startsWith('glossary.md#')).map((l) => l.slice('glossary.md#'.length));
-    assert.deepEqual([...links].sort(), ['agent-catalog', 'app-definition', 'app-registration', 'dev-issuer', 'harness', 'vector-space']);
+    const links = targets.filter((l) => l.includes('glossary.md#'));
+    assert.deepEqual([...links].sort(), [
+      'glossary.md#app-registration',
+      'sdk/glossary.md#agent-catalog',
+      'sdk/glossary.md#app-definition',
+      'sdk/glossary.md#dev-issuer',
+      'sdk/glossary.md#harness',
+      'vector-space/glossary.md#vector-space',
+    ]);
     assert.ok(linksOf(section(text, 'Next steps')).map(bare).some((link) => link.endsWith('reference/harness.md')));
   });
 

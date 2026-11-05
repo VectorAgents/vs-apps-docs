@@ -1,25 +1,46 @@
 import assert from 'node:assert/strict';
-import { readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 import { test } from 'node:test';
 
-const text = readFileSync(new URL('../docs/vector-apps/glossary.md', import.meta.url), 'utf8');
-const entries = text
+const sections = {
+  'vector-space': [
+    'Vector Space', 'space', 'space manager', 'Organization admin', 'Edit level', 'space page', 'staff', 'resource pool',
+    'knowledge source', 'Context Hub', 'ask', 'channel', 'MCP', 'A2A',
+  ],
+  'vector-apps': [
+    'app', 'app registration', 'manifest', 'app page', 'capability', 'capability grant', 'model slot', 'connector slot',
+    'acts', 'approvals', 'app token', 'service secret', 'binding', 'allowed resources',
+  ],
+  sdk: [
+    'app definition', 'SDK', 'harness', 'dev issuer', 'agent action', 'agent catalog', 'monorepo', 'shared package',
+    'app platform', 'app session', 'conformance kit',
+  ],
+};
+
+const docsDir = new URL('../docs/', import.meta.url);
+const parse = (text) => text
   .split(/^### /m)
   .slice(1)
   .map((block) => {
     const [name, ...rest] = block.split('\n');
     return { name: name.replace(/\s*\{#.*\}\s*$/, '').trim(), body: rest.join('\n') };
   });
+const texts = Object.fromEntries(Object.keys(sections).map((s) => [s, readFileSync(new URL(`${s}/glossary.md`, docsDir), 'utf8')]));
+const all = Object.entries(texts).flatMap(([section, text]) => parse(text).map((e) => ({ ...e, section })));
+const text = Object.values(texts).join('\n');
+const entries = all;
+const sorted = (names) => names.map((t) => t.toLowerCase()).sort();
 
-const required = [
-  'app', 'app definition', 'manifest', 'Vector Space', 'space', 'space manager', 'Organization admin', 'Edit level', 'space page',
-  'resource pool', 'knowledge source', 'app registration', 'app page', 'capability', 'capability grant', 'model slot',
-  'connector slot', 'allowed resources', 'agent action', 'agent catalog', 'acts', 'approvals',
-  'harness', 'dev issuer', 'SDK', 'MCP', 'A2A', 'service secret', 'app token', 'monorepo', 'shared package',
-];
+for (const [section, terms] of Object.entries(sections)) {
+  test(`${section} glossary defines exactly its terms`, () => {
+    assert.deepEqual(sorted(parse(texts[section]).map((e) => e.name)), sorted(terms));
+  });
+}
 
-test('covers every candidate term', () => {
-  assert.deepEqual(entries.map((e) => e.name.toLowerCase()).sort(), required.map((t) => t.toLowerCase()).sort());
+test('a term is defined once across the three glossaries', () => {
+  const names = all.map((e) => e.name.toLowerCase());
+  assert.deepEqual(names.filter((n, i) => names.indexOf(n) !== i), []);
 });
 
 test('each entry has definition, mapping and owner', () => {
@@ -40,7 +61,7 @@ test('published pages use no internal term', () => {
   const pages = readdirSync(docs, { recursive: true }).filter((f) => /\.mdx?$/.test(f));
   for (const page of pages) {
     const body = readFileSync(new URL(page, docs), 'utf8');
-    assert.doesNotMatch(body, /app developer|app binding|glossary\.md#binding/i, page);
+    assert.doesNotMatch(body, /app developer|app binding/i, page);
   }
 });
 
@@ -105,4 +126,54 @@ test('A2A entry names the agent card helpers and the definition field', () => {
   assert.match(entry, /`buildAppAgentCard`/);
   assert.match(entry, /`createA2aRequestHandler`/);
   assert.match(entry, /`agents\[\]`/);
+});
+
+test('MCP and A2A keep their SDK mapping line in the Vector Space glossary', () => {
+  for (const name of ['MCP', 'A2A']) {
+    const entry = all.find((e) => e.name === name);
+    assert.equal(entry.section, 'vector-space', name);
+    assert.match(entry.body, /^- Maps to: .*`/m, name);
+  }
+});
+
+test('conformance kit, app platform and app session entries name their SDK symbols', () => {
+  const body = (name) => entries.find((e) => e.name === name).body;
+  assert.match(body('conformance kit'), /`appPlatformConformance`/);
+  assert.match(body('conformance kit'), /`startFakeVectorSpace`/);
+  assert.match(body('app platform'), /`createAppPlatform`/);
+  assert.match(body('app session'), /`startAppSession`/);
+});
+
+test('app token maps the SDK name service token', () => {
+  assert.match(entries.find((e) => e.name === 'app token').body, /The SDK calls it a service token/);
+});
+
+test('every link to a glossary term resolves to a page and an anchor that exist', () => {
+  const slugOf = (name) => name.toLowerCase().replaceAll(' ', '-');
+  const anchors = Object.fromEntries(Object.entries(texts).map(([section, t]) => [section, parse(t).map((e) => slugOf(e.name))]));
+  let count = 0;
+  const pages = readdirSync(docsDir, { recursive: true }).filter((f) => /\.mdx?$/.test(f));
+  for (const page of pages) {
+    const body = readFileSync(new URL(page, docsDir), 'utf8');
+    for (const [, target, anchor] of body.matchAll(/\]\(([^)#\s]*glossary\.md)(?:#([^)\s]*))?\)/g)) {
+      const file = join(dirname(join('/docs', page)), target).replace(/^\/docs\//, '');
+      assert.ok(existsSync(new URL(file, docsDir)), `${page}: ${target} does not exist`);
+      const section = file.split('/')[0];
+      if (anchor) assert.ok(anchors[section]?.includes(anchor), `${page}: ${target}#${anchor} has no entry`);
+      count += 1;
+    }
+  }
+  assert.ok(count > 90, `${count} glossary links`);
+});
+
+test('each term links to the glossary that defines it', () => {
+  const home = Object.fromEntries(all.map((e) => [e.name.toLowerCase().replaceAll(' ', '-'), e.section]));
+  const pages = readdirSync(docsDir, { recursive: true }).filter((f) => /\.mdx?$/.test(f));
+  for (const page of pages) {
+    const body = readFileSync(new URL(page, docsDir), 'utf8');
+    for (const [, target, anchor] of body.matchAll(/\]\(([^)#\s]*glossary\.md)#([^)\s]*)\)/g)) {
+      const file = join(dirname(join('/docs', page)), target).replace(/^\/docs\//, '');
+      assert.equal(file.split('/')[0], home[anchor], `${page}: ${anchor} is defined in the ${home[anchor]} glossary`);
+    }
+  }
 });

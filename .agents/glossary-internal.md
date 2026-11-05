@@ -1,6 +1,6 @@
 # Internal glossary
 
-Terms only the Vector team needs. Docusaurus does not publish this file. A term lives here or in `docs/vector-apps/glossary.md`, never in both. See `.agents/domain.md` for the publish rule.
+Terms only the Vector team needs. Docusaurus does not publish this file. A term lives here or in one of the three published glossaries (`docs/vector-space/glossary.md`, `docs/vector-apps/glossary.md`, `docs/sdk/glossary.md`), never in both. See `.agents/domain.md` for the publish rule.
 
 ## Terms
 
@@ -10,13 +10,6 @@ The reader the docs are written for first: a developer new to Vector who builds 
 
 - Maps to: no SDK symbol.
 - Owner: docs.
-
-### binding
-
-An app attached to one space. It snapshots the manifest's grantable capabilities, acts and approvals, and holds that space's model, connector and module choices. Re-snapshotted on every pull or apply.
-
-- Maps to: no SDK symbol. The SDK sees the effect through the verified token and `loadAppClientConfig`.
-- Owner: Space.
 
 ### Check
 
@@ -38,13 +31,6 @@ A block of code in a docs page, opened and closed by three backticks. The text a
 
 - Maps to: no SDK symbol. `codeBlocks` in `scripts/quickstart-page.test.mjs` and `checkCodeBlocks` in `scripts/starter-sync.mjs`.
 - Owner: docs.
-
-### staff
-
-Vector employees who administer Space itself. Only staff register apps, apply manifest changes and edit an organization license. External developers are not staff. A space manager works inside one space instead.
-
-- Maps to: no SDK symbol.
-- Owner: Space.
 
 ### tour
 

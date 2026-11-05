@@ -3,16 +3,16 @@ title: Call a model from your server
 start: leads-app
 ---
 
-Ask [Vector Space](../glossary.md#vector-space) for a model from your server and call it.
+Ask [Vector Space](../../vector-space/glossary.md#vector-space) for a model from your server and call it.
 
 <!-- flavour node -->
-The guide uses `platform.ai` from the `@vectoragents/vs-apps/server` subpath of the [SDK](../glossary.md#sdk) on a `node:http` server.
+The guide uses `platform.ai` from the `@vectoragents/vs-apps/server` subpath of the [SDK](../../sdk/glossary.md#sdk) on a `node:http` server.
 <!-- /flavour -->
 <!-- flavour nest -->
-The guide uses `SpaceAiService` from the `@vectoragents/vs-apps/nest` subpath of the [SDK](../glossary.md#sdk) on a Nest.js server.
+The guide uses `SpaceAiService` from the `@vectoragents/vs-apps/nest` subpath of the [SDK](../../sdk/glossary.md#sdk) on a Nest.js server.
 <!-- /flavour -->
 
-The model comes from one [model slot](../glossary.md#model-slot), a named model request that your app declares and a [space manager](../glossary.md#space-manager) fills with one model.
+The model comes from one [model slot](../glossary.md#model-slot), a named model request that your app declares and a [space manager](../../vector-space/glossary.md#space-manager) fills with one model.
 
 Your server never holds a model key. The SDK trades the [service secret](../glossary.md#service-secret) for a short-lived key and returns it as the `apiKey` of a client configuration. The configuration also holds the `baseUrl` of the model gateway of Vector Space and the `model` name to send.
 

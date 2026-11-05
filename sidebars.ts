@@ -1,6 +1,7 @@
 import type { SidebarsConfig } from '@docusaurus/plugin-content-docs';
 
 const sidebars: SidebarsConfig = {
+  vectorSpace: ['vector-space/glossary'],
   vectorApps: [
     'vector-apps/how-a-vector-app-works',
     'vector-apps/quickstart',
@@ -63,6 +64,7 @@ const sidebars: SidebarsConfig = {
         'sdk/reference/conformance',
       ],
     },
+    'sdk/glossary',
   ],
 };
 

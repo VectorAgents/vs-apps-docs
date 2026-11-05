@@ -3,7 +3,7 @@ title: List and pick members
 ---
 
 <!-- flavour react -->
-Show the owners of leads by name, let a member pick an owner and list the people in each group. The data comes from the [space](../glossary.md#space) directory.
+Show the owners of leads by name, let a member pick an owner and list the people in each group. The data comes from the [space](../../vector-space/glossary.md#space) directory.
 
 ## Goal
 
@@ -12,7 +12,7 @@ End with an owners list built with `useUsers`, a member picker built with the di
 ## Prerequisites
 
 - The app from the [quickstart](../quickstart.md), added to a space (Part 2) and run with `npm run dev:space`. The harness has no directory, because `npm run dev` clears `SPACE_API_URL`.
-- `SPACE_API_URL` in `.env`, set to the [Vector Space](../glossary.md#vector-space) API origin followed by `/api`, for example `https://space-api.example.com/api`. The starter returns it as `spaceApiUrl` in `/api/client-config`. Without it, `useApp().directory` is `null`.
+- `SPACE_API_URL` in `.env`, set to the [Vector Space](../../vector-space/glossary.md#vector-space) API origin followed by `/api`, for example `https://space-api.example.com/api`. The starter returns it as `spaceApiUrl` in `/api/client-config`. Without it, `useApp().directory` is `null`.
 - Background: [`useUsers`](../../sdk/reference/react.md#react-useusers), [`DirectoryUser` and `DirectoryGroup`](../../sdk/reference/browser.md#directoryuser).
 
 ## Steps
