@@ -5,7 +5,7 @@ title: Open a route and read the caller
 Leave one route of your server open to anyone, and read who is calling on another route.
 
 <!-- flavour nest -->
-Both use the `@vectoragents/vs-apps/nest` subpath of the [SDK](../glossary.md#sdk).
+Both use the `@vectoragents/vs-apps/nest` subpath of the [SDK](../../sdk/glossary.md#sdk).
 
 By default the adapter's global guard verifies the user token of every route. `@Public` opts one route out of that check. `appCaller` returns the verified claims and the raw token for a route that stays behind the guard.
 
@@ -22,7 +22,7 @@ End with two routes on the server of the quickstart app: `GET /api/open`, which 
 
 ### 1. Open a route with `@Public`
 
-The global guard rejects a request that has no user token. Put `@Public()` on a route to skip the guard for it. The route then runs for every caller, so return nothing that belongs to one [space](../glossary.md#space) or one user.
+The global guard rejects a request that has no user token. Put `@Public()` on a route to skip the guard for it. The route then runs for every caller, so return nothing that belongs to one [space](../../vector-space/glossary.md#space) or one user.
 
 ```ts title="server/src/open-route.controller.ts"
 import { Controller, Get } from '@nestjs/common';

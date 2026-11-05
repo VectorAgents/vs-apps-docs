@@ -1,6 +1,6 @@
 # vs-apps-docs
 
-Docusaurus documentation site for `@vectoragents/vs-apps`. `docs/` holds the source pages in one folder per section: `docs/vector-apps/` (quickstart, recipes, guides, glossary) and `docs/sdk/` (app definition, examples, reference); `docs/index.mdx` is the entry page. The Definition builder is `src/pages/sdk/builder.tsx`. `sidebars.ts` holds one sidebar per section and the navbar shows a tab for each. `scripts/generate.mjs` turns them into `docs-gen/`: `docs-gen/site/` is what Docusaurus publishes, `docs-gen/pairs/<client>/<server>/` is for checks only. `scripts/` also holds the snippet typecheck.
+Docusaurus documentation site for `@vectoragents/vs-apps`. `docs/` holds the source pages in one folder per section: `docs/vector-space/` (glossary), `docs/vector-apps/` (quickstart, recipes, guides, glossary) and `docs/sdk/` (app definition, examples, reference, glossary); `docs/index.mdx` is the entry page. The Definition builder is `src/pages/sdk/builder.tsx`. `sidebars.ts` holds one sidebar per section and the navbar shows a tab for each. `scripts/generate.mjs` turns them into `docs-gen/`: `docs-gen/site/` is what Docusaurus publishes, `docs-gen/pairs/<client>/<server>/` is for checks only. `scripts/` also holds the snippet typecheck.
 
 ## Agent skills
 
@@ -14,7 +14,7 @@ Default five-role vocabulary (`needs-triage`, `needs-info`, `ready-for-agent`, `
 
 ### Domain docs
 
-Single-context: `docs/vector-apps/glossary.md` plus `.agents/adr/`. See `.agents/domain.md`.
+Single-context: the three glossaries `docs/vector-space/glossary.md`, `docs/vector-apps/glossary.md` and `docs/sdk/glossary.md`, plus `.agents/adr/`. See `.agents/domain.md`.
 
 ### Writing language
 

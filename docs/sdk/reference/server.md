@@ -2,7 +2,7 @@
 title: Server reference
 ---
 
-Reference for `@vectoragents/vs-apps/server` 0.4.0. This page covers the one symbol of the subpath that reaches out to [Vector Space](../../vector-apps/glossary.md#vector-space): `pingManifests`. It tells Vector Space that your [manifests](../../vector-apps/glossary.md#manifest) changed, so Vector Space does not wait for a staff refresh.
+Reference for `@vectoragents/vs-apps/server` 0.4.0. This page covers the one symbol of the subpath that reaches out to [Vector Space](../../vector-space/glossary.md#vector-space): `pingManifests`. It tells Vector Space that your [manifests](../../vector-apps/glossary.md#manifest) changed, so Vector Space does not wait for a [staff](../../vector-space/glossary.md#staff) refresh.
 
 Every symbol below follows one layout: signature, behaviour, example. Each example is a complete file and is typechecked against the installed package.
 

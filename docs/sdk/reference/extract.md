@@ -2,7 +2,7 @@
 title: Extract reference
 ---
 
-Reference for `@vectoragents/vs-apps/extract` 0.4.0. The subpath is the build-time tooling that turns the [agent pages](../../vector-apps/glossary.md#agent-catalog) and actions declared in your client into one JSON file. `buildManifests` merges that file into the [manifest](../../vector-apps/glossary.md#manifest) at server boot. The `vs-apps` command runs it.
+Reference for `@vectoragents/vs-apps/extract` 0.4.0. The subpath is the build-time tooling that turns the [agent pages](../glossary.md#agent-catalog) and actions declared in your client into one JSON file. `buildManifests` merges that file into the [manifest](../../vector-apps/glossary.md#manifest) at server boot. The `vs-apps` command runs it.
 
 Every symbol below follows one layout: signature, behaviour, example. Each example is a complete file and is typechecked against the installed package.
 

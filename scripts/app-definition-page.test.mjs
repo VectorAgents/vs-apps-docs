@@ -23,7 +23,7 @@ test('states each of the ten uses once, in order', () => {
     'Type navigation and routes',
     'Generate and serve the manifest',
     'List agent-callable routes',
-    'Merge the [agent catalog](../vector-apps/glossary.md#agent-catalog)',
+    'Merge the [agent catalog](./glossary.md#agent-catalog)',
     "Keep the server's app registry",
     'Check the token',
     'Receive connector events',
@@ -98,7 +98,8 @@ test('leaves deferred fields undocumented', () => {
 test('links each glossary term at first use only', () => {
   for (const term of ['manifest', 'Vector Space', 'capability', 'model slot', 'connector slot']) {
     const slug = term.toLowerCase().replaceAll(' ', '-');
-    const links = text.split(`](../vector-apps/glossary.md#${slug})`).length - 1;
+    const glossary = term === 'Vector Space' ? 'vector-space' : 'vector-apps';
+    const links = text.split(`](../${glossary}/glossary.md#${slug})`).length - 1;
     assert.equal(links, 1, `${term} linked ${links} times`);
   }
 });

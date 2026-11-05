@@ -26,6 +26,10 @@ The glossary uses the published word where the product glossary uses an internal
 | capability grant | Grant | The noun only. The product grant is a standing approval, a different thing. |
 | Vector Space, space | Space | The platform is Vector Space. The workspace is a space. |
 | app token | service token | The SDK README calls it a service token. |
+| staff | Staff (`UserType.Staff`) | A platform operator, reaching organizations through the tenancy tree. |
+| binding | Binding (`access.app_bindings`) | An app activated on a space. |
+| ask | Ask (`runs.asks`) | An approval is one kind of ask. |
+| channel | Channel (`studio.channels`) | An agent reached from outside the web app. WhatsApp, Messenger and Instagram are Meta messaging services. |
 
 ## SDK gaps
 

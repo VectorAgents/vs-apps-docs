@@ -27,7 +27,7 @@ test('every page of a section folder appears in exactly one sidebar, and the ent
 });
 
 test('each sidebar lists the pages of its own folder only', () => {
-  for (const [name, folder] of [['vectorApps', 'vector-apps/'], ['sdk', 'sdk/']]) {
+  for (const [name, folder] of [['vectorSpace', 'vector-space/'], ['vectorApps', 'vector-apps/'], ['sdk', 'sdk/']]) {
     for (const id of docIds(sidebars[name])) assert.ok(id.startsWith(folder), `${name}: ${id}`);
   }
 });
@@ -36,8 +36,8 @@ test('the Vector Apps sidebar runs Quickstart, Recipes, Guides, Glossary', () =>
   assert.deepEqual(topLevel('vectorApps'), ['vector-apps/quickstart', 'Recipes', 'Guides', 'vector-apps/glossary']);
 });
 
-test('the SDK sidebar runs App definition, Definition builder, Examples, Reference', () => {
-  assert.deepEqual(topLevel('sdk'), ['sdk/app-definition', 'Definition builder', 'sdk/examples', 'Reference']);
+test('the SDK sidebar runs App definition, Definition builder, Examples, Reference, Glossary', () => {
+  assert.deepEqual(topLevel('sdk'), ['sdk/app-definition', 'Definition builder', 'sdk/examples', 'Reference', 'sdk/glossary']);
   const builder = sidebars.sdk.find((item) => item.label === 'Definition builder');
   assert.equal(builder.href, '/sdk/builder');
 });
@@ -49,8 +49,14 @@ test('the Reference pages run Root, Server, Browser, React, Harness, oRPC, Extra
   );
 });
 
-test('Glossary is the last Vector Apps item', () => {
+test('Glossary is the last item of each section', () => {
+  assert.equal(idOf(sidebars.vectorSpace.at(-1)), 'vector-space/glossary');
   assert.equal(idOf(sidebars.vectorApps.at(-1)), 'vector-apps/glossary');
+  assert.equal(idOf(sidebars.sdk.at(-1)), 'sdk/glossary');
+});
+
+test('the Vector Space sidebar lists the Glossary and nothing else', () => {
+  assert.deepEqual(topLevel('vectorSpace'), ['vector-space/glossary']);
 });
 
 test('the Guides section lists the open-route, connector-events, call-a-model and Call Space guides', () => {
@@ -96,7 +102,7 @@ test('the navbar shows a tab for each sidebar and the builder link', () => {
   const { items } = config.themeConfig.navbar;
   assert.deepEqual(
     items.filter((item) => item.type === 'docSidebar').map((item) => [item.sidebarId, item.label]),
-    [['vectorApps', 'Vector Apps'], ['sdk', 'vs-apps SDK']],
+    [['vectorSpace', 'Vector Space'], ['vectorApps', 'Vector Apps'], ['sdk', 'vs-apps SDK']],
   );
   assert.ok(items.some((item) => item.to === '/sdk/builder' && item.label === 'Definition builder'));
 });

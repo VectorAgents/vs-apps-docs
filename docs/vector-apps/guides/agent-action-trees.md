@@ -2,7 +2,7 @@
 title: Agent action trees
 ---
 
-Advanced configuration of [agent actions](../glossary.md#agent-action): child actions that exist only while a parent is mounted, and testing an app page without [Vector Space](../glossary.md#vector-space).
+Advanced configuration of [agent actions](../../sdk/glossary.md#agent-action): child actions that exist only while a parent is mounted, and testing an app page without [Vector Space](../../vector-space/glossary.md#vector-space).
 
 ## Goal
 
@@ -10,7 +10,7 @@ End with a child action `leads.export_leads` that the agent can call only after 
 
 ## Prerequisites
 
-- The app from [`expose-agent-actions`](../recipes/expose-agent-actions.md), with the `leads` app page, the action `leads.open_lead_list` and the [agent catalog](../glossary.md#agent-catalog) that lists it.
+- The app from [`expose-agent-actions`](../recipes/expose-agent-actions.md), with the `leads` app page, the action `leads.open_lead_list` and the [agent catalog](../../sdk/glossary.md#agent-catalog) that lists it.
 - Background: [`defineAgentPage`](../../sdk/reference/root.md#defineagentpage) and [`AgentActionRegistryProvider`](../../sdk/reference/react.md). The [quickstart](../quickstart.md) covers the app setup.
 
 ## Steps

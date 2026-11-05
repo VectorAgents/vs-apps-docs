@@ -3,9 +3,9 @@ title: Expose your app as an A2A agent
 start: leads-app
 ---
 
-Let another agent find your app and call it. The guide uses the [A2A](../glossary.md#a2a) protocol (Agent2Agent), where an agent publishes an agent card and answers calls in JSON Remote Procedure Call (JSON-RPC), a message format built on JSON. An agent card is a JSON file that names the agent, lists its skills and says where to send calls.
+Let another agent find your app and call it. The guide uses the [A2A](../../vector-space/glossary.md#a2a) protocol (Agent2Agent), where an agent publishes an agent card and answers calls in JSON Remote Procedure Call (JSON-RPC), a message format built on JSON. An agent card is a JSON file that names the agent, lists its skills and says where to send calls.
 
-You declare the agent in the [app definition](../glossary.md#app-definition). [Vector Space](../glossary.md#vector-space) reads the declaration from the [manifest](../glossary.md#manifest), fetches the card and sends calls to the address in it. The helpers come from the `@vectoragents/vs-apps/server` subpath of the [SDK](../glossary.md#sdk).
+You declare the agent in the [app definition](../../sdk/glossary.md#app-definition). [Vector Space](../../vector-space/glossary.md#vector-space) reads the declaration from the [manifest](../glossary.md#manifest), fetches the card and sends calls to the address in it. The helpers come from the `@vectoragents/vs-apps/server` subpath of the [SDK](../../sdk/glossary.md#sdk).
 
 ## Goal
 

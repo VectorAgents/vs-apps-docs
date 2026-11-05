@@ -2,13 +2,13 @@
 title: Quickstart
 ---
 
-Run a small app in a space, a shared place for one team in [Vector Space](./glossary.md#vector-space), and see the same user token verified in the browser and on your server.
+Run a small app in a space, a shared place for one team in [Vector Space](../vector-space/glossary.md#vector-space), and see the same user token verified in the browser and on your server.
 
 import DiagramControls from '@site/src/components/DiagramControls';
 
 ## Goal
 
-You scaffold a working app with one command, run it in the [harness](./glossary.md#harness) on your machine, then ask Vector to register it so you can open it in a real space. The app has one app page, a screen that Vector Space lists in its navigation. Only users who hold the `hello:view` capability, a permission that Vector Space grants to a user, can see it.
+You scaffold a working app with one command, run it in the [harness](../sdk/glossary.md#harness) on your machine, then ask Vector to register it so you can open it in a real space. The app has one app page, a screen that Vector Space lists in its navigation. Only users who hold the `hello:view` capability, a permission that Vector Space grants to a user, can see it.
 
 Vector Space signs a short-lived token, the user token, for the person who opens the app page, and your app checks that token before it trusts anything in it.
 
@@ -172,7 +172,7 @@ The harness stands in for Vector Space on your machine. `npm run dev` starts the
 npm run dev
 ```
 
-Open `http://localhost:5173/harness.html`. The harness stands in for Vector Space: it asks the [dev issuer](./glossary.md#dev-issuer) in your server for a token for the user `dev-user` and posts the token to your app page. The address `http://localhost:5173` alone stays on `Waiting for Space.`, because only the harness or Vector Space sends a token.
+Open `http://localhost:5173/harness.html`. The harness stands in for Vector Space: it asks the [dev issuer](../sdk/glossary.md#dev-issuer) in your server for a token for the user `dev-user` and posts the token to your app page. The address `http://localhost:5173` alone stays on `Waiting for Space.`, because only the harness or Vector Space sends a token.
 
 <DiagramControls>
 
@@ -216,7 +216,7 @@ The app page in step 2 shows three lines. Steps 3 to 5 read the part of the app 
 - Step 4, the server: produces `Verified on the server`.
 - Step 5, the app page: produces `Verified in the browser` and `Capabilities`.
 
-The [app definition](./glossary.md#app-definition) names the app and lists its app pages and capabilities. The server check and the app page both import `CAPABILITY`. They use one capability key, `hello:view`.
+The [app definition](../sdk/glossary.md#app-definition) names the app and lists its app pages and capabilities. The server check and the app page both import `CAPABILITY`. They use one capability key, `hello:view`.
 
 ```ts title="shared/src/index.ts" starter
 import { defineApp } from '@vectoragents/vs-apps';
@@ -256,7 +256,7 @@ export const manifests = buildManifests([definition], {
 });
 ```
 
-`readExtractedAgentCatalog` reads `agent-catalog.json`, the [agent catalog](./glossary.md#agent-catalog) file, and `catalog` takes its content. The Hello app has no app page descriptions or agent actions. The starter ships it empty.
+`readExtractedAgentCatalog` reads `agent-catalog.json`, the [agent catalog](../sdk/glossary.md#agent-catalog) file, and `catalog` takes its content. The Hello app has no app page descriptions or agent actions. The starter ships it empty.
 
 <!-- flavour node -->
 The server runs one app platform, built with `createAppPlatform` from `@vectoragents/vs-apps/server`. The platform is the code of the SDK that serves every route that Vector Space and your client call: the manifest, `GET /api/client-config`, the two provisioning routes and, in harness mode, the dev routes. You write none of them. It answers Fetch requests, and `main.ts` bridges each `node:http` request to one.

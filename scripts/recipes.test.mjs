@@ -55,7 +55,7 @@ test('links the reference, the quickstart and the glossary, and every link resol
   for (const { path, name, text } of all) {
     assert.match(text, /\]\([./]+\/sdk\/reference\/[\w-]+\.md/, name);
     assert.match(text, /\]\([./]+\/quickstart\.md/, name);
-    assert.match(text, /\]\([./]+\/glossary\.md#[\w-]+\)/, name);
+    assert.match(text, /\]\([./]+\/(?:[\w-]+\/)?glossary\.md#[\w-]+\)/, name);
     for (const [, target] of text.matchAll(/\]\((\.[^)#]*\.md)(?:#[^)]*)?\)/g)) {
       assert.ok(existsSync(join(dirname(path), target)), `${name}: ${target}`);
     }
@@ -375,7 +375,7 @@ const a2aCode = () => titledSnippets(a2a).map((c) => c.body).join('\n');
 test('the A2A guide defines A2A at first use with a glossary link', () => {
   assert.notEqual(a2a, '');
   const first = a2a.replace(/^---\n[\s\S]*?\n---\n/, '').split('\n').find((line) => /A2A/.test(line));
-  assert.match(first, /\[A2A\]\((\.\.\/)+glossary\.md#a2a\)/);
+  assert.match(first, /\[A2A\]\((\.\.\/)+vector-space\/glossary\.md#a2a\)/);
 });
 
 test('the A2A guide builds the card with buildAppAgentCard and answers with createA2aRequestHandler in labelled server files', () => {
