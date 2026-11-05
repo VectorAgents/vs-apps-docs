@@ -13,7 +13,7 @@ const flavourSite = { ...loadFlavourSite({ root: process.cwd(), config: flavours
 
 const config: Config = {
   title: 'Vector Apps docs',
-  tagline: 'Build apps for Vector Spaces with @vectoragents/vs-apps',
+  tagline: 'Build apps for Vector Space with @vectoragents/vs-apps',
   url: process.env.DOCS_URL ?? 'https://docs.example.com',
   baseUrl,
   onBrokenLinks: 'throw',
