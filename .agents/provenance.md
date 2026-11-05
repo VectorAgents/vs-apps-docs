@@ -2,7 +2,7 @@
 
 What each claim in these docs rests on. A ticket or spec named below without a link rests on a `.scratch/` folder that no longer exists, so the claim cannot be traced further.
 
-The sections below follow the page folders: Quickstart and Guides are under `docs/vector-apps/`, App definition and Reference under `docs/sdk/`.
+The sections below follow the page folders: Quickstart, Guides, How a Vector App works and Why Vector Apps are under `docs/vector-apps/`. App definition, Reference, SDK overview and Choose your path are under `docs/sdk/`.
 
 ## Sources
 
@@ -129,3 +129,32 @@ Source paths are in the sibling `vector-spaces` repo, under `docs/systems/apps/`
 | Diagram style: true 30 degree isometric, three face tones, `plug` the one accent, position and badge as the signals besides colour, a visible legend with the SVG `title` and `desc`. | Spec section 7 and the diagram tickets of the hub structure map, with no link. The palette is the one of the variant A prototype. |
 | In forced colors Chromium keeps SVG fill and stroke from author CSS, so the page sets system colours for the diagram. SVG `title`, `desc` and `text` are indexed by the search plugin as part of the section. | Checked in Edge with forced-colors emulation, and by reading `search-index.json` of a build. `scripts/build-check/iso-diagram.test.mjs` pins the second. |
 | No placeholder example app (Hiring, SDR, CSR) and no Vector Module name appears in the diagram or the page. | The two examples `sdr` and `csr` exist as SDK example definitions in `src/examples/`. A Hiring app appears only in the SDK README. The product knows two Vector Modules, `omnibox` and `contacts` (`product/GLOSSARY.md`), not a calendar. |
+
+## Why Vector Apps
+
+Source paths are in the sibling `vector-spaces` repo, under `docs/`. The product docs hold no `APPS.md`: `systems/apps/README.md`, `BINDINGS.md`, `REGISTRY.md` and `PROTOCOL.md` stand in for it, with `product/OVERVIEW.md` and `product/GLOSSARY.md`.
+
+| Claim | Rests on |
+| --- | --- |
+| An app is a web app on its own origin that a space embeds in an iframe. The reader writes a client, a server and a manifest, and the server decides who may do what. | `product/GLOSSARY.md` (App), `systems/apps/README.md` (the model), `PROTOCOL.md` (Embed protocol) and the SDK README of 0.4.0 ("What a Vector App is"). |
+| A space has three ways to plug in code: an app, an A2A agent and an MCP server. An A2A agent is a remote agent the space agent delegates to. An MCP server is a remote set of tools. | `product/OVERVIEW.md` (the Apps layer, "Machines"), `systems/STUDIO.md` (Transport: an A2A leaf is a remote agent card). The three-way split is the page's own framing, as the product docs describe the surfaces and not a choice between them. |
+| An app can offer its own A2A agent and MCP server. Vector Space adds them to the space when the app is activated, and removes them on deprovision. | `systems/apps/PROTOCOL.md` (A2A and MCP exposure), `BINDINGS.md` (Binding lifecycle). |
+| A space gives an app member identity: the user token identifies the member and the space and lists the capabilities the member holds. Only the host token carries the name and picture of the member. | `PROTOCOL.md` (Tokens, User token). The page says "identifies", never "names". |
+| A space gives an app platform data: the resources a space manager attaches, reached only where the app is allowed them and the member may open them. | `BINDINGS.md` (Resources and runtime config, Invariants), `README.md` (Invariants: an app token reaches its pinned space alone). |
+| A space gives an app governed model access: a model slot that a space manager sets, a call through the AI gateway on the organization's own AI accounts, and no AI provider key in the app. | `PROTOCOL.md` (The gateway ticket: the app chooses no model, the set model is the grant), `product/OVERVIEW.md` ("One AI gateway"). |
+| An app declares acts and approvals. An approval is an ask, shown to the person who decides. | `product/GLOSSARY.md` (Act, Ask), `systems/COMMAND-CENTER.md` (App asks). |
+| The page leaves out the "what makes a good app" and "not for a public product" advice of the Partner Guide. | Spec section 4 of the hub structure map. The product docs state neither (research 01, claims 3.2 and 3.3). |
+
+## Choose your path
+
+The three columns and seven rows are this repo's own comparison. The product docs describe the surfaces and not a choice between them (Partner Guide check, claims 2.1 to 2.11). Each cell rests on the sources below. The page has no Effort row.
+
+| Claim | Rests on |
+| --- | --- |
+| Vector App cells: app pages and agent catalog entries in the space; staff register, a space manager activates and configures; the user token identifies the member; allowed resources and the member list; model slot; approvals and acts. | `systems/apps/REGISTRY.md` (Registration and refresh, Agent catalog and endpoints), `BINDINGS.md` (Binding lifecycle, Resources and runtime config, User directory), `PROTOCOL.md` (Tokens). |
+| A2A agent cells: an A2A agent joins the agent tree as a sub-agent the space agent delegates to, and its remote owns its prompt, model and retrieval. | `systems/STUDIO.md` (Transport, A2A leaf, the agent tree). |
+| MCP server cell "Shows up as": a connector in the resource pool. | `systems/apps/PROTOCOL.md` (A2A and MCP exposure: an app-exposed MCP server is an ordinary `CONNECTOR` pool resource), `product/GLOSSARY.md` (Connector, Resource). |
+| "No" for the member, platform data and approvals and acts on the A2A agent and MCP server columns, "Who sets it up" for both, and "Your own" for model calls. | The Partner Guide cells. Not observed in the product docs, which describe only the app-exposed variants (research 01, claims 2.6, 2.7 and 3.2). `systems/STUDIO.md` (the outbound A2A client closes over a credential of the organization) fits the "No" for the member. A standalone MCP connector can need a platform approval for a write operation (`systems/COMMAND-CENTER.md`), which is why the row says app approvals and acts. |
+| The aside line links the guide Call Vector Space from your server for a caller outside Vector Space. | `docs/vector-apps/guides/call-space-from-your-server.md` and its provenance rows. Spec section 4 decided on one aside line, with no "Calling a space" column. |
+| An app gets the member, the data of the space and model calls through Vector Space. The page says what an app gets and never that an app is the only way. | Research 01, claim 2.11: "only" is a product claim that can change. |
+| Closed lists are linked, never copied. | [Platform limits](../docs/sdk/reference/platform-limits.md). |
