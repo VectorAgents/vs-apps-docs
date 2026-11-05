@@ -36,16 +36,16 @@ test('the Vector Apps sidebar runs Quickstart, Recipes, Guides, Glossary', () =>
   assert.deepEqual(topLevel('vectorApps'), ['vector-apps/quickstart', 'Recipes', 'Guides', 'vector-apps/glossary']);
 });
 
-test('the SDK sidebar runs App definition, Definition builder, Examples, Reference, Glossary', () => {
-  assert.deepEqual(topLevel('sdk'), ['sdk/app-definition', 'Definition builder', 'sdk/examples', 'Reference', 'sdk/glossary']);
+test('the SDK sidebar runs SDK overview, App definition, Definition builder, Examples, Reference, Glossary', () => {
+  assert.deepEqual(topLevel('sdk'), ['sdk/overview', 'sdk/app-definition', 'Definition builder', 'sdk/examples', 'Reference', 'sdk/glossary']);
   const builder = sidebars.sdk.find((item) => item.label === 'Definition builder');
   assert.equal(builder.href, '/sdk/builder');
 });
 
-test('the Reference pages run Root, Server, Browser, React, Harness, oRPC, Extract, Conformance', () => {
+test('the Reference pages run Root, Server, Browser, React, Harness, oRPC, Extract, Conformance, Platform limits', () => {
   assert.deepEqual(
     docIds(categoryOf('sdk', 'Reference').items).map((id) => id.replace('sdk/reference/', '')),
-    ['root', 'server', 'browser', 'react', 'harness', 'orpc', 'extract', 'conformance'],
+    ['root', 'server', 'browser', 'react', 'harness', 'orpc', 'extract', 'conformance', 'platform-limits'],
   );
 });
 
