@@ -114,15 +114,33 @@ test('a link stays as written in the site page and in the pair copy', () => {
 
 const withTodo = (flavour, rest) => `---\ntitle: Gap\n---\n\n<!-- flavour ${flavour} todo -->\n<!-- /flavour -->\n\n${rest}`;
 
-test('a todo block renders a notice in its wrapper on the site page and in the pair copy of its flavour', () => {
+const switchTo = (flavour, label, target) =>
+  `<button type="button" className="button button--secondary flavour-todo-switch" data-axis="server" data-flavour="${flavour}" data-target="${target}">Switch to ${label}</button>`;
+
+test('a todo block renders a notice with a button to the written flavour on the site page, and plain text in the pair copy', () => {
   const { read, result } = run({ 'open-route.md': withTodo('node', '<!-- flavour nest -->\nNEST BODY\n<!-- /flavour -->\n') });
-  assert.match(
-    read('site/open-route.md'),
-    /<div className="flavour-block" data-axis="server" data-flavour="node">\n\n<p className="flavour-label">Node\.js \+ TypeScript<\/p>\n\n:::warning\nNot yet written for Node\.js \+ TypeScript\.\n:::\n\n<\/div>/,
+  const site = read('site/open-route.md');
+  assert.ok(
+    site.includes(
+      `<div className="flavour-block" data-axis="server" data-flavour="node">\n\n<p className="flavour-label">Node.js + TypeScript</p>\n\n:::warning\nNot yet written for Node.js + TypeScript.\n\n${switchTo('nest', 'Nest.js', 'nest-block-1')}\n:::\n\n</div>`,
+    ),
   );
+  assert.match(site, /<div className="flavour-block" data-axis="server" data-flavour="nest" id="nest-block-1">/);
   assert.match(read('pairs/react/node/open-route.md'), /^:::warning\nNot yet written for Node\.js \+ TypeScript\.\n:::$/m);
   assert.doesNotMatch(read('pairs/react/nest/open-route.md'), /Not yet written/);
+  assert.doesNotMatch(read('pairs/react/node/open-route.md'), /button/);
   assert.equal(result.todos, 1);
+});
+
+test('a todo button targets the next written block of its axis, or the last one before it', () => {
+  const block = (flavour, body) => `<!-- flavour ${flavour} -->\n${body}\n<!-- /flavour -->\n`;
+  const todo = (flavour) => `<!-- flavour ${flavour} todo -->\n<!-- /flavour -->\n`;
+  const after = run({ 'a.md': `${block('node', 'N1')}${block('nest', 'S1')}${todo('node')}${block('nest', 'S2')}` }).read('site/a.md');
+  assert.ok(after.includes(switchTo('nest', 'Nest.js', 'nest-block-2')));
+  assert.match(after, /data-flavour="nest" id="nest-block-2">/);
+  assert.doesNotMatch(after, /id="nest-block-1"/);
+  const before = run({ 'b.md': `${block('node', 'N1')}${block('nest', 'S1')}${block('node', 'N2')}${todo('nest')}` }).read('site/b.md');
+  assert.ok(before.includes(switchTo('node', 'Node.js + TypeScript', 'node-block-2')));
 });
 
 test('the generator fails when open todo blocks exceed the cap', () => {

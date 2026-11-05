@@ -312,6 +312,7 @@ html:not(:has(.flavour-block)) .flavour-picker {
   margin: 1.5rem 0;
   padding-left: 1rem;
   border-left: 3px solid var(--ifm-color-emphasis-300);
+  scroll-margin-top: calc(var(--ifm-navbar-height) + 1rem);
 }
 
 .flavour-label {

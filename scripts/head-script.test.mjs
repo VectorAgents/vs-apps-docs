@@ -118,3 +118,7 @@ test('the style hides the contents entry of a heading inside a hidden block', ()
 test('the style hides the picker until the head script has run', () => {
   assert.ok(flavourStyle(axes).includes('html:not([data-client]) .flavour-picker'));
 });
+
+test('the style hides the todo switch button until the head script has run', () => {
+  assert.ok(flavourStyle(axes).includes('html:not([data-client]) .flavour-todo-switch'));
+});

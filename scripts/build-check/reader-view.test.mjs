@@ -47,3 +47,16 @@ for (const { source, url } of pages) {
     }
   });
 }
+
+for (const { source, url } of pages) {
+  const todos = [...readFileSync(join(root, config.outDir, 'site', source), 'utf8').matchAll(/data-target="([^"]+)"/g)].map((m) => m[1]);
+  if (!todos.length) continue;
+  test(`${url}: each todo notice has a switch button whose target block is on the page`, () => {
+    const page = html(url);
+    assert.match(page, /Not yet written for /);
+    for (const target of todos) {
+      assert.ok(page.includes(`data-target="${target}"`), `button ${target}`);
+      assert.match(page, new RegExp(`class="flavour-block"[^>]*id="${target}"`), `block ${target}`);
+    }
+  });
+}
