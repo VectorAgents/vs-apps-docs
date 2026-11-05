@@ -6,13 +6,13 @@ export const CSR_MODEL_SLOTS = {
   workflowConversation: 'workflow-conversation',
 } as const;
 
-/** One slot per channel, each filled by a connector of that service. */
+/** One slot per messaging service, each filled by a connector of that service. */
 export const CSR_CHANNEL_SLOTS = {
   whatsapp: 'whatsapp',
   messenger: 'messenger',
 } as const;
 
-/** Handlers a space admin routes a channel connector's event types to. */
+/** Handlers a space manager routes a messaging connector's event types to. */
 export const CSR_CONNECTOR_HANDLERS = {
   inboundMessage: 'inbound-message',
   messageStatus: 'message-status',

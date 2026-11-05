@@ -2,7 +2,7 @@
 title: Harness reference
 ---
 
-Reference for `@vectoragents/vs-apps/react/harness` 0.4.0. The [harness](../glossary.md#harness) is a local stand-in for [Space](../glossary.md#vector-space). The starter includes the harness already wired. This page is the manual-wiring guide for an app that is not built from the starter. An app does not need the harness to ship.
+Reference for `@vectoragents/vs-apps/react/harness` 0.4.0. The [harness](../glossary.md#harness) is a local stand-in for [Vector Space](../glossary.md#vector-space). The starter includes the harness already wired. This page is the manual-wiring guide for an app that is not built from the starter. An app does not need the harness to ship.
 
 Every symbol below follows one layout: signature, behaviour, example. Each example is a complete file and is typechecked against the installed package.
 
@@ -15,7 +15,7 @@ Every symbol below follows one layout: signature, behaviour, example. Each examp
 
 ## `VectorAppsHarness`
 
-Renders a Space-like shell around the app, which runs in an iframe from the same origin.
+Renders a shell that looks like Vector Space around the app, which runs in an iframe from the same origin.
 
 ### Signature
 
@@ -25,7 +25,7 @@ function VectorAppsHarness(): JSX.Element;
 
 ### Behaviour
 
-- Fetches `/api/__dev/manifests` from the app server to build the sidebar of apps and pages.
+- Fetches `/api/__dev/manifests` from the app server to build the sidebar of apps and [app pages](../glossary.md#app-page).
 - Mints a token for the chosen identity and capabilities through `POST /api/__dev/token`, and sends it to the iframe. Changing the capability set in the dev panel re-mints it.
 - Shows an error with the `VA_DEV_ISSUER=true` hint when the manifests request fails.
 - Keeps the selected app, page, capabilities, theme and identity in the page query string, so a reload restores them.
@@ -115,9 +115,9 @@ Returns status `200` and the public key set of the dev issuer. The set verifies 
 ### Example
 
 <!-- flavour node -->
-`createAppPlatform` serves the three dev routes, the manifest route and the other routes that Space calls. It serves them once it holds a dev issuer. `createDevIssuer` signs tokens and verifies them, so one object serves both. It stores nothing, and it makes a new key on each call, so a restart makes the tokens of the open harness invalid. To keep them valid, save the `privateKey` of the issuer and pass it back to `createDevIssuer`.
+`createAppPlatform` serves the three dev routes, the manifest route and the other routes that Vector Space calls. It serves them once it holds a dev issuer. `createDevIssuer` signs tokens and verifies them, so one object serves both. It stores nothing, and it makes a new key on each call, so a restart makes the tokens of the open harness invalid. To keep them valid, save the `privateKey` of the issuer and pass it back to `createDevIssuer`.
 
-The platform also needs an `AppCredentialStore`, where it keeps the secret that Space pushes when it adds the app. The store below keeps the secrets in memory. The platform answers Fetch requests, so `handlePlatformRoute` bridges a `node:http` request to one. It returns `true` when the platform answered the request, and `false` for every other request.
+The platform also needs an `AppCredentialStore`, where it keeps the secret that Vector Space pushes when it adds the app. The store below keeps the secrets in memory. The platform answers Fetch requests, so `handlePlatformRoute` bridges a `node:http` request to one. It returns `true` when the platform answered the request, and `false` for every other request.
 
 ```ts title="server/src/platform.ts"
 import { createAppPlatform, createDevIssuer, type AppCredentialStore, type AppManifests } from '@vectoragents/vs-apps/server';
@@ -182,10 +182,10 @@ export async function handlePlatformRoute(
 
 ## Accept dev tokens
 
-Create the platform once at boot with `const platform = await createPlatform(manifests);`, with the manifests from `buildManifests`. Call `handlePlatformRoute` first inside the `try` block of your request handler, before any route of your own: `if (await handlePlatformRoute(platform, req, res)) return;`. Then make two more changes so the app accepts the tokens that the dev issuer signs. Without both, the iframe stays on "Waiting for Space.".
+Create the platform once at boot with `const platform = await createPlatform(manifests);`, with the manifests from `buildManifests`. Call `handlePlatformRoute` first inside the `try` block of your request handler, before any route of your own: `if (await handlePlatformRoute(platform, req, res)) return;`. Then make two more changes so the app accepts the tokens that the dev issuer signs. Without both, the iframe stays on `Waiting for Space.`.
 
-1. **Allow the harness origin.** Set `ALLOWED_PARENT_ORIGIN` to the harness origin, the origin that your bundler serves `harness.html` from, for example `http://localhost:5173`. The harness page is the parent of the iframe, so the client accepts messages from this origin only. A Space origin here makes the `postMessage` call from the iframe fail.
-2. **Verify with the dev issuer.** Pass `platform.verifier` to `verifyUserToken` in place of a Space verifier. It is the dev issuer while the platform holds one. Otherwise `GET /api/hello` fails with status `401`.
+1. **Allow the harness origin.** Set `ALLOWED_PARENT_ORIGIN` to the harness origin, the origin that your bundler serves `harness.html` from, for example `http://localhost:5173`. The harness page is the parent of the iframe, so the client accepts messages from this origin only. A Vector Space origin here makes the `postMessage` call from the iframe fail.
+2. **Verify with the dev issuer.** Pass `platform.verifier` to `verifyUserToken` in place of a Vector Space verifier. It is the dev issuer while the platform holds one. Otherwise `GET /api/hello` fails with status `401`.
 
 The platform serves `GET /api/client-config` itself. While it holds a dev issuer, the `spaceJwksUrl` of that route is `/api/__dev/jwks.json`, so the browser verifies the token against the dev key set. A route of your own does not need to return it.
 
@@ -207,21 +207,21 @@ When the page works, the harness card shows the user, the space and the capabili
 
 Set `VA_DEV_ISSUER=true` in the environment of the app server process, in the command that starts it, for example `VA_DEV_ISSUER=true npm run dev`. A watch runner such as `tsx watch` does not reload `.env`, so restart the server after you change the value.
 
-To run against a real Space, start the server without `VA_DEV_ISSUER`. Set `ALLOWED_PARENT_ORIGIN` to the Space origin and `SPACE_JWKS_URL` to the Space key set URL. Never build `harness.html` into the production bundle.
+To run against a real Vector Space, start the server without `VA_DEV_ISSUER`. Set `ALLOWED_PARENT_ORIGIN` to the Vector Space origin and `SPACE_JWKS_URL` to the Vector Space key set URL. Never build `harness.html` into the production bundle.
 
 ## Limits
 
-The harness signs its own tokens, so it proves your page and server. These parts of the path stay outside it:
+The harness signs its own tokens, so it proves your app page and server. These parts of the path stay outside it:
 
 - Vector's registration of the app.
-- Space fetching the manifest from your server.
+- Vector Space fetching the manifest from your server.
 - The license and space access that let a user open the app.
-- The real Space key set and the real iframe URL.
-- A real Space origin sending the token.
+- The real Vector Space key set and the real iframe URL.
+- A real Vector Space origin sending the token.
 
 ## Result
 
-A dev-only entry that runs the app inside a Space-like shell without a registration.
+A dev-only entry that runs the app inside a shell that looks like Vector Space, without a registration.
 
 ## Next step
 

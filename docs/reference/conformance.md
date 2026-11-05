@@ -2,19 +2,19 @@
 title: Conformance reference
 ---
 
-Reference for `@vectoragents/vs-apps/conformance` 0.4.0. The subpath is a test kit for your server. A fake [Space](../glossary.md#vector-space) signs every kind of token, and a list of cases drives the routes that Space calls on your server and checks each answer. The cases hold one rule each, such as refusing a token that Space did not sign.
+Reference for `@vectoragents/vs-apps/conformance` 0.4.0. The subpath is a test kit for your server. A fake [Vector Space](../glossary.md#vector-space) signs every kind of token, and a list of cases drives the routes that Vector Space calls on your server and checks each answer. The cases hold one rule each, such as refusing a token that Vector Space did not sign.
 
 Every symbol below follows one layout: signature, behaviour, example. Each example is a complete file and is typechecked against the installed package.
 
 ## Prerequisites
 
 - `@vectoragents/vs-apps` installed with a registry token.
-- Node.js and a test runner. The fake Space listens on a local port, so the subpath does not run in a browser.
+- Node.js and a test runner. The fake Vector Space listens on a local port, so the subpath does not run in a browser.
 - A server that serves the routes of the app platform, from `createAppPlatform` or from the Nest module.
 
 ## `startFakeVectorSpace`
 
-Starts a fake Space on a local port.
+Starts a fake Vector Space on a local port.
 
 ### Signature
 
@@ -34,7 +34,7 @@ interface FakeVectorSpace {
 
 | Field | Meaning |
 | --- | --- |
-| `baseUrl` | The origin of the fake Space. Use it as the `spaceBaseUrl` of your server. |
+| `baseUrl` | The origin of the fake Vector Space. Use it as the `spaceBaseUrl` of your server. |
 | `jwksUrl` | The key set that your server verifies tokens against. Use it as the `spaceJwksUrl`. |
 | `issuer` | The `iss` claim of every token. Use it as the `tokenIssuer`. |
 | `sign` | Signs a token with the key that `jwksUrl` publishes. |
@@ -44,8 +44,8 @@ interface FakeVectorSpace {
 ### Behaviour
 
 - Listens on an ephemeral port of `127.0.0.1`.
-- Publishes the key set, signs the six token kinds with the claims and lifetimes that Space uses, and records manifest pings.
-- Answers `404` to every other path, so a server that calls Space for anything else fails in the test.
+- Publishes the key set, signs the six token kinds with the claims and lifetimes that Vector Space uses, and records manifest pings.
+- Answers `404` to every other path, so a server that calls Vector Space for anything else fails in the test.
 - `dispose` closes the port. Call it after the last case.
 
 ## `appPlatformConformance`
@@ -85,9 +85,9 @@ interface ConformanceCase {
 ### Behaviour
 
 - Each case is a protocol rule. `run` throws when your server breaks it, and needs no test runner of its own.
-- The cases cover the manifest route, provisioning, the client config, connector events and ask decisions. They check the status for a missing token, a token that Space did not sign, a token of the wrong kind, and a token for another space or app.
+- The cases cover the manifest route, provisioning, the client config, connector events and ask decisions. They check the status for a missing token, a token that Vector Space did not sign, a token of the wrong kind, and a token for another space or app.
 - Read `target.space.baseUrl` and `target.space.jwksUrl` into the settings of your server before you boot it. The list exists before the server is up, so `baseUrl` may be set later.
-- Pass `handlers.event` when your server registers an event handler that resolves, and `handlers.failingEvent` for one that throws. The kit then checks that the first is acknowledged as handled and that the second answers `500`, so Space retries.
+- Pass `handlers.event` when your server registers an event handler that resolves, and `handlers.failingEvent` for one that throws. The kit then checks that the first is acknowledged as handled and that the second answers `500`, so Vector Space retries.
 - Run one test for each case, so a failure names the rule.
 
 ### Example
@@ -159,7 +159,7 @@ for (const { name, run } of appPlatformConformance(target)) it(name, run);
 
 ## Result
 
-A test file that boots your platform against a fake Space and runs one test for each protocol rule.
+A test file that boots your platform against a fake Vector Space and runs one test for each protocol rule.
 
 ## Next step
 
