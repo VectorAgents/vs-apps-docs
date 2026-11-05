@@ -36,7 +36,7 @@ test('the Nest.js tree of the server reference keeps the signature and shows a n
   const nest = serverTree('nest');
   const ping = section(nest, '`pingManifests`');
   for (const heading of ['Signature', 'Behaviour', 'Example']) assert.ok(ping.includes(`### ${heading}`), heading);
-  assert.match(nest, /^:::warning\nNot yet written for Nest\.js\. Read the \[Node\.js \+ TypeScript version\]\(\.\.\/\.\.\/node\/reference\/server\.md\)\.\n:::$/m);
+  assert.match(nest, /^:::warning\nNot yet written for Nest\.js\.\n:::$/m);
   assert.doesNotMatch(nest, /src\/ping\.ts|defineApp/);
 });
 

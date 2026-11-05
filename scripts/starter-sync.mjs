@@ -216,8 +216,8 @@ export const startOf = (text) => /^---\n[\s\S]*?^start:\s*(\S+)\s*$[\s\S]*?\n---
 const markdownIn = (dir) => (existsSync(dir) ? readdirSync(dir).filter((file) => file.endsWith('.md')) : []);
 
 /**
- * Every page to check, as `{ source, path, text, pair, start }`. A flavoured page contributes one entry per generated
- * tree, checked against the project of that tree's pair; a neutral page is checked against the default pair.
+ * Every page to check, as `{ source, path, text, pair, start }`. A flavoured page contributes one entry per tree, read
+ * from its pair copy and checked against the project of that pair; a neutral page is checked against the default pair.
  */
 export function readPages({ root, config, manifest }) {
   const flavoured = new Set(manifest.pages.map((page) => page.source));
@@ -226,8 +226,8 @@ export function readPages({ root, config, manifest }) {
   return [
     ...neutral.map((source) => entry(source, `${config.docsRoot}/${source}`, readFileSync(join(root, config.docsRoot, source), 'utf8'), {})),
     ...manifest.pages.flatMap(({ source, trees }) =>
-      trees.map(({ flavours }) => {
-        const path = `${config.outDir}/${Object.values(flavours).join('/')}/${source}`;
+      trees.map(({ flavours, file }) => {
+        const path = `${config.outDir}/${file}`;
         return entry(source, path, readFileSync(join(root, path), 'utf8'), flavours);
       }),
     ),

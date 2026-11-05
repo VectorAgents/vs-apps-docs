@@ -397,7 +397,7 @@ test('the A2A guide declares the agent in the definition with the card URL templ
 test('the A2A guide has a Node.js tree with the steps and a Nest.js tree with the not-yet-written notice', () => {
   assert.deepEqual(Object.keys(a2aTrees), ['node', 'nest']);
   assert.doesNotMatch(a2a, /\bNest(\.js|JS)?\b|@nestjs\/|@Injectable|Not yet written/);
-  assert.match(a2aTrees.nest, /Not yet written for Nest\.js\. Read the \[Node\.js \+ TypeScript version\]\(/);
+  assert.match(a2aTrees.nest, /Not yet written for Nest\.js\./);
   assert.equal(titledSnippets(a2aTrees.nest).length, 0);
   assert.doesNotMatch(a2aTrees.nest, /@nestjs\//);
 });

@@ -302,3 +302,18 @@
     max-width: calc(100vw - 5rem);
   }
 }
+
+.flavour-block {
+  margin: 1.5rem 0;
+  padding-left: 1rem;
+  border-left: 3px solid var(--ifm-color-emphasis-300);
+}
+
+.flavour-label {
+  margin-bottom: 0.5rem;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}

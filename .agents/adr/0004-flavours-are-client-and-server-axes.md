@@ -1,5 +1,7 @@
 # Flavours are client and server axes with URL trees, markers and per-pair search
 
+Superseded in part by [ADR 0005](0005-flavours-share-one-url-per-topic.md): URL rule, Stubs and links, Saved choice, Search and the link in Gaps.
+
 Supersedes [ADR 0001](0001-docs-assume-only-typescript-node-react.md).
 
 The published docs assume TypeScript 5 with `strict`, Node 20.19+ and `npm` for every reader, and nothing else. Beyond that baseline the docs offer flavours. A flavour is one value of an axis: on the client axis `react`; on the server axis `node` (Node.js + TypeScript) and `nest` (Nest.js). The reader picks one flavour per axis, a pair, and the pick shapes the URL of every page that differs by flavour. A second client framework or a Python server fits by adding a flavour name, a template directory in the starter and blocks in the pages. Vector's own apps use Vite and `pnpm`; an external developer may use neither, so no page assumes them.

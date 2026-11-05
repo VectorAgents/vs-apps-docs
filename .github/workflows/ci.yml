@@ -28,7 +28,7 @@ jobs:
       - run: pnpm check
       # Writes static/verified.json, then builds the site.
       - run: pnpm build
-      # Reads the built site: the search indexes of each client-server pair.
+      # Reads the built site: flavoured pages at their plain URLs and the search index.
       - run: pnpm test:build
 
   # Networked: runs the published CLI once per pair against the starter main. A failure here means the
@@ -48,5 +48,5 @@ jobs:
       - name: Authenticate to GitHub Packages
         run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.PACKAGES_TOKEN }}" >> .npmrc
       - run: pnpm install --frozen-lockfile
-      # CI is set, so a failed clone or CLI run fails the job. The script generates the page trees first.
+      # CI is set, so a failed clone or CLI run fails the job. The script generates the pair copies first.
       - run: pnpm check:starter

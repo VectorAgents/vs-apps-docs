@@ -317,9 +317,9 @@ test('main: a page that asks for the overlay is checked against the overlay proj
 
 test('main: problems name the page and the pair', async () => {
   const errors = [];
-  const stale = record({ path: 'docs-gen/react/nest/quickstart.md', pair: { client: 'react', server: 'nest' }, text: page.replace('port 3101', 'port 3001') });
+  const stale = record({ path: 'docs-gen/pairs/react/nest/quickstart.md', pair: { client: 'react', server: 'nest' }, text: page.replace('port 3101', 'port 3001') });
   assert.equal(await run({ pages: [stale], error: (m) => errors.push(m) }), 1);
-  assert.match(errors.join('\n'), /docs-gen\/react\/nest\/quickstart\.md \(react\+nest\).*port 3101/);
+  assert.match(errors.join('\n'), /docs-gen\/pairs\/react\/nest\/quickstart\.md \(react\+nest\).*port 3101/);
 });
 
 test('main: every pair is checked for the SDK pin, even without a page', async () => {
@@ -390,7 +390,11 @@ test('page versions: the real quickstart and harness pages name the installed ve
 });
 
 
-const flavourPage = (source, axes, trees) => ({ source, axes, trees: trees.map((flavours) => ({ flavours })) });
+const flavourPage = (source, axes, trees) => ({
+  source,
+  axes,
+  trees: trees.map((flavours) => ({ flavours, file: `pairs/${flavours.client ?? 'react'}/${flavours.server ?? 'node'}/${source}` })),
+});
 const templates = [
   { row: 'client', name: 'react' },
   { row: 'server', name: 'node' },
@@ -457,14 +461,14 @@ function docsRoot(files) {
   return root;
 }
 
-test('pages: neutral pages take the default pair and their own start; flavoured pages come from the trees', () => {
+test('pages: neutral pages take the default pair and their own start; flavoured pages come from the pair copies', () => {
   const root = docsRoot({
     'docs/quickstart.md': 'quick',
     'docs/reference/harness.md': 'harness',
     'docs/recipes/a.md': '---\nstart: leads-app\n---\nrecipe',
     'docs/guides/x.md': 'flavoured source',
-    'docs-gen/nest/guides/x.md': 'nest tree',
-    'docs-gen/node/guides/x.md': 'node tree',
+    'docs-gen/pairs/react/nest/guides/x.md': 'nest tree',
+    'docs-gen/pairs/react/node/guides/x.md': 'node tree',
   });
   const manifest = { pages: [flavourPage('guides/x.md', ['server'], [{ server: 'node' }, { server: 'nest' }])] };
   const pages = readPages({ root, config, manifest });
@@ -473,13 +477,13 @@ test('pages: neutral pages take the default pair and their own start; flavoured 
   assert.deepEqual(by('docs/recipes/a.md').pair, { client: 'react', server: 'node' });
   assert.equal(by('docs/recipes/a.md').start, 'leads-app');
   assert.equal(by('docs/quickstart.md').start, 'hello');
-  assert.equal(by('docs-gen/nest/guides/x.md').text, 'nest tree');
-  assert.deepEqual(by('docs-gen/nest/guides/x.md').pair, { client: 'react', server: 'nest' });
-  assert.equal(by('docs-gen/nest/guides/x.md').source, 'guides/x.md');
+  assert.equal(by('docs-gen/pairs/react/nest/guides/x.md').text, 'nest tree');
+  assert.deepEqual(by('docs-gen/pairs/react/nest/guides/x.md').pair, { client: 'react', server: 'nest' });
+  assert.equal(by('docs-gen/pairs/react/nest/guides/x.md').source, 'guides/x.md');
   assert.equal(pages.some((p) => p.path === 'docs/guides/x.md'), false);
 });
 
-test('pages: a flavoured page without a generated tree is an error', () => {
+test('pages: a flavoured page without a generated pair copy is an error', () => {
   const root = docsRoot({ 'docs/quickstart.md': 'quick', 'docs/reference/harness.md': 'harness' });
   const manifest = { pages: [flavourPage('guides/x.md', ['server'], [{ server: 'node' }])] };
   assert.throws(() => readPages({ root, config, manifest }), /node\/guides\/x\.md/);
@@ -498,7 +502,7 @@ test('the real CLI and templates pass main for a flavoured page that asks for th
   const starterDir = process.env.STARTER_DIR;
   const excerpt = readFileSync(join(starterDir, 'overlays/leads-app/client/src/LeadsPage.tsx'), 'utf8').split('\n').slice(0, 3).join('\n');
   const text = `---\nstart: leads-app\n---\n\`\`\`tsx title="client/src/LeadsPage.tsx" starter\n${excerpt}\n\`\`\`\n`;
-  const pages = ['node', 'nest'].map((server) => record({ source: 'guides/leads.md', path: `docs-gen/react/${server}/guides/leads.md`, pair: { client: 'react', server }, start: startOf(text), text }));
+  const pages = ['node', 'nest'].map((server) => record({ source: 'guides/leads.md', path: `docs-gen/pairs/react/${server}/guides/leads.md`, pair: { client: 'react', server }, start: startOf(text), text }));
   const manifest = { pages: [flavourPage('guides/leads.md', ['client', 'server'], [{ client: 'react', server: 'node' }, { client: 'react', server: 'nest' }])] };
   assert.equal(await main({ env: { STARTER_DIR: starterDir }, config, manifest, pages, ...silent }), 0);
 });

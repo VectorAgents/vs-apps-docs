@@ -24,16 +24,14 @@ const defaultGenDir = fileURLToPath(new URL('../docs-gen/', import.meta.url));
 
 /**
  * The generated copies of the source page `source` (path under `docs/`), one `{ tree, text }` per tree.
- * `tree` is the tree path (`node`, `react/nest`); a neutral page has one copy with `tree` ''.
+ * A flavoured page is read from `pairs/`: `tree` is the flavours of the axes it varies on (`node`, `react/nest`),
+ * and the text is the pair copy that holds those flavours. A neutral page has one copy with `tree` '', read from `site/`.
  * Run the same assertions on every entry so a flavoured page is checked in each tree.
  */
 export const treesOf = (source, { genDir = defaultGenDir } = {}) => {
   const manifestFile = join(genDir, 'flavours.json');
   if (!existsSync(manifestFile)) throw new Error(`${genDir} has no flavours.json: run pnpm generate first`);
   const page = JSON.parse(readFileSync(manifestFile, 'utf8')).pages.find((p) => p.source === source);
-  if (!page) return [{ tree: '', text: readFileSync(join(genDir, source), 'utf8') }];
-  return page.trees.map(({ flavours }) => {
-    const tree = Object.values(flavours).join('/');
-    return { tree, text: readFileSync(join(genDir, tree, source), 'utf8') };
-  });
+  if (!page) return [{ tree: '', text: readFileSync(join(genDir, 'site', source), 'utf8') }];
+  return page.trees.map(({ flavours, file }) => ({ tree: Object.values(flavours).join('/'), text: readFileSync(join(genDir, file), 'utf8') }));
 };
