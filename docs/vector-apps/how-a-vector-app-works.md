@@ -77,5 +77,6 @@ The user token identifies the member and the space. It lists the capabilities th
 ## Where to go next
 
 - [Quickstart](./quickstart.md): run a small app and see the user token checked in the browser and on your server.
+- [SDK overview](../sdk/overview.md): see what the SDK holds and which import path reaches each part.
 - [App definition](../sdk/app-definition.md): describe the pages and capabilities of your app in one object.
 - [Vector Apps glossary](./glossary.md): look up each term on this page.

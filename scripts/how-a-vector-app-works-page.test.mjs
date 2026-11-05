@@ -51,7 +51,7 @@ test('table cells hold 15 words or fewer', () => {
   }
 });
 
-test('every link resolves, and the page links the quickstart, the app definition and the Vector Apps glossary', () => {
+test('every link resolves, and the page links the quickstart, the SDK overview, the app definition and the Vector Apps glossary', () => {
   const links = linksOf(text);
   for (const link of links) {
     const [path, anchor] = link.split('#');
@@ -61,7 +61,7 @@ test('every link resolves, and the page links the quickstart, the app definition
       assert.ok(terms.some((l) => l.slice(4).toLowerCase().replaceAll(' ', '-') === anchor), link);
     }
   }
-  for (const target of ['./quickstart.md', '../sdk/app-definition.md', './glossary.md']) assert.ok(links.includes(target), target);
+  for (const target of ['./quickstart.md', '../sdk/overview.md', '../sdk/app-definition.md', './glossary.md']) assert.ok(links.includes(target), target);
 });
 
 test('the page follows the voice checks', () => assert.deepEqual(voiceViolations(text), []));
