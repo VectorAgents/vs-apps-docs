@@ -1,9 +1,9 @@
 ---
-title: Call Space from your server
+title: Call Vector Space from your server
 start: leads-app
 ---
 
-Make your server call [Space](../glossary.md#space) in two ways: as the signed-in user, and as the app itself.
+Make your server call [Vector Space](../glossary.md#vector-space) in two ways: as the signed-in user, and as the app itself.
 
 <!-- flavour node -->
 Both use the `@vectoragents/vs-apps/server` subpath of the [SDK](../glossary.md#sdk) on a plain `node:http` server.
@@ -12,11 +12,11 @@ Both use the `@vectoragents/vs-apps/server` subpath of the [SDK](../glossary.md#
 Both use the `@vectoragents/vs-apps/nest` subpath of the [SDK](../glossary.md#sdk) on a Nest.js server.
 <!-- /flavour -->
 
-A call as the user carries the user's token, so Space limits it to what that user may do. A call as the app carries a short-lived token that Space issues in exchange for a [service secret](../glossary.md#service-secret). Space limits it to what the app may do, with no user present.
+A call as the user carries the user's token, so Vector Space limits it to what that user may do. A call as the app carries a short-lived token that Vector Space issues in exchange for a [service secret](../glossary.md#service-secret). Vector Space limits it to what the app may do, with no user present.
 
 ## Goal
 
-End with two routes on the server from [`expose-agent-actions`](../recipes/expose-agent-actions.md). `POST /api/space/agent` starts a conversation with the Space agent as the caller. `GET /api/space/connectors` lists the connectors of the caller's space as the app.
+End with two routes on the server from [`expose-agent-actions`](../recipes/expose-agent-actions.md). `POST /api/space/agent` starts a conversation with the space agent as the caller. `GET /api/space/connectors` lists the connectors of the caller's space as the app.
 
 ## Prerequisites
 
@@ -35,13 +35,13 @@ cd leads-guide
 ```
 <!-- /flavour -->
 
-- Background: the [server primitives](../reference/root.md), and the [quickstart](../quickstart.md) that registers the app in Space.
+- Background: the [server primitives](../reference/root.md), and the [quickstart](../quickstart.md) that registers the app in Vector Space.
 
 ## Steps
 
-### 1. Point the server at Space
+### 1. Point the server at Vector Space
 
-The server calls Space at its origin. The `SPACE_API_URL` value is that origin plus `/api`, the same shape as `SPACE_JWKS_URL`. Skip this step if `.env` already has it.
+The server calls Vector Space at its origin. The `SPACE_API_URL` value is that origin plus `/api`, the same shape as `SPACE_JWKS_URL`. Skip this step if `.env` already has it.
 
 ```bash
 echo 'SPACE_API_URL=YOUR_SPACE_API_URL' >> .env
@@ -50,18 +50,18 @@ echo 'SPACE_API_URL=YOUR_SPACE_API_URL' >> .env
 <!-- flavour node -->
 ### 2. Know the platform clients
 
-The app platform of the starter, `platform` in `server/src/platform.ts`, holds the clients that call Space. Space creates a [service secret](../glossary.md#service-secret) for each pair of app and space and pushes it to `POST /api/provision`, as in step 4 of the [quickstart](../quickstart.md). The platform serves that route and keeps the secret in its credential store.
+The app platform of the starter, `platform` in `server/src/platform.ts`, holds the clients that call Vector Space. Vector Space creates a [service secret](../glossary.md#service-secret) for each pair of app and space and pushes it to `POST /api/provision`, as in step 4 of the [quickstart](../quickstart.md). The platform serves that route and keeps the secret in its credential store.
 
-- `platform.spaceActions` has one method for each Space action. Each method takes a bearer token as its first argument.
+- `platform.spaceActions` has one method for each Vector Space action. Each method takes a bearer token as its first argument.
 - `platform.s2s(appId, spaceId)` exchanges the service secret for a short-lived [app token](../glossary.md#app-token). It asks the store for the secret on every exchange and caches only the token.
 
-The store of the starter keeps the secrets in memory and loses them on restart. `AppCredentialStore` is the one interface you implement over your own storage, so plan a persistent store before production. After a restart, `platform.s2s` fails until the binding secret is rotated in Space, which pushes it again.
+The store of the starter keeps the secrets in memory and loses them on restart. `AppCredentialStore` is the one interface you implement over your own storage, so plan a persistent store before production. After a restart, `platform.s2s` fails until the binding secret is rotated in Vector Space, which pushes it again.
 
 ### 3. Add the handlers
 
 The agent handler passes the caller's own token to `agentInvoke`. The connectors handler passes an app token to `connectorsList`. No user limits that call, so the route must check the capability first.
 
-Each handler takes the platform, and the verified claims that `requireCapability` returns, as in step 3 of [gate a page and an endpoint](../recipes/gate-by-capability.md).
+Each handler takes the platform, and the verified claims that `requireCapability` returns, as in step 3 of [gate an app page and an endpoint](../recipes/gate-by-capability.md).
 
 ```ts title="server/src/space-calls.ts"
 import type { IncomingMessage } from 'node:http';
@@ -90,24 +90,24 @@ if (pathname === '/api/space/agent') return send(res, 200, await startConversati
 if (pathname === '/api/space/connectors') return send(res, 200, await listConnectors(platform, await requireCapability(req, 'lead:manage')));
 ```
 
-A failed call throws `SpaceActionError`, which has a `status` and an optional `code`. The `catch` block in `main.ts` answers `500` for it. Add `if (error instanceof SpaceActionError) return send(res, error.status, { error: error.message });` after the `AppAuthError` line to answer with the status that Space sent. Import `SpaceActionError` from `@vectoragents/vs-apps/server`, next to `AppAuthError`.
+A failed call throws `SpaceActionError`, which has a `status` and an optional `code`. The `catch` block in `main.ts` answers `500` for it. Add `if (error instanceof SpaceActionError) return send(res, error.status, { error: error.message });` after the `AppAuthError` line to answer with the status that Vector Space sent. Import `SpaceActionError` from `@vectoragents/vs-apps/server`, next to `AppAuthError`.
 <!-- /flavour -->
 <!-- flavour nest -->
 ### 2. Know the three services
 
 `AppPlatformModule` provides all three services to every module, so you import nothing to inject them.
 
-- `SpaceActionsService` has one method for each Space action. Each method takes a bearer token as its first argument.
+- `SpaceActionsService` has one method for each Vector Space action. Each method takes a bearer token as its first argument.
 - `AppActionsService` wraps `SpaceActionsService` for a caller. It reads the token and the `spaceId` from the request, so you pass only the request and the input.
-- `SpaceS2sService` exchanges the service secret for a short-lived [app token](../glossary.md#app-token). Space creates the secret for each pair of app and space and pushes it to the credential store, `MemoryCredentialStore` in `server/src/credential-store.ts`.
+- `SpaceS2sService` exchanges the service secret for a short-lived [app token](../glossary.md#app-token). Vector Space creates the secret for each pair of app and space and pushes it to the credential store, `MemoryCredentialStore` in `server/src/credential-store.ts`.
 
-The store keeps the secrets in memory and loses them on restart. `AppCredentialStore` is the one interface you implement over your own storage, so plan a persistent store before production. After a restart, `getToken` fails until the binding secret is rotated in Space, which pushes it again.
+The store keeps the secrets in memory and loses them on restart. `AppCredentialStore` is the one interface you implement over your own storage, so plan a persistent store before production. After a restart, `getToken` fails until the binding secret is rotated in Vector Space, which pushes it again.
 
 ### 3. Add the routes
 
 The agent route passes the request to `AppActionsService`, which sends the caller's own token. The connectors route sends an app token, which no user limits. Its `@RequireCapability` check therefore decides who may use the route.
 
-`getToken` takes the `appId` and the `spaceId` that `appCaller` reads from the verified claims, as in [open a route and read the caller](./open-route-and-read-caller.md). A failed Space call reaches your caller as an HTTP error with the status that Space sent.
+`getToken` takes the `appId` and the `spaceId` that `appCaller` reads from the verified claims, as in [open a route and read the caller](./open-route-and-read-caller.md). A failed Vector Space call reaches your caller as an HTTP error with the status that Vector Space sent.
 
 ```ts title="server/src/space-calls.controller.ts"
 import { Body, Controller, Get, Post, Req } from '@nestjs/common';
@@ -162,12 +162,12 @@ curl -s -o /dev/null -w '%{http_code}\n' -X POST http://localhost:<SERVER_PORT>/
 curl -s -o /dev/null -w '%{http_code}\n' http://localhost:<SERVER_PORT>/api/space/connectors
 ```
 
-**Check**: both commands print `401`, because each route refuses a request with no user token before it calls Space.
+**Check**: both commands print `401`, because each route refuses a request with no user token before it calls Vector Space.
 
 ## Result
 
-A signed-in caller of `/api/space/agent` starts a conversation with the Space agent and receives its `threadId`. A caller of `/api/space/connectors` receives the connector registry of their space, fetched with an app token. After Space provisions the app, the platform finds the service secret of each space.
+A signed-in caller of `/api/space/agent` starts a conversation with the space agent and receives its `threadId`. A caller of `/api/space/connectors` receives the connector registry of their space, fetched with an app token. After Vector Space provisions the app, the platform finds the service secret of each space.
 
 ## Next step
 
-Let the Space agent call your app in return with [agent action trees](./agent-action-trees.md).
+Let the space agent call your app in return with [agent action trees](./agent-action-trees.md).

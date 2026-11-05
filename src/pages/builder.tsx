@@ -140,11 +140,11 @@ export default function Builder(): ReactElement {
             <Field label="Version" path="version" {...fieldProps}>
               {(id) => <input id={id} value={draft.version} onChange={(e) => set({ version: e.target.value })} />}
             </Field>
-            <Field label="Default page key (optional)" path="defaultPageKey" {...fieldProps}>
+            <Field label="Default app page key (optional)" path="defaultPageKey" {...fieldProps}>
               {(id) => <input id={id} value={draft.defaultPageKey ?? ''} onChange={(e) => set({ defaultPageKey: e.target.value })} />}
             </Field>
 
-            <h2>Pages</h2>
+            <h2>App pages</h2>
             {errors.get('pages')?.map((e) => (
               <p key={e.message} className="builder-error" role="alert">
                 {e.message}
@@ -152,7 +152,7 @@ export default function Builder(): ReactElement {
             ))}
             {draft.pages.map((page, i) => (
               <fieldset key={i}>
-                <legend>Page {i + 1}</legend>
+                <legend>App page {i + 1}</legend>
                 <Field label="Key" path={`pages[${i}].key`} {...fieldProps}>
                   {(id) => <input id={id} value={page.key} onChange={(e) => set({ pages: replace<PageDraft>(draft.pages, i, { key: e.target.value }) })} />}
                 </Field>
@@ -172,12 +172,12 @@ export default function Builder(): ReactElement {
                   )}
                 </Field>
                 <button type="button" onClick={() => set({ pages: remove(draft.pages, i) })}>
-                  Remove page
+                  Remove app page
                 </button>
               </fieldset>
             ))}
             <button type="button" onClick={() => set({ pages: [...draft.pages, { key: '', label: '', path: '/' }] })}>
-              Add page
+              Add app page
             </button>
 
             <h2>Capabilities</h2>

@@ -13,7 +13,7 @@ Every symbol below follows one layout: signature, behaviour, example. Each examp
 
 ## `defineAgentPage`
 
-Declares a [page](../glossary.md#page) the Space agent can read, and returns the factory for its [agent actions](../glossary.md#agent-action).
+Declares an [app page](../glossary.md#app-page) the space agent can read, and returns the factory for its [agent actions](../glossary.md#agent-action).
 
 ### Signature
 
@@ -53,7 +53,7 @@ interface AgentActionInput<S extends z.ZodTypeAny = z.ZodTypeAny> {
 - `page.action(...)` roots an action on the page. `action.child(...)` declares an action that is available only while its parent is mounted.
 - Throws on a duplicate `pageId`, a duplicate action id, or an `id` that is not a snake_case local name.
 - Declaring an action does not make it callable. A component must bind it with `useAgentAction` from [`/react`](./react.md).
-- Write each `description` for the agent. The SDK puts it in the manifest, which Space reads.
+- Write each `description` for the agent. The SDK puts it in the manifest, which Vector Space reads.
 
 ### Example
 
@@ -185,7 +185,7 @@ type AgentActionDispatchResult =
 - `context` reaches the handler as its second argument. Concurrent dispatches do not share it.
 - A child action is available only while its parent is mounted. Dispatching it without the parent returns `UNAVAILABLE_ACTION` with `missingParent`.
 - A handler that throws, or rejects, returns `HANDLER_ERROR` with the error message.
-- The bridge that Space talks to calls `dispatch` and reports the outcome. After each successful call, the bridge reports the mounted actions.
+- The bridge that Vector Space talks to calls `dispatch` and reports the outcome. After each successful call, the bridge reports the mounted actions.
 
 ### Example
 

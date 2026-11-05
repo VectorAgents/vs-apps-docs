@@ -2,15 +2,15 @@
 title: Agent action trees
 ---
 
-Advanced configuration of [agent actions](../glossary.md#agent-action): child actions that exist only while a parent is mounted, and testing a page without [Space](../glossary.md#space).
+Advanced configuration of [agent actions](../glossary.md#agent-action): child actions that exist only while a parent is mounted, and testing an app page without [Vector Space](../glossary.md#vector-space).
 
 ## Goal
 
-End with a child action `leads.export_leads` that the agent can call only after it opens a Lead List, and a test harness that mounts the page without `AppProvider`.
+End with a child action `leads.export_leads` that the agent can call only after it opens a Lead List, and a test harness that mounts the app page without `AppProvider`.
 
 ## Prerequisites
 
-- The app from [`expose-agent-actions`](../recipes/expose-agent-actions.md), with the `leads` page, the action `leads.open_lead_list` and the [agent catalog](../glossary.md#agent-catalog) that lists it.
+- The app from [`expose-agent-actions`](../recipes/expose-agent-actions.md), with the `leads` app page, the action `leads.open_lead_list` and the [agent catalog](../glossary.md#agent-catalog) that lists it.
 - Background: [`defineAgentPage`](../reference/root.md#defineagentpage) and [`AgentActionRegistryProvider`](../reference/react.md). The [quickstart](../quickstart.md) covers the app setup.
 
 ## Steps
@@ -71,7 +71,7 @@ export function LeadsPage() {
 }
 ```
 
-### 3. Test the page without Space
+### 3. Test the app page without Vector Space
 
 `AppProvider` already mounts the registry, and a second `AgentActionRegistryProvider` splits it. Mount the provider directly only where `AppProvider` is absent, such as a test or a story.
 
@@ -92,7 +92,7 @@ To trigger an action in such a test, read the registry with `useAgentActionRegis
 
 ## Result
 
-The agent sees `leads.export_leads` only after it opens a Lead List, and the page renders in a test without Space.
+The agent sees `leads.export_leads` only after it opens a Lead List, and the app page renders in a test without Vector Space.
 
 ## Next step
 

@@ -1,18 +1,18 @@
 ---
-title: Gate a page and an endpoint by capability
+title: Gate an app page and an endpoint by capability
 start: leads-app
 ---
 
-Hide a [page](../glossary.md#page) from members who lack a [capability](../glossary.md#capability) and refuse the same members on the server. The example gates the `leads` page of `hello-app` with `lead:manage`.
+Hide an [app page](../glossary.md#app-page) from members who lack a [capability](../glossary.md#capability) and refuse the same members on the server. The example gates the `leads` app page of `hello-app` with `lead:manage`.
 
 ## Goal
 
-End with one capability enforced twice: `RequireCapability` hides the `leads` page in the browser, and the server answers `403` to a token without it. One wrapper gives every gated page the same fallback.
+End with one capability enforced twice: `RequireCapability` hides the `leads` app page in the browser, and the server answers `403` to a token without it. One wrapper gives every gated app page the same fallback.
 
 ## Prerequisites
 
 - A GitHub package token in `GITHUB_PACKAGES_TOKEN`, as in [step 0 of the quickstart](../quickstart.md#0-set-up-access-to-the-package-registry). The scaffold command reads it.
-- The `leads-app` start of the starter. It is `hello-app` with an ungated `leads` page. Scaffold it and work inside the new folder.
+- The `leads-app` start of the starter. It is `hello-app` with an ungated `leads` app page. Scaffold it and work inside the new folder.
 
 <!-- flavour node -->
 ```bash
@@ -27,18 +27,18 @@ cd leads-app
 ```
 <!-- /flavour -->
 
-- A member who holds the capability and one who does not. A [space manager](../glossary.md#space-manager) [grants](../glossary.md#grant) capabilities in [Space](../glossary.md#space).
+- A member who holds the capability and one who does not. A [space manager](../glossary.md#space-manager) [grants](../glossary.md#capability-grant) capabilities in [Vector Space](../glossary.md#vector-space).
 - Background: [`RequireCapability` on the client](../reference/react.md#requirecapability).
 
 ## Steps
 
-Each snippet is a complete file. The `leads-app` start already declares the `lead:manage` and `icp:manage` capabilities and the `leads` page, and this recipe changes what is listed below.
+Each snippet is a complete file. The `leads-app` start already declares the `lead:manage` and `icp:manage` capabilities and the `leads` app page, and this recipe changes what is listed below.
 
-### 1. Gate the pages in the definition
+### 1. Gate the app pages in the definition
 
-A page names its capability in `capability`. `defineApp` does not check that the name exists in `capabilities`, so keep the two keys identical.
+An app page names its capability in `capability`. `defineApp` does not check that the name exists in `capabilities`, so keep the two keys identical.
 
-In the start the `leads` page has no `capability`. Add it, and add an `icp` page gated by `icp:manage`, which step 5 uses as the second page. Replace the definition in `shared/src/index.ts`.
+In the start the `leads` app page has no `capability`. Add it, and add an `icp` app page gated by `icp:manage`, which step 5 uses as the second app page. Replace the definition in `shared/src/index.ts`.
 
 ```ts title="shared/src/index.ts"
 import { defineApp } from '@vectoragents/vs-apps';
@@ -65,7 +65,7 @@ export const definition = defineApp({
 The `CAPABILITY` export stays, because the `/api/hello` route and `HelloPage.tsx` use it.
 
 <!-- flavour react -->
-### 2. Gate the page in the browser
+### 2. Gate the app page in the browser
 
 `RequireCapability` renders its children only when the token holds the capability. A function `fallback` receives the missing capability name. Replace `client/src/LeadsPage.tsx`.
 
@@ -132,16 +132,16 @@ controllers: [HelloController, LeadsController],
 
 ### 4. Check both gates
 
-Run `npm run dev` and open `http://localhost:5173/harness.html`. Choose the Leads page in the sidebar.
+Run `npm run dev` and open `http://localhost:5173/harness.html`. Choose the Leads app page in the sidebar.
 
-In the dev panel, remove `lead:manage` from the capability set. The page shows the fallback text. Add `lead:manage` back, and the page shows the heading.
+In the dev panel, remove `lead:manage` from the capability set. The app page shows the fallback text. Add `lead:manage` back, and the app page shows the heading.
 
 For the server, mint a development token without `lead:manage` through the [harness token route](../reference/harness.md). Call `GET /api/leads` with it. The server answers `403` with `Missing capability: lead:manage`. A token that holds the capability gets `200`.
 
 <!-- flavour react -->
-### 5. Share one fallback across pages
+### 5. Share one fallback across app pages
 
-Each page that repeats `fallback` can drift from the others. Wrap `RequireCapability` once, and every gated page shows the same message.
+Each app page that repeats `fallback` can drift from the others. Wrap `RequireCapability` once, and every gated app page shows the same message.
 
 ```tsx title="client/src/GatedPage.tsx"
 import type { ReactNode } from 'react';
@@ -159,7 +159,7 @@ export function GatedPage({ capability, children }: { capability: string; childr
 }
 ```
 
-In `client/src/LeadsPage.tsx`, replace the `RequireCapability` element with `<GatedPage capability="lead:manage">` and drop the import. Keep the `main` element inside it. The `icp` page uses the same wrapper with its own capability.
+In `client/src/LeadsPage.tsx`, replace the `RequireCapability` element with `<GatedPage capability="lead:manage">` and drop the import. Keep the `main` element inside it. The `icp` app page uses the same wrapper with its own capability.
 
 ```tsx title="client/src/IcpPage.tsx"
 import { GatedPage } from './GatedPage';
@@ -175,12 +175,12 @@ export function IcpPage() {
 }
 ```
 
-In `client/src/App.tsx`, render `<IcpPage />` when `window.location.pathname` is `/icp`, the way the file does for `/leads`. Both pages now show one fallback. To change the message, edit `GatedPage.tsx`.
+In `client/src/App.tsx`, render `<IcpPage />` when `window.location.pathname` is `/icp`, the way the file does for `/leads`. Both app pages now show one fallback. To change the message, edit `GatedPage.tsx`.
 <!-- /flavour -->
 
 ## Result
 
-The `leads` and `icp` pages render only for members with `lead:manage` and `icp:manage`. `GET /api/leads` refuses every other token. Both pages share one fallback in `GatedPage`.
+The `leads` and `icp` app pages render only for members with `lead:manage` and `icp:manage`. `GET /api/leads` refuses every other token. Both app pages share one fallback in `GatedPage`.
 
 ## Next step
 

@@ -72,14 +72,14 @@ interface AppClientConfig {
 | Field | Meaning |
 | --- | --- |
 | `allowedParentOrigin` | The one origin the iframe bridge accepts messages from. |
-| `spaceJwksUrl` | Where the browser fetches [Space](../glossary.md#space) signing keys to verify a token. |
+| `spaceJwksUrl` | Where the browser fetches [Vector Space](../glossary.md#vector-space) signing keys to verify a token. |
 | `tokenIssuer` | The expected `iss` claim of a token. |
-| `spaceApiUrl` | The Space API base. Setting it enables the user directory. |
+| `spaceApiUrl` | The Vector Space API base. Setting it enables the user directory. |
 
 ### Behaviour
 
 - Only `allowedParentOrigin` is required. `loadAppClientConfig` rejects without it.
-- The server env is the source of the values in every environment, so the same bundle runs in the [harness](./harness.md) and in Space.
+- The server env is the source of the values in every environment, so the same bundle runs in the [harness](./harness.md) and in Vector Space.
 - Without `spaceApiUrl`, `useApp().directory` is `null` and `useUsers` returns placeholder names.
 
 ### Example
@@ -98,7 +98,7 @@ export const config = loadAppClientConfig({ baked });
 
 ## `startAppSession`
 
-Runs the app side of the embed protocol for one page and exposes its state as an external store. [`AppProvider`](./react.md) calls it for a React tree. Call it yourself on another framework.
+Runs the app side of the embed protocol for one [app page](../glossary.md#app-page) and exposes its state as an external store. [`AppProvider`](./react.md) calls it for a React tree. Call it yourself on another framework.
 
 ### Signature
 
@@ -132,17 +132,17 @@ interface AppSessionState {
 | Option | Meaning |
 | --- | --- |
 | `config` | Boot config, or a promise of it. |
-| `registry` | The [agent action registry](./root.md#createagentactionregistry) that receives the actions that Space dispatches. |
-| `navigate` | Called when Space asks the app to open a path. |
+| `registry` | The [agent action registry](./root.md#createagentactionregistry) that receives the actions that Vector Space dispatches. |
+| `navigate` | Called when Vector Space asks the app to open a path. |
 | `onToken` | Called with each verified token, and with `null` on `dispose`. |
-| `onTheme` | Called with `'light'` or `'dark'` when Space changes theme. |
+| `onTheme` | Called with `'light'` or `'dark'` when Vector Space changes theme. |
 
 ### Behaviour
 
 - Starts the iframe bridge once the config resolves. The bridge accepts messages only from `allowedParentOrigin`.
 - Verifies each token against the key set of the config. A token that fails verification is logged to the console and ignored, so `claims` stays `null`.
 - Opens the user directory on the first verified token, when the config sets `spaceApiUrl`.
-- Dispatches each action that Space sends into `registry`, and reports the document height to Space through a `ResizeObserver`.
+- Dispatches each action that Vector Space sends into `registry`, and reports the document height to Vector Space through a `ResizeObserver`.
 - Keeps the token in memory only.
 - `getSnapshot` returns the same object until the state changes, so it works as the snapshot function of a store such as `useSyncExternalStore`.
 - `dispose` stops the bridge, calls `onToken(null)` and resets the state to the one before the first token.
@@ -192,7 +192,7 @@ interface DirectoryUser {
 
 - `useUsers` returns these in a map keyed by `id`.
 - `directory.search(q, take?)` returns them as an array.
-- An identifier that Space cannot show keeps its entry with `deleted: true`.
+- An identifier that Vector Space cannot show keeps its entry with `deleted: true`.
 - `avatarUrl` is `null` when the user has none.
 
 ### Example

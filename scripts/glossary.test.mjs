@@ -12,8 +12,9 @@ const entries = text
   });
 
 const required = [
-  'app', 'app definition', 'manifest', 'Space', 'space manager', 'Organization admin', 'Edit level', 'app registration', 'page',
-  'capability', 'grant', 'model slot', 'connector slot', 'agent action', 'agent catalog', 'acts', 'approvals',
+  'app', 'app definition', 'manifest', 'Vector Space', 'space', 'space manager', 'Organization admin', 'Edit level', 'space page',
+  'resource pool', 'knowledge source', 'app registration', 'app page', 'capability', 'capability grant', 'model slot',
+  'connector slot', 'allowed resources', 'agent action', 'agent catalog', 'acts', 'approvals',
   'harness', 'dev issuer', 'SDK', 'MCP', 'A2A', 'service secret', 'app token', 'monorepo', 'shared package',
 ];
 
@@ -25,7 +26,7 @@ test('each entry has definition, mapping and owner', () => {
   for (const { name, body } of entries) {
     assert.match(body, /^[^\s-].*$/m, `${name}: definition`);
     assert.match(body, /^- Maps to: .+/m, `${name}: mapping`);
-    assert.match(body, /^- Owner: (SDK|Space|SDK and Space|docs)\b/m, `${name}: owner`);
+    assert.match(body, /^- Owner: (SDK|Vector Space|SDK and Vector Space|docs)\b/m, `${name}: owner`);
   }
 });
 
@@ -63,10 +64,39 @@ test('glossary defines no workspace term', () => {
   assert.ok(!entries.some((e) => /workspace/i.test(e.name)));
 });
 
-test('Space and space manager entries open with the quickstart hand-off text', () => {
+test('Vector Space, space and space manager entries open with the platform text', () => {
   const first = (name) => entries.find((e) => e.name === name).body.trim().split('\n')[0];
-  assert.equal(first('Space'), 'A Vector workspace. A space manager adds apps, shares capabilities and sets slots in it. It embeds each app page in an iframe.');
+  assert.match(first('Vector Space'), /^The Vector platform\./);
+  assert.match(first('space'), /^A shared place in Vector Space\b/);
   assert.equal(first('space manager'), 'A member of a space at Edit level, or an Organization admin. They add apps, grant capabilities and choose the models and connectors for the slots.');
+});
+
+test('app page and space page entries tell the two pages apart', () => {
+  const body = (name) => entries.find((e) => e.name === name).body;
+  assert.match(body('space page'), /\bapp page\b/);
+  assert.match(body('app page'), /\bspace page\b/);
+});
+
+test('allowed resources entry states the overlap rule in the member\'s access', () => {
+  const entry = entries.find((e) => e.name === 'allowed resources').body;
+  assert.match(entry, /allowed for the app and open to the member/);
+  assert.doesNotMatch(text, /\b(ceiling|floor)\b/i);
+});
+
+test('resource pool and knowledge source entries name the Vector Space screens', () => {
+  const body = (name) => entries.find((e) => e.name === name).body;
+  assert.match(body('resource pool'), /Context Hub/);
+  assert.match(body('resource pool'), /Resources/);
+  assert.match(body('knowledge source'), /settings of an app/);
+});
+
+test('no entry is named grant', () => {
+  assert.ok(!entries.some((e) => e.name.toLowerCase() === 'grant'));
+});
+
+test('glossary prose writes Vector Space in full', () => {
+  const prose = text.replace(/`[^`]*`/g, '');
+  assert.doesNotMatch(prose, /(?<!Vector )\bSpaces?\b/);
 });
 
 test('A2A entry names the agent card helpers and the definition field', () => {

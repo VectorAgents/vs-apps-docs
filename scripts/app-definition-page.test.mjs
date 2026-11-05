@@ -11,7 +11,7 @@ const text = readFileSync(pageUrl, 'utf8');
 const headings = [...text.matchAll(/^#{2,3} (.+)$/gm)].map((m) => m[1]);
 
 test('answers the four questions', () => {
-  for (const h of ['What an app definition is', 'What an app definition does', 'How to write one', 'How it reflects in Space']) {
+  for (const h of ['What an app definition is', 'What an app definition does', 'How to write one', 'How it reflects in Vector Space']) {
     assert.ok(headings.includes(h), h);
   }
 });
@@ -28,14 +28,14 @@ test('states each of the ten uses once, in order', () => {
     'Check the token',
     'Receive connector events',
     'Look up a model slot',
-    'Read the manifest in Space',
+    'Read the manifest in Vector Space',
   ]);
 });
 
-test('contrasts definition and manifest and says Space never sees the definition', () => {
+test('contrasts definition and manifest and says Vector Space never sees the definition', () => {
   assert.match(text, /hand-written TypeScript/i);
   assert.match(text, /generated JSON/i);
-  assert.match(text, /Space never sees the definition/);
+  assert.match(text, /Vector Space never sees the definition/);
 });
 
 test('the one mermaid code block sits inside DiagramControls, imported first in the body', () => {
@@ -81,14 +81,14 @@ test('states the empty capabilities and ungated page rules and the typo warning'
   assert.match(text, /:::warning[\s\S]*does not check[\s\S]*:::/);
 });
 
-test('states what the SDK guarantees and what is Space-side, and the pending review', () => {
+test('states what the SDK guarantees and what is Vector Space side, and the pending review', () => {
   assert.match(text, /### SDK guarantees/);
-  assert.match(text, /### Space-side/);
+  assert.match(text, /### Vector Space side/);
   assert.match(text, /pending/i);
 });
 
 test('does not claim unverified nav behaviour for a page without a capability', () => {
-  assert.doesNotMatch(text, /without a capability[^.]*\b(appears|shows|listed|visible) in the (Space )?nav/i);
+  assert.doesNotMatch(text, /without a capability[^.]*\b(appears|shows|listed|visible) in the (Vector Space )?nav/i);
 });
 
 test('leaves deferred fields undocumented', () => {
@@ -96,7 +96,7 @@ test('leaves deferred fields undocumented', () => {
 });
 
 test('links each glossary term at first use only', () => {
-  for (const term of ['manifest', 'Space', 'capability', 'model slot', 'connector slot']) {
+  for (const term of ['manifest', 'Vector Space', 'capability', 'model slot', 'connector slot']) {
     const slug = term.toLowerCase().replaceAll(' ', '-');
     const links = text.split(`](./glossary.md#${slug})`).length - 1;
     assert.equal(links, 1, `${term} linked ${links} times`);

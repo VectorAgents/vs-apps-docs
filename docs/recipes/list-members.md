@@ -11,8 +11,8 @@ End with an owners list built with `useUsers`, a member picker built with the di
 
 ## Prerequisites
 
-- The app from the [quickstart](../quickstart.md), added to a Space (Part 2) and run with `npm run dev:space`. The harness has no directory, because `npm run dev` clears `SPACE_API_URL`.
-- `SPACE_API_URL` in `.env`, set to the Space API origin followed by `/api`, for example `https://space-api.example.com/api`. The starter returns it as `spaceApiUrl` in `/api/client-config`. Without it, `useApp().directory` is `null`.
+- The app from the [quickstart](../quickstart.md), added to a space (Part 2) and run with `npm run dev:space`. The harness has no directory, because `npm run dev` clears `SPACE_API_URL`.
+- `SPACE_API_URL` in `.env`, set to the [Vector Space](../glossary.md#vector-space) API origin followed by `/api`, for example `https://space-api.example.com/api`. The starter returns it as `spaceApiUrl` in `/api/client-config`. Without it, `useApp().directory` is `null`.
 - Background: [`useUsers`](../reference/react.md#useusers), [`DirectoryUser` and `DirectoryGroup`](../reference/browser.md#directoryuser).
 
 ## Steps
@@ -21,7 +21,7 @@ Each snippet is a complete file.
 
 ### 1. Resolve owner identifiers to names
 
-`useUsers` takes user identifiers your data already holds, for example the owner of each lead. It fetches again only when the set of identifiers changes, so a new array on each render costs nothing. If Space cannot show an identifier, the map holds an entry with `deleted: true` and the name `Former member`. Space cannot show an identifier for a deleted user, a user who left the organization or an unknown identifier.
+`useUsers` takes user identifiers your data already holds, for example the owner of each lead. It fetches again only when the set of identifiers changes, so a new array on each render costs nothing. If Vector Space cannot show an identifier, the map holds an entry with `deleted: true` and the name `Former member`. Vector Space cannot show an identifier for a deleted user, a user who left the organization or an unknown identifier.
 
 ```tsx title="client/src/LeadOwners.tsx"
 import { useUsers } from '@vectoragents/vs-apps/react';
@@ -49,7 +49,7 @@ export function LeadOwners({ ownerIds }: { ownerIds: readonly string[] }) {
 
 ### 2. Search members for a picker
 
-`useApp().directory` is `null` without a directory. `search` returns `DirectoryUser` entries and rejects when Space answers with an error, so the snippet catches the rejection and shows an error line.
+`useApp().directory` is `null` without a directory. `search` returns `DirectoryUser` entries and rejects when Vector Space answers with an error, so the snippet catches the rejection and shows an error line.
 
 Search runs from an effect that waits 300 ms after the last keystroke. The cleanup cancels the timer when the query changes, so only the last pause sends a call. The same cleanup drops a reply that arrives after the query changed.
 
@@ -110,7 +110,7 @@ export function OwnerPicker({ onPick }: { onPick: (user: DirectoryUser) => void 
 
 ### 3. Show the members of a group
 
-A `DirectoryGroup` holds `userIds`, not names. `userIds` lists only members that Space shows. Pass them to `useUsers` to get names. A hook cannot run in a loop, so one component takes one group.
+A `DirectoryGroup` holds `userIds`, not names. `userIds` lists only members that Vector Space shows. Pass them to `useUsers` to get names. A hook cannot run in a loop, so one component takes one group.
 
 ```tsx title="client/src/GroupRoster.tsx"
 import type { DirectoryGroup } from '@vectoragents/vs-apps/browser';
@@ -133,7 +133,7 @@ export function GroupRoster({ group }: { group: DirectoryGroup }) {
 
 ### 4. List groups
 
-`directory.groups()` returns every `DirectoryGroup` of the space. Its `id` is numeric, unlike the string identifier of a user. Like `search`, it rejects when Space answers with an error, so the snippet shows an error line.
+`directory.groups()` returns every `DirectoryGroup` of the space. Its `id` is numeric, unlike the string identifier of a user. Like `search`, it rejects when Vector Space answers with an error, so the snippet shows an error line.
 
 ```tsx title="client/src/TeamGroups.tsx"
 import type { DirectoryGroup } from '@vectoragents/vs-apps/browser';
@@ -169,7 +169,7 @@ export function TeamGroups() {
 
 ### 5. Mount the components
 
-In `client/src/LeadsPage.tsx`, import `LeadOwners`, `OwnerPicker` and `TeamGroups`. Render `<LeadOwners ownerIds={ownerIds} />` with the owner identifiers the page holds, `<OwnerPicker onPick={pickOwner} />`, where `pickOwner` is your function that stores the picked `user.id`, and `<TeamGroups />`. Each component calls `useApp` or `useUsers`, so it must render inside `AppProvider`, as the pages do.
+In `client/src/LeadsPage.tsx`, import `LeadOwners`, `OwnerPicker` and `TeamGroups`. Render `<LeadOwners ownerIds={ownerIds} />` with the owner identifiers the app page holds, `<OwnerPicker onPick={pickOwner} />`, where `pickOwner` is your function that stores the picked `user.id`, and `<TeamGroups />`. Each component calls `useApp` or `useUsers`, so it must render inside `AppProvider`, as the app pages do.
 
 ## Result
 
@@ -177,5 +177,5 @@ Owner identifiers render as names, a search box returns members for a picker wit
 
 ## Next step
 
-Let the Space agent drive these pages with [expose agent actions](./expose-agent-actions.md).
+Let the space agent drive these app pages with [expose agent actions](./expose-agent-actions.md).
 <!-- /flavour -->

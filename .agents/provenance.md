@@ -8,6 +8,23 @@ What each claim in these docs rests on. A ticket or spec named below without a l
 - Every code snippet typechecks against the installed package, except the quickstart's `starter` code blocks. The starter's CI typechecks those excerpts ([ADR 0003](adr/0003-quickstart-runs-create-app-from-github-packages.md)). The stamp at the foot of each page shows the version and date of the last run.
 - Space-side claims come from Space-side documentation, except the checks under [Verified in a local Space](#verified-in-a-local-space). This covers registration, the pending review, auto-apply, navigation entries, grants and the configuration sheet.
 
+- Glossary terms rest on the product glossary of the sibling `vector-spaces` repo (`docs/product/GLOSSARY.md`), with `docs/systems/apps/BINDINGS.md` for the app settings. A published page never names either file.
+
+## Glossary term mapping
+
+The glossary uses the published word where the product glossary uses an internal one.
+
+| Published term | Product term | Note |
+| --- | --- | --- |
+| allowed resources | Ceiling (`access.app_binding_resources`) | The resources a space manager attaches to an app. `ceiling` does not occur in `docs/`. |
+| the member's access | Floor | The overlap rule: an action runs only on resources that are allowed for the app and open to the member. |
+| resource pool | Pool | Vector Space lists it under Context Hub as **Resources**. |
+| knowledge source | Source | Vector Space shows knowledge sources in the settings of an app. |
+| space page | Page (`pages.pages`) | A grid of widgets. `app page` names the SDK `pages[]` entry. |
+| capability grant | Grant | The noun only. The product grant is a standing approval, a different thing. |
+| Vector Space, space | Space | The platform is Vector Space. The workspace is a space. |
+| app token | service token | The SDK README calls it a service token. |
+
 ## SDK gaps
 
 - The SDK declares no `engines` field. The docs name the current Node.js LTS release, which the starter CI tests (`lts/*`). Vite 8 accepts every LTS from 22.12.
@@ -53,6 +70,9 @@ Rows marked "Starter claim" describe the starter repo. The starter's own CI and 
 | The SDK does not register handlers from the definition. It acknowledges an unregistered handler as `{ handled: false }` and does not retry it. `buildManifests` sets `eventsUrl` to `<publicBaseUrl>/api/events/<appKey>` unless the definition sets it. | The installed 0.4.0 dist and README, [Decide fixes for defects in the current page](../.scratch/app-definition-review/issues/08-decide-fixes-for-defects-in-the-current-page.md). |
 | `createAppPlatform` from `@vectoragents/vs-apps/server` serves the events receiver (`POST /api/events/:appKey`) and holds the handler registry, `platform.connectorEvents`. The Nest adapter wraps both as `ConnectorEventsService`. The connector events guide has no Node.js version yet, so the neutral page states only the `eventsUrl` and that the server answers there. | The installed 0.4.0 dist (`server/app-platform/connector-events/`, `nest/app-platform/connector-events/`) and README "Connector events". |
 | `buildManifests` throws on a duplicate `appKey` in the list of definitions. `verifyS2sToken` compares the `appKey` of a token with the app key, with no framework. | The installed 0.4.0 dist (`server/manifests/build-manifests.util.js`, `server/app-auth/app-auth.util.js`). |
+| Only `verifyS2sToken` and `verifyEventsToken` compare the `appKey` of a token, with the key of the route that was called. `verifyUserToken` and `verifyProvisioningToken` do not read `appKey`. | The 0.4.0 source (`src/server/app-auth/app-auth.util.ts`), read in `@vectoragents/vs-apps` 0.4.0 at `vector-spaces/packages/apps`. |
+| The SDK has no slot check. `createSpaceAi` passes the slot to Space, and Space refuses an undeclared or unset slot. The SDK passes the refusal on as a `SpaceActionError`. | The 0.4.0 source (`src/server/space-ai/space-ai.util.ts`: the TSDoc says an unset slot is refused as a `SpaceActionError`; no code checks the manifest). The refusal itself is Space-side and not observed. |
+| A plain `createSpaceS2s` exchange gives an app token with no user. With `userId`, the exchange gives a user token under that member's access, with `viaServer: true`, refused unless the space admits the user. The SDK calls the app token a service token. | The 0.4.0 source (`src/actions/actions.schema.ts`, `s2sExchangeInputSchema` comment; `src/tokens/tokens.schema.ts`, `viaServer`; `README.md`, "service token"). Space's refusal status is Space-side and not observed. |
 | `defineApp` does not reject unknown top-level keys. It rejects a malformed page key at import. Duplicate page keys are checked in `buildManifests`, not at import. | The installed 0.4.0 dist (`definitionSchema` is not strict, `appPageSchema` checks the key format, `appManifestSchema` checks duplicates), same ticket. |
 
 ## Reference
@@ -68,6 +88,8 @@ Rows marked "Starter claim" describe the starter repo. The starter's own CI and 
 | Claim | Rests on |
 | --- | --- |
 | A slot that no one set answers `409` with `AI_SLOT_NOT_READY`, and a slot key that the manifest does not declare answers `400`. `createSpaceAi` throws a `SpaceActionError` that carries the status. | Space code, not observed: `app-s2s-exchange.service.ts` in `vector-spaces` `apps/server/src/domain/vector-apps/backchannel/services/`, [ticket 21, Comments](../.scratch/recipes-review/issues/21-guide-pair-call-a-model-from-your-server.md). The `SpaceActionError` status rests on the installed 0.4.0 dist. No call to a live Space was run. |
+| The `409` and `400` statuses of a model call are Space's answers. The SDK source does not raise them. | `README.md` of 0.4.0 and Space code (`app-s2s-exchange.service.ts`, as in the row above), not the SDK source. No call to a live Space was run. |
+| The platform reuses a model ticket until one minute before `expiresAt`, for one space, slot, run and trace. | The 0.4.0 source (`src/server/space-ai/space-ai.util.ts`: the cache key is `spaceId:slot:runSpanId:traceId`, `refreshAt = expiresAt * 1000 - 60_000`). |
 | Space delivers each connector event at least once, up to three times. | Space code, not observed: the connector event dispatch queue takes the shared job defaults (`attempts: 3`, exponential back-off) in `packages/core/src/kernel/messaging/queues/constants/queue-defaults.constant.ts`, and the redrive service in `vector-spaces` `domain/context-hub/connectors/webhooks/redrive/` names a "three-attempt backoff". [Ticket 19, Comments](../.scratch/recipes-review/issues/19-nest-guide-handle-connector-events.md) records that event routing is not run end to end. |
 | The A2A route answers `401` for a missing, invalid or wrong-scope token, and `403` for a token that names another space or app. | The installed 0.4.0 dist (`verifyS2sToken` in `server/app-auth/app-auth.util.js`). The check is [ticket 22, Comments](../.scratch/recipes-review/issues/22-guide-expose-app-as-a2a-agent.md). The `401` with no token is the only status the guide asks the reader to observe. |
 | Space creates a service secret for each pair of app and space and pushes it in the body of `POST /api/provision`, where the starter route drops it. | Space code, not observed: `provisionSpace` in `vector-spaces` `apps/server/src/domain/vector-apps/provisioning/services/vector-apps-client.service.ts` posts `{ serviceSecret }` under a provisioning token. The starter behaviour rests on [ticket 21, Comments](../.scratch/recipes-review/issues/21-guide-pair-call-a-model-from-your-server.md) and [ticket 20, Comments](../.scratch/recipes-review/issues/20-guide-pair-call-space-from-your-server.md). |

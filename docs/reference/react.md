@@ -3,7 +3,7 @@ title: React reference
 ---
 
 <!-- flavour react -->
-Reference for `@vectoragents/vs-apps/react` 0.4.0. The subpath binds the [browser runtime](./browser.md) of an [app](../glossary.md#app) to React: the provider that completes the handshake with [Space](../glossary.md#space), the hooks that read the result, two gates, and the bindings that let the Space agent drive a page through [agent actions](../glossary.md#agent-action). The [harness](./harness.md) is the `@vectoragents/vs-apps/react/harness` subpath.
+Reference for `@vectoragents/vs-apps/react` 0.4.0. The subpath binds the [browser runtime](./browser.md) of an [app](../glossary.md#app) to React: the provider that completes the handshake with [Vector Space](../glossary.md#vector-space), the hooks that read the result, two gates, and the bindings that let the space agent drive an [app page](../glossary.md#app-page) through [agent actions](../glossary.md#agent-action). The [harness](./harness.md) is the `@vectoragents/vs-apps/react/harness` subpath.
 
 Every symbol below follows one layout: signature, behaviour, example. Each example is a complete file and is typechecked against the installed package.
 
@@ -36,16 +36,16 @@ interface AppProviderProps {
 | Prop | Meaning |
 | --- | --- |
 | `config` | Boot config, or a promise of it. `loadAppClientConfig()` from [`/browser`](./browser.md) returns it. |
-| `navigate` | Called when Space asks the app to open a path. |
+| `navigate` | Called when Vector Space asks the app to open a path. |
 | `onToken` | Called with each verified token, and with `null` on unmount. Use it to attach the token to your own API client. |
-| `onTheme` | Called with `'light'` or `'dark'` when Space changes theme. |
+| `onTheme` | Called with `'light'` or `'dark'` when Vector Space changes theme. |
 
 ### Behaviour
 
 - Starts the app session of [`/browser`](./browser.md), `startAppSession`, once the config resolves. The session starts the iframe bridge to the parent window. The bridge accepts messages only from `allowedParentOrigin`.
-- Verifies each token Space sends against its signing keys. A token that fails verification is logged to the console and ignored, so `useApp().claims` stays `null`.
+- Verifies each token Vector Space sends against its signing keys. A token that fails verification is logged to the console and ignored, so `useApp().claims` stays `null`.
 - Opens the user directory on the first verified token, when the config sets `spaceApiUrl`.
-- Reports the document height to Space through a `ResizeObserver`.
+- Reports the document height to Vector Space through a `ResizeObserver`.
 - Registers [agent actions](../glossary.md#agent-action) by wrapping the tree in `AgentActionRegistryProvider`. Do not add a second one.
 - Restarts the session when `config` changes, so create `config` once.
 - A config promise that rejects is logged to the console. No token ever arrives, so a `BootGate` stays on its fallback.
@@ -95,9 +95,9 @@ interface AppSessionState {
 | Field | Meaning |
 | --- | --- |
 | `claims` | The verified token claims, or `null` before the handshake completes. Includes `sub` (user id), `spaceId`, `organizationId`, `appKey` and `capabilities`. |
-| `capabilities` | The capabilities [granted](../glossary.md#grant) to the current user. Empty before the handshake. |
+| `capabilities` | The capabilities [granted](../glossary.md#capability-grant) to the current user. Empty before the handshake. |
 | `hasCapability` | `true` when `capabilities` holds the given name. |
-| `requestRefresh` | Asks Space to send a fresh token. A no-op before the bridge starts. |
+| `requestRefresh` | Asks Vector Space to send a fresh token. A no-op before the bridge starts. |
 | `directory` | The user directory, or `null` before the first token or when the config has no `spaceApiUrl`. |
 
 ### Behaviour
@@ -154,7 +154,7 @@ interface DirectoryUser {
 - Without a directory, returns a placeholder map at once with `loading: false`. Each `displayName` is the id itself.
 - Calls made in the same tick share one request. A repeat within a minute is served from the directory cache.
 - A failed lookup is retried up to three times with back-off. After the last failure the map is empty, so read each entry with a fallback to the id.
-- An identifier that Space cannot show stays in the map with `deleted: true`.
+- An identifier that Vector Space cannot show stays in the map with `deleted: true`.
 - The hook compares the set of identifiers. The order of the identifiers and a new array on each render do not trigger a fetch.
 
 ### Example
@@ -186,7 +186,7 @@ export function Owners({ ownerIds }: { ownerIds: readonly string[] }) {
 
 ## `BootGate`
 
-Holds the tree back until the handshake with Space completes.
+Holds the tree back until the handshake with Vector Space completes.
 
 ### Signature
 
@@ -339,7 +339,7 @@ function AgentActionRegistryProvider(props: {
 ### Behaviour
 
 - Creates one [`AgentActionRegistry`](./root.md#createagentactionregistry) per mount and keeps it for the life of the provider.
-- `AppProvider` already wraps its tree in this provider. A second one splits the registry, so actions bound below it are invisible to Space.
+- `AppProvider` already wraps its tree in this provider. A second one splits the registry, so actions bound below it are invisible to Vector Space.
 - Mount it directly only in a test or a story that renders a page without `AppProvider`.
 
 ### Example
