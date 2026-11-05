@@ -32,8 +32,8 @@ test('each sidebar lists the pages of its own folder only', () => {
   }
 });
 
-test('the Vector Apps sidebar runs Quickstart, Recipes, Guides, Glossary', () => {
-  assert.deepEqual(topLevel('vectorApps'), ['vector-apps/quickstart', 'Recipes', 'Guides', 'vector-apps/glossary']);
+test('the Vector Apps sidebar runs How a Vector App works, Quickstart, Recipes, Guides, Glossary', () => {
+  assert.deepEqual(topLevel('vectorApps'), ['vector-apps/how-a-vector-app-works', 'vector-apps/quickstart', 'Recipes', 'Guides', 'vector-apps/glossary']);
 });
 
 test('the SDK sidebar runs SDK overview, App definition, Definition builder, Examples, Reference, Glossary', () => {
