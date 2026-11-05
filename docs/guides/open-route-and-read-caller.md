@@ -22,7 +22,7 @@ End with two routes on the server of the quickstart app: `GET /api/open`, which 
 
 ### 1. Open a route with `@Public`
 
-The global guard rejects a request that has no user token. Put `@Public()` on a route to skip the guard for it. The route then runs for every caller, so return nothing that belongs to one [Space](../glossary.md#space) or one user.
+The global guard rejects a request that has no user token. Put `@Public()` on a route to skip the guard for it. The route then runs for every caller, so return nothing that belongs to one [Space](../glossary.md#vector-space) or one user.
 
 ```ts title="server/src/open-route.controller.ts"
 import { Controller, Get } from '@nestjs/common';

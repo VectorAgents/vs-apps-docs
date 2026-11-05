@@ -72,7 +72,7 @@ interface AppClientConfig {
 | Field | Meaning |
 | --- | --- |
 | `allowedParentOrigin` | The one origin the iframe bridge accepts messages from. |
-| `spaceJwksUrl` | Where the browser fetches [Space](../glossary.md#space) signing keys to verify a token. |
+| `spaceJwksUrl` | Where the browser fetches [Space](../glossary.md#vector-space) signing keys to verify a token. |
 | `tokenIssuer` | The expected `iss` claim of a token. |
 | `spaceApiUrl` | The Space API base. Setting it enables the user directory. |
 

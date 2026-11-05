@@ -3,7 +3,7 @@ title: Expose agent actions on a page
 start: leads-app
 ---
 
-Let the [Space](../glossary.md#space) agent open a Lead List on the leads [page](../glossary.md#page). The recipe declares the page and the [agent action](../glossary.md#agent-action) with `defineAgentPage`, binds a handler with `useAgentAction`, and writes both into the [agent catalog](../glossary.md#agent-catalog).
+Let the [Space](../glossary.md#vector-space) agent open a Lead List on the leads [page](../glossary.md#app-page). The recipe declares the page and the [agent action](../glossary.md#agent-action) with `defineAgentPage`, binds a handler with `useAgentAction`, and writes both into the [agent catalog](../glossary.md#agent-catalog).
 
 ## Goal
 

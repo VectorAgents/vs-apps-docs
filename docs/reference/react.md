@@ -3,7 +3,7 @@ title: React reference
 ---
 
 <!-- flavour react -->
-Reference for `@vectoragents/vs-apps/react` 0.4.0. The subpath binds the [browser runtime](./browser.md) of an [app](../glossary.md#app) to React: the provider that completes the handshake with [Space](../glossary.md#space), the hooks that read the result, two gates, and the bindings that let the Space agent drive a page through [agent actions](../glossary.md#agent-action). The [harness](./harness.md) is the `@vectoragents/vs-apps/react/harness` subpath.
+Reference for `@vectoragents/vs-apps/react` 0.4.0. The subpath binds the [browser runtime](./browser.md) of an [app](../glossary.md#app) to React: the provider that completes the handshake with [Space](../glossary.md#vector-space), the hooks that read the result, two gates, and the bindings that let the Space agent drive a page through [agent actions](../glossary.md#agent-action). The [harness](./harness.md) is the `@vectoragents/vs-apps/react/harness` subpath.
 
 Every symbol below follows one layout: signature, behaviour, example. Each example is a complete file and is typechecked against the installed package.
 
@@ -95,7 +95,7 @@ interface AppSessionState {
 | Field | Meaning |
 | --- | --- |
 | `claims` | The verified token claims, or `null` before the handshake completes. Includes `sub` (user id), `spaceId`, `organizationId`, `appKey` and `capabilities`. |
-| `capabilities` | The capabilities [granted](../glossary.md#grant) to the current user. Empty before the handshake. |
+| `capabilities` | The capabilities [granted](../glossary.md#capability-grant) to the current user. Empty before the handshake. |
 | `hasCapability` | `true` when `capabilities` holds the given name. |
 | `requestRefresh` | Asks Space to send a fresh token. A no-op before the bridge starts. |
 | `directory` | The user directory, or `null` before the first token or when the config has no `spaceApiUrl`. |

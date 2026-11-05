@@ -2,7 +2,7 @@
 title: Quickstart
 ---
 
-Run a small app inside a [Space](./glossary.md#space) and see the same user token verified in the browser and on your server.
+Run a small app inside a [Space](./glossary.md#vector-space) and see the same user token verified in the browser and on your server.
 
 import DiagramControls from '@site/src/components/DiagramControls';
 

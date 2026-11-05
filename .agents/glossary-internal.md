@@ -39,13 +39,6 @@ A block of code in a docs page, opened and closed by three backticks. The text a
 - Maps to: no SDK symbol. `codeBlocks` in `scripts/quickstart-page.test.mjs` and `checkCodeBlocks` in `scripts/starter-sync.mjs`.
 - Owner: docs.
 
-### Space Page
-
-A grid of widgets in a space, with page filters. A different thing from the published term page: the SDK has no part in it, and no published docs page uses it.
-
-- Maps to: no SDK symbol. `Page` in vector-spaces, stored as `pages.pages`.
-- Owner: Space.
-
 ### staff
 
 Vector employees who administer Space itself. Only staff register apps, apply manifest changes and edit an organization license. External developers are not staff. A space manager works inside one space instead.
