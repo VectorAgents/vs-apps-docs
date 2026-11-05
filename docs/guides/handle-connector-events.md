@@ -7,11 +7,11 @@ Receive an inbound event from a connector in your server, and answer it through 
 <!-- flavour nest -->
 The guide uses `ConnectorEventsService` and the `ConnectorExecuteResult` type from the `@vectoragents/vs-apps/nest` subpath of the [SDK](../glossary.md#sdk).
 
-A [connector slot](../glossary.md#connector-slot) can declare event handlers. When a [space manager](../glossary.md#space-manager) routes an event type of the attached connector to a handler, [Space](../glossary.md#vector-space) sends each event to your server. `ConnectorEventsService` holds the function that runs for each handler. `ConnectorExecuteResult` is what a call back to the connector returns.
+A [connector slot](../glossary.md#connector-slot) can declare event handlers. When a [space manager](../glossary.md#space-manager) routes an event type of the attached connector to a handler, [Vector Space](../glossary.md#vector-space) sends each event to your server. `ConnectorEventsService` holds the function that runs for each handler. `ConnectorExecuteResult` is what a call back to the connector returns.
 
 ## Goal
 
-End with a handler for the inbound events of one connector slot. The handler replies through the connector, checks the `ConnectorExecuteResult`, and lets Space send the event again when the reply fails.
+End with a handler for the inbound events of one connector slot. The handler replies through the connector, checks the `ConnectorExecuteResult`, and lets Vector Space send the event again when the reply fails.
 
 ## Prerequisites
 
@@ -22,7 +22,7 @@ End with a handler for the inbound events of one connector slot. The handler rep
 
 ### 1. Declare the slot and its handler
 
-Space routes events only to a handler that the manifest declares. Put the slot in its own file, so that `shared/src/index.ts` changes by two lines.
+Vector Space routes events only to a handler that the manifest declares. Put the slot in its own file, so that `shared/src/index.ts` changes by two lines.
 
 ```ts title="shared/src/support-slot.ts"
 import type { AppConnectorRequirement } from '@vectoragents/vs-apps';
@@ -44,7 +44,7 @@ export const supportSlot: AppConnectorRequirement = {
 
 In `shared/src/index.ts`, import `supportSlot` from `./support-slot`. Add `resources: { connectors: [supportSlot] }` to the object that `defineApp` takes.
 
-A handler makes `eventsUrl` required in the manifest. `buildManifests` builds it as `<PUBLIC_BASE_URL>/api/events/hello-app`, so set `PUBLIC_BASE_URL` in `.env` to an address that Space can reach.
+A handler makes `eventsUrl` required in the manifest. `buildManifests` builds it as `<PUBLIC_BASE_URL>/api/events/hello-app`, so set `PUBLIC_BASE_URL` in `.env` to an address that Vector Space can reach.
 
 ### 2. Reply through the connector
 
@@ -84,7 +84,7 @@ export class SupportReplyService {
 
 The function gets the event and a context with the verified `claims` of the events token and the `traceparent` header. It returns nothing. The SDK answers `{ handled: true }` when the function returns, and answers `500` when it throws.
 
-Space delivers each event at least once, up to three times. Skip an event identifier that you already handled.
+Vector Space delivers each event at least once, up to three times. Skip an event identifier that you already handled.
 
 ```ts title="server/src/support-events.service.ts"
 import { Injectable, OnModuleInit } from '@nestjs/common';
@@ -118,7 +118,7 @@ export class SupportEventsService implements OnModuleInit {
 }
 ```
 
-The throw makes the SDK answer `500`, and Space sends the event again. The set keeps its identifiers in memory, so a restart forgets them. Keep the identifiers in your own storage if a second reply is a problem.
+The throw makes the SDK answer `500`, and Vector Space sends the event again. The set keeps its identifiers in memory, so a restart forgets them. Keep the identifiers in your own storage if a second reply is a problem.
 
 A delivery for a handler that no one registered gets `{ handled: false }` and is not sent again. `event.payload` is the body of the provider, unchanged.
 
@@ -147,15 +147,15 @@ Restart `npm run dev:space`. In a second terminal, post an event with no token. 
 curl -s -o /dev/null -w '%{http_code}\n' -X POST -H 'Content-Type: application/json' -d '{"eventId":1,"slot":"support","handler":"inbound-message","provider":"REST","connectorId":1,"connectorName":"Support inbox","eventType":"message-received","spaceId":1,"occurredAt":"2026-01-01T00:00:00Z","payload":{}}' http://localhost:<SERVER_PORT>/api/events/hello-app
 ```
 
-**Check**: the command prints `401`, because the route accepts only an events token that Space signs. A body that fails the event schema prints `400` first.
+**Check**: the command prints `401`, because the route accepts only an events token that Vector Space signs. A body that fails the event schema prints `400` first.
 
 ## Result
 
-The server mounts `POST /api/events/hello-app`, verifies the events token of each delivery and runs `inbound-message` for the events that Space routes to it. The handler replies through the connector and reads the `ConnectorExecuteResult`. A failed reply makes Space send the event again. A space manager attaches a connector to the `support` slot and routes its event types after the app is registered in Space.
+The server mounts `POST /api/events/hello-app`, verifies the events token of each delivery and runs `inbound-message` for the events that Vector Space routes to it. The handler replies through the connector and reads the `ConnectorExecuteResult`. A failed reply makes Vector Space send the event again. A space manager attaches a connector to the `support` slot and routes its event types after the app is registered in Vector Space.
 
 ## Next step
 
-Register the app in Space with Part 2 of the [quickstart](../quickstart.md), so that a space manager can attach a connector to the `support` slot and route its events.
+Register the app in Vector Space with Part 2 of the [quickstart](../quickstart.md), so that a space manager can attach a connector to the `support` slot and route its events.
 <!-- /flavour -->
 <!-- flavour node todo -->
 <!-- /flavour -->

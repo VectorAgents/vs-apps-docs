@@ -3,7 +3,7 @@ title: Call a model from your server
 start: leads-app
 ---
 
-Ask [Space](../glossary.md#vector-space) for a model from your server and call it.
+Ask [Vector Space](../glossary.md#vector-space) for a model from your server and call it.
 
 <!-- flavour node -->
 The guide uses `platform.ai` from the `@vectoragents/vs-apps/server` subpath of the [SDK](../glossary.md#sdk) on a `node:http` server.
@@ -14,11 +14,11 @@ The guide uses `SpaceAiService` from the `@vectoragents/vs-apps/nest` subpath of
 
 The model comes from one [model slot](../glossary.md#model-slot), a named model request that your app declares and a [space manager](../glossary.md#space-manager) fills with one model.
 
-Your server never holds a model key. The SDK trades the [service secret](../glossary.md#service-secret) for a short-lived key and returns it as the `apiKey` of a client configuration. The configuration also holds the `baseUrl` of Space's model gateway and the `model` name to send.
+Your server never holds a model key. The SDK trades the [service secret](../glossary.md#service-secret) for a short-lived key and returns it as the `apiKey` of a client configuration. The configuration also holds the `baseUrl` of the model gateway of Vector Space and the `model` name to send.
 
 ## Goal
 
-End with `GET /api/summary` on the server from [expose agent actions](../recipes/expose-agent-actions.md). The route asks Space for the model set on the `lead-summary` slot, calls it once and returns the reply.
+End with `GET /api/summary` on the server from [expose agent actions](../recipes/expose-agent-actions.md). The route asks Vector Space for the model set on the `lead-summary` slot, calls it once and returns the reply.
 
 ## Prerequisites
 
@@ -37,15 +37,15 @@ cd leads-guide
 ```
 <!-- /flavour -->
 
-- The app is added to a Space as in Part 2 of the [quickstart](../quickstart.md).
-- A space manager who can reach at least one Anthropic model in that Space.
+- The app is added to a space as in Part 2 of the [quickstart](../quickstart.md).
+- A space manager who can reach at least one Anthropic model in that space.
 - Background: the [`/server` reference](../reference/server.md).
 
 ## Steps
 
 ### 1. Declare the model slot
 
-The slot is a plain object that satisfies `AppModelSlot`. `providers` fixes the wire that your code speaks, so every model that fills the slot answers in the Anthropic format. `required` makes Space show the slot as needing setup until a space manager sets a model.
+The slot is a plain object that satisfies `AppModelSlot`. `providers` fixes the wire that your code speaks, so every model that fills the slot answers in the Anthropic format. `required` makes Vector Space show the slot as needing setup until a space manager sets a model.
 
 ```ts title="shared/src/lead-summary-slot.ts"
 import type { AppModelSlot } from '@vectoragents/vs-apps';
@@ -65,14 +65,14 @@ Add the slot to the definition in `shared/src/index.ts`. Import `leadSummarySlot
 ### 2. Keep the service secret
 
 <!-- flavour node -->
-Space pushes the service secret to `POST /api/provision` when it adds the app. The app platform of the starter, `platform` in `server/src/platform.ts`, serves that route and stores the secret in its credential store, `MemoryCredentialStore` in `server/src/credential-store.ts`, so you write no code in this step.
+Vector Space pushes the service secret to `POST /api/provision` when it adds the app. The app platform of the starter, `platform` in `server/src/platform.ts`, serves that route and stores the secret in its credential store, `MemoryCredentialStore` in `server/src/credential-store.ts`, so you write no code in this step.
 
-The store keeps the secrets in memory and loses them on restart. `AppCredentialStore` is the one interface you implement over your own storage, so plan a persistent store before production. Until Space pushes the secret again, `platform.ai` fails with status `401`.
+The store keeps the secrets in memory and loses them on restart. `AppCredentialStore` is the one interface you implement over your own storage, so plan a persistent store before production. Until Vector Space pushes the secret again, `platform.ai` fails with status `401`.
 <!-- /flavour -->
 <!-- flavour nest -->
-Space pushes the service secret to `POST /api/provision` when it adds the app. `AppPlatformModule` stores it in the credential store of `AppModule`, `MemoryCredentialStore` in `server/src/credential-store.ts`, so you write no code in this step.
+Vector Space pushes the service secret to `POST /api/provision` when it adds the app. `AppPlatformModule` stores it in the credential store of `AppModule`, `MemoryCredentialStore` in `server/src/credential-store.ts`, so you write no code in this step.
 
-The store keeps the secrets in memory and loses them on restart. `AppCredentialStore` is the one interface you implement over your own storage, so plan a persistent store before production. Until Space pushes the secret again, `getClientConfig` fails with status `401`.
+The store keeps the secrets in memory and loses them on restart. `AppCredentialStore` is the one interface you implement over your own storage, so plan a persistent store before production. Until Vector Space pushes the secret again, `getClientConfig` fails with status `401`.
 <!-- /flavour -->
 
 ### 3. Call the model
@@ -88,7 +88,7 @@ The key works for this slot only. `model` is the slot's alias, not the model nam
 The key works for this slot only. `model` is the slot's alias, not the model name that the space manager picked. Send it as it is.
 <!-- /flavour -->
 
-If no one sets the slot, Space refuses the call with status `409`. Space refuses a slot key that the manifest does not declare with status `400`.
+If no one sets the slot, Vector Space refuses the call with status `409`. Vector Space refuses a slot key that the manifest does not declare with status `400`.
 
 <!-- flavour node -->
 `platform.ai` throws a `SpaceActionError` that carries the status.
@@ -151,7 +151,7 @@ export async function completePrompt(config: AiClientConfig, prompt: string): Pr
 }
 ```
 
-The controller reads the caller with `appCaller`, as in [open a route and read the caller](./open-route-and-read-caller.md). The `appId` and `spaceId` claims name the app and the Space that the token came from.
+The controller reads the caller with `appCaller`, as in [open a route and read the caller](./open-route-and-read-caller.md). The `appId` and `spaceId` claims name the app and the space that the token came from.
 
 `SpaceAiService` throws a `SpaceActionError` that carries the status, so the controller turns it into an `HttpException` with the same status.
 
@@ -187,7 +187,7 @@ The string `'lead-summary'` must equal the `key` from step 1.
 ### 4. Mount the route
 
 <!-- flavour node -->
-The platform reads `SPACE_API_URL` from `.env`, which Part 2 of the quickstart sets, and removes the `/api` suffix, because it needs the origin of Space.
+The platform reads `SPACE_API_URL` from `.env`, which Part 2 of the quickstart sets, and removes the `/api` suffix, because it needs the origin of Vector Space.
 
 In `server/src/main.ts`, make three changes.
 
@@ -208,10 +208,10 @@ controllers: [HelloController, LeadSummaryController],
 **Role**: space manager. Restart `npm run dev:space`.
 
 <!-- flavour node -->
-A change to the manifest reaches Space through [`pingManifests`](../reference/server.md#pingmanifests) or a manual refresh in Space. Then open the configuration of the app and choose a model for **Lead summary**. Remove the app from the Space and add it again, so that Space pushes the secret to the credential store.
+A change to the manifest reaches Vector Space through [`pingManifests`](../reference/server.md#pingmanifests) or a manual refresh in Vector Space. Then open the configuration of the app and choose a model for **Lead summary**. Remove the app from the space and add it again, so that Vector Space pushes the secret to the credential store.
 <!-- /flavour -->
 <!-- flavour nest -->
-The module pings Space with the new manifest at start. In Space, open the configuration of the app and choose a model for **Lead summary**. Remove the app from the Space and add it again, so that Space pushes the secret to the credential store.
+The module pings Vector Space with the new manifest at start. In Vector Space, open the configuration of the app and choose a model for **Lead summary**. Remove the app from the space and add it again, so that Vector Space pushes the secret to the credential store.
 <!-- /flavour -->
 
 In a second terminal, request the route without a token. `SERVER_PORT` is the value in `.env`.
@@ -220,11 +220,11 @@ In a second terminal, request the route without a token. `SERVER_PORT` is the va
 curl -s -o /dev/null -w '%{http_code}\n' http://localhost:<SERVER_PORT>/api/summary
 ```
 
-**Check**: the command prints `401`, because the route refuses a request with no user token. Call the route from a page of the app with the user token, as `fetchHello` does in the quickstart. With a model set, it answers `200` and `{ "summary": "..." }`. With no model set, it answers `409`.
+**Check**: the command prints `401`, because the route refuses a request with no user token. Call the route from an app page with the user token, as `fetchHello` does in the quickstart. With a model set, it answers `200` and `{ "summary": "..." }`. With no model set, it answers `409`.
 
 ## Result
 
-`GET /api/summary` verifies the caller, asks Space for the model that a space manager set on the `lead-summary` slot, and returns that model's reply. Your server holds no model key.
+`GET /api/summary` verifies the caller, asks Vector Space for the model that a space manager set on the `lead-summary` slot, and returns that model's reply. Your server holds no model key.
 
 ## Next step
 

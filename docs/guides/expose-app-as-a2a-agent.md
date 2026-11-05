@@ -5,11 +5,11 @@ start: leads-app
 
 Let another agent find your app and call it. The guide uses the [A2A](../glossary.md#a2a) protocol (Agent2Agent), where an agent publishes an agent card and answers calls in JSON Remote Procedure Call (JSON-RPC), a message format built on JSON. An agent card is a JSON file that names the agent, lists its skills and says where to send calls.
 
-You declare the agent in the [app definition](../glossary.md#app-definition). [Space](../glossary.md#vector-space) reads the declaration from the [manifest](../glossary.md#manifest), fetches the card and sends calls to the address in it. The helpers come from the `@vectoragents/vs-apps/server` subpath of the [SDK](../glossary.md#sdk).
+You declare the agent in the [app definition](../glossary.md#app-definition). [Vector Space](../glossary.md#vector-space) reads the declaration from the [manifest](../glossary.md#manifest), fetches the card and sends calls to the address in it. The helpers come from the `@vectoragents/vs-apps/server` subpath of the [SDK](../glossary.md#sdk).
 
 ## Goal
 
-End with two routes on the server from [`expose-agent-actions`](../recipes/expose-agent-actions.md). `GET /api/a2a/<spaceId>/.well-known/agent-card.json` serves the card. `POST /api/a2a/<spaceId>` answers calls from Space and streams a reply.
+End with two routes on the server from [`expose-agent-actions`](../recipes/expose-agent-actions.md). `GET /api/a2a/<spaceId>/.well-known/agent-card.json` serves the card. `POST /api/a2a/<spaceId>` answers calls from Vector Space and streams a reply.
 
 ## Prerequisites
 
@@ -28,14 +28,14 @@ cd leads-guide
 ```
 <!-- /flavour -->
 
-- Background: the [server primitives](../reference/root.md), the [quickstart](../quickstart.md) that registers the app in Space, and the [`/server` reference](../reference/server.md).
+- Background: the [server primitives](../reference/root.md), the [quickstart](../quickstart.md) that registers the app in Vector Space, and the [`/server` reference](../reference/server.md).
 
 ## Steps
 
 <!-- flavour node -->
 ### 1. Declare the agent
 
-An entry in `agents` tells Space where to find the card. `cardUrlTemplate` is an absolute URL with two tokens. `buildManifests` replaces `{publicBaseUrl}` with the `PUBLIC_BASE_URL` of your server. Space replaces `{spaceId}` with the identifier of each space.
+An entry in `agents` tells Vector Space where to find the card. `cardUrlTemplate` is an absolute URL with two tokens. `buildManifests` replaces `{publicBaseUrl}` with the `PUBLIC_BASE_URL` of your server. Vector Space replaces `{spaceId}` with the identifier of each space.
 
 `key` is a lowercase name with hyphens that stays the same across versions. Replace `shared/src/index.ts` with this file. It is the definition of the `leads-app` start with an `agents` entry added.
 
@@ -71,7 +71,7 @@ export const definition = defineApp({
 
 `buildAppAgentCard` returns the card as an object. The card is the only place that holds the name, the description and the skills of the agent. The definition holds none of them.
 
-`rpcUrl` is where Space sends calls, so it must match the route in step 3. The card also declares that callers send a bearer token, which Space signs.
+`rpcUrl` is where Vector Space sends calls, so it must match the route in step 3. The card also declares that callers send a bearer token, which Vector Space signs.
 
 ```ts title="server/src/a2a-card.ts"
 import { buildAppAgentCard } from '@vectoragents/vs-apps/server';
@@ -101,7 +101,7 @@ export function agentCard(spaceId: number) {
 
 The handler answers `message/send` with one JSON body. It answers `message/stream` with a function that writes the events, so your route sets the stream headers. Any other method gets a "Method not found" error.
 
-`verifyS2sToken` checks the bearer token against Space's public keys. It pins the token to one space and one app, so a token for another space or app gets `403`. A call with no token gets `401`. The second argument of the handler, `ctx`, carries the space identifier into `generate`.
+`verifyS2sToken` checks the bearer token against the public keys of Vector Space. It pins the token to one space and one app, so a token for another space or app gets `403`. A call with no token gets `401`. The second argument of the handler, `ctx`, carries the space identifier into `generate`.
 
 ```ts title="server/src/a2a.ts"
 import type { IncomingMessage, ServerResponse } from 'node:http';
@@ -178,16 +178,16 @@ curl -s http://localhost:<SERVER_PORT>/api/a2a/1/.well-known/agent-card.json
 curl -s -o /dev/null -w '%{http_code}\n' -X POST http://localhost:<SERVER_PORT>/api/a2a/1
 ```
 
-**Check**: the first command prints a card whose `url` ends in `/api/a2a/1`. The second prints `401`, because the route verifies a token from Space before it reads the call.
+**Check**: the first command prints a card whose `url` ends in `/api/a2a/1`. The second prints `401`, because the route verifies a token from Vector Space before it reads the call.
 
-A manifest change waits as a pending review, as in step 4 of [add a page and a capability](../recipes/add-page-and-capability.md). Ask Vector to apply it, so Space reads the new `agents` entry.
+A manifest change waits as a pending review, as in step 4 of [add an app page and a capability](../recipes/add-page-and-capability.md). Ask Vector to apply it, so Vector Space reads the new `agents` entry.
 <!-- /flavour -->
 <!-- flavour nest todo -->
 <!-- /flavour -->
 
 ## Result
 
-Space finds `hello-app` as an agent through the manifest and fetches its card for each space. A call that carries a valid token from Space gets the reply of `generate`, as one JSON body for `message/send` and as events for `message/stream`. Any other call gets `401` or `403`.
+Vector Space finds `hello-app` as an agent through the manifest and fetches its card for each space. A call that carries a valid token from Vector Space gets the reply of `generate`, as one JSON body for `message/send` and as events for `message/stream`. Any other call gets `401` or `403`.
 
 ## Next step
 
