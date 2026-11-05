@@ -48,44 +48,60 @@
   color: var(--ifm-color-warning-darkest);
 }
 
-.tracks {
+.path-cards {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1.5rem;
+  align-items: start;
 }
 
 @media (max-width: 996px) {
-  .tracks {
+  .path-cards {
     grid-template-columns: minmax(0, 1fr);
   }
 }
 
-.track {
+.path-card {
   border: 1px solid var(--ifm-color-emphasis-300);
   border-radius: var(--ifm-global-radius);
-  padding: 1rem 1.25rem;
+  padding: 1.25rem;
 }
 
-.track h3 {
+.path-card--build {
+  border: 2px solid var(--ifm-color-primary);
+}
+
+.path-card h2 {
   margin-top: 0;
-  font-size: 1.25rem;
+  font-size: 1.35rem;
 }
 
-.track ol {
+.path-card ul {
   margin-bottom: 0;
+  padding-left: 1.1rem;
 }
 
-.landing-reference ul {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem 1.5rem;
-  list-style: none;
-  padding-left: 0;
-  margin: 1.5rem 0 0;
+.path-eyebrow {
+  margin: 0 0 0.25rem;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
-.landing-start {
-  margin-bottom: 1.5rem;
+.path-goals {
+  margin-top: 1rem;
+  font-size: 0.95rem;
+}
+
+.path-goals li {
+  margin-bottom: 0.35rem;
+}
+
+.path-goals span {
+  display: block;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.85rem;
 }
 
 .diagram-frame {
