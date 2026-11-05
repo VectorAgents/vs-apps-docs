@@ -227,3 +227,55 @@ test('the shipped config writes a page without a flavour marker to site/ unchang
   assert.deepEqual(JSON.parse(readFileSync(join(out, 'flavours.json'), 'utf8')).pages.map((page) => page.source).sort(), flavoured.sort());
   assert.ok(todos <= shipped.todoCap);
 });
+
+const headed = (node, nest) =>
+  `---\ntitle: Headed\n---\n\n## Shared heading\n\n<!-- flavour node -->\n${node}\n<!-- /flavour -->\n\n<!-- flavour nest -->\n${nest}\n<!-- /flavour -->\n`;
+
+test('a heading inside a block gets the id <flavour>-<slug> on the site page', () => {
+  const { read } = run({ 'a.md': headed('### 2. Know the platform clients', '### 2. Know the three services') });
+  const page = read('site/a.md');
+  assert.match(page, /^### 2\. Know the platform clients \{#node-2-know-the-platform-clients\}$/m);
+  assert.match(page, /^### 2\. Know the three services \{#nest-2-know-the-three-services\}$/m);
+});
+
+test('a heading outside a block keeps its plain id', () => {
+  const { read } = run({ 'a.md': headed('x', 'y') });
+  assert.match(read('site/a.md'), /^## Shared heading$/m);
+});
+
+test('the slug drops code ticks, emphasis, link syntax and punctuation', () => {
+  const { read } = run({ 'a.md': headed('## Open a route with `@Public` and *care*\n## See [the guide](./x.md): "now"!', 'y') });
+  const page = read('site/a.md');
+  assert.match(page, /^## Open a route with `@Public` and \*care\* \{#node-open-a-route-with-public-and-care\}$/m);
+  assert.match(page, /\{#node-see-the-guide-now\}$/m);
+});
+
+test('two equal headings in one block get distinct ids', () => {
+  const { read } = run({ 'a.md': headed('## Steps\n\n## Steps', 'y') });
+  const page = read('site/a.md');
+  assert.match(page, /\{#node-steps\}$/m);
+  assert.match(page, /\{#node-steps-1\}$/m);
+});
+
+test('equal headings in two blocks do not collide', () => {
+  const { read } = run({ 'a.md': headed('## Steps', '## Steps') });
+  const page = read('site/a.md');
+  assert.match(page, /^## Steps \{#node-steps\}$/m);
+  assert.match(page, /^## Steps \{#nest-steps\}$/m);
+});
+
+test('an explicit id in a block gets the flavour prefix', () => {
+  const { read } = run({ 'a.md': headed('## Steps {#run}', 'y') });
+  assert.match(read('site/a.md'), /^## Steps \{#node-run\}$/m);
+});
+
+test('a hash line inside a code fence is not a heading', () => {
+  const { read } = run({ 'a.md': headed('```sh\n# install\n```', 'y') });
+  assert.match(read('site/a.md'), /^# install$/m);
+});
+
+test('the pair copies keep plain headings', () => {
+  const { read } = run({ 'a.md': headed('### Step', '### Step') });
+  assert.match(read('pairs/react/node/a.md'), /^### Step$/m);
+  assert.doesNotMatch(read('pairs/react/node/a.md'), /\{#/);
+});

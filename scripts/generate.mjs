@@ -41,6 +41,35 @@ function parse(text, where, knownFlavour, errors) {
   return parts;
 }
 
+/** The anchor slug of heading text, as Docusaurus makes it: markup dropped, lowercase, punctuation removed, spaces to hyphens. */
+const slugOf = (text) =>
+  text
+    .replace(/!?\[([^\]]*)\]\([^)]*\)/g, '$1')
+    .replace(/<[^>]+>/g, '')
+    .replace(/[`*]/g, '')
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}\p{M}_ -]/gu, '')
+    .replace(/ /g, '-');
+
+/**
+ * `lines` with every heading given the explicit id `<flavour>-<slug>`, so ids in different blocks never collide and
+ * the reader view can tell a heading's flavour from its id. `taken` counts the ids made so far on the page.
+ */
+function prefixHeadingIds(lines, flavour, taken) {
+  let fence = null;
+  return lines.map((line) => {
+    const opening = /^\s*(`{3,}|~{3,})/.exec(line);
+    if (opening) fence = fence === null ? opening[1][0] : fence === opening[1][0] ? null : fence;
+    if (opening || fence !== null) return line;
+    const heading = /^(#{1,6}) +(.+?)(?: +\{#([^}\s]+)\})?\s*$/.exec(line);
+    if (!heading) return line;
+    const id = `${flavour}-${heading[3] ?? slugOf(heading[2])}`;
+    const count = taken.get(id) ?? 0;
+    taken.set(id, count + 1);
+    return `${heading[1]} ${heading[2]} {#${count ? `${id}-${count}` : id}}`;
+  });
+}
+
 /** Every value combination of the axes in `names`, as objects of axis to flavour. */
 export const combinations = (axes, names) =>
   names.reduce((acc, axis) => acc.flatMap((c) => Object.keys(axes[axis]).map((f) => ({ ...c, [axis]: f }))), [{}]);
@@ -111,13 +140,13 @@ export function generate({ root, config }) {
   if (errors.length) throw new Error(errors.join('\n'));
 
   const notice = (flavour) => [':::warning', `Not yet written for ${axes[axisOf(flavour)][flavour]}.`, ':::'];
-  const wrapped = (p) => [
+  const wrapped = (p, taken) => [
     '',
     `<div className="flavour-block" data-axis="${axisOf(p.flavour)}" data-flavour="${p.flavour}">`,
     '',
     `<p className="flavour-label">${axes[axisOf(p.flavour)][p.flavour]}</p>`,
     '',
-    ...(p.todo ? notice(p.flavour) : p.lines),
+    ...(p.todo ? notice(p.flavour) : prefixHeadingIds(p.lines, p.flavour, taken)),
     '',
     '</div>',
     '',
@@ -137,7 +166,8 @@ export function generate({ root, config }) {
       continue;
     }
     todos += parts.filter((p) => p.todo).length;
-    emit(`site/${rel}`, parts.flatMap((p) => (p.flavour ? wrapped(p) : p.lines)).join('\n'));
+    const taken = new Map();
+    emit(`site/${rel}`, parts.flatMap((p) => (p.flavour ? wrapped(p, taken) : p.lines)).join('\n'));
     for (const pair of pairs) {
       const body = parts
         .filter((p) => !p.flavour || Object.values(pair).includes(p.flavour))

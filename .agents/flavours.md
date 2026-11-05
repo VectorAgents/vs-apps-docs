@@ -31,10 +31,14 @@ How to write a page that differs by flavour. Terms: axis, flavour, pair, flavour
 - The generator fails on a marker error, on a flavour name that equals a top-level folder of `docs/` and when the `todo` blocks exceed `todoCap`. `pnpm check`, `pnpm test`, `pnpm build` and `pnpm start` run it first.
 - The sidebar lists each page once and the paginator is the stock one.
 
-## Saved choice
+## Reader view
 
-- The saved choice is JSON in `localStorage` under `vs-apps-docs.flavours`. `src/flavours/useFlavours.ts` reads it, with `?client=&server=` from the address winning (`choiceInQuery` in `src/flavours/resolve.mjs`, tested in `scripts/flavours-resolve.test.mjs`).
-- `src/components/FlavourPicker.tsx` saves a pick and leaves the address alone. The navbar does not list it yet, and no head script or CSS hides a block.
+- `docusaurus.config.ts` puts an inline script and an inline style in every page's `<head>`, both built from `flavours.config.json` by `src/flavours/head-script.mjs`. The script sets `data-<axis>` on `<html>` before first paint. The style hides a `.flavour-block` of another flavour and its entry in the right-hand contents, but only once the attribute is set, so a reader without JavaScript sees every block, labelled.
+- Choice rules (`chooseFlavours`, tested in `scripts/head-script.test.mjs`): a flavour named by the address wins over the saved choice and overwrites it. The address names a flavour with `?client=&server=`, or with a bare anchor that starts `<flavour>-`. Anything else falls back to the saved choice, then the defaults.
+- The saved choice is JSON in `localStorage` under `vs-apps-docs.flavours`.
+- `src/components/FlavourPicker.tsx` (navbar) sets the attributes and saves the pick through `src/flavours/useFlavours.ts`. It leaves the address alone. `src/css/custom.css` hides the picker on a page with no flavour block.
+- `src/flavours/client.ts` follows a bare anchor after a navigation inside the site and gives a heading link every axis (`shareUrl` in `src/flavours/resolve.mjs`), so a copied heading link opens on the same flavours.
+- The generator gives a heading inside a block the id `<flavour>-<slug>`. Link to such a heading with that id, for example `../reference/react.md#react-useapp`.
 
 ## Starter check
 

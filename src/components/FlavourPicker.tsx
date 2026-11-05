@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import type { ReactElement } from 'react';
 import { shortLabel } from '../flavours/resolve.mjs';
-import { saveChoice, useChoice, useFlavourSite } from '../flavours/useFlavours';
+import { pickFlavours, useChoice, useFlavourSite } from '../flavours/useFlavours';
 
 const capitalise = (word: string): string => word.charAt(0).toUpperCase() + word.slice(1);
 
@@ -28,7 +28,7 @@ export default function FlavourPicker({ mobile }: { mobile?: boolean }): ReactEl
   function pick(axis: string, flavour: string): void {
     setOpen(false);
     trigger.current?.focus();
-    saveChoice({ [axis]: flavour });
+    pickFlavours({ [axis]: flavour });
   }
 
   return (

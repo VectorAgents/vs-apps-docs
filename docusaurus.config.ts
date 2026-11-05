@@ -1,6 +1,7 @@
 import { themes } from 'prism-react-renderer';
 import type { Config } from '@docusaurus/types';
 import embedFile from './src/plugins/embed-file.mjs';
+import { flavourStyle, headScript } from './src/flavours/head-script.mjs';
 import pkg from './package.json' with { type: 'json' };
 import flavours from './flavours.config.json' with { type: 'json' };
 
@@ -16,6 +17,11 @@ const config: Config = {
   onBrokenLinks: 'throw',
   markdown: { mermaid: true },
   customFields: { sdkVersion, flavourSite },
+  clientModules: ['./src/flavours/client.ts'],
+  headTags: [
+    { tagName: 'style', attributes: {}, innerHTML: flavourStyle(flavours.axes) },
+    { tagName: 'script', attributes: {}, innerHTML: headScript(flavours.axes, flavours.defaults) },
+  ],
   presets: [
     [
       'classic',
@@ -35,6 +41,7 @@ const config: Config = {
       title: 'Vector Apps docs',
       items: [
         { to: '/builder', label: 'Definition builder', position: 'left' },
+        { type: 'custom-flavourPicker', position: 'right' },
         { type: 'html', position: 'right', value: `<span class="sdk-version">@vectoragents/vs-apps ${sdkVersion}</span>` },
       ],
     },

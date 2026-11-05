@@ -13,7 +13,7 @@ End with the `leads` and `icp` app pages in the navigation of the space, gated b
 
 - The app from the [quickstart](../quickstart.md), registered in a space (Part 2) and run with `npm run dev:space`.
 - `SPACE_API_URL` in `.env`, set to the [Vector Space](../glossary.md#vector-space) API origin followed by `/api`, for example `https://space-api.example.com/api`. Step 4 uses it.
-- Background: the [app definition](../app-definition.md) page, the [`RequireCapability` reference](../reference/react.md#requirecapability).
+- Background: the [app definition](../app-definition.md) page, the [`RequireCapability` reference](../reference/react.md#react-requirecapability).
 
 ## Steps
 
