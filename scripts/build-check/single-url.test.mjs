@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
@@ -11,7 +11,20 @@ const html = (url) => readFileSync(join(root, 'build', url, 'index.html'), 'utf8
 
 const CATEGORY = '<li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1';
 
-for (const { url, flavours } of pages.flatMap((page) => page.trees)) {
+test('the site has flavoured pages to check', () => assert.ok(pages.length > 0));
+
+for (const { url, axes } of pages) {
+  test(`${url} opens at its plain URL with a labelled block for every flavour of its axes`, () => {
+    const page = html(url);
+    for (const axis of axes) {
+      for (const [flavour, label] of Object.entries(config.axes[axis])) {
+        assert.match(page, new RegExp(`data-axis="${axis}"[^>]*data-flavour="${flavour}"`), `${axis} ${flavour}`);
+        assert.ok(page.includes(`<p class="flavour-label">${label}</p>`), label);
+      }
+    }
+    assert.doesNotMatch(page, /<!-- \/?flavour/);
+  });
+
   test(`${url} has an active sidebar link, an open category, breadcrumbs and pagination`, () => {
     const page = html(url);
     assert.match(page, new RegExp(`aria-current="page"[^>]*href="${url}"`));
@@ -23,4 +36,13 @@ for (const { url, flavours } of pages.flatMap((page) => page.trees)) {
   });
 }
 
-test('the site has flavoured pages to check', () => assert.ok(pages.length > 0));
+test('no page is published under a flavour address', () => {
+  const flavours = Object.values(config.axes).flatMap((flavoured) => Object.keys(flavoured));
+  for (const flavour of flavours) assert.equal(existsSync(join(root, 'build', flavour)), false, `build/${flavour}`);
+});
+
+test('the site has one search index and no per-pair index', () => {
+  const files = readdirSync(join(root, 'build'));
+  assert.ok(files.includes('search-index.json'));
+  assert.deepEqual(files.filter((f) => /^search-index-.+\.json$/.test(f)), []);
+});

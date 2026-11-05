@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { codeOf, nextLinks, section, titledSnippets, treesOf } from './page-helpers.mjs';
 
-const NOTICE = /^:::warning\nNot yet written for Node\.js \+ TypeScript\. Read the \[Nest\.js version\]\(\.\.\/\.\.\/nest\/guides\/([\w-]+)\.md\)\.\n:::$/m;
+const NOTICE = /^:::warning\nNot yet written for Node\.js \+ TypeScript\.\n:::$/m;
 
 for (const name of ['open-route-and-read-caller', 'handle-connector-events']) {
   const trees = treesOf(`guides/${name}.md`);
@@ -13,9 +13,8 @@ for (const name of ['open-route-and-read-caller', 'handle-connector-events']) {
     assert.deepEqual(trees.map(({ tree }) => tree), ['node', 'nest']);
   });
 
-  test(`${name}: the Node.js tree is a notice that links the Nest.js version`, () => {
+  test(`${name}: the Node.js tree is a notice`, () => {
     assert.match(node, NOTICE);
-    assert.equal(node.match(NOTICE)[1], name);
     assert.doesNotMatch(node, /^## /m);
   });
 

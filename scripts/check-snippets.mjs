@@ -35,7 +35,7 @@ const baseOptions = {
   types: ['node'],
 };
 
-/** Typechecks the ts/tsx code blocks: neutral pages once from `docsDir`, flavoured pages once per pair from `genDir`. Writes `stampFile` only on a clean pass. */
+/** Typechecks the ts/tsx code blocks: neutral pages once from `docsDir`, flavoured pages once per pair from `genDir/pairs`. Writes `stampFile` only on a clean pass. */
 export function checkSnippets({
   docsDir = join(root, 'docs'),
   genDir = join(root, 'docs-gen'),
@@ -101,16 +101,10 @@ export function checkSnippets({
     const projects = [];
     projects.push({ name: 'neutral', pages: sources.filter(({ doc }) => !flavouredSources.has(doc)) });
 
-    // A pair project holds every tree page whose flavours the pair contains.
+    // A pair project holds the pair's copy of every flavoured page.
     for (const pair of combinations(config.axes, Object.keys(config.axes))) {
-      const pages = flavouredPages.flatMap((page) =>
-        page.trees
-          .filter(({ flavours }) => Object.entries(flavours).every(([axis, flavour]) => pair[axis] === flavour))
-          .map(({ flavours }) => {
-            const doc = [...Object.values(flavours), page.source].join('/');
-            return { file: join(genDir, doc), doc };
-          }),
-      );
+      const dir = ['pairs', ...Object.keys(config.axes).map((axis) => pair[axis])].join('/');
+      const pages = flavouredPages.map((page) => ({ file: join(genDir, dir, page.source), doc: `${dir}/${page.source}` }));
       const options = Object.assign({}, ...Object.values(pair).map((flavour) => flavourOptions[flavour]));
       projects.push({ name: Object.values(pair).join('+'), pages, options });
     }

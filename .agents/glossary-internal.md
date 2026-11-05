@@ -69,22 +69,22 @@ One value of an axis: client `react`; server `node` (Node.js + TypeScript) or `n
 
 ### pair
 
-One client flavour and one server flavour together, such as `react+node`. It names the unit that the picker saves, that gets a search index and that the quickstart scaffolds. It has no link to the pair of app and space in "service secret".
+One client flavour and one server flavour together, such as `react+node`. It names the unit that the picker saves, that gets a copy of each flavoured page under `docs-gen/pairs/` and that the quickstart scaffolds. It has no link to the pair of app and space in "service secret".
 
-- Maps to: one value combination of both axes in the generated tree.
+- Maps to: one value combination of both axes, the directory `docs-gen/pairs/<client>/<server>/`.
 - Owner: docs.
 
 ### flavour block
 
-Source text between `<!-- flavour <name> -->` and `<!-- /flavour -->`. `todo` after the name marks a block nobody has written. The generator keeps the block in the trees of its flavour and drops it from the others.
+Source text between `<!-- flavour <name> -->` and `<!-- /flavour -->`. `todo` after the name marks a block nobody has written. The published page shows every block, wrapped and labelled; the pair copy of a pair keeps only its own blocks.
 
 - Maps to: `parse` in `scripts/generate.mjs`.
 - Owner: docs.
 
 ### neutral page
 
-A page with no flavour block. It is published once, at its own address, and the picker does not change it.
+A page with no flavour block. The generator flags it with `neutral: true` in front matter, and the picker does not change it.
 
-- Maps to: a page that `scripts/generate.mjs` copies unchanged.
+- Maps to: a page that `scripts/generate.mjs` writes to `docs-gen/site/` with the flag and no pair copy.
 - Owner: docs.
 

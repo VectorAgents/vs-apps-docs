@@ -10,8 +10,8 @@ test('the page is emitted once for each server', () => {
   assert.deepEqual(trees.map(({ tree }) => tree), ['node', 'nest']);
 });
 
-test('the Nest.js tree shows a notice that links the Node.js version, and no dev-issuer setup', () => {
-  assert.match(nestText, /^:::warning\nNot yet written for Nest\.js\. Read the \[Node\.js \+ TypeScript version\]\(\.\.\/\.\.\/node\/reference\/harness\.md\)\.\n:::$/m);
+test('the Nest.js tree shows a notice and no dev-issuer setup', () => {
+  assert.match(nestText, /^:::warning\nNot yet written for Nest\.js\.\n:::$/m);
   assert.equal(section(nestText, 'Accept dev tokens'), '');
   assert.doesNotMatch(nestText, /createDevIssuer|AppPlatformModule|devIssuer|node:http/);
 });

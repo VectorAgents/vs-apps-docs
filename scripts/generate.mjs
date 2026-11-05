@@ -1,5 +1,5 @@
 import { copyFileSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
-import { dirname, join, posix } from 'node:path';
+import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const pageFile = /\.mdx?$/;
@@ -50,51 +50,34 @@ const splitFrontMatter = (text) => {
   return m ? { front: m[0], body: text.slice(m[0].length) } : { front: '', body: text };
 };
 
-/** The front matter a stub needs: the source's own, plus a `title` from the first heading when it has none. */
-function stubFront(text) {
+/** `text` with `key: value` added to its front matter, which is created when the page has none. */
+const withFrontMatter = (text, entry) => {
   const { front, body } = splitFrontMatter(text);
-  if (/^title:/m.test(front)) return front;
-  const heading = /^# (.+)$/m.exec(body)?.[1];
-  if (!heading) return front;
-  const title = `title: ${JSON.stringify(heading)}\n`;
-  return front ? front.replace(/\n---\n$/, `\n${title}---\n`) : `---\n${title}---\n`;
-}
+  return front ? front.replace(/\n---\n$/, `\n${entry}\n---\n`) + body : `---\n${entry}\n---\n${body}`;
+};
 
 /** Route of the page at `rel`: no extension, and a folder index sits at its folder. */
 const urlOf = (rel) => `/${rel.replace(/\.mdx?$/, '').replace(/(^|\/)index$/, '')}`;
 
-/** Relative link path from the page at `from` to the page at `to`, both under the output root. */
-const linkPath = (from, to) => {
-  const path = posix.relative(posix.dirname(from), to);
-  return path.startsWith('.') ? path : `./${path}`;
-};
-
-const linkPattern = /\]\((\.\.?\/[^)#\s]*\.mdx?)(#[^)]*)?\)/g;
-
-/** Builds the page tree under `config.outDir` from the source pages under `config.docsRoot`. */
+/**
+ * Writes two trees under `config.outDir` from the source pages under `config.docsRoot`. `site/` is what Docusaurus
+ * publishes: one page per source, every flavour block wrapped and labelled, a neutral page flagged in front matter.
+ * `pairs/<client>/<server>/` holds one copy of each flavoured page per pair, for checks only.
+ */
 export function generate({ root, config }) {
   const { axes } = config;
   const axisOrder = Object.keys(axes);
   const axisOf = (flavour) => axisOrder.find((a) => flavour in axes[a]);
-  const label = (combo) => axisOrder.filter((a) => a in combo).map((a) => axes[a][combo[a]]).join(' · ');
-  const treePath = (combo, rel) => [...axisOrder.filter((a) => a in combo).map((a) => combo[a]), rel].join('/');
+  const pairs = combinations(axes, axisOrder);
+  const pairDir = (pair) => ['pairs', ...axisOrder.map((a) => pair[a])].join('/');
 
   const source = join(root, config.docsRoot);
   const out = join(root, config.outDir);
   rmSync(out, { recursive: true, force: true });
   const errors = [];
-  const written = new Map();
-  /** Records that `from` writes the output file `path`; false when another source already did. */
-  const claim = (path, from) => {
-    const other = written.get(path);
-    if (other) errors.push(`${path} is written by both ${[other, from].sort().join(' and ')}`);
-    else written.set(path, from);
-    return !other;
-  };
-  const emit = (rel, text, from) => {
-    if (!claim(rel, from)) return;
-    mkdirSync(dirname(join(out, rel)), { recursive: true });
-    writeFileSync(join(out, rel), text);
+  const emit = (path, text) => {
+    mkdirSync(dirname(join(out, path)), { recursive: true });
+    writeFileSync(join(out, path), text);
   };
 
   for (const axis of axisOrder) {
@@ -127,59 +110,52 @@ export function generate({ root, config }) {
   }
   if (errors.length) throw new Error(errors.join('\n'));
 
-  // A tree page links into its own tree when it has every axis the target varies on; otherwise the stub chooses.
-  const rewriteLinks = (body, from, combo) =>
-    body.replace(linkPattern, (match, target, hash = '') => {
-      const to = posix.join(posix.dirname(from), target);
-      const page = pages.get(to);
-      if (!page) return match;
-      const inTree = page.used.length > 0 && page.used.every((a) => a in combo);
-      const dest = inTree ? treePath(Object.fromEntries(page.used.map((a) => [a, combo[a]])), to) : to;
-      return `](${linkPath(treePath(combo, from), dest)}${hash})`;
-    });
+  const notice = (flavour) => [':::warning', `Not yet written for ${axes[axisOf(flavour)][flavour]}.`, ':::'];
+  const wrapped = (p) => [
+    '',
+    `<div className="flavour-block" data-axis="${axisOf(p.flavour)}" data-flavour="${p.flavour}">`,
+    '',
+    `<p className="flavour-label">${axes[axisOf(p.flavour)][p.flavour]}</p>`,
+    '',
+    ...(p.todo ? notice(p.flavour) : p.lines),
+    '',
+    '</div>',
+    '',
+  ];
 
   // Counts source blocks, so a second client flavour does not double a gap.
   let todos = 0;
   const manifest = [];
   for (const [rel, { text, parts, used }] of pages) {
-    const from = `${config.docsRoot}/${rel}`;
     if (!used.length) {
-      if (claim(rel, from)) {
-        mkdirSync(dirname(join(out, rel)), { recursive: true });
-        copyFileSync(join(source, rel), join(out, rel));
+      if (text === null) {
+        mkdirSync(dirname(join(out, 'site', rel)), { recursive: true });
+        copyFileSync(join(source, rel), join(out, 'site', rel));
+      } else {
+        emit(`site/${rel}`, withFrontMatter(text, 'neutral: true'));
       }
       continue;
     }
-    const trees = combinations(axes, used);
     todos += parts.filter((p) => p.todo).length;
-    for (const combo of trees) {
-      const notice = (flavour) => {
-        const axis = axisOf(flavour);
-        const writtenFlavour = Object.keys(axes[axis]).find((f) => parts.some((p) => p.flavour === f && !p.todo));
-        const other = { ...combo, [axis]: writtenFlavour };
-        const link = `[${label(other)} version](${linkPath(treePath(combo, rel), treePath(other, rel))})`;
-        return ['', ':::warning', `Not yet written for ${axes[axis][flavour]}. Read the ${link}.`, ':::', ''];
-      };
+    emit(`site/${rel}`, parts.flatMap((p) => (p.flavour ? wrapped(p) : p.lines)).join('\n'));
+    for (const pair of pairs) {
       const body = parts
-        .filter((p) => !p.flavour || Object.values(combo).includes(p.flavour))
-        .flatMap((p) => (p.todo ? notice(p.flavour) : p.lines))
+        .filter((p) => !p.flavour || Object.values(pair).includes(p.flavour))
+        .flatMap((p) => (p.todo ? ['', ...notice(p.flavour), ''] : p.lines))
         .join('\n');
-      const { front, body: rest } = splitFrontMatter(rewriteLinks(body, rel, combo));
-      const shown = front ? front.replace(/\n---\n$/, '\ndisplayed_sidebar: docs\n---\n') : '---\ndisplayed_sidebar: docs\n---\n';
-      emit(treePath(combo, rel), shown + rest, from);
+      emit(`${pairDir(pair)}/${rel}`, body);
     }
     manifest.push({
       source: rel,
       url: urlOf(rel),
       axes: used,
-      trees: trees.map((flavours) => ({ flavours, url: urlOf(treePath(flavours, rel)) })),
+      trees: combinations(axes, used).map((flavours) => ({
+        flavours,
+        file: `${pairDir(pairs.find((pair) => Object.entries(flavours).every(([axis, flavour]) => pair[axis] === flavour)))}/${rel}`,
+      })),
     });
-    const front = stubFront(text);
-    const links = trees.map((combo) => `- [${label(combo)}](${linkPath(rel, treePath(combo, rel))})`);
-    emit(rel, `${front}\nThis page has one version for each client and server pair. Choose yours:\n\n${links.join('\n')}\n`, from);
   }
-  emit('flavours.json', `${JSON.stringify({ pages: manifest }, null, 2)}\n`, 'the generator');
-  if (errors.length) throw new Error(errors.join('\n'));
+  emit('flavours.json', `${JSON.stringify({ pages: manifest }, null, 2)}\n`);
   if (todos > config.todoCap) {
     const noun = todos === 1 ? 'notice exceeds' : 'notices exceed';
     throw new Error(`${todos} open todo ${noun} the cap of ${config.todoCap}`);
