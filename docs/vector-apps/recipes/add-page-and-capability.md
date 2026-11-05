@@ -3,7 +3,7 @@ title: Add an app page and a capability
 ---
 
 <!-- flavour react -->
-Grow the `hello-app` definition by two [app pages](../glossary.md#app-page) and the [capabilities](../glossary.md#capability) that gate them, link the app pages without a reload, then see them in a [space](../glossary.md#space).
+Grow the `hello-app` definition by two [app pages](../glossary.md#app-page) and the [capabilities](../glossary.md#capability) that gate them, link the app pages without a reload, then see them in a [space](../../vector-space/glossary.md#space).
 
 ## Goal
 
@@ -12,7 +12,7 @@ End with the `leads` and `icp` app pages in the navigation of the space, gated b
 ## Prerequisites
 
 - The app from the [quickstart](../quickstart.md), registered in a space (Part 2) and run with `npm run dev:space`.
-- `SPACE_API_URL` in `.env`, set to the [Vector Space](../glossary.md#vector-space) API origin followed by `/api`, for example `https://space-api.example.com/api`. Step 4 uses it.
+- `SPACE_API_URL` in `.env`, set to the [Vector Space](../../vector-space/glossary.md#vector-space) API origin followed by `/api`, for example `https://space-api.example.com/api`. Step 4 uses it.
 - Background: the [app definition](../../sdk/app-definition.md) page, the [`RequireCapability` reference](../../sdk/reference/react.md#react-requirecapability).
 
 ## Steps
@@ -183,7 +183,7 @@ A manifest change waits as a pending review until Vector applies it. If Vector S
 
 ### 5. Grant the capabilities
 
-A [space manager](../glossary.md#space-manager) grants `lead:manage` and `icp:manage` to a member. The member refreshes the browser page, and both app pages appear in the navigation.
+A [space manager](../../vector-space/glossary.md#space-manager) grants `lead:manage` and `icp:manage` to a member. The member refreshes the browser page, and both app pages appear in the navigation.
 
 ## Result
 

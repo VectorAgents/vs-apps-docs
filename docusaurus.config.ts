@@ -41,6 +41,7 @@ const config: Config = {
     navbar: {
       title: 'Vector Apps docs',
       items: [
+        { type: 'docSidebar', sidebarId: 'vectorSpace', label: 'Vector Space', position: 'left' },
         { type: 'docSidebar', sidebarId: 'vectorApps', label: 'Vector Apps', position: 'left' },
         { type: 'docSidebar', sidebarId: 'sdk', label: 'vs-apps SDK', position: 'left' },
         { to: '/sdk/builder', label: 'Definition builder', position: 'left' },

@@ -27,7 +27,7 @@ cd leads-app
 ```
 <!-- /flavour -->
 
-- A member who holds the capability and one who does not. A [space manager](../glossary.md#space-manager) [grants](../glossary.md#capability-grant) capabilities in [Vector Space](../glossary.md#vector-space).
+- A member who holds the capability and one who does not. A [space manager](../../vector-space/glossary.md#space-manager) [grants](../glossary.md#capability-grant) capabilities in [Vector Space](../../vector-space/glossary.md#vector-space).
 - Background: [`RequireCapability` on the client](../../sdk/reference/react.md#react-requirecapability).
 
 ## Steps

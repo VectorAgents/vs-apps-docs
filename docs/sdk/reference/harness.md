@@ -2,7 +2,7 @@
 title: Harness reference
 ---
 
-Reference for `@vectoragents/vs-apps/react/harness` 0.4.0. The [harness](../../vector-apps/glossary.md#harness) is a local stand-in for [Vector Space](../../vector-apps/glossary.md#vector-space). The starter includes the harness already wired. This page is the manual-wiring guide for an app that is not built from the starter. An app does not need the harness to ship.
+Reference for `@vectoragents/vs-apps/react/harness` 0.4.0. The [harness](../glossary.md#harness) is a local stand-in for [Vector Space](../../vector-space/glossary.md#vector-space). The starter includes the harness already wired. This page is the manual-wiring guide for an app that is not built from the starter. An app does not need the harness to ship.
 
 Every symbol below follows one layout: signature, behaviour, example. Each example is a complete file and is typechecked against the installed package.
 

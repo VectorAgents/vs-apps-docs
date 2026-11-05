@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
 const internalUrl = new URL('../.agents/glossary-internal.md', import.meta.url);
-const publishedUrl = new URL('../docs/vector-apps/glossary.md', import.meta.url);
+const publishedUrls = ['vector-space', 'vector-apps', 'sdk'].map((section) => new URL(`../docs/${section}/glossary.md`, import.meta.url));
 
 const names = (text) => text.split(/^### /m).slice(1).map((block) => block.split('\n')[0].replace(/\s*\{#.*\}\s*$/, '').trim().toLowerCase());
 const internal = readFileSync(internalUrl, 'utf8');
@@ -21,7 +21,7 @@ test('internal entries have definition, mapping and owner', () => {
 });
 
 test('no term is in both glossaries', () => {
-  const published = names(readFileSync(publishedUrl, 'utf8'));
+  const published = publishedUrls.flatMap((url) => names(readFileSync(url, 'utf8')));
   for (const name of names(internal)) assert.ok(!published.includes(name), `${name} is in both files`);
 });
 
@@ -34,4 +34,12 @@ test('Role entry defines the quickstart role line', () => {
   assert.ok(block, 'Role entry missing');
   assert.match(block, /`\*\*Role\*\*: Organization admin\.`/);
   assert.match(block, /`\*\*Role\*\*: space manager\.`/);
+});
+
+test('staff and binding are published terms, not internal ones', () => {
+  const published = publishedUrls.flatMap((url) => names(readFileSync(url, 'utf8')));
+  for (const term of ['staff', 'binding']) {
+    assert.ok(published.includes(term), `${term} is not published`);
+    assert.ok(!names(internal).includes(term), `${term} is still internal`);
+  }
 });

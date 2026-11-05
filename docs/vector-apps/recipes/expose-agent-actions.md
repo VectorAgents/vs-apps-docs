@@ -3,7 +3,7 @@ title: Expose agent actions on an app page
 start: leads-app
 ---
 
-Let the [space](../glossary.md#space) agent open a Lead List on the leads [app page](../glossary.md#app-page). The recipe declares the app page and the [agent action](../glossary.md#agent-action) with `defineAgentPage`, binds a handler with `useAgentAction`, and writes both into the [agent catalog](../glossary.md#agent-catalog).
+Let the [space](../../vector-space/glossary.md#space) agent open a Lead List on the leads [app page](../glossary.md#app-page). The recipe declares the app page and the [agent action](../../sdk/glossary.md#agent-action) with `defineAgentPage`, binds a handler with `useAgentAction`, and writes both into the [agent catalog](../../sdk/glossary.md#agent-catalog).
 
 ## Goal
 
@@ -36,7 +36,7 @@ npm install --save-dev vite-node --workspace client
 
 Keep the declarations in one module. The catalog entry and the component import the same handle. `pageId` must equal the `key` of an app page in the app definition. The definition has the app page key `leads`, so `buildManifests` finds the app page.
 
-Write each `description` for the agent. The SDK puts it in the manifest, which [Vector Space](../glossary.md#vector-space) reads.
+Write each `description` for the agent. The SDK puts it in the manifest, which [Vector Space](../../vector-space/glossary.md#vector-space) reads.
 
 ```ts title="client/src/actions.ts"
 import { defineAgentPage } from '@vectoragents/vs-apps';

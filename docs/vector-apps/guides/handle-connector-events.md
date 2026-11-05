@@ -5,9 +5,9 @@ title: Handle connector events
 Receive an inbound event from a connector in your server, and answer it through the same connector.
 
 <!-- flavour nest -->
-The guide uses `ConnectorEventsService` and the `ConnectorExecuteResult` type from the `@vectoragents/vs-apps/nest` subpath of the [SDK](../glossary.md#sdk).
+The guide uses `ConnectorEventsService` and the `ConnectorExecuteResult` type from the `@vectoragents/vs-apps/nest` subpath of the [SDK](../../sdk/glossary.md#sdk).
 
-A [connector slot](../glossary.md#connector-slot) can declare event handlers. When a [space manager](../glossary.md#space-manager) routes an event type of the attached connector to a handler, [Vector Space](../glossary.md#vector-space) sends each event to your server. `ConnectorEventsService` holds the function that runs for each handler. `ConnectorExecuteResult` is what a call back to the connector returns.
+A [connector slot](../glossary.md#connector-slot) can declare event handlers. When a [space manager](../../vector-space/glossary.md#space-manager) routes an event type of the attached connector to a handler, [Vector Space](../../vector-space/glossary.md#vector-space) sends each event to your server. `ConnectorEventsService` holds the function that runs for each handler. `ConnectorExecuteResult` is what a call back to the connector returns.
 
 ## Goal
 
