@@ -3,6 +3,7 @@ import type { SidebarsConfig } from '@docusaurus/plugin-content-docs';
 const sidebars: SidebarsConfig = {
   vectorSpace: ['vector-space/glossary'],
   vectorApps: [
+    'vector-apps/why-vector-apps',
     'vector-apps/how-a-vector-app-works',
     'vector-apps/quickstart',
     {
@@ -43,6 +44,7 @@ const sidebars: SidebarsConfig = {
   ],
   sdk: [
     'sdk/overview',
+    'sdk/choose-your-path',
     'sdk/app-definition',
     { type: 'link', label: 'Definition builder', href: '/sdk/builder' },
     'sdk/examples',
