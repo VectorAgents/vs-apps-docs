@@ -2,7 +2,7 @@
 
 What each claim in these docs rests on. A ticket or spec named below without a link rests on a `.scratch/` folder that no longer exists, so the claim cannot be traced further.
 
-The sections below follow the page folders: Why Vector Space and Vector Space at a glance are under `docs/vector-space/`. Quickstart, Guides, How a Vector App works and Why Vector Apps are under `docs/vector-apps/`. App definition, Reference, SDK overview and Choose your path are under `docs/sdk/`.
+The sections below follow the page folders: Why Vector Space and Vector Space at a glance are under `docs/vector-space/`. Quickstart, Guides, How a Vector App works and Why Vector Apps are under `docs/vector-apps/`. App definition, Reference, SDK overview and Choose your path are under `docs/sdk/`. The Entry page is `docs/index.mdx`.
 
 ## Sources
 
@@ -174,3 +174,14 @@ The three columns and seven rows are this repo's own comparison. The product doc
 | The aside line links the guide Call Vector Space from your server for a caller outside Vector Space. | `docs/vector-apps/guides/call-space-from-your-server.md` and its provenance rows. Spec section 4 decided on one aside line, with no "Calling a space" column. |
 | An app gets the member, the data of the space and model calls through Vector Space. The page says what an app gets and never that an app is the only way. | Research 01, claim 2.11: "only" is a product claim that can change. |
 | Closed lists are linked, never copied. | [Platform limits](../docs/sdk/reference/platform-limits.md). |
+
+## Entry page
+
+Source paths are in the sibling `vector-spaces` repo, under `docs/`. The product docs hold no `APPS.md`: `product/OVERVIEW.md` and `product/GLOSSARY.md` are the sources, with `systems/apps/README.md` for apps.
+
+| Claim | Rests on |
+| --- | --- |
+| Vector Space is the platform where the people and AI agents of an organization work together in spaces. | `product/OVERVIEW.md` ("What it is"). The page words it as in [Why Vector Space](../docs/vector-space/why-vector-space.md). |
+| A Vector App adds your own pages and agent actions to a space. | `product/GLOSSARY.md` (App), `systems/apps/README.md` (the model), `systems/apps/REGISTRY.md` (the manifest lists pages and agent catalog entries). |
+| The vs-apps SDK is the TypeScript package you build apps with. | The README of `@vectoragents/vs-apps` 0.4.0. |
+| The three cards, Understand, Build and Look up, only link pages that other rows here already source. | The entry page of the hub structure map (variant A). |
