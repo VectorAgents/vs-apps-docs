@@ -9,7 +9,6 @@ import { voiceViolations } from './voice.mjs';
 const docs = resolve(dirname(fileURLToPath(import.meta.url)), '../docs');
 const file = resolve(docs, 'vector-apps/how-a-vector-app-works.md');
 const text = readFileSync(file, 'utf8');
-const glossary = readFileSync(resolve(docs, 'vector-apps/glossary.md'), 'utf8');
 
 const headings = (level) => [...text.matchAll(new RegExp(`^${'#'.repeat(level)} (.+)$`, 'gm'))].map((m) => m[1]);
 const tableRows = (body) =>
@@ -57,7 +56,10 @@ test('every link resolves, and the page links the quickstart, the app definition
   for (const link of links) {
     const [path, anchor] = link.split('#');
     assert.ok(existsSync(resolve(dirname(file), path)), link);
-    if (anchor && path.endsWith('glossary.md')) assert.ok(glossary.split('\n').some((l) => l.startsWith('### ') && l.slice(4).toLowerCase().replaceAll(' ', '-') === anchor), link);
+    if (anchor && path.endsWith('glossary.md')) {
+      const terms = readFileSync(resolve(dirname(file), path), 'utf8').split('\n').filter((l) => l.startsWith('### '));
+      assert.ok(terms.some((l) => l.slice(4).toLowerCase().replaceAll(' ', '-') === anchor), link);
+    }
   }
   for (const target of ['./quickstart.md', '../sdk/app-definition.md', './glossary.md']) assert.ok(links.includes(target), target);
 });

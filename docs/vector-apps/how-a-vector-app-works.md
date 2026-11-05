@@ -6,7 +6,7 @@ description: The parts of an app, the six steps from build to removal, who does 
 import IsoDiagram from '@site/src/components/IsoDiagram';
 import { appsOverview } from '@site/src/diagrams/apps-overview.ts';
 
-An [app](./glossary.md#app) is a web app that runs on its own origin and that a space shows inside Vector Space. A space is a shared place in Vector Space, the Vector platform, for one team. This page shows the parts of an app, the six steps from build to removal, and the tokens that Vector Space signs for it.
+An [app](./glossary.md#app) is a web app that runs on its own origin and that a [space](../vector-space/glossary.md#space) shows inside [Vector Space](../vector-space/glossary.md#vector-space), the Vector platform. This page shows the parts of an app, the six steps from build to removal, and the tokens that Vector Space signs for it.
 
 ## The parts of an app
 
@@ -18,7 +18,7 @@ The four lines show the token path. Lines a to c run each time someone uses the 
 
 ## The lifecycle
 
-An app goes through six steps. Each step has one owner. Vector staff, the people who run Vector Space for every organization, own the register step. A space manager, a member who manages a space, owns three steps.
+An app goes through six steps. Each step has one owner. [Staff](../vector-space/glossary.md#staff), the Vector employees who run Vector Space, own the register step. A [space manager](../vector-space/glossary.md#space-manager) owns three steps.
 
 | Step | Who | What happens |
 | --- | --- | --- |
@@ -61,7 +61,7 @@ A space manager removes the app from a space, or someone deletes the space. Vect
 
 Vector Space signs six kinds of token with one key set. Your app only verifies them. Each token carries the app it is for, and each one expires.
 
-Two kinds go with interfaces that your app can offer. A2A is the agent-to-agent protocol, for one agent that calls another. MCP is the Model Context Protocol, for an agent that calls a server of tools.
+Two kinds go with interfaces that your app can offer. [A2A](../vector-space/glossary.md#a2a) is the Agent2Agent protocol, for one agent that calls another. [MCP](../vector-space/glossary.md#mcp) is the Model Context Protocol, for an agent that calls a server of tools.
 
 | Token | How it travels | Default lifetime |
 | --- | --- | --- |
