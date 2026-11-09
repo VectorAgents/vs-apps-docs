@@ -171,6 +171,22 @@ The three columns and seven rows are this repo's own comparison. The product doc
 | An app gets the member, the data of the space and model calls through Vector Space. The page says what an app gets and never that an app is the only way. | "Only" is a product claim that can change. |
 | Closed lists are linked, never copied. | [Platform limits](../docs/sdk/reference/platform-limits.md). |
 
+## Agents in a space
+
+Source paths are in the sibling `vector-spaces` repo, under `docs/`. Claim-level sources are in the "Page 4: `agents-in-a-space`" part of the build's outline research. The spec overrides drop "What an agent can reach" and "Where agents are set up", and name no depth.
+
+| Claim | Rests on |
+| --- | --- |
+| An agent is a configured model with instructions, tools and resources. Each space has exactly one orchestrator agent, created with the space. An organization has none. The member's request goes to it, and it hands parts to other agents. | `product/GLOSSARY.md` (Agents and runs: Agent), `systems/STUDIO.md` (The agent tree), `systems/runs/DELEGATION.md` (Levels), `systems/access/README.md` (Spaces). |
+| Agent Studio is where a person who manages agents sets up an agent. The page lists instructions and evaluations only. | `product/OVERVIEW.md` (The product's layers), `systems/STUDIO.md` (Draft, versions and publish). |
+| The orchestrator agent gives the member one reply: only its output reaches the user. | `systems/STUDIO.md` (output reaches the user only through the orchestrator). |
+| The tree: the orchestrator agent is the root, a configured agent can have child agents (the master says "sub-agent"), only agents built into the space have children, and an agent moves only within its space. The page names no depth, no level numbers and no limits, because `STUDIO.md` states no depth and `DELEGATION.md` numbers the levels inconsistently. | `systems/STUDIO.md` (The agent tree), `systems/runs/DELEGATION.md` (Levels). |
+| Leaves: a remote A2A agent whose owner controls its prompt, model and retrieval, which an app can offer; and a short-lived helper (the master's "subagent") that an agent starts for one task, which has no children and is retired when it finishes. | `systems/STUDIO.md` (The agent tree, Vocabulary: A2A leaf), `systems/runs/DELEGATION.md` (Levels). |
+| A connector is a resource an agent uses, not an agent it delegates to. | `systems/runs/DELEGATION.md` (Levels). |
+| A thread is one conversation with one agent, owned by one user, and no one else reads it, administrators included. Others get "not found". | `systems/runs/README.md` (Threads, instances, turns and runs), `systems/access/RUNTIME.md` (Threads), `product/GLOSSARY.md` (Thread). |
+| A run is one execution of one agent in a thread and closes when it ends. A delegated agent has a run of its own: inferred from the same sections, as no master sentence says it in these words. The page avoids "turn". | `systems/runs/README.md` (Threads, instances, turns and runs), `product/GLOSSARY.md` (Run). |
+| Each agent sees only what the member may see: an agent's reach is the space's resources narrowed to the person it works for. | `systems/access/RESOURCES.md` (Agent scope), `systems/access/RUNTIME.md` (Run identity: a chat in the web app runs as the thread's owner). The page states the web chat case only. |
+
 ## Entry page
 
 Source paths are in the sibling `vector-spaces` repo, under `docs/`. The product docs hold no `APPS.md`: `product/OVERVIEW.md` and `product/GLOSSARY.md` are the sources, with `systems/apps/README.md` for apps.
