@@ -106,7 +106,8 @@ test('layout: an unknown slab or link end is an error', () => {
   assert.throws(() => layoutStructure({ ...small, links: [{ id: 'x', from: 'back', to: 'nowhere' }] }), /nowhere/);
 });
 
-const real = slots.filter((s) => existsSync(join(figures, `${s.id}.ts`)));
+/** The Apps overview is a structure figure that is not a slot of the Vector Space section, so it has no registry row. */
+const real = [...slots.filter((s) => existsSync(join(figures, `${s.id}.ts`))), { id: 'apps-overview' }];
 
 test('at least the overview figure has data', () => {
   assert.ok(real.some((s) => s.id === 'space-structure'));
@@ -117,9 +118,10 @@ for (const slot of real) {
   const scene = layoutStructure(data);
   const solids = (kind) => scene.solids.filter((s) => s.kind === kind);
 
-  test(`${slot.id}: the data carries the slot id and the registry caption`, () => {
+  test(`${slot.id}: the data carries its id, its caption (the registry one for a slot), a title and a description`, () => {
     assert.equal(data.id, slot.id);
-    assert.equal(data.caption, slot.caption);
+    if (slot.caption) assert.equal(data.caption, slot.caption);
+    assert.ok(data.caption.trim());
     assert.ok(data.title.length > 0 && data.desc.length > 0);
   });
 
@@ -322,4 +324,32 @@ test('a legend line swatch draws a plain link and the figures that draw plain li
     assert.ok(data.links.some((l) => !l.remote));
     assert.ok(data.legend.some((i) => i.swatch === 'link'), `${id} explains its lines`);
   }
+});
+
+test('apps-overview: 5 parts on 2 slabs side by side, yours on the origin slab and the client in the space', async () => {
+  const data = await load('apps-overview');
+  assert.deepEqual(data.slabs.map((s) => [s.label, s.level]), [['Vector Space', 0], ['Your origin', 0]]);
+  const on = (id) => labels(data.parts.filter((p) => p.on === id));
+  assert.deepEqual(on('space'), ['Your client', 'AI gateway', 'Platform data']);
+  assert.deepEqual(on('origin'), ['Your server', 'Manifest']);
+});
+
+test('apps-overview: Vector Space parts are core, the parts you write are plug', async () => {
+  const data = await load('apps-overview');
+  const tone = (tone) => labels(data.parts.filter((p) => p.tone === tone)).sort();
+  assert.deepEqual(tone('core'), ['AI gateway', 'Platform data']);
+  assert.deepEqual(tone('plug'), ['Manifest', 'Your client', 'Your server']);
+});
+
+test('apps-overview: three dashed links join client and server, server and platform data, and Vector Space and the manifest, and no other link', async () => {
+  const data = await load('apps-overview');
+  assert.deepEqual(data.links.map((l) => [l.from, l.to]).sort(), [['client', 'server'], ['server', 'data'], ['space', 'manifest']].sort());
+  assert.ok(data.links.every((l) => l.remote));
+  assert.deepEqual(data.legend.map((i) => i.swatch), ['core', 'plug', 'remote']);
+});
+
+test('apps-overview: no numbered badge, no token letter, and no vendor or example app', async () => {
+  const data = await load('apps-overview');
+  assert.doesNotMatch(everyText(data), /badge|\bline [a-d]\b|Hiring|SDR|CSR|Apollo|Exa|BrightData|RedemptAI/i);
+  assert.doesNotMatch([...data.slabs, ...data.parts].map((i) => i.text).join(' ').replace(/Vector Space/g, ''), /\bSpace\b/);
 });
