@@ -10,9 +10,9 @@ const docs = resolve(dirname(fileURLToPath(import.meta.url)), '../docs');
 const file = resolve(docs, 'vector-space/how-work-moves-through-a-space.md');
 const text = readFileSync(file, 'utf8');
 const body = text.replace(/^---\n[\s\S]*?\n---\n/, '');
-const prose = body.replace(/^import .*$/gm, '').replace(/<FigurePlaceholder[^>]*\/>/g, '');
+const prose = body.replace(/^import .*$/gm, '').replace(/<(?:FigurePlaceholder|FlowFigure)[^>]*\/>/g, '');
 const plain = prose.replace(/\[([^\]]*)\]\([^)]*\)/g, '$1');
-const slotsIn = (s) => [...s.matchAll(/<FigurePlaceholder slot="([^"]+)" \/>/g)].map((m) => m[1]);
+const slotsIn = (s) => [...s.matchAll(/<FigurePlaceholder slot="([^"]+)" \/>|<FlowFigure data=\{workedExampleFlow\} \/>/g)].map((m) => m[1] ?? 'worked-example-flow');
 const rowsOf = (s) => s.split('\n').filter((l) => /^\|/.test(l) && !/^\| ?-{3}/.test(l)).map((l) => l.split('|').slice(1, -1).map((c) => c.trim()));
 const unlink = (s) => s.replace(/\[([^\]]*)\]\([^)]*\)/g, '$1');
 

@@ -3,7 +3,8 @@ title: How work moves through a space
 description: One request followed from a member's question to a sent email, step by step.
 ---
 
-import FigurePlaceholder from '@site/src/components/FigurePlaceholder';
+import FlowFigure from '@site/src/components/FlowFigure';
+import { workedExampleFlow } from '@site/src/diagrams/figures/worked-example-flow.ts';
 
 Work in a space moves in steps that the platform checks and records. This page follows one request, from a member's question to a sent email, in six steps.
 
@@ -13,7 +14,7 @@ A [member](./glossary.md#member) asks the [orchestrator agent](./glossary.md#orc
 
 The work uses a [Vector App](../vector-apps/glossary.md#app), a web app that a space shows in an iframe. The app is only an example. Each section below covers one or two steps, and the last one shows who ran each step.
 
-<FigurePlaceholder slot="worked-example-flow" />
+<FlowFigure data={workedExampleFlow} />
 
 ## The request
 

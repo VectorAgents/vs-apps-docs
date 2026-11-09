@@ -1,71 +1,11 @@
-import { Fragment, createElement, useEffect, useId, useState } from 'react';
+import { Fragment, useEffect, useId, useState } from 'react';
 import type { CSSProperties, ReactElement } from 'react';
-import { pointsAttr } from '../diagrams/figure/geometry.ts';
-import { ICONS } from '../diagrams/figure/icons.ts';
-import type { IconName } from '../diagrams/figure/icons.ts';
 import { LIFT, layoutStructure } from '../diagrams/figure/layout.ts';
-import type { SceneEntry, SceneSolid, StructureScene } from '../diagrams/figure/layout.ts';
-import type { LegendItem, StructureData } from '../diagrams/figure/types.ts';
-
-const ICON_SIZE = 22;
-/** Distance from the middle of a part's top face to the middle of its icon, and to the baseline of its name. */
-const ICON_RISE = 6;
-const NAME_DROP = 15;
+import type { SceneEntry, StructureScene } from '../diagrams/figure/layout.ts';
+import type { StructureData } from '../diagrams/figure/types.ts';
+import { Solid, Swatch } from './FigureShapes.tsx';
 
 const HINT = 'Hover or focus a part or a slab to read about it. Click to keep it open. Press Escape to close it.';
-
-function Icon({ name, x, y }: { name: IconName; x: number; y: number }): ReactElement {
-  return (
-    <g className="fig-icon" transform={`translate(${x - ICON_SIZE / 2} ${y - ICON_SIZE / 2}) scale(${ICON_SIZE / 24})`}>
-      {ICONS[name].map(([tag, attributes], i) => createElement(tag, { key: i, ...attributes }))}
-    </g>
-  );
-}
-
-function Solid({ solid, active, pinned, onEnter, onLeave, onToggle }: { solid: SceneSolid; active: boolean; pinned: boolean; onEnter: () => void; onLeave: () => void; onToggle: () => void }): ReactElement {
-  const { label } = solid;
-  return (
-    <g
-      className={`fig-solid fig-${solid.kind} fig-tone-${solid.tone}${active ? ' fig-active' : ''}${pinned ? ' fig-lifted' : ''}`}
-      onPointerEnter={onEnter}
-      onPointerLeave={onLeave}
-      onClick={onToggle}
-    >
-      {solid.facets.map((facet, i) => (
-        <polygon key={i} className={`fig-facet fig-b${facet.bucket}`} points={pointsAttr(facet.points)} />
-      ))}
-      <polygon className="fig-top" points={pointsAttr(solid.top)} />
-      <polygon className="fig-outline" points={pointsAttr(solid.hull)} />
-      {solid.kind === 'part' && solid.icon && <Icon name={solid.icon} x={label.x} y={label.y - ICON_RISE} />}{' '}
-      {solid.kind === 'part' ? (
-        <text className="fig-label" x={label.x} y={label.y + NAME_DROP} textAnchor="middle">
-          {label.text}
-        </text>
-      ) : (
-        <text className="fig-label fig-label-slab" transform={`translate(${label.x} ${label.y}) skewY(30)`}>
-          {label.text}
-        </text>
-      )}
-    </g>
-  );
-}
-
-function Swatch({ item }: { item: LegendItem }): ReactElement {
-  if (item.swatch === 'remote' || item.swatch === 'link') {
-    return (
-      <svg className="structure-figure__swatch" viewBox="0 0 34 22" aria-hidden="true">
-        <line className={item.swatch === 'remote' ? 'fig-link fig-link-remote' : 'fig-link'} x1="2" y1="11" x2="32" y2="11" />
-      </svg>
-    );
-  }
-  return (
-    <svg className={`structure-figure__swatch fig-tone-${item.swatch}`} viewBox="0 0 34 22" aria-hidden="true">
-      <polygon className="fig-facet fig-b3" points="2,8 17,15 17,21 2,14" />
-      <polygon className="fig-facet fig-b0" points="32,8 17,15 17,21 32,14" />
-      <polygon className="fig-top" points="2,8 17,1 32,8 17,15" />
-    </svg>
-  );
-}
 
 function Card({ entry }: { entry: SceneEntry | undefined }): ReactElement {
   if (!entry) return <p className="structure-figure__hint">{HINT}</p>;
@@ -123,10 +63,10 @@ export default function StructureFigure({ data, figure = 1 }: { data: StructureD
               <Solid
                 solid={solid}
                 active={shown === solid.id || pinned === solid.id}
-                pinned={pinned === solid.id && solid.lift > 0}
-                onEnter={() => setPreview(solid.id)}
-                onLeave={() => setPreview(null)}
-                onToggle={() => toggle(solid.id)}
+                lifted={pinned === solid.id && solid.lift > 0}
+                onPointerEnter={() => setPreview(solid.id)}
+                onPointerLeave={() => setPreview(null)}
+                onClick={() => toggle(solid.id)}
               />{' '}
             </Fragment>
           ))}
