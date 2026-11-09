@@ -218,6 +218,23 @@ Source paths are in the sibling `vector-spaces` repo, under `docs/`. Claim-level
 | A run is one execution of one agent in a thread and closes when it ends. A delegated agent has a run of its own: inferred from the same sections, as no master sentence says it in these words. The page avoids "turn". | `systems/runs/README.md` (Threads, instances, turns and runs), `product/GLOSSARY.md` (Run). |
 | Each agent sees only what the member may see: an agent's reach is the space's resources narrowed to the person it works for. | `systems/access/RESOURCES.md` (Agent scope), `systems/access/RUNTIME.md` (Run identity: a chat in the web app runs as the thread's owner). The page states the web chat case only. |
 
+## One access model
+
+Source paths are in the sibling `vector-spaces` repo, under `docs/`. Claim-level sources are in the "2. one-access-model" part of the Why group's outline research. The spec overrides drop "People who skip the check" and "What the check does not decide", name no step order, and keep the API-key variant of the example as a separate closing paragraph (gate row 6).
+
+| Claim | Rests on |
+| --- | --- |
+| Access is the result of one check that runs for each operation on a resource, and the same check answers it whatever the way in (UI, API, agents, apps). | `product/GLOSSARY.md` (Access, Share and General access: Access), `product/OVERVIEW.md` (What holds it together), `systems/access/README.md` (The access primitive). |
+| The check reads General access (Restricted, Can use or Can edit), shares (one user, group or app, one role), blocks (deny one user or group on one resource) and Conditions (limit the rows an allowed operation touches). A share of a group reaches every user the group holds. | `systems/access/README.md` (The access primitive, Conditions), `systems/access/RESOURCES.md` (General access, Blocks), `product/GLOSSARY.md` (Access: Share, Subject). |
+| A Restricted resource reaches only its owner and the users and groups that a share names, and no Organization admin, space manager or staff rank reaches it unless a share names them. | `systems/access/RESOURCES.md` (General access). |
+| "What wins", never a numbered order: General access and shares add up, a block wins whatever gave the access, a Condition narrows what is left and nothing widens past it. The master gives a formula, and its only fixed order is that Conditions run last. | `systems/access/README.md` (The access primitive: "a block wins regardless of source"; Conditions). |
+| Conditions apply to datasources and connectors only. On a datasource a Condition becomes a row filter in every query. On a connector it guards the call's arguments and the response is not filtered afterwards. | `systems/access/README.md` (Conditions), `systems/access/RUNTIME.md` (Runtime gating, Datasource enforcement). |
+| The rules are the same for every way in and the subject differs: a web chat runs as the thread's owner, a personal token as its owner, a service-account key as that account. | `systems/access/RUNTIME.md` (Run identity), `product/GLOSSARY.md` (Tenancy and people). |
+| An agent reaches what its person reaches, and the agent's own scope narrows that and never grants. | `systems/access/RESOURCES.md` (Agent scope), `systems/access/RUNTIME.md` (Runtime gating). |
+| A Vector App reaches only the overlap of its own shares and the person's access. A capability grant is a share on named capabilities of a Vector App at Can use. | `systems/apps/BINDINGS.md` (Capabilities and access, Invariants). Spec decision 7 of the outline ticket replaces ticket 17's "not a share". |
+| An approval is a second check and never grants access. | `systems/COMMAND-CENTER.md` (Deciding). |
+| Example: a Condition on a group limits a datasource to EU rows, and the member gets the same rows in an app and through the orchestrator agent. The API-key paragraph rests on the general claim only and is cut if gate row 6 fails. | `systems/access/RUNTIME.md` (Runtime gating, Datasource enforcement), `systems/access/README.md` (Conditions), `product/OVERVIEW.md` (What holds it together). |
+
 ## Entry page
 
 Source paths are in the sibling `vector-spaces` repo, under `docs/`. The product docs hold no `APPS.md`: `product/OVERVIEW.md` and `product/GLOSSARY.md` are the sources, with `systems/apps/README.md` for apps.
