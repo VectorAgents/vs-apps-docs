@@ -1,7 +1,37 @@
 import type { SidebarsConfig } from '@docusaurus/plugin-content-docs';
 
 const sidebars: SidebarsConfig = {
-  vectorSpace: ['vector-space/why-vector-space', 'vector-space/vector-space-at-a-glance', 'vector-space/glossary'],
+  vectorSpace: [
+    {
+      type: 'category',
+      label: 'What',
+      collapsed: false,
+      items: [
+        'vector-space/what-vector-space-is',
+        'vector-space/organizations-and-spaces',
+        'vector-space/what-a-space-holds',
+        'vector-space/agents-in-a-space',
+        'vector-space/who-can-do-what',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Why',
+      collapsed: false,
+      items: ['vector-space/why-vector-space', 'vector-space/one-access-model', 'vector-space/the-record-of-work'],
+    },
+    {
+      type: 'category',
+      label: 'How',
+      collapsed: false,
+      items: [
+        'vector-space/how-work-moves-through-a-space',
+        'vector-space/approvals-and-the-command-center',
+        'vector-space/extending-a-space',
+      ],
+    },
+    'vector-space/glossary',
+  ],
   vectorApps: [
     'vector-apps/why-vector-apps',
     'vector-apps/how-a-vector-app-works',

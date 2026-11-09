@@ -55,8 +55,22 @@ test('Glossary is the last item of each section', () => {
   assert.equal(idOf(sidebars.sdk.at(-1)), 'sdk/glossary');
 });
 
-test('the Vector Space sidebar runs Why Vector Space, Vector Space at a glance, Glossary', () => {
-  assert.deepEqual(topLevel('vectorSpace'), ['vector-space/why-vector-space', 'vector-space/vector-space-at-a-glance', 'vector-space/glossary']);
+test('the Vector Space sidebar runs the What, Why and How categories, then the Glossary, with no page of their own', () => {
+  assert.deepEqual(topLevel('vectorSpace'), ['What', 'Why', 'How', 'vector-space/glossary']);
+  for (const label of ['What', 'Why', 'How']) assert.equal(categoryOf('vectorSpace', label).link, undefined, label);
+  assert.deepEqual(docIds(categoryOf('vectorSpace', 'What').items).map((id) => id.replace('vector-space/', '')), [
+    'what-vector-space-is',
+    'organizations-and-spaces',
+    'what-a-space-holds',
+    'agents-in-a-space',
+    'who-can-do-what',
+  ]);
+  assert.deepEqual(docIds(categoryOf('vectorSpace', 'Why').items).map((id) => id.replace('vector-space/', '')), ['why-vector-space', 'one-access-model', 'the-record-of-work']);
+  assert.deepEqual(docIds(categoryOf('vectorSpace', 'How').items).map((id) => id.replace('vector-space/', '')), [
+    'how-work-moves-through-a-space',
+    'approvals-and-the-command-center',
+    'extending-a-space',
+  ]);
 });
 
 test('the Guides section lists the open-route, connector-events, call-a-model and Call Space guides', () => {

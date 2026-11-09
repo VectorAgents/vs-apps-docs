@@ -40,7 +40,7 @@ test('three cards in the order Understand, Build, Look up', () => {
 test('Understand links the four concept pages', () => {
   assert.deepEqual(card('Understand').links, [
     '/vector-space/why-vector-space',
-    '/vector-space/vector-space-at-a-glance',
+    '/vector-space/what-vector-space-is',
     '/vector-apps/why-vector-apps',
     '/vector-apps/how-a-vector-app-works',
   ]);

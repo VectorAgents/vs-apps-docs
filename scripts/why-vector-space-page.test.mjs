@@ -21,7 +21,7 @@ test('the page opens with the definition of Vector Space', () => {
   assert.match(body, /^\[Vector Space\]\(\.\/glossary\.md#vector-space\) is the platform /);
 });
 
-test('every link resolves, and the page links the glance page, Why Vector Apps and the glossary', () => {
+test('every link resolves, and the page links What Vector Space is, Why Vector Apps and the glossary', () => {
   const links = linksOf(text);
   for (const link of links) {
     const [path, anchor] = link.split('#');
@@ -31,7 +31,7 @@ test('every link resolves, and the page links the glance page, Why Vector Apps a
       assert.ok(terms.some((l) => l.slice(4).toLowerCase().replaceAll(' ', '-') === anchor), link);
     }
   }
-  for (const target of ['./vector-space-at-a-glance.md', '../vector-apps/why-vector-apps.md', './glossary.md']) assert.ok(links.includes(target), target);
+  for (const target of ['./what-vector-space-is.md', '../vector-apps/why-vector-apps.md', './glossary.md']) assert.ok(links.includes(target), target);
 });
 
 test('the three platform rules are one access model, one AI gateway and one record of work, as a list', () => {

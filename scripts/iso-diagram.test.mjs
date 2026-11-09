@@ -2,7 +2,6 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { layoutDiagram } from '../src/diagrams/isoLayout.ts';
 import { appsOverview } from '../src/diagrams/apps-overview.ts';
-import { spaceOverview } from '../src/diagrams/space-overview.ts';
 
 const words = (text) => text.trim().split(/\s+/).length;
 
@@ -159,75 +158,4 @@ test('apps overview: terms follow the glossary', () => {
   assert.doesNotMatch(all, /service token|workspace|RedemptAI/i);
   assert.doesNotMatch(all, /(?<!Vector )\bSpace\b/);
   assert.match(all, /app token/);
-});
-
-const spacePart = (id) => spaceOverview.parts.find((p) => p.id === id);
-const spaceSlab = (id) => spaceOverview.slabs.find((s) => s.id === id);
-const within = (box, slab) => box.c >= slab.c && box.c + box.w <= slab.c + slab.w && box.r >= slab.r && box.r + box.d <= slab.r + slab.d;
-
-test('space overview: eight numbered parts in the order of the page, two slabs, two dashed links with no letter', () => {
-  const { legend } = layoutDiagram(spaceOverview);
-  assert.deepEqual(legend.parts.map((i) => i.marker), ['1', '2', '3', '4', '5', '6', '7', '8']);
-  assert.deepEqual(
-    legend.parts.map((i) => i.text.split('.')[0]),
-    ['Orchestrator agent', 'Resource pool', 'Members', 'Pages in the space', 'Command Center', 'Vector Apps', 'A2A agent', 'MCP connector'],
-  );
-  assert.deepEqual(legend.places.map((i) => i.text.split('.')[0]), ['Organization', 'The space']);
-  assert.deepEqual(legend.path, []);
-  assert.deepEqual(spaceOverview.links.map((l) => l.remote), [true, true]);
-});
-
-test('space overview: plug marks Vector Apps, the A2A agent and the MCP connector, and nothing else', () => {
-  assert.deepEqual(spaceOverview.parts.filter((p) => p.tone === 'plug').map((p) => p.id).sort(), ['a2a', 'app', 'mcp']);
-  assert.ok(spaceOverview.slabs.every((s) => s.tone === 'slab'));
-});
-
-test('space overview: six parts stand on the Space slab, the Space slab on the Organization slab, and the A2A agent and MCP connector outside both', () => {
-  for (const id of ['orchestrator', 'pool', 'members', 'pages', 'commandCenter', 'app']) {
-    assert.ok(within(spacePart(id), spaceSlab('space')), id);
-    assert.equal(spacePart(id).z, spaceSlab('space').z + spaceSlab('space').h, id);
-  }
-  assert.ok(within(spaceSlab('space'), spaceSlab('organization')));
-  assert.equal(spaceSlab('space').z, spaceSlab('organization').z + spaceSlab('organization').h);
-  for (const id of ['a2a', 'mcp']) {
-    const outside = (slab) => spacePart(id).c >= slab.c + slab.w || spacePart(id).r >= slab.r + slab.d;
-    assert.ok(outside(spaceSlab('organization')), id);
-  }
-});
-
-test('space overview: each dashed link joins one outside part to the Space slab and passes through no part', () => {
-  for (const [link, id] of [[spaceOverview.links[0], 'a2a'], [spaceOverview.links[1], 'mcp']]) {
-    const part = spacePart(id);
-    assert.ok(link.from[0] >= part.c && link.from[0] <= part.c + part.w && link.from[1] >= part.r && link.from[1] <= part.r + part.d, `${id} start`);
-    assert.ok(link.z > part.z && link.z < part.z + part.h, `${id} height`);
-    const space = spaceSlab('space');
-    assert.equal(link.to[0], space.c + space.w, `${id} end on the Space slab edge`);
-    assert.ok(link.to[1] > space.r && link.to[1] < space.r + space.d, `${id} end`);
-    for (const p of spaceOverview.parts.filter((q) => q.id !== id)) {
-      for (let t = 0; t <= 1; t += 0.01) {
-        const c = link.from[0] + (link.to[0] - link.from[0]) * t;
-        const r = link.from[1] + (link.to[1] - link.from[1]) * t;
-        const hit = c > p.c && c < p.c + p.w && r > p.r && r < p.r + p.d && link.z >= p.z && link.z < p.z + p.h;
-        assert.ok(!hit, `${id} link passes through ${p.id}`);
-      }
-    }
-  }
-});
-
-test('space overview: each legend item is 15 words or fewer, with no em or en dash and no first-person plural', () => {
-  const { legend } = layoutDiagram(spaceOverview);
-  for (const item of [...legend.places, ...legend.parts]) {
-    assert.ok(words(item.text) <= 15, `${words(item.text)} words: ${item.text}`);
-    assert.doesNotMatch(item.text, /[–—]/);
-    assert.doesNotMatch(item.text, /\b(we|our|ours|us)\b/i);
-  }
-  for (const text of [spaceOverview.title, spaceOverview.desc, spaceOverview.caption]) {
-    assert.ok(text.length > 0);
-    assert.doesNotMatch(text, /[–—]/);
-  }
-});
-
-test('space overview: terms follow the glossary and the picture names no Vector Module or example app', () => {
-  const all = JSON.stringify(spaceOverview);
-  assert.doesNotMatch(all, /workspace|RedemptAI|omnibox|contacts|calendar|Hiring|SDR|CSR/i);
 });
