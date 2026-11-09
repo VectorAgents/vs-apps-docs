@@ -39,6 +39,14 @@ test('the space gives an app member identity, platform data, model access and th
   for (const term of ['identifies the member', 'allowed resources', 'model slot', 'AI gateway', 'acts', 'approvals']) assert.ok(given.includes(term), term);
 });
 
+test('the model access bullet says production publishes no gateway to apps, so it refuses with 503, and a local stack answers', () => {
+  const bullet = section(text, 'What a space gives an app').split('\n').find((l) => l.startsWith('- **Governed model access.**')) ?? '';
+  assert.match(bullet, /production Vector Space publishes no gateway address to apps/);
+  assert.match(bullet, /refuses the request with status `503`/);
+  assert.match(bullet, /local stack/);
+  assert.doesNotMatch(bullet, /the call goes through the/i);
+});
+
 test('the user token identifies the member and the page never says a token names them', () => {
   assert.doesNotMatch(text, /names the member/i);
 });
