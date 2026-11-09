@@ -29,7 +29,7 @@ for (const [path, body] of Object.entries(pages)) {
 generate({ root, config });
 const genDir = join(root, 'docs-gen');
 
-test('treesOf returns one entry per tree of a flavoured page, labelled by its tree path', () => {
+test('treesOf returns one pair copy per tree of a flavoured page, labelled by its tree path', () => {
   const trees = treesOf('guides/call.md', { genDir });
   assert.deepEqual(trees.map(({ tree }) => tree), ['node', 'nest']);
   assert.match(trees[0].text, /NODE/);
@@ -42,7 +42,7 @@ test('treesOf names both axes for a both-axis page', () => {
   assert.ok(trees.every(({ text }) => /REACT/.test(text)));
 });
 
-test('treesOf returns the single copy of a neutral page', () => {
+test('treesOf returns the single site copy of a neutral page', () => {
   const trees = treesOf('plain.md', { genDir });
   assert.deepEqual(trees, [{ tree: '', text: 'PLAIN\n' }]);
 });

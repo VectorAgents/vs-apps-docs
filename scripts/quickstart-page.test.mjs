@@ -5,7 +5,7 @@ import { CLI_PACKAGE } from './starter-source.mjs';
 import { voiceViolations } from './voice.mjs';
 
 const SCAFFOLD = `npm create ${CLI_PACKAGE.replace('/create-', '/')}`;
-const trees = treesOf('quickstart.md');
+const trees = treesOf('vector-apps/quickstart.md');
 
 test('the quickstart is emitted once per pair, react with node and with nest', () => {
   assert.deepEqual(trees.map(({ tree }) => tree), ['react/node', 'react/nest']);
@@ -53,7 +53,7 @@ for (const { tree, text } of trees) {
       'Goal',
       'Prerequisites',
       'Part 1: Run the app locally',
-      'Part 2: Add the app to a Space',
+      'Part 2: Add the app to a space',
       'Result',
       'Next steps',
     ]);
@@ -63,12 +63,12 @@ for (const { tree, text } of trees) {
     assert.match(text, /^---\ntitle: Quickstart\n/);
     const opening = text.replace(/^---\n[\s\S]*?\n---\n/, '').trim().split('\n\n')[0];
     assert.doesNotMatch(opening, /^#/);
-    assert.match(opening, /\]\((\.\.?\/)+glossary\.md#space\)/);
+    assert.match(opening, /\]\((\.\.?\/)+vector-space\/glossary\.md#vector-space\)/);
   });
 
   t('Goal names both end states and ends with the Mermaid diagram and its caption', () => {
     assert.match(goal, /harness/);
-    assert.match(goal, /open in a Space/);
+    assert.match(goal, /open in a space/);
     assert.match(goal, /scaffold/);
     assert.doesNotMatch(goal, /\bclone/i);
     const diagrams = codeBlocks.filter((f) => f.lang === 'mermaid');
@@ -88,7 +88,7 @@ for (const { tree, text } of trees) {
     const [opening, importLine] = body.split('\n\n');
     assert.doesNotMatch(opening, /DiagramControls/);
     assert.equal(importLine, "import DiagramControls from '@site/src/components/DiagramControls';");
-    assert.match(text, /<DiagramControls>\n\n```mermaid\n[\s\S]*?\n```\n\n<\/DiagramControls>\n\nSpace mints the token/);
+    assert.match(text, /<DiagramControls>\n\n```mermaid\n[\s\S]*?\n```\n\n<\/DiagramControls>\n\nVector Space mints the token/);
     assert.equal(count(/<DiagramControls>/g), 2);
     assert.match(text, /<DiagramControls>\n\n```mermaid\n[\s\S]*?\n```\n\n<\/DiagramControls>\n\nStep \(3\) in the diagram produces/);
   });
@@ -128,7 +128,7 @@ for (const { tree, text } of trees) {
       '2. Run the app in the harness',
       '3. Read the app definition',
       '4. Verify the token on the server',
-      '5. Read the token in the page',
+      '5. Read the token in the app page',
     ]);
   });
 
@@ -139,12 +139,12 @@ for (const { tree, text } of trees) {
     assert.equal(items.length, 4);
     for (const line of items) assert.match(line, /^- \[ \] /);
     assert.deepEqual(rest.map(title), [
-      '1. Point the app at your Space',
+      '1. Point the app at Vector Space',
       '2. Ask Vector to register the app',
       '3. Publish the space agent',
       '4. Add the app to a space',
       '5. Share the app with a user',
-      '6. Open the page',
+      '6. Open the app page',
     ]);
     assert.match(intro, /\]\(#3-publish-the-space-agent\)/);
     assert.ok(rest[2].includes('**Role**: Organization admin.'));
@@ -232,11 +232,11 @@ for (const { tree, text } of trees) {
     const env = steps(part2)[0];
     const bullet = env.split('\n').find((l) => l.startsWith('- `SPACE_API_URL`'));
     assert.ok(bullet);
-    assert.match(bullet, /origin of the Space API followed by `\/api`/);
+    assert.match(bullet, /origin of the Vector Space API followed by `\/api`/);
     assert.match(bullet, /`https:\/\/space-api\.example\.com\/api`/);
     assert.match(bullet, /no trailing slash/);
     assert.match(env, /`npm run dev` clears `SPACE_API_URL`/);
-    assert.match(env, /pings Space/);
+    assert.match(env, /pings Vector Space/);
     assert.doesNotMatch(env, /prints nothing when the ping works|Manifest ping sent for/);
     assert.match(env, /manifest ping for "hello-app" got/);
     assert.match(env, /server keeps running/);
@@ -281,7 +281,7 @@ for (const { tree, text } of trees) {
       /^Verified in the browser: user dev-user in space 1\.\nCapabilities: hello:view\nVerified on the server: space 1, user dev-user$/m,
     );
     const afterBlock = afterCheck.split(/^```$/m).at(-1);
-    assert.match(afterBlock, /The run proves your page and your server, but not your registration or Space access\./);
+    assert.match(afterBlock, /The run proves your app page and your server, but not your registration or Vector Space access\./);
     assert.match(afterBlock, /Part 2 covers those\./);
   });
 
@@ -380,9 +380,16 @@ for (const { tree, text } of trees) {
   });
 
   t('links the six glossary terms, the concept page and the harness reference', () => {
-    assert.ok(targets.includes('app-definition.md'));
-    const links = targets.filter((l) => l.startsWith('glossary.md#')).map((l) => l.slice('glossary.md#'.length));
-    assert.deepEqual([...links].sort(), ['agent-catalog', 'app-definition', 'app-registration', 'dev-issuer', 'harness', 'space']);
+    assert.ok(targets.includes('sdk/app-definition.md'));
+    const links = targets.filter((l) => l.includes('glossary.md#'));
+    assert.deepEqual([...links].sort(), [
+      'glossary.md#app-registration',
+      'sdk/glossary.md#agent-catalog',
+      'sdk/glossary.md#app-definition',
+      'sdk/glossary.md#dev-issuer',
+      'sdk/glossary.md#harness',
+      'vector-space/glossary.md#vector-space',
+    ]);
     assert.ok(linksOf(section(text, 'Next steps')).map(bare).some((link) => link.endsWith('reference/harness.md')));
   });
 

@@ -76,7 +76,7 @@ export interface BuildOutput {
 
 const rules = new Map([...coreFieldRules, ...resourceFieldRules].map((r) => [r.path, r]));
 const matches = (rulePath: string, value: string): boolean => new RegExp(rules.get(rulePath)!.pattern!).test(value);
-const ruleText = (rulePath: string): string => rules.get(rulePath)!.rule;
+const ruleText = (rulePath: string): string => rules.get(rulePath)!.rule.replace(/\[([^\]]+)\]\([^)]*\)/g, '$1');
 const oneOf = (value: string, options: readonly string[]): boolean => options.includes(value);
 
 function checkUnique(keys: string[], base: string, noun: string, errors: Issue[]): void {
@@ -107,11 +107,11 @@ export function validateDraft(draft: Draft): { errors: Issue[]; warnings: Issue[
     } else if (!capabilityKeys.includes(page.capability)) {
       warnings.push({
         path: `pages[${i}].capability`,
-        message: `Capability "${page.capability}" is not declared. defineApp accepts it, and the page stays ungated by any real capability.`,
+        message: `Capability "${page.capability}" is not declared. defineApp accepts it, and the app page stays ungated by any real capability.`,
       });
     }
   });
-  checkUnique(draft.pages.map((p) => p.key), 'pages', 'page key', errors);
+  checkUnique(draft.pages.map((p) => p.key), 'pages', 'app page key', errors);
   if (draft.defaultPageKey && !draft.pages.some((p) => p.key === draft.defaultPageKey)) {
     fail('defaultPageKey', ruleText('defaultPageKey'));
   }

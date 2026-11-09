@@ -1,73 +1,74 @@
-import { useMemo, useSyncExternalStore } from 'react';
-import { useLocation } from '@docusaurus/router';
+import { useCallback, useMemo, useSyncExternalStore } from 'react';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-import { storageKey } from './head-script.mjs';
-import { choiceInUrl, completeChoice } from './resolve.mjs';
+import { chooseFlavours, storageKey } from './head-script.mjs';
 
 export type Choice = Record<string, string>;
 
 export interface FlavourSite {
   axes: Record<string, Record<string, string>>;
   defaults: Choice;
-  baseUrl: string;
-  redirects: Record<string, { to?: string; axes: string[]; fixed?: Choice }>;
 }
 
 export const useFlavourSite = (): FlavourSite => useDocusaurusContext().siteConfig.customFields!.flavourSite as FlavourSite;
 
 const listeners = new Set<() => void>();
 
-const readRaw = (): string => {
-  try {
-    return localStorage.getItem(storageKey) ?? '';
-  } catch {
-    return '';
-  }
-};
+const attribute = (axis: string): string => `data-${axis}`;
 
-const parse = (raw: string): Choice | null => {
+/** The saved choice as stored; null when nothing is saved, the storage is blocked or the JSON is damaged. */
+export function readSaved(): Choice | null {
   try {
-    return JSON.parse(raw);
+    return JSON.parse(localStorage.getItem(storageKey) ?? 'null');
   } catch {
     return null;
   }
-};
+}
 
-/** The saved choice as stored, or null before the first save; may name flavours that no longer exist. */
-export const readSaved = (): Choice | null => parse(readRaw());
+/** The flavours on `<html>`, which the head script sets from the address or the saved choice and a pick changes. */
+export function readShown({ axes }: FlavourSite): Choice {
+  const shown: Choice = {};
+  for (const axis of Object.keys(axes)) {
+    const flavour = document.documentElement.getAttribute(attribute(axis));
+    if (flavour) shown[axis] = flavour;
+  }
+  return shown;
+}
 
-/** Merges `choice` into the saved choice. Storage that throws keeps the choice for this page view only. */
-export function saveChoice(choice: Choice): void {
-  const next = JSON.stringify({ ...readSaved(), ...choice });
-  if (next === readRaw()) return;
+/**
+ * Shows `choice` and saves it. The address stays as it is. Storage that throws keeps the choice for this page
+ * view only.
+ */
+export function pickFlavours(choice: Choice): void {
+  for (const [axis, flavour] of Object.entries(choice)) document.documentElement.setAttribute(attribute(axis), flavour);
   try {
-    localStorage.setItem(storageKey, next);
+    localStorage.setItem(storageKey, JSON.stringify({ ...readSaved(), ...choice }));
   } catch {
-    return;
+    // The pick still shows; it is not remembered.
   }
   listeners.forEach((listener) => listener());
 }
 
+/**
+ * Applies the flavour that a bare anchor names, when it names one, after a navigation inside the site. The head
+ * script does the same on a full page load.
+ */
+export function followAnchor(site: FlavourSite, hash: string): void {
+  const { choice, save } = chooseFlavours({ search: '', hash, saved: readShown(site), ...site });
+  if (save) pickFlavours(choice as Choice);
+}
+
 const subscribe = (listener: () => void): (() => void) => {
   listeners.add(listener);
-  const onStorage = (event: StorageEvent) => event.key === storageKey && listener();
-  window.addEventListener('storage', onStorage);
-  return () => {
-    listeners.delete(listener);
-    window.removeEventListener('storage', onStorage);
-  };
+  return () => listeners.delete(listener);
 };
 
 /**
- * The reader's current pair: the flavours in the address win over the saved choice, the defaults fill the rest.
- * The server render and the first client render use no saved choice, so they match.
+ * The reader's current pair. The server render and the first client render use the defaults, so they match;
+ * the pair on `<html>` replaces them right after.
  */
 export function useChoice(): Choice {
-  const { axes, defaults, baseUrl } = useFlavourSite();
-  const { pathname } = useLocation();
-  const raw = useSyncExternalStore(subscribe, readRaw, () => '');
-  return useMemo(
-    () => completeChoice({ ...parse(raw), ...choiceInUrl({ pathname, baseUrl, axes }).choice }, axes, defaults),
-    [raw, pathname, axes, defaults, baseUrl],
-  );
+  const site = useFlavourSite();
+  const snapshot = useCallback(() => JSON.stringify(readShown(site)), [site]);
+  const shown = useSyncExternalStore(subscribe, snapshot, () => '{}');
+  return useMemo(() => ({ ...site.defaults, ...JSON.parse(shown) }), [shown, site]);
 }

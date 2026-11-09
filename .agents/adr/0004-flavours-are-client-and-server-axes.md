@@ -1,18 +1,16 @@
-# Flavours are client and server axes with URL trees, markers and per-pair search
+# Flavours are client and server axes with markers
+
+[ADR 0005](0005-flavours-share-one-url-per-topic.md) holds the URL rule, links, saved choice, search and the todo notice link.
 
 Supersedes [ADR 0001](0001-docs-assume-only-typescript-node-react.md).
 
-The published docs assume TypeScript 5 with `strict`, Node 20.19+ and `npm` for every reader, and nothing else. Beyond that baseline the docs offer flavours. A flavour is one value of an axis: on the client axis `react`; on the server axis `node` (Node.js + TypeScript) and `nest` (Nest.js). The reader picks one flavour per axis, a pair, and the pick shapes the URL of every page that differs by flavour. A second client framework or a Python server fits by adding a flavour name, a template directory in the starter and blocks in the pages. Vector's own apps use Vite and `pnpm`; an external developer may use neither, so no page assumes them.
+The published docs assume TypeScript 5 with `strict`, Node 20.19+ and `npm` for every reader, and nothing else. Beyond that baseline the docs offer flavours. A flavour is one value of an axis: on the client axis `react`; on the server axis `node` (Node.js + TypeScript) and `nest` (Nest.js). The reader picks one flavour per axis, a pair. A second client framework or a Python server fits by adding a flavour name, a template directory in the starter and blocks in the pages. Vector's own apps use Vite and `pnpm`; an external developer may use neither, so no page assumes them.
 
 ## Decision
 
 - **Markers.** One source page per topic under `docs/`. Text between `<!-- flavour <name> -->` and `<!-- /flavour -->` belongs to one flavour. `<!-- flavour <name> todo -->` marks a block nobody has written. Blocks do not nest, and prose outside blocks is shared.
 - **Generator.** `scripts/generate.mjs` reads the source pages and `flavours.config.json` and writes the published tree to `docs-gen/`. It runs first in `pnpm check`, and before `pnpm build` and `pnpm start`.
-- **URL rule.** A page's URL carries the axes its blocks use: `/<server>/...`, `/<client>/...`, `/<client>/<server>/...`, or no prefix for a neutral page. A page is emitted once per value combination of those axes. Flavour names are lowercase and differ across axes and from the top-level folders of `docs/`, so the first URL segment is unambiguous.
-- **Stubs and links.** A flavoured page also has a flavourless stub at its old address, which carries its sidebar entry. Authors write relative links. Inside a tree they point into the same tree, except to a page that uses an axis the tree lacks, which gets the stub. A neutral page keeps links to the stub.
-- **Saved choice.** The choice lives in `localStorage`, applies only on flavourless URLs, and starts as `react` + `node`. A shared link always wins and overwrites it.
-- **Search.** One index per pair, scoped with `searchContextByPaths` through a local wrapper plugin. The search plugin version is pinned because the wrapper imports its internals. A test after `docusaurus build` checks each index. The search bar reads its context from the URL path only, so a one-axis address (`/react/...`, `/node/...`, `/nest/...`) searches a one-axis context that holds every flavour of the other axis, not the reader's pair.
-- **Gaps.** A `todo` block renders a visible notice with a link to the written flavour. `flavours.config.json` holds a cap on `todo` blocks, and `pnpm check` fails above it.
+- **Gaps.** A `todo` block renders a visible notice. `flavours.config.json` holds a cap on `todo` blocks, and `pnpm check` fails above it.
 - **Marker errors fail the generator.** An unclosed or nested block, an unknown flavour, and a flavoured page with no block or `todo` for a flavour of an axis it uses.
 
 ## Considered options

@@ -9,33 +9,28 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const gen = join(root, 'docs-gen');
 const { pages } = JSON.parse(readFileSync(join(gen, 'flavours.json'), 'utf8'));
 
-// Pages whose body is React-specific. reference/browser stays neutral: the /browser subpath has no React code.
+// Pages whose body is React-specific. sdk/reference/browser stays neutral: the /browser subpath has no React code.
 const clientOnly = [
-  'recipes/add-page-and-capability',
-  'recipes/read-app-context',
-  'recipes/list-members',
-  'guides/filter-navigation-by-capability',
-  'reference/react',
+  'vector-apps/recipes/add-page-and-capability',
+  'vector-apps/recipes/read-app-context',
+  'vector-apps/recipes/list-members',
+  'vector-apps/guides/filter-navigation-by-capability',
+  'sdk/reference/react',
 ];
-const neutral = ['reference/browser', 'reference/root', 'glossary', 'app-definition', 'examples'];
+const neutral = ['sdk/reference/browser', 'sdk/reference/root', 'vector-space/glossary', 'vector-apps/glossary', 'sdk/glossary', 'sdk/app-definition', 'sdk/examples'];
 
 for (const name of clientOnly) {
-  test(`${name} is client-only: one react tree, a stub at the old address`, () => {
+  test(`${name} is client-only: one react tree, one site page with only a client block`, () => {
     const page = pages.find((p) => p.source === `${name}.md`);
     assert.deepEqual(page?.axes, ['client']);
-    assert.deepEqual(page.trees, [{ flavours: { client: 'react' }, url: `/react/${name}` }]);
+    assert.deepEqual(page.trees, [{ flavours: { client: 'react' }, file: `pairs/react/node/${name}.md` }]);
     assert.equal(page.url, `/${name}`);
     const trees = treesOf(`${name}.md`);
     assert.deepEqual(trees.map((t) => t.tree), ['react']);
     assert.doesNotMatch(trees[0].text, /<!-- \/?flavour/);
-    const stub = readFileSync(join(gen, `${name}.md`), 'utf8');
-    assert.match(stub, /\]\((\.\/)?[./\w-]*react\/[\w/-]+\.md\)/);
-    assert.doesNotMatch(stub, /^## /m);
-  });
-
-  test(`${name} stays out of the server trees`, () => {
-    for (const server of ['node', 'nest']) assert.equal(existsSync(join(gen, server, `${name}.md`)), false, server);
-    assert.equal(existsSync(join(gen, 'react', 'node', `${name}.md`)), false);
+    const site = readFileSync(join(gen, 'site', `${name}.md`), 'utf8');
+    assert.match(site, /data-axis="client" data-flavour="react"/);
+    assert.doesNotMatch(site, /data-axis="server"|<!-- \/?flavour/);
   });
 }
 
@@ -51,13 +46,13 @@ const anchorsOf = (text) =>
 const walk = (dir) =>
   readdirSync(dir, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(join(dir, e.name)) : /\.mdx?$/.test(e.name) ? [join(dir, e.name)] : []));
 
-test('every anchored link in the generated site lands on a heading of the generated target', () => {
+test('every anchored link in the generated site lands on a heading of its target page', () => {
   const bad = [];
-  for (const file of walk(gen)) {
+  for (const file of walk(join(gen, 'site'))) {
     const text = readFileSync(file, 'utf8');
     for (const [, target, anchor] of text.matchAll(/\]\((\.[^)#]*\.mdx?)#([^)]+)\)/g)) {
       const path = join(dirname(file), target);
-      if (!existsSync(path) || !anchorsOf(readFileSync(path, 'utf8')).has(anchor)) bad.push(`${file.slice(gen.length + 1)}: ${target}#${anchor}`);
+      if (!existsSync(path) || !anchorsOf(readFileSync(path, 'utf8')).has(anchor)) bad.push(`${file.slice(gen.length + 6)}: ${target}#${anchor}`);
     }
   }
   assert.deepEqual(bad, []);

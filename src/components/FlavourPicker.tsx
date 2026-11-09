@@ -1,17 +1,14 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import type { ReactElement } from 'react';
-import { useHistory, useLocation } from '@docusaurus/router';
-import { isFlavouredPage, shortLabel, switchTarget } from '../flavours/resolve.mjs';
-import { saveChoice, useChoice, useFlavourSite } from '../flavours/useFlavours';
+import { shortLabel } from '../flavours/resolve.mjs';
+import { pickFlavours, useChoice, useFlavourSite } from '../flavours/useFlavours';
 
 const capitalise = (word: string): string => word.charAt(0).toUpperCase() + word.slice(1);
 
-/** Navbar item, shown only on a page that varies by flavour. The trigger shows the pair in short text; the popover has one row of full names per axis. */
+/** Navbar item. The trigger shows the pair in short text; the popover has one row of full names per axis. */
 export default function FlavourPicker({ mobile }: { mobile?: boolean }): ReactElement {
-  const { axes, baseUrl, redirects } = useFlavourSite();
+  const { axes } = useFlavourSite();
   const choice = useChoice();
-  const history = useHistory();
-  const { pathname, search, hash } = useLocation();
   const root = useRef<HTMLDivElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
   const popover = useId();
@@ -31,12 +28,8 @@ export default function FlavourPicker({ mobile }: { mobile?: boolean }): ReactEl
   function pick(axis: string, flavour: string): void {
     setOpen(false);
     trigger.current?.focus();
-    saveChoice({ [axis]: flavour });
-    const to = switchTarget({ pathname, baseUrl, axes, axis, flavour });
-    if (to) history.push(to + search + hash);
+    pickFlavours({ [axis]: flavour });
   }
-
-  if (!isFlavouredPage({ pathname, baseUrl, axes, redirects })) return <></>;
 
   return (
     <div

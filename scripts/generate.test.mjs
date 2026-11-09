@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { dirname, join, posix, relative } from 'node:path';
+import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { after, test } from 'node:test';
 import { generate } from './generate.mjs';
@@ -34,129 +34,113 @@ function run(pages, overrides = {}) {
 }
 
 const server = (extra = '') => `---\ntitle: Server page\n---\n\nShared prose.\n\n<!-- flavour node -->\nNODE BODY\n<!-- /flavour -->\n\n<!-- flavour nest -->\nNEST BODY\n<!-- /flavour -->\n${extra}`;
-
-test('a neutral page is copied byte for byte to its own address, with no stub or tree', () => {
-  const page = '---\ntitle: Plain\n---\n\nSee [other](./other.md#part).\n';
-  const { files, read } = run({ 'plain.md': page, 'other.md': '# Other\n' });
-  assert.deepEqual(files(), ['other.md', 'plain.md']);
-  assert.equal(read('plain.md'), page);
-});
-
-test('a server-only page is emitted once per server flavour under /<server>/', () => {
-  const { files, read } = run({ 'guides/call.md': server() });
-  assert.deepEqual(files().filter((f) => f.startsWith('nest/') || f.startsWith('node/')), ['nest/guides/call.md', 'node/guides/call.md']);
-  const node = read('node/guides/call.md');
-  assert.match(node, /Shared prose\./);
-  assert.match(node, /NODE BODY/);
-  assert.doesNotMatch(node, /NEST BODY|flavour/);
-  assert.match(read('nest/guides/call.md'), /NEST BODY/);
-  assert.doesNotMatch(read('nest/guides/call.md'), /NODE BODY/);
-});
-
-test('tree pages show the shared sidebar', () => {
-  const { read } = run({ 'guides/call.md': server() });
-  assert.match(read('node/guides/call.md'), /^---\ntitle: Server page\ndisplayed_sidebar: docs\n---\n/);
-});
-
-test('a flavoured page keeps a flavourless stub at its own address that links to every tree page', () => {
-  const { read } = run({ 'guides/call.md': server() });
-  const stub = read('guides/call.md');
-  assert.match(stub, /^---\ntitle: Server page\n---\n/);
-  assert.doesNotMatch(stub, /Shared prose|NODE BODY/);
-  assert.match(stub, /\[Node\.js \+ TypeScript\]\(\.\.\/node\/guides\/call\.md\)/);
-  assert.match(stub, /\[Nest\.js\]\(\.\.\/nest\/guides\/call\.md\)/);
-});
-
-test('a client-only page is emitted under /<client>/ and carries the client block content', () => {
-  const page = '---\ntitle: Hook\n---\n\n<!-- flavour react -->\nREACT BODY\n<!-- /flavour -->\n';
-  const { files, read } = run({ 'recipes/hook.md': page });
-  assert.deepEqual(files(), ['react/recipes/hook.md', 'recipes/hook.md']);
-  assert.match(read('react/recipes/hook.md'), /REACT BODY/);
-  assert.match(read('recipes/hook.md'), /\[React\]\(\.\.\/react\/recipes\/hook\.md\)/);
-});
-
-test('a both-axis page is emitted once per client and server pair under /<client>/<server>/', () => {
-  const page = `---\ntitle: Both\n---\n\n<!-- flavour react -->\nREACT STEP\n<!-- /flavour -->\n${server()}`.replace('---\ntitle: Server page\n---\n', '');
-  const { files, read } = run({ 'quickstart.md': page });
-  assert.deepEqual(files(), ['quickstart.md', 'react/nest/quickstart.md', 'react/node/quickstart.md']);
-  const nest = read('react/nest/quickstart.md');
-  assert.match(nest, /REACT STEP/);
-  assert.match(nest, /NEST BODY/);
-  assert.doesNotMatch(nest, /NODE BODY/);
-  assert.match(read('quickstart.md'), /\[React · Nest\.js\]\(\.\/react\/nest\/quickstart\.md\)/);
-});
-
-test('a page without front matter still gets the shared sidebar, and its stub takes the first heading as title', () => {
-  const { read } = run({ 'quickstart.md': '# Quickstart\n\n<!-- flavour node -->\nA\n<!-- /flavour -->\n<!-- flavour nest -->\nB\n<!-- /flavour -->\n' });
-  assert.match(read('node/quickstart.md'), /^---\ndisplayed_sidebar: docs\n---\n# Quickstart/);
-  assert.match(read('quickstart.md'), /^---\ntitle: "Quickstart"\n---\n/);
-});
-
 const hook = '<!-- flavour react -->\nREACT\n<!-- /flavour -->\n';
 const both = '<!-- flavour react -->\nR\n<!-- /flavour -->\n<!-- flavour node -->\nN\n<!-- /flavour -->\n<!-- flavour nest -->\nS\n<!-- /flavour -->\n';
 
-/** Output path that the first link of `text` points at, resolved from the page at `from`. */
-const target = (from, text) => posix.join(posix.dirname(from), /\]\(([^)#]+)/.exec(text)[1]);
-
-test('inside a tree, a link to a flavoured page points into the same tree and keeps its hash', () => {
-  const { read } = run({ 'guides/call.md': server(), 'other/page.md': server('\nSee [call](../guides/call.md#part).\n') });
-  for (const tree of ['node', 'nest']) {
-    const from = `${tree}/other/page.md`;
-    const text = read(from).split('See ')[1];
-    assert.equal(target(from, text), `${tree}/guides/call.md`);
-    assert.match(text, /#part\)/);
-  }
+test('a neutral page goes to site/ unchanged and has no pair copy', () => {
+  const page = '---\ntitle: Plain\n---\n\nSee [other](./other.md#part).\n';
+  const { files, read } = run({ 'plain.md': page, 'other.md': '# Other\n' });
+  assert.deepEqual(files(), ['site/other.md', 'site/plain.md']);
+  assert.equal(read('site/plain.md'), page);
+  assert.equal(read('site/other.md'), '# Other\n');
 });
 
-test('a link from a tree to a page that varies on an axis the tree lacks points to the flavourless stub', () => {
-  const { read } = run({
-    'recipes/hook.md': hook,
-    'guides/call.md': server('\n[hook](../recipes/hook.md)\n'),
-  });
-  assert.match(read('node/guides/call.md'), /\[hook\]\(\.\.\/\.\.\/recipes\/hook\.md\)/);
+test('a file that is not a page is copied to site/ byte for byte', () => {
+  const { read } = run({ 'plain.md': '# P\n', 'data.json': '{ "a": 1 }\n' });
+  assert.equal(read('site/data.json'), '{ "a": 1 }\n');
 });
 
-test('a both-axis tree links a server-only page in its own server tree and a client-only page in its client tree', () => {
-  const { read } = run({
-    'quickstart.md': `${both}\n[call](./guides/call.md) [hook](./recipes/hook.md)\n`,
-    'guides/call.md': server(),
-    'recipes/hook.md': hook,
-  });
-  const page = read('react/nest/quickstart.md');
-  assert.match(page, /\[call\]\(\.\.\/\.\.\/nest\/guides\/call\.md\)/);
-  assert.match(page, /\[hook\]\(\.\.\/recipes\/hook\.md\)/);
+test('a flavoured page is written once to site/, at its own path, with no stub or per-flavour copy', () => {
+  const { files } = run({ 'guides/call.md': server() });
+  assert.deepEqual(files().filter((f) => f.startsWith('site/')), ['site/guides/call.md']);
 });
 
-test('inside a tree, a link to a neutral page is re-based for the deeper path', () => {
-  const { read } = run({
-    'guides/call.md': server('\n[glossary](../glossary.md#term) [web](https://example.com/a.md) [gone](./missing.md)\n'),
-    'glossary.md': '# G\n',
-  });
-  const node = read('node/guides/call.md');
-  assert.match(node, /\[glossary\]\(\.\.\/\.\.\/glossary\.md#term\)/);
-  assert.match(node, /\[web\]\(https:\/\/example\.com\/a\.md\) \[gone\]\(\.\/missing\.md\)/);
+test('the site page keeps the shared text and wraps each flavour block with its axis, flavour and label', () => {
+  const { read } = run({ 'guides/call.md': server() });
+  const page = read('site/guides/call.md');
+  assert.match(page, /^---\ntitle: Server page\n---\n/);
+  assert.match(page, /Shared prose\./);
+  assert.doesNotMatch(page, /<!-- \/?flavour/);
+  assert.match(
+    page,
+    /<div className="flavour-block" data-axis="server" data-flavour="node">\n\n<p className="flavour-label">Node\.js \+ TypeScript<\/p>\n\nNODE BODY\n\n<\/div>/,
+  );
+  assert.match(
+    page,
+    /<div className="flavour-block" data-axis="server" data-flavour="nest">\n\n<p className="flavour-label">Nest\.js<\/p>\n\nNEST BODY\n\n<\/div>/,
+  );
 });
 
-test('a neutral page keeps its relative links to flavoured pages, which resolve to the stub', () => {
-  const page = 'See [call](./guides/call.md).\n';
-  const { read } = run({ 'plain.md': page, 'guides/call.md': server() });
-  assert.equal(read('plain.md'), page);
+test('a page without front matter keeps none', () => {
+  const { read } = run({ 'quickstart.md': '# Quickstart\n\n<!-- flavour node -->\nA\n<!-- /flavour -->\n<!-- flavour nest -->\nB\n<!-- /flavour -->\n' });
+  assert.match(read('site/quickstart.md'), /^# Quickstart\n/);
+});
+
+test('a client-only page is one site page with a block for its client flavour', () => {
+  const page = `---\ntitle: Hook\n---\n\n${hook}`;
+  const { files, read } = run({ 'recipes/hook.md': page });
+  assert.deepEqual(files().filter((f) => f.startsWith('site/')), ['site/recipes/hook.md']);
+  assert.match(read('site/recipes/hook.md'), /data-axis="client" data-flavour="react">\n\n<p className="flavour-label">React<\/p>\n\nREACT\n\n<\/div>/);
+});
+
+test('each pair gets a copy of every flavoured page with its own blocks only, and no markers or wrappers', () => {
+  const { files, read } = run({ 'guides/call.md': server() });
+  assert.deepEqual(files().filter((f) => f.startsWith('pairs/')), ['pairs/react/nest/guides/call.md', 'pairs/react/node/guides/call.md']);
+  const node = read('pairs/react/node/guides/call.md');
+  assert.match(node, /^---\ntitle: Server page\n---\n/);
+  assert.match(node, /Shared prose\./);
+  assert.match(node, /NODE BODY/);
+  assert.doesNotMatch(node, /NEST BODY|flavour|<div/);
+  const nest = read('pairs/react/nest/guides/call.md');
+  assert.match(nest, /NEST BODY/);
+  assert.doesNotMatch(nest, /NODE BODY/);
+});
+
+test('a both-axis page carries the blocks of both axes in each pair copy', () => {
+  const { read } = run({ 'quickstart.md': `---\ntitle: Both\n---\n\n${both}` });
+  const nest = read('pairs/react/nest/quickstart.md');
+  assert.match(nest, /\nR\n/);
+  assert.match(nest, /\nS\n/);
+  assert.doesNotMatch(nest, /\nN\n/);
+});
+
+test('a link stays as written in the site page and in the pair copy', () => {
+  const link = '\nSee [call](../guides/call.md#part) and [glossary](../glossary.md#term).\n';
+  const { read } = run({ 'guides/call.md': server(), 'other/page.md': server(link), 'glossary.md': '# G\n' });
+  const written = /See \[call\]\(\.\.\/guides\/call\.md#part\) and \[glossary\]\(\.\.\/glossary\.md#term\)\./;
+  assert.match(read('site/other/page.md'), written);
+  assert.match(read('pairs/react/node/other/page.md'), written);
 });
 
 const withTodo = (flavour, rest) => `---\ntitle: Gap\n---\n\n<!-- flavour ${flavour} todo -->\n<!-- /flavour -->\n\n${rest}`;
 
-test('a todo block renders a visible notice that links to the written flavour', () => {
+const switchTo = (flavour, label, target) =>
+  `<button type="button" className="button button--secondary flavour-todo-switch" data-axis="server" data-flavour="${flavour}" data-target="${target}">Switch to ${label}</button>`;
+
+test('a todo block renders a notice with a button to the written flavour on the site page, and plain text in the pair copy', () => {
   const { read, result } = run({ 'open-route.md': withTodo('node', '<!-- flavour nest -->\nNEST BODY\n<!-- /flavour -->\n') });
-  const node = read('node/open-route.md');
-  assert.match(node, /^:::warning\nNot yet written for Node\.js \+ TypeScript\. Read the \[Nest\.js version\]\(\.\.\/nest\/open-route\.md\)\.\n:::$/m);
-  assert.doesNotMatch(read('nest/open-route.md'), /Not yet written/);
+  const site = read('site/open-route.md');
+  assert.ok(
+    site.includes(
+      `<div className="flavour-block" data-axis="server" data-flavour="node">\n\n<p className="flavour-label">Node.js + TypeScript</p>\n\n:::warning\nNot yet written for Node.js + TypeScript.\n\n${switchTo('nest', 'Nest.js', 'nest-block-1')}\n:::\n\n</div>`,
+    ),
+  );
+  assert.match(site, /<div className="flavour-block" data-axis="server" data-flavour="nest" id="nest-block-1">/);
+  assert.match(read('pairs/react/node/open-route.md'), /^:::warning\nNot yet written for Node\.js \+ TypeScript\.\n:::$/m);
+  assert.doesNotMatch(read('pairs/react/nest/open-route.md'), /Not yet written/);
+  assert.doesNotMatch(read('pairs/react/node/open-route.md'), /button/);
   assert.equal(result.todos, 1);
 });
 
-test('on a both-axis page the notice link keeps the other axes of the tree', () => {
-  const page = '<!-- flavour react -->\nR\n<!-- /flavour -->\n<!-- flavour nest todo -->\n<!-- /flavour -->\n<!-- flavour node -->\nN\n<!-- /flavour -->\n';
-  const { read } = run({ 'quickstart.md': page });
-  assert.match(read('react/nest/quickstart.md'), /Read the \[React · Node\.js \+ TypeScript version\]\(\.\.\/node\/quickstart\.md\)/);
+test('a todo button targets the next written block of its axis, or the last one before it', () => {
+  const block = (flavour, body) => `<!-- flavour ${flavour} -->\n${body}\n<!-- /flavour -->\n`;
+  const todo = (flavour) => `<!-- flavour ${flavour} todo -->\n<!-- /flavour -->\n`;
+  const after = run({ 'a.md': `${block('node', 'N1')}${block('nest', 'S1')}${todo('node')}${block('nest', 'S2')}` }).read('site/a.md');
+  assert.ok(after.includes(switchTo('nest', 'Nest.js', 'nest-block-2')));
+  assert.match(after, /data-flavour="nest" id="nest-block-2">/);
+  assert.doesNotMatch(after, /id="nest-block-1"/);
+  const before = run({ 'b.md': `${block('node', 'N1')}${block('nest', 'S1')}${block('node', 'N2')}${todo('nest')}` }).read('site/b.md');
+  assert.ok(before.includes(switchTo('node', 'Node.js + TypeScript', 'node-block-2')));
 });
 
 test('the generator fails when open todo blocks exceed the cap', () => {
@@ -213,29 +197,21 @@ test('a nested folder named like a flavour is allowed', () => {
   assert.doesNotThrow(() => run({ 'guides/nest/a.md': '# A\n' }));
 });
 
-test('a source file that the generator also writes fails', () => {
-  assert.throws(
-    () => run({ 'a.md': server(), 'flavours.json': '{}' }),
-    /flavours\.json is written by both docs\/flavours\.json and the generator/,
-  );
-});
-
 test('the docs root and output folder come from config', () => {
-  const { exists, read } = run({ 'guides/call.md': server(), 'plain.md': '# P\n' }, { docsRoot: 'content/sdk', outDir: 'build/gen' });
-  assert.ok(exists('plain.md') && exists('node/guides/call.md'));
-  assert.match(read('guides/call.md'), /\.\.\/node\/guides\/call\.md/);
+  const { exists } = run({ 'guides/call.md': server(), 'plain.md': '# P\n' }, { docsRoot: 'content/sdk', outDir: 'build/gen' });
+  assert.ok(exists('site/plain.md') && exists('site/guides/call.md') && exists('pairs/react/node/guides/call.md'));
 });
 
-test('flavours.json lists each flavoured page with its stub address and tree addresses', () => {
-  const { read } = run({ 'quickstart.md': `${both}`, 'plain.md': '# P\n', 'recipes/index.md': server() });
+test('flavours.json lists each flavoured page with its URL, axes and the pair copy that holds each tree', () => {
+  const { read } = run({ 'quickstart.md': both, 'plain.md': '# P\n', 'recipes/index.md': server() });
   assert.deepEqual(JSON.parse(read('flavours.json')).pages, [
     {
       source: 'quickstart.md',
       url: '/quickstart',
       axes: ['client', 'server'],
       trees: [
-        { flavours: { client: 'react', server: 'node' }, url: '/react/node/quickstart' },
-        { flavours: { client: 'react', server: 'nest' }, url: '/react/nest/quickstart' },
+        { flavours: { client: 'react', server: 'node' }, file: 'pairs/react/node/quickstart.md' },
+        { flavours: { client: 'react', server: 'nest' }, file: 'pairs/react/nest/quickstart.md' },
       ],
     },
     {
@@ -243,14 +219,14 @@ test('flavours.json lists each flavoured page with its stub address and tree add
       url: '/recipes',
       axes: ['server'],
       trees: [
-        { flavours: { server: 'node' }, url: '/node/recipes' },
-        { flavours: { server: 'nest' }, url: '/nest/recipes' },
+        { flavours: { server: 'node' }, file: 'pairs/react/node/recipes/index.md' },
+        { flavours: { server: 'nest' }, file: 'pairs/react/nest/recipes/index.md' },
       ],
     },
   ]);
 });
 
-test('the shipped config emits a page without a flavour marker as one byte-identical copy and lists the others', () => {
+test('the shipped config writes a page without a flavour marker to site/ unchanged, and lists the others', () => {
   const repo = join(dirname(fileURLToPath(import.meta.url)), '..');
   const shipped = JSON.parse(readFileSync(join(repo, 'flavours.config.json'), 'utf8'));
   const out = mkdtempSync(join(tmpdir(), 'generate-site-'));
@@ -261,10 +237,62 @@ test('the shipped config emits a page without a flavour marker as one byte-ident
   const flavoured = [];
   for (const entry of sources) {
     const rel = relative(join(repo, shipped.docsRoot), join(entry.parentPath, entry.name));
-    const text = readFileSync(join(repo, shipped.docsRoot, rel));
-    if (/^<!-- flavour /m.test(text.toString())) flavoured.push(rel);
-    else assert.deepEqual(readFileSync(join(out, rel)), text, rel);
+    const text = readFileSync(join(repo, shipped.docsRoot, rel), 'utf8');
+    if (/^<!-- flavour /m.test(text)) flavoured.push(rel);
+    else assert.deepEqual(readFileSync(join(out, 'site', rel), 'utf8'), text, rel);
   }
   assert.deepEqual(JSON.parse(readFileSync(join(out, 'flavours.json'), 'utf8')).pages.map((page) => page.source).sort(), flavoured.sort());
   assert.ok(todos <= shipped.todoCap);
+});
+
+const headed = (node, nest) =>
+  `---\ntitle: Headed\n---\n\n## Shared heading\n\n<!-- flavour node -->\n${node}\n<!-- /flavour -->\n\n<!-- flavour nest -->\n${nest}\n<!-- /flavour -->\n`;
+
+test('a heading inside a block gets the id <flavour>-<slug> on the site page', () => {
+  const { read } = run({ 'a.md': headed('### 2. Know the platform clients', '### 2. Know the three services') });
+  const page = read('site/a.md');
+  assert.match(page, /^### 2\. Know the platform clients \{#node-2-know-the-platform-clients\}$/m);
+  assert.match(page, /^### 2\. Know the three services \{#nest-2-know-the-three-services\}$/m);
+});
+
+test('a heading outside a block keeps its plain id', () => {
+  const { read } = run({ 'a.md': headed('x', 'y') });
+  assert.match(read('site/a.md'), /^## Shared heading$/m);
+});
+
+test('the slug drops code ticks, emphasis, link syntax and punctuation', () => {
+  const { read } = run({ 'a.md': headed('## Open a route with `@Public` and *care*\n## See [the guide](./x.md): "now"!', 'y') });
+  const page = read('site/a.md');
+  assert.match(page, /^## Open a route with `@Public` and \*care\* \{#node-open-a-route-with-public-and-care\}$/m);
+  assert.match(page, /\{#node-see-the-guide-now\}$/m);
+});
+
+test('two equal headings in one block get distinct ids', () => {
+  const { read } = run({ 'a.md': headed('## Steps\n\n## Steps', 'y') });
+  const page = read('site/a.md');
+  assert.match(page, /\{#node-steps\}$/m);
+  assert.match(page, /\{#node-steps-1\}$/m);
+});
+
+test('equal headings in two blocks do not collide', () => {
+  const { read } = run({ 'a.md': headed('## Steps', '## Steps') });
+  const page = read('site/a.md');
+  assert.match(page, /^## Steps \{#node-steps\}$/m);
+  assert.match(page, /^## Steps \{#nest-steps\}$/m);
+});
+
+test('an explicit id in a block gets the flavour prefix', () => {
+  const { read } = run({ 'a.md': headed('## Steps {#run}', 'y') });
+  assert.match(read('site/a.md'), /^## Steps \{#node-run\}$/m);
+});
+
+test('a hash line inside a code fence is not a heading', () => {
+  const { read } = run({ 'a.md': headed('```sh\n# install\n```', 'y') });
+  assert.match(read('site/a.md'), /^# install$/m);
+});
+
+test('the pair copies keep plain headings', () => {
+  const { read } = run({ 'a.md': headed('### Step', '### Step') });
+  assert.match(read('pairs/react/node/a.md'), /^### Step$/m);
+  assert.doesNotMatch(read('pairs/react/node/a.md'), /\{#/);
 });

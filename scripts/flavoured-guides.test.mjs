@@ -2,10 +2,10 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { codeOf, nextLinks, section, titledSnippets, treesOf } from './page-helpers.mjs';
 
-const NOTICE = /^:::warning\nNot yet written for Node\.js \+ TypeScript\. Read the \[Nest\.js version\]\(\.\.\/\.\.\/nest\/guides\/([\w-]+)\.md\)\.\n:::$/m;
+const NOTICE = /^:::warning\nNot yet written for Node\.js \+ TypeScript\.\n:::$/m;
 
 for (const name of ['open-route-and-read-caller', 'handle-connector-events']) {
-  const trees = treesOf(`guides/${name}.md`);
+  const trees = treesOf(`vector-apps/guides/${name}.md`);
   const nest = trees.find(({ tree }) => tree === 'nest')?.text ?? '';
   const node = trees.find(({ tree }) => tree === 'node')?.text ?? '';
 
@@ -13,9 +13,8 @@ for (const name of ['open-route-and-read-caller', 'handle-connector-events']) {
     assert.deepEqual(trees.map(({ tree }) => tree), ['node', 'nest']);
   });
 
-  test(`${name}: the Node.js tree is a notice that links the Nest.js version`, () => {
+  test(`${name}: the Node.js tree is a notice`, () => {
     assert.match(node, NOTICE);
-    assert.equal(node.match(NOTICE)[1], name);
     assert.doesNotMatch(node, /^## /m);
   });
 
@@ -41,7 +40,7 @@ for (const name of ['open-route-and-read-caller', 'handle-connector-events']) {
   });
 }
 
-const openRoute = treesOf('guides/open-route-and-read-caller.md').find(({ tree }) => tree === 'nest').text;
+const openRoute = treesOf('vector-apps/guides/open-route-and-read-caller.md').find(({ tree }) => tree === 'nest').text;
 
 test('the open-route guide shows @Public, appCaller and AppRequest in labelled server files', () => {
   const body = titledSnippets(openRoute).filter(({ title }) => title.startsWith('server/')).map(({ body }) => body).join('\n');
@@ -58,7 +57,7 @@ test('the open-route guide checks that the open route answers 200 and the caller
   assert.match(steps, /\*\*Check\*\*:[^\n]*`200`[^\n]*`401`/);
 });
 
-const connector = treesOf('guides/handle-connector-events.md').find(({ tree }) => tree === 'nest').text;
+const connector = treesOf('vector-apps/guides/handle-connector-events.md').find(({ tree }) => tree === 'nest').text;
 const connectorCode = titledSnippets(connector)
   .filter(({ title }) => /^(server|shared)\//.test(title))
   .map(({ body }) => body)

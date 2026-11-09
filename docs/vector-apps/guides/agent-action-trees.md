@@ -1,0 +1,99 @@
+---
+title: Agent action trees
+---
+
+Advanced configuration of [agent actions](../../sdk/glossary.md#agent-action): child actions that exist only while a parent is mounted, and testing an app page without [Vector Space](../../vector-space/glossary.md#vector-space).
+
+## Goal
+
+End with a child action `leads.export_leads` that the agent can call only after it opens a Lead List, and a test harness that mounts the app page without `AppProvider`.
+
+## Prerequisites
+
+- The app from [`expose-agent-actions`](../recipes/expose-agent-actions.md), with the `leads` app page, the action `leads.open_lead_list` and the [agent catalog](../../sdk/glossary.md#agent-catalog) that lists it.
+- Background: [`defineAgentPage`](../../sdk/reference/root.md#defineagentpage) and [`AgentActionRegistryProvider`](../../sdk/reference/react.md). The [quickstart](../quickstart.md) covers the app setup.
+
+## Steps
+
+### 1. Declare a child action
+
+Replace `client/src/actions.ts`. `child` declares an action that is available only while its parent is mounted. Calling it without the parent returns `UNAVAILABLE_ACTION`.
+
+```ts title="client/src/actions.ts"
+import { defineAgentPage } from '@vectoragents/vs-apps';
+import { z } from 'zod';
+
+export const leadsPage = defineAgentPage({
+  pageId: 'leads',
+  description: 'Leads: people and companies found by lead searches, kept in Lead Lists.',
+});
+
+export const openLeadListAction = leadsPage.action({
+  id: 'open_lead_list',
+  description: "Open one Lead List's page, where its leads arrive as a search runs.",
+  params: z.object({ leadListId: z.string() }),
+});
+
+export const exportLeadsAction = openLeadListAction.child({
+  id: 'export_leads',
+  description: "Download the open Lead List's leads as a csv or xlsx file.",
+  params: z.object({ format: z.enum(['csv', 'xlsx']) }),
+});
+```
+
+### 2. Bind the parent and the child in nested components
+
+Mount the child binding inside the component that the parent action opens, so the child exists only while a Lead List is open. Replace `client/src/LeadsPage.tsx`.
+
+```tsx title="client/src/LeadsPage.tsx"
+import { useAgentAction } from '@vectoragents/vs-apps/react';
+import { useState } from 'react';
+import { exportLeadsAction, openLeadListAction } from './actions';
+
+function ExportControls({ leadListId }: { leadListId: string }) {
+  const [last, setLast] = useState('none');
+
+  useAgentAction(exportLeadsAction, ({ format }) => {
+    setLast(format);
+  });
+
+  return <p>Lead List {leadListId}, last export: {last}.</p>;
+}
+
+export function LeadsPage() {
+  const [openId, setOpenId] = useState<string | null>(null);
+
+  useAgentAction(openLeadListAction, ({ leadListId }) => {
+    setOpenId(leadListId);
+  });
+
+  return openId ? <ExportControls leadListId={openId} /> : <p>Pick a Lead List.</p>;
+}
+```
+
+### 3. Test the app page without Vector Space
+
+`AppProvider` already mounts the registry, and a second `AgentActionRegistryProvider` splits it. Mount the provider directly only where `AppProvider` is absent, such as a test or a story.
+
+```tsx title="client/src/LeadsPage.harness.tsx"
+import { AgentActionRegistryProvider } from '@vectoragents/vs-apps/react';
+import { LeadsPage } from './LeadsPage';
+
+export function LeadsPageHarness() {
+  return (
+    <AgentActionRegistryProvider>
+      <LeadsPage />
+    </AgentActionRegistryProvider>
+  );
+}
+```
+
+To trigger an action in such a test, read the registry with `useAgentActionRegistry` and call `dispatch('leads.open_lead_list', { leadListId: 'll-1' })`. `dispatch` never throws, and returns `{ ok: false, code }` on failure. The [root reference](../../sdk/reference/root.md#createagentactionregistry) lists the registry methods.
+
+## Result
+
+The agent sees `leads.export_leads` only after it opens a Lead List, and the app page renders in a test without Vector Space.
+
+## Next step
+
+Look up every registry symbol in the [react reference](../../sdk/reference/react.md).

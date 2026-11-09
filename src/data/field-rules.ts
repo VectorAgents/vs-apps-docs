@@ -2,13 +2,13 @@ export interface FieldRule {
   /** Dotted path from the definition root; `[]` marks an array item. */
   path: string;
   required: boolean;
-  /** Markdown text with no links; the app-definition page repeats it verbatim and a test keeps the two equal. */
+  /** Markdown the app-definition page repeats verbatim, checked by a test. Links go to `docs/sdk/reference/platform-limits.md` only; the builder strips them. */
   rule: string;
   /** Regular expression source the value must match, when the rule is a pattern. */
   pattern?: string;
 }
 
-// The value lists below mirror what `defineApp` accepts.
+// The builder reads these closed lists; the published pages hold them only in platform-limits.md.
 export const modalities = ['chat', 'vision', 'embed', 'rerank'] as const;
 export const modelProviders = ['ANTHROPIC', 'AZURE_OPENAI', 'COHERE', 'AZURE_DOCUMENT_INTELLIGENCE'] as const;
 export const modelCapabilities = ['toolCalling', 'structuredOutput', 'reasoningOutput', 'promptCaching', 'streaming'] as const;
@@ -26,7 +26,7 @@ export const connectorProviders = [
   'META',
 ] as const;
 
-const code = (values: readonly string[]): string => values.map((v) => `\`${v}\``).join(', ');
+const limits = (anchor: string, text: string): string => `[${text}](./reference/platform-limits.md#${anchor})`;
 const kebab = '^[a-z][a-z0-9-]*$';
 
 export const coreFieldRules: FieldRule[] = [
@@ -67,7 +67,7 @@ export const coreFieldRules: FieldRule[] = [
 ];
 
 export const resourceFieldRules: FieldRule[] = [
-  { path: 'resources', required: false, rule: 'Object. Declares what the app needs from each Space.' },
+  { path: 'resources', required: false, rule: 'Object. Declares what the app needs from each space.' },
   { path: 'resources.modules[].key', required: true, rule: 'Non-empty string. Unique within modules.' },
   { path: 'resources.modules[].required', required: true, rule: 'Boolean.' },
   { path: 'resources.modules[].label', required: false, rule: 'Display label.' },
@@ -75,12 +75,12 @@ export const resourceFieldRules: FieldRule[] = [
   {
     path: 'resources.models[].modality',
     required: true,
-    rule: 'Kind of model: `"chat"`, `"vision"`, `"embed"` or `"rerank"`.',
+    rule: `One of the ${limits('modalities', 'modalities')}.`,
   },
   {
     path: 'resources.models[].providers',
     required: true,
-    rule: `At least one of ${code(modelProviders)}.`,
+    rule: `At least one of the ${limits('model-providers', 'model providers')}.`,
   },
   { path: 'resources.models[].label', required: false, rule: 'Display label. Falls back to the slot key.' },
   { path: 'resources.models[].description', required: false, rule: 'String.' },
@@ -92,14 +92,14 @@ export const resourceFieldRules: FieldRule[] = [
   {
     path: 'resources.models[].capabilities',
     required: false,
-    rule: `Each one of ${code(modelCapabilities)}.`,
+    rule: `Each one of the ${limits('capability-filters', 'capability filters')}.`,
   },
   { path: 'resources.models[].required', required: true, rule: 'Boolean.' },
   { path: 'resources.connectors[].key', required: true, rule: 'Lower kebab-case slot key.', pattern: kebab },
   {
     path: 'resources.connectors[].provider',
     required: true,
-    rule: `One of ${code(connectorProviders)}.`,
+    rule: `One of the ${limits('connector-providers', 'connector providers')}.`,
   },
   { path: 'resources.connectors[].label', required: false, rule: 'Display label. Falls back to the slot key.' },
   { path: 'resources.connectors[].required', required: true, rule: 'Boolean.' },

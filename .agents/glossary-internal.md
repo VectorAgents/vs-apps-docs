@@ -1,6 +1,6 @@
 # Internal glossary
 
-Terms only the Vector team needs. Docusaurus does not publish this file. A term lives here or in `docs/glossary.md`, never in both. See `.agents/domain.md` for the publish rule.
+Terms only the Vector team needs. Docusaurus does not publish this file. A term lives here or in one of the three published glossaries (`docs/vector-space/glossary.md`, `docs/vector-apps/glossary.md`, `docs/sdk/glossary.md`), never in both. See `.agents/domain.md` for the publish rule.
 
 ## Terms
 
@@ -10,13 +10,6 @@ The reader the docs are written for first: a developer new to Vector who builds 
 
 - Maps to: no SDK symbol.
 - Owner: docs.
-
-### binding
-
-An app attached to one space. It snapshots the manifest's grantable capabilities, acts and approvals, and holds that space's model, connector and module choices. Re-snapshotted on every pull or apply.
-
-- Maps to: no SDK symbol. The SDK sees the effect through the verified token and `loadAppClientConfig`.
-- Owner: Space.
 
 ### Check
 
@@ -38,20 +31,6 @@ A block of code in a docs page, opened and closed by three backticks. The text a
 
 - Maps to: no SDK symbol. `codeBlocks` in `scripts/quickstart-page.test.mjs` and `checkCodeBlocks` in `scripts/starter-sync.mjs`.
 - Owner: docs.
-
-### Space Page
-
-A grid of widgets in a space, with page filters. A different thing from the published term page: the SDK has no part in it, and no published docs page uses it.
-
-- Maps to: no SDK symbol. `Page` in vector-spaces, stored as `pages.pages`.
-- Owner: Space.
-
-### staff
-
-Vector employees who administer Space itself. Only staff register apps, apply manifest changes and edit an organization license. External developers are not staff. A space manager works inside one space instead.
-
-- Maps to: no SDK symbol.
-- Owner: Space.
 
 ### tour
 
@@ -76,22 +55,22 @@ One value of an axis: client `react`; server `node` (Node.js + TypeScript) or `n
 
 ### pair
 
-One client flavour and one server flavour together, such as `react+node`. It names the unit that the picker saves, that gets a search index and that the quickstart scaffolds. It has no link to the pair of app and space in "service secret".
+One client flavour and one server flavour together, such as `react+node`. It names the unit that the picker saves, that gets a copy of each flavoured page under `docs-gen/pairs/` and that the quickstart scaffolds. It has no link to the pair of app and space in "service secret".
 
-- Maps to: one value combination of both axes in the generated tree.
+- Maps to: one value combination of both axes, the directory `docs-gen/pairs/<client>/<server>/`.
 - Owner: docs.
 
 ### flavour block
 
-Source text between `<!-- flavour <name> -->` and `<!-- /flavour -->`. `todo` after the name marks a block nobody has written. The generator keeps the block in the trees of its flavour and drops it from the others.
+Source text between `<!-- flavour <name> -->` and `<!-- /flavour -->`. `todo` after the name marks a block nobody has written. The published page shows every block, wrapped and labelled; the pair copy of a pair keeps only its own blocks.
 
 - Maps to: `parse` in `scripts/generate.mjs`.
 - Owner: docs.
 
 ### neutral page
 
-A page with no flavour block. It is published once, at its own address, and the picker does not change it.
+A page with no flavour block. The picker does not change it.
 
-- Maps to: a page that `scripts/generate.mjs` copies unchanged.
+- Maps to: a page that `scripts/generate.mjs` copies to `docs-gen/site/` as written, with no pair copy.
 - Owner: docs.
 

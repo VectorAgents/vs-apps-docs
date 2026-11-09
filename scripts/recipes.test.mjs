@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { dirname, join, relative } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { codeOf, linksOf, nextLinks, section, snippetsOf, titledSnippets, treesOf } from './page-helpers.mjs';
 
 const docs = join(dirname(fileURLToPath(import.meta.url)), '..', 'docs');
+const site = join(dirname(fileURLToPath(import.meta.url)), '..', 'docs-gen', 'site');
 // The Next-step chain order of the five client recipes.
 const recipeNames = ['add-page-and-capability', 'gate-by-capability', 'read-app-context', 'list-members', 'expose-agent-actions'];
 const openRouteGuide = 'open-route-and-read-caller';
@@ -16,8 +17,8 @@ const pagesIn = (dir) =>
     .filter((name) => name.endsWith('.md'))
     .map((name) => ({ path: join(docs, dir, name), name: name.replace(/\.md$/, ''), text: readFileSync(join(docs, dir, name), 'utf8') }));
 
-const recipes = existsSync(join(docs, 'recipes')) ? pagesIn('recipes') : [];
-const guideFiles = existsSync(join(docs, 'guides')) ? pagesIn('guides') : [];
+const recipes = existsSync(join(docs, 'vector-apps', 'recipes')) ? pagesIn('vector-apps/recipes') : [];
+const guideFiles = existsSync(join(docs, 'vector-apps', 'guides')) ? pagesIn('vector-apps/guides') : [];
 // Pages with a Nest block and a todo Node.js block: scripts/flavoured-guides.test.mjs checks their content.
 const nestBlockGuides = guideFiles.filter((page) => [openRouteGuide, connectorGuide].includes(page.name));
 const guides = guideFiles.filter((page) => !nestBlockGuides.includes(page));
@@ -52,9 +53,9 @@ test('every ts and tsx block is a labelled complete file with no ellipsis', () =
 
 test('links the reference, the quickstart and the glossary, and every link resolves', () => {
   for (const { path, name, text } of all) {
-    assert.match(text, /\]\([./]+\/reference\/[\w-]+\.md/, name);
+    assert.match(text, /\]\([./]+\/sdk\/reference\/[\w-]+\.md/, name);
     assert.match(text, /\]\([./]+\/quickstart\.md/, name);
-    assert.match(text, /\]\([./]+\/glossary\.md#[\w-]+\)/, name);
+    assert.match(text, /\]\([./]+\/(?:[\w-]+\/)?glossary\.md#[\w-]+\)/, name);
     for (const [, target] of text.matchAll(/\]\((\.[^)#]*\.md)(?:#[^)]*)?\)/g)) {
       assert.ok(existsSync(join(dirname(path), target)), `${name}: ${target}`);
     }
@@ -80,7 +81,8 @@ test('every #anchor link from a recipe or guide targets a heading that exists', 
   let checked = 0;
   for (const { path, name, text } of all) {
     for (const [, target, anchor] of text.matchAll(/\]\((\.[^)#]*\.md)#([^)]+)\)/g)) {
-      const file = join(dirname(path), target);
+      // A heading inside a flavour block has the id <flavour>-<slug>, set on the generated site page.
+      const file = join(site, relative(docs, join(dirname(path), target)));
       assert.ok(anchorsOf(readFileSync(file, 'utf8')).has(anchor), `${name}: ${target}#${anchor}`);
       checked += 1;
     }
@@ -122,7 +124,7 @@ test('no page names a script the starter lacks or the old Part 2 anchor', () => 
 });
 
 const gate = recipes.find((r) => r.name === 'gate-by-capability');
-const gateTrees = treesOf('recipes/gate-by-capability.md');
+const gateTrees = treesOf('vector-apps/recipes/gate-by-capability.md');
 
 test('gate-by-capability is a page for each pair and starts from the leads-app overlay', () => {
   assert.deepEqual(gateTrees.map(({ tree }) => tree), ['react/node', 'react/nest']);
@@ -157,7 +159,7 @@ test('gate-by-capability Nest block registers the controller in AppModule and us
 
 test('gate-by-capability closes by sharing one fallback across at least two pages', () => {
   const steps = section(gate.text, 'Steps').split(/^### /m).slice(1);
-  assert.match(steps.at(-1), /^\d+\. Share one fallback across pages\n/);
+  assert.match(steps.at(-1), /^\d+\. Share one fallback across app pages\n/);
   assert.equal([...steps.at(-1).matchAll(/^```tsx title="client\/src\/\w+\.tsx"/gm)].length >= 2, true);
   assert.ok([...gate.text.matchAll(/<GatedPage\b/g)].length >= 2);
   assert.equal([...gate.text.matchAll(/fallback=/g)].length, 2);
@@ -192,13 +194,13 @@ test('expose-agent-actions names the catalog command, its entry file and the dev
 
 test('expose-agent-actions limits description and mounted-action claims to the SDK', () => {
   assert.doesNotMatch(expose.text, /only guidance/);
-  assert.match(expose.text, /The SDK puts it in the manifest, which Space reads\./);
+  assert.match(expose.text, /The SDK puts it in the manifest, which \[Vector Space\]\([^)]*\) reads\./);
   assert.match(expose.text, /After each successful call, the SDK reports the mounted actions\./);
   assert.doesNotMatch(expose.text, /agent sees `leads/);
 });
 
 const callSpaceName = 'call-space-from-your-server';
-const callSpace = Object.fromEntries(treesOf(`guides/${callSpaceName}.md`).map(({ tree, text }) => [tree.split('/')[0], text]));
+const callSpace = Object.fromEntries(treesOf(`vector-apps/guides/${callSpaceName}.md`).map(({ tree, text }) => [tree.split('/')[0], text]));
 
 test('Call Space from your server has a Node.js and a Nest.js tree, ', () => {
   assert.deepEqual(Object.keys(callSpace), ['node', 'nest']);
@@ -299,8 +301,8 @@ test('add-page-and-capability restart step says the starter tells Space and keep
 });
 
 test('add-page-and-capability links between pages without a reload through navigate and one shared pages array', () => {
-  const step = addPageSteps().find((s) => /^\d+\. Link between pages without a reload\n/.test(s));
-  assert.ok(step, 'a step named "Link between pages without a reload"');
+  const step = addPageSteps().find((s) => /^\d+\. Link between app pages without a reload\n/.test(s));
+  assert.ok(step, 'a step named "Link between app pages without a reload"');
   assert.match(step, /iframe/);
   assert.match(step, /history\.pushState\(/);
   assert.match(step, /<AppProvider[^>]*\bnavigate=|\bnavigate=\{navigate\}/);
@@ -310,7 +312,7 @@ test('add-page-and-capability links between pages without a reload through navig
   assert.match(addPage.text, /^export type PagePath = \(typeof pages\)\[number\]\['path'\];$/m);
 });
 
-const modelTrees = Object.fromEntries(treesOf(`guides/${modelGuide}.md`).map(({ tree, text }) => [tree.split('/')[0], text]));
+const modelTrees = Object.fromEntries(treesOf(`vector-apps/guides/${modelGuide}.md`).map(({ tree, text }) => [tree.split('/')[0], text]));
 
 test('the Node.js call-a-model tree names no Nest term', () => {
   assert.doesNotMatch(modelTrees.node, /\bNest(\.js|JS)?\b|@nestjs\/|@vectoragents\/vs-apps\/nest/);
@@ -322,7 +324,7 @@ test('each call-a-model tree links the glossary at the first model slot and says
     const body = text.replace(/^---\n[\s\S]*?\n---\n/, '');
     assert.equal(body.search(/model slot/i), body.indexOf('[model slot](') + 1);
     assert.match(body, /\[model slot\]\([./]+\/glossary\.md#model-slot\)/);
-    assert.match(body, /If no one sets the slot, Space refuses the call with status `409`/);
+    assert.match(body, /If no one sets the slot, Vector Space refuses the call with status `409`/);
   }
 });
 
@@ -366,14 +368,14 @@ test('the call-a-model trees keep the in-memory credential store warning', () =>
 });
 
 const a2aName = 'expose-app-as-a2a-agent';
-const a2aTrees = Object.fromEntries(treesOf(`guides/${a2aName}.md`).map(({ tree, text }) => [tree.split('/')[0], text]));
+const a2aTrees = Object.fromEntries(treesOf(`vector-apps/guides/${a2aName}.md`).map(({ tree, text }) => [tree.split('/')[0], text]));
 const a2a = a2aTrees.node;
 const a2aCode = () => titledSnippets(a2a).map((c) => c.body).join('\n');
 
 test('the A2A guide defines A2A at first use with a glossary link', () => {
   assert.notEqual(a2a, '');
   const first = a2a.replace(/^---\n[\s\S]*?\n---\n/, '').split('\n').find((line) => /A2A/.test(line));
-  assert.match(first, /\[A2A\]\((\.\.\/)+glossary\.md#a2a\)/);
+  assert.match(first, /\[A2A\]\((\.\.\/)+vector-space\/glossary\.md#a2a\)/);
 });
 
 test('the A2A guide builds the card with buildAppAgentCard and answers with createA2aRequestHandler in labelled server files', () => {
@@ -397,7 +399,7 @@ test('the A2A guide declares the agent in the definition with the card URL templ
 test('the A2A guide has a Node.js tree with the steps and a Nest.js tree with the not-yet-written notice', () => {
   assert.deepEqual(Object.keys(a2aTrees), ['node', 'nest']);
   assert.doesNotMatch(a2a, /\bNest(\.js|JS)?\b|@nestjs\/|@Injectable|Not yet written/);
-  assert.match(a2aTrees.nest, /Not yet written for Nest\.js\. Read the \[Node\.js \+ TypeScript version\]\(/);
+  assert.match(a2aTrees.nest, /Not yet written for Nest\.js\./);
   assert.equal(titledSnippets(a2aTrees.nest).length, 0);
   assert.doesNotMatch(a2aTrees.nest, /@nestjs\//);
 });
@@ -425,7 +427,7 @@ test('filter-navigation-by-capability gates leads and icp and leaves home ungate
 
 test('filter-navigation-by-capability names the leads-app start and its scaffold command, not the old folder', () => {
   assert.match(filterNav.text, /^---\n[\s\S]*?^start: leads-app$[\s\S]*?\n---\n/m);
-  const [{ text }] = treesOf('guides/filter-navigation-by-capability.md');
+  const [{ text }] = treesOf('vector-apps/guides/filter-navigation-by-capability.md');
   assert.match(section(text, 'Prerequisites'), /`npm create @vectoragents\/app leads-app -- --client react --server node --start leads-app`/);
   assert.doesNotMatch(text, /recipes\/leads-app|git clone/);
 });
@@ -504,7 +506,7 @@ test('the guides that moved start from the leads-app overlay and scaffold it int
   for (const name of [callSpaceName, modelGuide, a2aName]) {
     const page = guides.find((g) => g.name === name);
     assert.match(page.text, /^---\n[\s\S]*?^start: leads-app$[\s\S]*?\n---\n/m, name);
-    for (const { tree, text } of treesOf(`guides/${name}.md`)) {
+    for (const { tree, text } of treesOf(`vector-apps/guides/${name}.md`)) {
       const server = tree.split('/')[0];
       assert.match(section(text, 'Prerequisites'), new RegExp(`^npm create @vectoragents/app leads-guide -- --client react --server ${server} --start leads-app$`, 'm'), `${name} ${tree}`);
       assert.match(section(text, 'Prerequisites'), /into a new folder/, `${name} ${tree}`);

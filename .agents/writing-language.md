@@ -11,7 +11,7 @@ Precedence: rules here win over any reference. A page-type section wins over the
 - **L1 Plain word.** Use the common word. Bad: "feeds ten uses". Good: "is used in ten places".
 - **L2 One idea per sentence.** Split at "and", "so" and ";" when each side could stand alone.
 - **L3 Sentence length.** Target 25 words or fewer. Hard cap 40. References: mean 13-14, p90 25-28.
-- **L4 Paragraph length.** 4 sentences or fewer. References: mean 1.4-1.9.
+- **L4 Paragraph length.** 5 sentences or fewer. References: mean 1.4-1.9.
 - **L5 Table cell and reference description.** 15 words or fewer. A cell over 15 words is a note, not an error. References: 9-11.
 - **L6 Active voice.** Name the actor. Bad: "A slot nobody set runs nothing". Good: "If no one sets a slot, the app cannot use that model."
 - **L7 No noun stacks.** Three nouns in a row need a verb. Bad: "Connector-event handler wiring". Good: "Register connector event handlers".
@@ -54,19 +54,18 @@ Precedence: rules here win over any reference. A page-type section wins over the
 
 ## Tutorial page
 
-Scope: `docs/quickstart.md` only. `scripts/voice.mjs` checks the TU1 hard cap, TU2 and TU3 outside code.
+Scope: `docs/vector-apps/quickstart.md` only. `scripts/voice.mjs` checks L4, the TU1 hard cap and TU2 outside code.
 
 - **TU1 Sentence.** Target 30 words. Hard cap 40. Replaces L3 on this page.
-- **TU2 Paragraph.** 5 sentences or fewer. Replaces L4 on this page.
-- **TU3 No contractions.**
-- **TU4 Reason first.** A step or section opens with a sentence that says why.
-- **TU5 Imperative steps.** A step starts with an imperative verb. "-ing" forms are allowed where natural.
-- **TU6 Define in one clause.** Define a term in one clause at first use. Link only a destination the reader follows. The page defines "capability", "space manager" and "manifest" in a one-clause appositive at first use, and `scripts/quickstart-page.test.mjs` pins that form.
-- **TU7 Security contract first.** Lead with the security contract. Teach through running code, not folder creation. Say that a client check is display only and the server check decides.
+- **TU2 No contractions.**
+- **TU3 Reason first.** A step or section opens with a sentence that says why.
+- **TU4 Imperative steps.** A step starts with an imperative verb. "-ing" forms are allowed where natural.
+- **TU5 Define in one clause.** Define a term in one clause at first use. Link only a destination the reader follows. The page defines "capability", "space manager" and "manifest" in a one-clause appositive at first use, and `scripts/quickstart-page.test.mjs` pins that form.
+- **TU6 Security contract first.** Lead with the security contract. Teach through running code, not folder creation. Say that a client check is display only and the server check decides.
 
 ## Recipe page
 
-Scope: `docs/recipes/`.
+Scope: `docs/vector-apps/recipes/`.
 
 - **R1 Sorting rule.** A recipe starts from a project the starter CLI generates (`--start hello`, or an overlay such as `--start leads-app`) and ends with something you run. If the page needs a result from an earlier page, it is a guide.
 - **R2 Layout.** Front matter `title`, an opening paragraph, then the sections Goal, Prerequisites, Steps, Result, Next step, in that order.
@@ -79,7 +78,7 @@ Scope: `docs/recipes/`.
 
 ## Guide page
 
-Scope: `docs/guides/`.
+Scope: `docs/vector-apps/guides/`.
 
 - **G1 Sorting rule.** A guide starts from the result of a prior recipe. Its Prerequisites name that recipe. If the page starts from the starter app, it is a recipe.
 - **G2 Layout.** Same as R2.
@@ -90,5 +89,5 @@ Scope: `docs/guides/`.
 
 ## Not in this checklist
 
-- Contractions. Decided for the Tutorial page (TU3). Pending for other pages.
+- Contractions. Decided for the Tutorial page (TU2). Pending for other pages.
 - Existing writing standard (hyphens, current state only). Reported in a separate section.
