@@ -143,6 +143,21 @@ Source paths are in the sibling `vector-spaces` repo, under `docs/`. The product
 | The three platform rules: one access model, one AI gateway, one record of work. The page words the access rule as roles, shares, blocks and conditions, which is the product's "roles, shares, blocks and Conditions". | `product/OVERVIEW.md` ("What holds it together"). |
 | An organization is the tenant. A space is the unit of work, binds one orchestrator agent, and resolves access inside it for each member and action. | `product/OVERVIEW.md` ("How it fits"), `product/GLOSSARY.md` (Organization, Space, Agent). |
 
+## Organizations and spaces
+
+Source paths are in the sibling `vector-spaces` repo, under `docs/`. The page is `docs/vector-space/organizations-and-spaces.md`.
+
+| Claim | Rests on |
+| --- | --- |
+| An organization is the tenant. Every user, API key, resource and space belongs to one. A space is the unit of work and holds one orchestrator agent, resources, members and groups, pages, and the apps and Vector Modules turned on for it. | `product/OVERVIEW.md` ("How it fits"), `product/GLOSSARY.md` (Tenancy and people: Organization; Spaces and content: Space). |
+| Each organization has one Organization admin, who a transfer passes to another live member. The admin is a space manager of every space. | `product/GLOSSARY.md` (Tenancy and people: Organization admin), `systems/access/README.md` (Organization admin and space managers). |
+| AI provider accounts belong to the organization and pay for its model calls. An account reaches every space by default and can be limited to chosen spaces. The page therefore says each resource belongs to one space and never that spaces share nothing. | `product/OVERVIEW.md` ("What it is"), `systems/AI.md` (Data model, invariant 2: an all-spaces account is the default, a scoped account reaches the spaces with a grant row), `systems/credentials/README.md` (Core primitives: one credential can back resources in more than one space). |
+| A resource is owned by one space. No share reaches a resource of another space. An agent moves only within its space. | `systems/access/RESOURCES.md` (Resources), `systems/access/README.md` (The pool and tenancy), `systems/STUDIO.md` (The agent tree). |
+| Access is worked out inside a space, for each member and operation. Only users of the organization, service accounts included, join its spaces. Membership alone reaches what General access gives. | `product/OVERVIEW.md` ("How it fits"), `systems/access/README.md` (Spaces), `product/GLOSSARY.md` (Access: Member). |
+| A space manager manages the members, groups, shares, resources, agent and apps of the space. | `product/OVERVIEW.md` (Who uses it), `systems/access/README.md` (Organization admin and space managers). |
+| Left out on purpose: distributors, customers, licences and space deletion (administrative, not concepts), and who creates a space (`who-can-do-what`). | `systems/access/README.md` (The pool and tenancy), `systems/SPACES.md` (Provisioning and deletion). |
+| The example is the page's own scenario slice. It states no fact beyond the rows above. | Spec of the Vector Space concepts, section 3.2. |
+
 ## Why Vector Apps
 
 Source paths are in the sibling `vector-spaces` repo, under `docs/`. The product docs hold no `APPS.md`: `systems/apps/README.md`, `BINDINGS.md`, `REGISTRY.md` and `PROTOCOL.md` stand in for it, with `product/OVERVIEW.md` and `product/GLOSSARY.md`.
