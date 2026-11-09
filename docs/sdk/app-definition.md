@@ -17,7 +17,7 @@ One page gated by one capability.
 import { defineApp } from '@vectoragents/vs-apps';
 
 export const definition = defineApp({
-  key: 'hello-app', // sent to Space as appKey
+  key: 'hello-app', // sent to Vector Space as appKey
   name: 'Hello app',
   version: '0.1.0',
   pages: [

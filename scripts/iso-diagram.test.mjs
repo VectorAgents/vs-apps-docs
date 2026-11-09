@@ -170,9 +170,9 @@ test('space overview: eight numbered parts in the order of the page, two slabs, 
   assert.deepEqual(legend.parts.map((i) => i.marker), ['1', '2', '3', '4', '5', '6', '7', '8']);
   assert.deepEqual(
     legend.parts.map((i) => i.text.split('.')[0]),
-    ['Orchestrator agent', 'Resource pool', 'Members', 'Space pages', 'Command Center', 'Vector Apps', 'A2A agent', 'MCP connector'],
+    ['Orchestrator agent', 'Resource pool', 'Members', 'Pages in the space', 'Command Center', 'Vector Apps', 'A2A agent', 'MCP connector'],
   );
-  assert.deepEqual(legend.places.map((i) => i.text.split('.')[0]), ['Organization', 'Space']);
+  assert.deepEqual(legend.places.map((i) => i.text.split('.')[0]), ['Organization', 'The space']);
   assert.deepEqual(legend.path, []);
   assert.deepEqual(spaceOverview.links.map((l) => l.remote), [true, true]);
 });

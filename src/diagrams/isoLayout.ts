@@ -65,9 +65,7 @@ export interface IsoScene {
 }
 
 const COS30 = Math.cos(Math.PI / 6);
-/** Screen pixels of one grid cell. */
 const UNIT = 22;
-/** Radius of a badge circle, in grid-free screen units. */
 export const BADGE_RADIUS = 11;
 const HEAD_LENGTH = 9;
 const HEAD_HALF_WIDTH = 4.5;

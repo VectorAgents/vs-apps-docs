@@ -1,5 +1,3 @@
-/** Pure logic for the reader's flavour choice. */
-
 /** `href` with one parameter per axis of `choice`, so the link opens on the same flavours; other parameters and the hash stay. */
 export function shareUrl(href, choice) {
   const url = new URL(href);

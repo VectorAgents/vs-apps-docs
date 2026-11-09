@@ -24,7 +24,9 @@ The package has nine import paths, called subpaths. The root path holds the defi
 
 The `nest` subpath has no reference page. The guides use it.
 
-Some subpaths need a peer package. Install `zod` version 3 with the package. Add `@nestjs/common` and `@nestjs/core` for `nest`, `react` for `react` and `react/harness`, and `@orpc/contract` for `orpc`. The `server` and `browser` subpaths use only Web-standard APIs. The `nest`, `extract` and `conformance` subpaths need Node.js.
+Some subpaths need a peer package. Install `zod` version 3 with the package. Add `@nestjs/common` and `@nestjs/core` for `nest`, `react` for `react` and `react/harness`, and `@orpc/contract` for `orpc`.
+
+The `server` and `browser` subpaths use only Web-standard APIs. The `nest`, `extract` and `conformance` subpaths need Node.js.
 
 The closed lists that an app definition accepts, such as connector providers, are on the [platform limits](./reference/platform-limits.md) page.
 

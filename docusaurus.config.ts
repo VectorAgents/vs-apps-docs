@@ -10,7 +10,7 @@ const flavourSite = { axes: flavours.axes, defaults: flavours.defaults };
 const docsDir = `${flavours.outDir}/site`;
 
 const config: Config = {
-  title: 'Vector Apps docs',
+  title: 'Vector Space docs',
   tagline: 'Build apps for Vector Space with @vectoragents/vs-apps',
   url: process.env.DOCS_URL ?? 'https://docs.example.com',
   baseUrl: process.env.DOCS_BASE_URL ?? '/',
@@ -39,7 +39,7 @@ const config: Config = {
   ],
   themeConfig: {
     navbar: {
-      title: 'Vector Apps docs',
+      title: 'Vector Space docs',
       items: [
         { type: 'docSidebar', sidebarId: 'vectorSpace', label: 'Vector Space', position: 'left' },
         { type: 'docSidebar', sidebarId: 'vectorApps', label: 'Vector Apps', position: 'left' },

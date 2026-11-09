@@ -35,19 +35,27 @@ You describe the app in one [app definition](../sdk/app-definition.md). Your ser
 
 ### Register
 
-Staff give Vector Space the URL of your manifest. Vector Space reads and checks it, then shows staff what the manifest declares, such as model slots. Staff then create the [app registration](./glossary.md#app-registration). Registering does not add the app to any space. It uses line d of the diagram.
+Staff give Vector Space the URL of your manifest. Vector Space reads and checks it, then shows staff what the manifest declares, such as model slots. Staff then create the [app registration](./glossary.md#app-registration).
+
+Registering does not add the app to any space. It uses line d of the diagram.
 
 ### Activate
 
-A space manager adds the app to a space. Vector Space first checks that the organization may use the app. Then it calls `POST /api/provision` on your server to push a [service secret](./glossary.md#service-secret). If any part fails, Vector Space tells your server to deprovision, and the activation fails. The space manager can try again.
+A space manager adds the app to a space. Vector Space first checks that the organization may use the app. Then it calls `POST /api/provision` on your server to push a [service secret](./glossary.md#service-secret).
+
+If any part fails, Vector Space tells your server to deprovision, and the activation fails. The space manager can try again.
 
 ### Configure
 
-A new app is shared with no one. The space manager shares it with members and groups. That decides who can open it and which [capabilities](./glossary.md#capability) they hold. The space manager also sets each [model slot](./glossary.md#model-slot) and [connector slot](./glossary.md#connector-slot) and attaches the resources the app may read. Until a required slot is set, the app needs setup, but it stays in the space.
+A new app is shared with no one. The space manager shares it with members and groups. That decides who can open it and which [capabilities](./glossary.md#capability) they hold.
+
+The space manager also sets each [model slot](./glossary.md#model-slot) and [connector slot](./glossary.md#connector-slot) and attaches the resources the app may read. Until a required slot is set, the app needs setup, but it stays in the space.
 
 ### Update
 
-You deploy a new manifest. Your server tells Vector Space at start, and staff can also choose **Check for updates**. If the manifest has not changed, nothing happens. If it has, Vector Space holds it until staff apply it, unless auto-apply is on for that app registration. Auto-apply is off by default.
+You deploy a new manifest. Your server tells Vector Space at start, and staff can also choose **Check for updates**.
+
+If the manifest has not changed, nothing happens. If it has, Vector Space holds it until staff apply it, unless auto-apply is on for that app registration. Auto-apply is off by default.
 
 A change that reaches past your app always waits for staff, even with auto-apply on. A new [approval](./glossary.md#approvals) key is one example.
 
@@ -55,7 +63,9 @@ After staff apply a manifest, Vector Space brings every space that has the app i
 
 ### Deprovision
 
-A space manager removes the app from a space, or someone deletes the space. Vector Space calls `DELETE /api/deprovision` on your server and removes the agents and MCP servers that the app added to the space. The call is best effort. If your server does not answer, Vector Space still removes the app. A space manager can add the app again later.
+A space manager removes the app from a space, or someone deletes the space. Vector Space calls `DELETE /api/deprovision` on your server and removes the agents and MCP servers that the app added to the space.
+
+The call is best effort. If your server does not answer, Vector Space still removes the app. A space manager can add the app again later.
 
 ## The six token kinds
 

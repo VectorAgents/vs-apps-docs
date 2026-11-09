@@ -18,7 +18,10 @@ export const codeOf = (text, titleFile) => titledSnippets(text).find(({ title })
 
 const defaultGenDir = fileURLToPath(new URL('../docs-gen/', import.meta.url));
 
-/** One `{ tree, text }` per generated copy of `source`: from `pairs/` for a flavoured page (`tree` is `node` or `react/nest`), from `site/` for a neutral one (`tree` ''). */
+/**
+ * One `{ tree, text }` per generated copy of `source`. A flavoured page reads from `pairs/` (`tree` is `node` or `react/nest`),
+ * a neutral page from `site/` (`tree` '').
+ */
 export const treesOf = (source, { genDir = defaultGenDir } = {}) => {
   const manifestFile = join(genDir, 'flavours.json');
   if (!existsSync(manifestFile)) throw new Error(`${genDir} has no flavours.json: run pnpm generate first`);

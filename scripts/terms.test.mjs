@@ -93,3 +93,13 @@ test('published pages use the current terms', () => {
     assert.deepEqual(violations, [], `${page}: ${violations.map((v) => `${v.line} ${v.rule} "${v.text}"`).join(', ')}`);
   }
 });
+
+test('diagram labels and text use the current terms', async () => {
+  const dir = new URL('../src/diagrams/', import.meta.url);
+  for (const file of readdirSync(dir).filter((f) => /^(?!isoLayout).*\.ts$/.test(f))) {
+    const data = Object.values(await import(new URL(file, dir)))[0];
+    const text = JSON.stringify(data).replace(/","|":"|[{}[\]]/g, '\n');
+    const violations = termViolations(text);
+    assert.deepEqual(violations, [], `${file}: ${violations.map((v) => `${v.rule} "${v.text}"`).join(', ')}`);
+  }
+});

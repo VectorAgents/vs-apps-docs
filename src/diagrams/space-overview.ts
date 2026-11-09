@@ -12,13 +12,13 @@ export const spaceOverview: IsoDiagramData = {
   legendTitles: { places: 'Places', parts: 'Parts', links: 'Links' },
   slabs: [
     { id: 'organization', label: 'Organization', text: 'The tenant. Every user, key, resource and space belongs to one.', tone: 'slab', c: 0, r: 0, w: 12, d: 12, h: ORG_TOP, z: 0 },
-    { id: 'space', label: 'Space', text: 'The unit of work. Access is resolved inside it, for each member and action.', tone: 'slab', c: 1.5, r: 1.5, w: 9, d: 9, h: SPACE_TOP - ORG_TOP, z: ORG_TOP },
+    { id: 'space', label: 'The space', text: 'The unit of work. It resolves access for each member and action.', tone: 'slab', c: 1.5, r: 1.5, w: 9, d: 9, h: SPACE_TOP - ORG_TOP, z: ORG_TOP },
   ],
   parts: [
     { id: 'orchestrator', badge: 1, label: 'Orchestrator agent', text: 'The one agent that runs the space. It delegates to other agents.', tone: 'core', c: 4.5, r: 5.3, w: 2, d: 2, h: 30, z: SPACE_TOP },
     { id: 'pool', badge: 2, label: 'Resource pool', text: 'Everything the space holds: connectors, knowledge sources, skills, apps and space pages.', tone: 'core', c: 6, r: 2.5, w: 2.5, d: 2, h: 14, z: SPACE_TOP },
     { id: 'members', badge: 3, label: 'Members', text: 'The people of the space, each with a role.', tone: 'core', c: 2.5, r: 2.5, w: 2, d: 2, h: 10, z: SPACE_TOP },
-    { id: 'pages', badge: 4, label: 'Space pages', text: 'Grids of widgets and documents.', tone: 'core', c: 2.3, r: 6.5, w: 2, d: 2.2, h: 8, z: SPACE_TOP },
+    { id: 'pages', badge: 4, label: 'Pages in the space', text: 'Grids of widgets and documents.', tone: 'core', c: 2.3, r: 6.5, w: 2, d: 2.2, h: 8, z: SPACE_TOP },
     { id: 'commandCenter', badge: 5, label: 'Command Center', text: 'Everything an agent or an app waits on a person for.', tone: 'core', c: 8, r: 5.3, w: 2, d: 2, h: 8, z: SPACE_TOP },
     { id: 'app', badge: 6, label: 'Vector Apps', text: 'Web apps on their own origins. Each app page opens in an iframe.', tone: 'plug', c: 6, r: 7.9, w: 2.8, d: 1.8, h: 16, z: SPACE_TOP },
     { id: 'a2a', badge: 7, label: 'A2A agent', text: 'A remote agent that the orchestrator agent delegates to, over a dashed link.', tone: 'plug', c: 13.5, r: 2, w: 2, d: 2, h: 14, z: 0 },

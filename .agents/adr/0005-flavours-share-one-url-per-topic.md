@@ -6,7 +6,7 @@ A flavoured page is published once, at one plain URL such as `/vector-apps/quick
 
 ## Decision
 
-- **URL rule.** One URL per page. The URL has no flavour segment, so a flavoured page has no stub and no redirect. Old flavour-tree URLs and `/nest/...` addresses may break; `onBrokenLinks: 'throw'` guards internal links.
+- **URL rule.** One URL per page. The URL has no flavour segment, so a flavoured page has no stub and no redirect. `onBrokenLinks: 'throw'` guards internal links.
 - **Merged page.** The generator wraps each flavour block with its axis, its flavour and a visible label. A `<head>` script and CSS show the reader's blocks before paint. Mechanics: `.agents/flavours.md`, Generator and Reader view.
 - **Parameters.** `?client=react&server=nest`, one parameter per axis, named after the axis. Which source wins, and what a pick or a copied link carries: `.agents/flavours.md`, Reader view.
 - **Anchors.** A heading inside a block has the id `<flavour>-<slug>`, so ids never collide across blocks. Headings outside blocks keep plain ids.

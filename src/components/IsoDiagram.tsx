@@ -63,8 +63,8 @@ function Legend({ title, items, link, id }: { title: string; items: IsoLegendIte
 }
 
 /**
- * The legend under the picture carries the same facts as text. Colours come from the `--iso-*` tokens in `custom.css`,
- * so the picture follows the theme. The search plugin indexes SVG text, so a space sits between the text elements to keep their words apart.
+ * The legend under the picture repeats the facts as text. A space sits between the SVG text elements so the search plugin
+ * indexes their words apart.
  */
 export default function IsoDiagram({ diagram, figure = 1 }: { diagram: IsoDiagramData; figure?: number }): ReactElement {
   const scene = layoutDiagram(diagram);

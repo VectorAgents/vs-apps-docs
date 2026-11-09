@@ -35,6 +35,11 @@ test('the entry page holds no flavour block, and every page has the picker in it
   for (const url of ['/', ...pages.map((page) => page.url)]) assert.match(html(url), /class="flavour-picker/, url);
 });
 
+test('the picker is hidden on every page that holds no flavour block', () => {
+  const css = readFileSync(join(root, 'src/css/custom.css'), 'utf8');
+  assert.match(css, /html:not\(:has\(\.flavour-block\)\) \.flavour-picker \{\s*display: none;/);
+});
+
 for (const { source, url } of pages) {
   const ids = [...readFileSync(join(root, config.outDir, 'site', source), 'utf8').matchAll(/\{#([^}\s]+)\}$/gm)].map((m) => m[1]);
   test(`${url}: each heading id in a block is prefixed with a flavour, on the heading and in the contents`, () => {

@@ -3,7 +3,9 @@ title: Choose your path
 description: Compare a Vector App, an A2A agent and an MCP server by what you build, how each shows up in a space and what Vector Space gives it.
 ---
 
-Three interfaces plug your code into a [space](../vector-space/glossary.md#space) in [Vector Space](../vector-space/glossary.md#vector-space): a Vector App, an A2A agent and an MCP server. An [A2A](../vector-space/glossary.md#a2a) agent is a remote agent that the agent of the space delegates work to. An [MCP](../vector-space/glossary.md#mcp) server is a remote server of tools that agents call. This page compares the three so you can pick one before you build. [Why Vector Apps](../vector-apps/why-vector-apps.md) says what an app is.
+Three interfaces plug your code into a [space](../vector-space/glossary.md#space) in [Vector Space](../vector-space/glossary.md#vector-space): a Vector App, an A2A agent and an MCP server. An [A2A](../vector-space/glossary.md#a2a) agent is a remote agent that the agent of the space delegates work to. An [MCP](../vector-space/glossary.md#mcp) server is a remote server of tools that agents call.
+
+This page compares the three so you can pick one before you build. [Why Vector Apps](../vector-apps/why-vector-apps.md) says what an app is.
 
 ## Compare the three paths
 
@@ -14,7 +16,7 @@ Each column is one path. Each row is one thing that you build or that Vector Spa
 | You build | A client, a server and an [app definition](./glossary.md#app-definition). | An agent that serves an agent card and answers A2A messages. | A server that lists tools and answers MCP calls. |
 | Shows up as | [App pages](../vector-apps/glossary.md#app-page) in the space, and entries in the [agent catalog](./glossary.md#agent-catalog). | A sub-agent that the agent of the space delegates to. | A connector in the [resource pool](../vector-space/glossary.md#resource-pool) of the space. |
 | Who sets it up | [Staff](../vector-space/glossary.md#staff) register it. A [space manager](../vector-space/glossary.md#space-manager) adds and configures it. | A space manager adds the agent card to the space. | A member of the space adds it as a connector. |
-| Knows the calling member | Yes. The user token identifies the member and lists their capabilities. | No. Vector Space does not pass the member on. | No. Vector Space does not pass the member on. |
+| Knows the calling member | Yes. The user token identifies the member and lists their capabilities. | No, unless an app offers the agent. Then the A2A token can identify the member. | No. Vector Space does not pass the member on. |
 | Reads platform data | Yes. The [allowed resources](../vector-apps/glossary.md#allowed-resources) of the space, and the member list. | No. | No. |
 | Model calls | Yes, through a [model slot](../vector-apps/glossary.md#model-slot), on the [AI](../vector-space/glossary.md#ai) accounts of the organization. | Your own, outside Vector Space. | Your own, outside Vector Space. |
 | App approvals and acts | Yes. You declare [approvals](../vector-apps/glossary.md#approvals) and [acts](../vector-apps/glossary.md#acts). | No. | No. |

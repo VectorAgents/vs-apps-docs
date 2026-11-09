@@ -124,11 +124,7 @@ export function generate({ root, config }) {
 
   const notice = (flavour) => [':::warning', `Not yet written for ${axes[axisOf(flavour)][flavour]}.`, ':::'];
 
-  /**
-   * The id of each block that a todo button scrolls to, as `<flavour>-block-<n>` with n counting the blocks of that
-   * flavour on the page, and for each todo block the part it points at: the next written block of its axis in
-   * another flavour, else the last one before it. A todo with no such block gets no button.
-   */
+  /** Per todo block, the written block of another flavour on its axis that its button scrolls to; none means no button. */
   function switchTargets(parts) {
     const count = new Map();
     const ids = new Map();
