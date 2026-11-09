@@ -30,7 +30,7 @@ A user who can edit on the space, or an Organization admin. They add apps, share
 
 ### Organization admin
 
-A member who manages the organization in Vector Space and sees **Organization** under **Settings**. Every Organization admin is a space manager.
+The one member who manages the organization in Vector Space and sees **Organization** under **Settings**. An organization has one Organization admin. The Organization admin is a space manager of every space.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
