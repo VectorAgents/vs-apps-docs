@@ -106,7 +106,7 @@ test('layout: an unknown slab or link end is an error', () => {
   assert.throws(() => layoutStructure({ ...small, links: [{ id: 'x', from: 'back', to: 'nowhere' }] }), /nowhere/);
 });
 
-const real = slots.filter((s) => s.kind === 'structure' && existsSync(join(figures, `${s.id}.ts`)));
+const real = slots.filter((s) => existsSync(join(figures, `${s.id}.ts`)));
 
 test('at least the overview figure has data', () => {
   assert.ok(real.some((s) => s.id === 'space-structure'));

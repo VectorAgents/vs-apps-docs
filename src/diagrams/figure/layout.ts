@@ -3,9 +3,10 @@ import type { Facet, Point } from './geometry.ts';
 import type { IconName } from './icons.ts';
 import type { LegendItem, StructureData } from './types.ts';
 
-/** Height of a slab and of every part, in height units. One part height keeps the parts comparable. */
-const SLAB_HEIGHT = 4;
-const PART_HEIGHT = 2.5;
+/** Height of a slab, in height units. */
+export const SLAB_HEIGHT = 4;
+/** Height of every part, in height units. One part height keeps the parts comparable. */
+export const PART_HEIGHT = 2.5;
 const SLAB_RADIUS = 1.2;
 const PART_RADIUS = 0.5;
 /** Screen units a pinned part rises. Reduced motion drops it in CSS. */
@@ -14,6 +15,11 @@ const PAD = 12;
 const SLAB_LABEL_INSET = SLAB_RADIUS + 0.4;
 /** Baseline offset that centres 13 unit text on a slab wall. */
 const SLAB_LABEL_BASELINE = 4.5;
+
+/** Distance from the middle of a part's top face to the middle of its icon or marks, in screen units. */
+export const ICON_RISE = 6;
+/** Distance between the middles of two neighbouring marks, in screen units. */
+export const MARK_GAP = 19;
 
 /** Where the name of a part or slab is drawn: its text, and the start (slab) or middle (part) of its baseline. */
 export interface SceneLabel {
@@ -36,8 +42,18 @@ export interface SceneSolid {
   label: SceneLabel;
   /** Icon name of a part; a slab has none. */
   icon?: IconName;
+  /** The marks of a part that has them, centred on the icon spot and drawn instead of the icon. */
+  marks?: SceneMark[];
   /** Screen units the solid rises when pinned: `LIFT` for a part, 0 for a slab, which carries the parts on it. */
   lift: number;
+}
+
+/** One vendor mark, with the middle of its tile in screen units. */
+export interface SceneMark {
+  name: string;
+  src: string;
+  x: number;
+  y: number;
 }
 
 export interface SceneLink {
@@ -132,7 +148,8 @@ export function layoutStructure(data: StructureData): StructureScene {
     const { facets, top, hull } = facetsOf(roundedPlan(p.c, p.r, p.w, p.d, PART_RADIUS), z, PART_HEIGHT);
     const [x, y] = project(p.c + p.w / 2, p.r + p.d / 2, z + PART_HEIGHT);
     footprints.set(p.id, { ...p, z: z + PART_HEIGHT / 2 });
-    solids.push({ id: p.id, kind: 'part', tone: p.tone, facets, top, hull, label: { text: p.label, x: round(x), y: round(y), skew: false }, icon: p.icon, lift: LIFT });
+    const marks = p.marks?.map(({ name, src }, i, all): SceneMark => ({ name, src, x: round(x + (i - (all.length - 1) / 2) * MARK_GAP), y: round(y - ICON_RISE) }));
+    solids.push({ id: p.id, kind: 'part', tone: p.tone, facets, top, hull, label: { text: p.label, x: round(x), y: round(y), skew: false }, icon: p.icon, ...(marks && { marks }), lift: LIFT });
   }
 
   const links: SceneLink[] = data.links.map((l) => {

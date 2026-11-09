@@ -9,7 +9,7 @@ export interface FigureSlot {
 }
 
 /** Placeholders allowed in `docs/`. Lower it each time a real figure replaces one. */
-export const PLACEHOLDER_CAP = 7;
+export const PLACEHOLDER_CAP = 6;
 
 export const slots: readonly FigureSlot[] = [
   {
