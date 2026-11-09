@@ -10,7 +10,7 @@ const docs = resolve(dirname(fileURLToPath(import.meta.url)), '../docs');
 const file = resolve(docs, 'vector-space/agents-in-a-space.md');
 const text = readFileSync(file, 'utf8');
 const body = text.replace(/^---\n[\s\S]*?\n---\n/, '').replace(/^import .*$/gm, '').trim();
-const prose = body.replace(/<FigurePlaceholder[^>]*\/>/g, '').replace(/\]\([^)]*\)/g, ']').replace(/[#*`|]/g, '');
+const prose = body.replace(/<(?:FigurePlaceholder|StructureFigure)[^>]*\/>/g, '').replace(/\]\([^)]*\)/g, ']').replace(/[#*`|]/g, '');
 const lead = body.split(/^## /m)[0];
 
 const headings = [...text.matchAll(/^## (.+)$/gm)].map((m) => m[1]);
@@ -27,8 +27,8 @@ test('the page is 500 to 800 words with no table', () => {
 });
 
 test('the figure slot appears once, inside "The agent tree"', () => {
-  assert.equal(text.match(/<FigurePlaceholder\b/g)?.length, 1);
-  assert.match(section(text, 'The agent tree'), /<FigurePlaceholder slot="agent-tree" \/>/);
+  assert.equal(text.match(/<StructureFigure\b/g)?.length, 1);
+  assert.match(section(text, 'The agent tree'), /<StructureFigure data=\{agentTree\} \/>/);
 });
 
 test('the tree is one orchestrator agent, agents for jobs with child agents, and two kinds of leaf, with no depth number', () => {

@@ -3,7 +3,8 @@ title: The record of work
 description: Who ran what, the four governance views, spend, acts and Human Time Return.
 ---
 
-import FigurePlaceholder from '@site/src/components/FigurePlaceholder';
+import StructureFigure from '@site/src/components/StructureFigure';
+import { recordOfWork } from '@site/src/diagrams/figures/record-of-work.ts';
 
 The record of work is what Vector Space writes down about each piece of work: who it ran as and what started it. [Governance](./glossary.md#governance) shows that record in four views, so an organization can see what ran, what it cost and what changed.
 
@@ -30,7 +31,7 @@ Four views read the records. Each answers one question.
 
 The Organization admin reads the whole organization. A [space manager](./glossary.md#space-manager) reads the same views for their own space. Another user's [thread](./glossary.md#thread) is never readable here. A figure that cannot be read shows as missing, never as zero.
 
-<FigurePlaceholder slot="record-of-work" />
+<StructureFigure data={recordOfWork} />
 
 ## Failure postures
 

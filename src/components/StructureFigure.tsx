@@ -51,10 +51,10 @@ function Solid({ solid, active, pinned, onEnter, onLeave, onToggle }: { solid: S
 }
 
 function Swatch({ item }: { item: LegendItem }): ReactElement {
-  if (item.swatch === 'remote') {
+  if (item.swatch === 'remote' || item.swatch === 'link') {
     return (
       <svg className="structure-figure__swatch" viewBox="0 0 34 22" aria-hidden="true">
-        <line className="fig-link fig-link-remote" x1="2" y1="11" x2="32" y2="11" />
+        <line className={item.swatch === 'remote' ? 'fig-link fig-link-remote' : 'fig-link'} x1="2" y1="11" x2="32" y2="11" />
       </svg>
     );
   }

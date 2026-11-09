@@ -10,9 +10,9 @@ const docs = resolve(dirname(fileURLToPath(import.meta.url)), '../docs');
 const file = resolve(docs, 'vector-space/the-record-of-work.md');
 const text = readFileSync(file, 'utf8');
 const body = text.replace(/^---\n[\s\S]*?\n---\n/, '');
-const prose = body.replace(/^import .*$/gm, '').replace(/<FigurePlaceholder[^>]*\/>/g, '');
+const prose = body.replace(/^import .*$/gm, '').replace(/<(?:FigurePlaceholder|StructureFigure)[^>]*\/>/g, '');
 const plain = prose.replace(/\[([^\]]*)\]\([^)]*\)/g, '$1');
-const slotsIn = (s) => [...s.matchAll(/<FigurePlaceholder slot="([^"]+)" \/>/g)].map((m) => m[1]);
+const slotsIn = (s) => [...s.matchAll(/<StructureFigure data=\{(\w+)\} \/>/g)].map((m) => m[1]);
 const sentencesOf = (s) => s.split(/\n{2,}/).flatMap((p) => p.split(/(?<=[.!?])\s+/));
 const rowsOf = (s) => s.split('\n').filter((l) => /^\|/.test(l) && !/^\| ?-{3}/.test(l)).map((l) => l.split('|').slice(1, -1).map((c) => c.trim()));
 
@@ -62,8 +62,8 @@ test('the four governance views are each named and linked, with who reads them',
 });
 
 test('the slot record-of-work appears once, in "The four governance views"', () => {
-  assert.deepEqual(slotsIn(text), ['record-of-work']);
-  assert.deepEqual(slotsIn(section(text, 'The four governance views')), ['record-of-work']);
+  assert.deepEqual(slotsIn(text), ['recordOfWork']);
+  assert.deepEqual(slotsIn(section(text, 'The four governance views')), ['recordOfWork']);
 });
 
 test('failure postures are one 4-row table: audit fails closed, the rest do not', () => {

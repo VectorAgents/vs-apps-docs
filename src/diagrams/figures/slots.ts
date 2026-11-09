@@ -9,7 +9,7 @@ export interface FigureSlot {
 }
 
 /** Placeholders allowed in `docs/`. Lower it each time a real figure replaces one. */
-export const PLACEHOLDER_CAP = 7;
+export const PLACEHOLDER_CAP = 3;
 
 export const slots: readonly FigureSlot[] = [
   {
@@ -28,7 +28,7 @@ export const slots: readonly FigureSlot[] = [
     id: 'agent-tree',
     page: 'agents-in-a-space',
     kind: 'structure',
-    caption: 'One orchestrator agent heads the agents of a space',
+    caption: 'One orchestrator agent leads the agents of a space',
   },
   {
     id: 'access-check',
