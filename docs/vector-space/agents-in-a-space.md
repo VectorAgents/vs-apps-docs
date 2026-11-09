@@ -3,7 +3,8 @@ title: Agents in a space
 description: What an agent is, how the orchestrator agent hands work to other agents, and how threads and runs keep that work apart.
 ---
 
-import FigurePlaceholder from '@site/src/components/FigurePlaceholder';
+import StructureFigure from '@site/src/components/StructureFigure';
+import { agentTree } from '@site/src/diagrams/figures/agent-tree.ts';
 
 An [agent](./glossary.md#agent) is a model that is set up with instructions, tools and resources. It works inside one [space](./glossary.md#space). Each space has one [orchestrator agent](./glossary.md#orchestrator-agent). It takes the request of a [member](./glossary.md#member) and hands parts of it to other agents. This page shows how those agents fit together and how their conversations are kept apart.
 
@@ -21,7 +22,7 @@ The orchestrator agent manages the agents below it. It decides which agent gets 
 
 ## The agent tree
 
-<FigurePlaceholder slot="agent-tree" />
+<StructureFigure data={agentTree} />
 
 The agents of a space form a tree. The orchestrator agent is the root. Below it sit agents for specific jobs, such as searching leads or drafting email. Each of these agents can have child agents of its own, which take parts of its job.
 

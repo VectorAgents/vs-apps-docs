@@ -10,7 +10,7 @@ const docs = resolve(dirname(fileURLToPath(import.meta.url)), '../docs');
 const file = resolve(docs, 'vector-space/one-access-model.md');
 const text = readFileSync(file, 'utf8');
 const body = text.replace(/^---\n[\s\S]*?\n---\n/, '').replace(/^import .*$/gm, '').trim();
-const prose = body.replace(/<FigurePlaceholder[^>]*\/>/g, '').replace(/\]\([^)]*\)/g, ']').replace(/[#*`|]/g, '');
+const prose = body.replace(/<(?:FigurePlaceholder|StructureFigure)[^>]*\/>/g, '').replace(/\]\([^)]*\)/g, ']').replace(/[#*`|]/g, '');
 const lead = body.split(/^## /m)[0];
 const noLinks = body.replace(/\]\([^)]*\)/g, ']');
 
@@ -28,8 +28,8 @@ test('the page is 500 to 800 words with at most one table', () => {
 });
 
 test('the figure slot appears once, inside "How the inputs combine"', () => {
-  assert.equal(text.match(/<FigurePlaceholder\b/g)?.length, 1);
-  assert.match(section(text, 'How the inputs combine'), /<FigurePlaceholder slot="access-check" \/>/);
+  assert.equal(text.match(/<StructureFigure\b/g)?.length, 1);
+  assert.match(section(text, 'How the inputs combine'), /<StructureFigure data=\{accessCheck\} \/>/);
 });
 
 test('the example is a member who sees only the EU leads, by a condition on the group, in the app and through the orchestrator agent', () => {

@@ -3,7 +3,8 @@ title: One access model
 description: How a request is decided, the same for the UI, the API, agents and apps.
 ---
 
-import FigurePlaceholder from '@site/src/components/FigurePlaceholder';
+import StructureFigure from '@site/src/components/StructureFigure';
+import { accessCheck } from '@site/src/diagrams/figures/access-check.ts';
 
 Access is what a caller may do on a resource in a space. Vector Space works it out for each operation with one check, the same for the UI, the API, agents and apps. The check reads four inputs, and clear rules say which input wins.
 
@@ -28,7 +29,7 @@ One rule is easy to miss. A Restricted resource reaches only its owner and the u
 
 ## How the inputs combine
 
-<FigurePlaceholder slot="access-check" />
+<StructureFigure data={accessCheck} />
 
 These rules say what wins. They are not a numbered order.
 

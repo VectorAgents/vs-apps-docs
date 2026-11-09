@@ -3,7 +3,8 @@ title: Organizations and spaces
 description: The tenant boundary, and the space as the unit of work.
 ---
 
-import FigurePlaceholder from '@site/src/components/FigurePlaceholder';
+import StructureFigure from '@site/src/components/StructureFigure';
+import { organizationStructure } from '@site/src/diagrams/figures/organization-structure.ts';
 
 An [organization](./glossary.md#organization) is the company account in Vector Space. It is the tenant: every user, key, resource and space sits inside one organization. A [space](./glossary.md#space) is the unit of work: one team's place for its members, its agents and its data. One organization holds many spaces, and each space belongs to one organization.
 
@@ -21,7 +22,7 @@ Each organization has one [Organization admin](./glossary.md#organization-admin)
 
 AI provider accounts belong to the organization, not to one space. An AI provider account is the organization's own account with a company that supplies AI models, and it pays for the organization's model calls. Each account reaches every space by default. Someone can limit an account to chosen spaces.
 
-<FigurePlaceholder slot="organization-structure" />
+<StructureFigure data={organizationStructure} />
 
 ## The space as the unit of work
 

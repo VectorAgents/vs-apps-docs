@@ -224,3 +224,102 @@ test('space-structure: the Command Center is a plain part, not listed under Vect
 test('space-structure: the figure names no example app and no vendor', () => {
   assert.doesNotMatch(JSON.stringify(spaceStructure), /Hiring|SDR|CSR|Apollo|Exa|BrightData|RedemptAI/);
 });
+
+const load = async (id) => (await import(join(figures, `${id}.ts`)))[camel(id)];
+const labels = (parts) => parts.map((p) => p.label);
+const everyText = (data) => JSON.stringify(data);
+const concept = ['organization-structure', 'agent-tree', 'access-check', 'record-of-work'];
+
+test('the four structure figures of the concept pages have data', () => {
+  for (const id of concept) assert.ok(existsSync(join(figures, `${id}.ts`)), id);
+});
+
+test('organization-structure: one Organization slab under two Space slabs, with the admin on the Organization slab', async () => {
+  const data = await load('organization-structure');
+  const bySlab = (id) => labels(data.parts.filter((p) => p.on === id));
+  assert.deepEqual(data.slabs.map((s) => [s.label, s.level]), [['Organization', 0], ['Sales space', 1], ['Second space', 1]]);
+  assert.deepEqual(bySlab('organization'), ['Organization admin']);
+  for (const id of ['salesSpace', 'secondSpace']) assert.deepEqual(bySlab(id), ['Members', 'Orchestrator agent', 'Context Hub']);
+});
+
+test('organization-structure: each resource belongs to one space and the spaces are never said to share nothing', async () => {
+  const data = await load('organization-structure');
+  const hubs = data.parts.filter((p) => p.label === 'Context Hub');
+  assert.equal(hubs.length, 2);
+  for (const hub of hubs) assert.match(hub.text, /one space|this space/i);
+  assert.doesNotMatch(everyText(data), /share nothing|shares nothing|nothing in common/i);
+  assert.deepEqual(data.links, []);
+});
+
+test('agent-tree: 6 parts, no Thread and no depth number', async () => {
+  const data = await load('agent-tree');
+  assert.equal(data.parts.length, 6);
+  assert.deepEqual(labels(data.parts).sort(), ['A2A agent', 'Child agent', 'Email agent', 'Lead search agent', 'Orchestrator agent', 'Short-lived helper']);
+  assert.doesNotMatch(everyText(data), /thread|depth|level \d|tier|\d+ levels/i);
+});
+
+test('agent-tree: the A2A agent is outside the space on a dashed link and the leaves have no children', async () => {
+  const data = await load('agent-tree');
+  const a2a = data.parts.find((p) => p.id === 'a2a');
+  assert.equal(a2a.tone, 'plug');
+  assert.notEqual(a2a.on, data.parts.find((p) => p.id === 'orchestrator').on);
+  assert.deepEqual(data.links.filter((l) => l.remote).map((l) => [l.from, l.to]), [['orchestrator', 'a2a']]);
+  const parents = new Set(data.links.map((l) => l.from));
+  for (const leaf of ['a2a', 'helper', 'child']) assert.ok(!parents.has(leaf), `${leaf} has no child`);
+  assert.deepEqual(data.links.filter((l) => !l.remote).map((l) => `${l.from}>${l.to}`).sort(), ['email>helper', 'lead>child', 'orchestrator>email', 'orchestrator>lead']);
+});
+
+test('access-check: every caller reaches the Context Hub through the one Access check', async () => {
+  const data = await load('access-check');
+  assert.equal(data.slabs.length, 1);
+  assert.deepEqual(labels(data.parts).sort(), ['Access check', 'Context Hub', 'Member', 'Orchestrator agent', 'Service account', 'Vector App']);
+  const callers = data.parts.filter((p) => p.tone === 'plug');
+  assert.deepEqual(callers.map((p) => p.id).sort(), ['agent', 'app', 'member', 'serviceAccount']);
+  const check = data.parts.find((p) => p.id === 'check');
+  const hub = data.parts.find((p) => p.id === 'hub');
+  for (const caller of callers) {
+    assert.ok(caller.c + caller.w < check.c, `${caller.id} is on the caller side of the check`);
+    assert.ok(data.links.some((l) => l.from === caller.id && l.to === 'check'), `${caller.id} joins the check`);
+  }
+  assert.ok(check.c + check.w < hub.c);
+  assert.deepEqual(data.links.filter((l) => l.to === 'hub').map((l) => l.from), ['check']);
+  assert.ok(data.links.every((l) => !l.remote));
+});
+
+test('access-check: the API caller is a service account, and the card text carries the direction', async () => {
+  const data = await load('access-check');
+  assert.match(data.parts.find((p) => p.id === 'serviceAccount').text, /API/);
+  assert.match(data.parts.find((p) => p.id === 'check').text, /every/i);
+  assert.doesNotMatch(everyText(data), /AuthZEN|XACML|Zanzibar|numbered order/);
+});
+
+test('record-of-work: two actors feed one Execution, which four views read, on one Governance slab', async () => {
+  const data = await load('record-of-work');
+  assert.deepEqual(data.slabs.map((s) => s.label), ['Governance']);
+  assert.deepEqual(labels(data.parts).sort(), ['Activity', 'App', 'Audit', 'Execution', 'Health', 'Member', 'Overview']);
+  assert.deepEqual(data.links.filter((l) => l.to === 'execution').map((l) => l.from).sort(), ['app', 'member']);
+  assert.deepEqual(data.links.filter((l) => l.from === 'execution').map((l) => l.to).sort(), ['activity', 'audit', 'health', 'overview']);
+});
+
+test('record-of-work: the caption is the one of the spec and the views are never planes', async () => {
+  const data = await load('record-of-work');
+  assert.equal(data.caption, 'Each execution records who it ran as, and four views read the records');
+  assert.doesNotMatch(everyText(data), /\bplanes?\b|actor stamp|immutabl|black-box/i);
+});
+
+test('the four figures name no example app, no vendor and no banned term, and write no capital-S Space outside a slab name', async () => {
+  for (const id of concept) {
+    const data = await load(id);
+    assert.doesNotMatch(everyText(data), /Hiring|SDR|CSR|Apollo|Exa|BrightData|RedemptAI|resource pool|\bgrant\b|operating system/i, id);
+    const prose = [...data.slabs.map((s) => s.text), ...data.parts.map((p) => p.text), data.title, data.caption].join(' ').replace(/Vector Space/g, '');
+    assert.doesNotMatch(prose, /\bSpace\b/, id);
+  }
+});
+
+test('a legend line swatch draws a plain link and the figures that draw plain links explain them', async () => {
+  for (const id of ['agent-tree', 'access-check', 'record-of-work']) {
+    const data = await load(id);
+    assert.ok(data.links.some((l) => !l.remote));
+    assert.ok(data.legend.some((i) => i.swatch === 'link'), `${id} explains its lines`);
+  }
+});

@@ -73,9 +73,9 @@ export interface LinkData {
   remote?: boolean;
 }
 
-/** `core` and `plug` draw a swatch in the tone of that kind of part, `remote` draws a dashed line. */
+/** `core` and `plug` draw a swatch in the tone of that kind of part, `link` draws a plain line and `remote` a dashed line. */
 export interface LegendItem {
-  swatch: PartTone | 'remote';
+  swatch: PartTone | 'link' | 'remote';
   /** 15 words or fewer. */
   text: string;
 }

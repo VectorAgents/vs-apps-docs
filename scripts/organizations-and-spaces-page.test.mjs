@@ -10,9 +10,9 @@ const docs = resolve(dirname(fileURLToPath(import.meta.url)), '../docs');
 const file = resolve(docs, 'vector-space/organizations-and-spaces.md');
 const text = readFileSync(file, 'utf8');
 const body = text.replace(/^---\n[\s\S]*?\n---\n/, '');
-const prose = body.replace(/^import .*$/gm, '').replace(/<FigurePlaceholder[^>]*\/>/g, '');
+const prose = body.replace(/^import .*$/gm, '').replace(/<(?:FigurePlaceholder|StructureFigure)[^>]*\/>/g, '');
 const plain = prose.replace(/\[([^\]]*)\]\([^)]*\)/g, '$1');
-const slotsIn = (s) => [...s.matchAll(/<FigurePlaceholder slot="([^"]+)" \/>/g)].map((m) => m[1]);
+const slotsIn = (s) => [...s.matchAll(/<StructureFigure data=\{(\w+)\} \/>/g)].map((m) => m[1]);
 
 test('the page runs lead, Example, three detail sections, Where to go next', () => {
   assert.deepEqual([...text.matchAll(/^## (.+)$/gm)].map((m) => m[1]), [
@@ -37,8 +37,8 @@ test('the page is 500 to 800 words with no table', () => {
 });
 
 test('the slot organization-structure appears once, in "The organization as the tenant"', () => {
-  assert.deepEqual(slotsIn(text), ['organization-structure']);
-  assert.deepEqual(slotsIn(section(text, 'The organization as the tenant')), ['organization-structure']);
+  assert.deepEqual(slotsIn(text), ['organizationStructure']);
+  assert.deepEqual(slotsIn(section(text, 'The organization as the tenant')), ['organizationStructure']);
 });
 
 test('every link resolves, every glossary anchor exists, and Where to go next links its three pages and the glossary', () => {
