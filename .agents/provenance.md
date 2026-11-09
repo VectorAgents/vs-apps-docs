@@ -245,3 +245,21 @@ Source paths are in the sibling `vector-spaces` repo, under `docs/`. The product
 | A Vector App adds your own pages and agent actions to a space. | `product/GLOSSARY.md` (App), `systems/apps/README.md` (the model), `systems/apps/REGISTRY.md` (the manifest lists pages and agent catalog entries). |
 | The vs-apps SDK is the TypeScript package you build apps with. | The README of `@vectoragents/vs-apps` 0.4.0. |
 | The three cards, Understand, Build and Look up, only link pages that other rows here already source. | The links of the entry page. |
+
+## How work moves through a space
+
+Source paths are in the sibling `vector-spaces` repo, under `docs/`. Claim-level sources are in the "1. `how-work-moves-through-a-space`" part of the How group's outline research. The spec overrides: one H2 per step with no Example H2, the box is named "Connectors", the page does not name Can edit on contacts, it does not say that each further lead raises an ask, and the actors are Member for steps 1, 4, 5 and 6 and App for steps 2 and 3. The agent is not an actor.
+
+| Claim | Rests on |
+| --- | --- |
+| A member asks the space's one orchestrator agent in a thread. The run works as the thread's owner, the member, and each call is decided for that member. | `systems/STUDIO.md` (The agent tree), `product/GLOSSARY.md` (Agents and runs), `systems/access/RUNTIME.md` (Run identity, Runtime gating). |
+| The agent reaches the app only if the member reaches it. | `systems/apps/BINDINGS.md` (Capabilities and access: One reach rule; Invariants). |
+| Finding leads is a read action, so it raises no ask. An app endpoint call asks unless the request is a GET, so the page names the action a read (gate row 14). | `systems/apps/REGISTRY.md` (Agent catalog and endpoints), `systems/COMMAND-CENTER.md` (The ask). |
+| The app uses Apollo, Exa and BrightData as the space's Connectors. BrightData is a user statement, not a provider on main (gate row 2). | User statement. `systems/context-hub/CALLS.md` for the connector call record. |
+| The app records "lead qualified" as an act for each lead. Only apps record acts. | `systems/INTELLIGENCE.md` (lead paragraph; Admission; The manifest is the act vocabulary). |
+| The app saves each lead as a contact in the contacts Vector Module (gate row 10: the step stays by user decision). The page does not name the access on contacts. | `systems/context-hub/MODULES.md` (Consumption: agents, apps, client; The contacts module). |
+| The agent drafts the email from the contacts. The model call goes through the AI gateway, the one route for every paid model call (gate row 7). | `systems/context-hub/MODULES.md` (Consumption: agents, apps, client), `systems/AI.md` (The gateway). |
+| Sending is a write, and sends through the Omnibox need approval by default. The run stops and an ask appears in the Command Center. | `systems/context-hub/MODULES.md` (The omnibox module), `systems/COMMAND-CENTER.md` (The ask; Grants: The default, and what loosens it; Raised and resolved). |
+| The member who asked decides, because a person answers for their own run. After approval the run resumes as the same actor, and an approval is a second check and never gives access. | `systems/COMMAND-CENTER.md` (The audience; Deciding). |
+| The email goes out through the Omnibox as the member. The app records no act for the send (user decision, ticket 18). | `systems/context-hub/MODULES.md` (Access & visibility; The omnibox module), `systems/COMMAND-CENTER.md` (Deciding), `systems/access/RUNTIME.md` (Run identity). |
+| The record names an actor per step: Member for 1, 4, 5 and 6, App for 2 and 3. The actor kind of an app's connector call is not stated in the docs (gate rows 3 and 9). The agent is not an actor: the master has six actor arms. | `systems/governance/README.md` (The attribution envelope; `actorRef`: one grammar over six arms), `systems/governance/EXECUTION.md` (The record), `systems/INTELLIGENCE.md` (Admission). |
