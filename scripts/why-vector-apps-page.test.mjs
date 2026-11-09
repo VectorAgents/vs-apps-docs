@@ -21,7 +21,7 @@ test('the page opens with the definition of an app', () => {
   assert.match(body, /^An \[app\]\(\.\/glossary\.md#app\) is /);
 });
 
-test('every link resolves, and the page links How a Vector App works, the quickstart and Choose your path', () => {
+test('every link resolves, and the page links How a Vector App works, the quickstart and Extending a space', () => {
   const links = linksOf(text);
   for (const link of links) {
     const [path, anchor] = link.split('#');
@@ -31,7 +31,18 @@ test('every link resolves, and the page links How a Vector App works, the quicks
       assert.ok(terms.some((l) => l.slice(4).toLowerCase().replaceAll(' ', '-') === anchor), link);
     }
   }
-  for (const target of ['./how-a-vector-app-works.md', './quickstart.md', '../sdk/choose-your-path.md']) assert.ok(links.includes(target), target);
+  for (const target of ['./how-a-vector-app-works.md', './quickstart.md', '../vector-space/extending-a-space.md']) assert.ok(links.includes(target), target);
+  assert.equal(links.filter((l) => l === '../vector-space/extending-a-space.md').length, 2, 'once in Where an app fits, once in Where to go next');
+  assert.doesNotMatch(text, /choose-your-path|Choose your path/);
+});
+
+test('Where an app fits is one sentence that links Extending a space, then the app-offered agents, with no list', () => {
+  const fits = section(text, 'Where an app fits');
+  assert.doesNotMatch(fits, /^- /m);
+  assert.match(fits, /\[Extending a space\]\(\.\.\/vector-space\/extending-a-space\.md\) compares the three ways to plug in your code/);
+  assert.match(fits, /\[A2A\]\(\.\.\/vector-space\/glossary\.md#a2a\)/);
+  assert.match(fits, /\[MCP\]\(\.\.\/vector-space\/glossary\.md#mcp\)/);
+  assert.match(fits, /An app can also offer an A2A agent and an MCP server of its own/);
 });
 
 test('the space gives an app member identity, platform data, model access and the record of work', () => {
