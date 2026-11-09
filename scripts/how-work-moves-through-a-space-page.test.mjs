@@ -138,6 +138,19 @@ test('the page names no master doc, implementation name, banned term or use case
   assert.doesNotMatch(prose, /(?<!Vector )\bSpace\b/);
 });
 
+const { workedExampleFlow } = await import('../src/diagrams/figures/worked-example-flow.ts');
+const headings = [...text.matchAll(/^## (.+)$/gm)].map((m) => m[1]);
+const slugOf = (heading) => heading.toLowerCase().replace(/[^a-z0-9 ]/g, '').replace(/ /g, '-');
+
+test('each step of the figure links to the H2 that names that step', () => {
+  assert.equal(workedExampleFlow.steps.length, 6);
+  for (const [i, step] of workedExampleFlow.steps.entries()) {
+    const heading = headings.find((h) => `#${slugOf(h)}` === step.href);
+    assert.ok(heading, `step ${i + 1} links to ${step.href}`);
+    assert.match(section(text, heading), new RegExp(`^Steps? [\\d and]*\\b${i + 1}\\b`, 'm'), `the section opens with step ${i + 1}`);
+  }
+});
+
 test('the page assumes no TypeScript, Node or React', () => assert.doesNotMatch(prose, /TypeScript|Node|React/));
 
 test('the page follows the voice checks and no sentence passes 25 words', () => {

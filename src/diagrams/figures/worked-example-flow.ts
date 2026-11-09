@@ -12,6 +12,10 @@ const connectorsLink: Waypoint = [16.0, 8.9, 13.25];
 const appLinkOfConnectors: Waypoint = [20.2, 8.3, 9.25];
 const laneBetweenMemberAndContacts = 9.0;
 const laneBetweenRows = 7.6;
+/** Where the email leaves the space: past the left edge of the Space slab, at the height of the part tops. */
+const outOfTheSpace: Waypoint = [0.6, 4.56, 14.6];
+/** The centre of the ask tile, above the Command Center. */
+const askTile: Waypoint = [7.2, 5.4, 22.5];
 
 /** Member to the Orchestrator agent, then over the dashed link to the app. */
 const requestPath: Waypoint[] = [
@@ -28,6 +32,11 @@ const requestPath: Waypoint[] = [
 const queryPath = (mark: number): Waypoint[] => ['app', appLinkOfConnectors, connectorsLink, `connectors#${mark}`];
 /** The app to Contacts, through the lane between the two rows of parts. */
 const savePath: Waypoint[] = ['app', [20.2, laneBetweenRows, 9.25], [11.0, laneBetweenRows, 14.0], 'contacts'];
+
+/** Contacts to the orchestrator agent, along the lane between the Member and Contacts. */
+const draftPath: Waypoint[] = ['contacts', [laneBetweenMemberAndContacts, 8.96, 15.0], [laneBetweenMemberAndContacts, 4.56, 15.0], 'orchestrator'];
+/** The model call: out to the AI gateway and back. */
+const gatewayPath: Waypoint[] = ['orchestrator', 'gateway', 'orchestrator'];
 
 /** One service of Connectors: its search starts at `search`, its results gather and its cube leaves at `leave`, and it is back at the app at `back`. */
 const services = [
@@ -66,6 +75,52 @@ const scenes: SceneData[] = [
     effects: [
       { kind: 'hop', path: savePath, draw: [0, 1] },
       ...[0, 1, 2].map((i): SceneData['effects'][number] => ({ kind: 'item', path: savePath, move: [0, 1], rise: i * 0.95, qualifiedAt: 0 })),
+    ],
+  },
+  {
+    step: 4,
+    durationMs: 7000,
+    lit: [{ part: 'contacts', from: 0 }, { part: 'orchestrator', from: 0.2 }, { part: 'gateway', from: 0.3 }],
+    effects: [
+      { kind: 'hop', path: draftPath, draw: [0, 0.22] },
+      { kind: 'item', path: draftPath, move: [0, 0.22], show: [0, 0.26], qualifiedAt: 0 },
+      { kind: 'draft', at: [12.1, 4.0, 15], to: 'Ava Clarke, Northwind Capital', subject: 'About your lending desk', body: "Hi Ava, Northwind's new UK lending desk caught my eye. Could you spare 15 minutes this week?", type: [0.3, 0.85] },
+      { kind: 'hop', path: gatewayPath.slice(0, 2), draw: [0.3, 0.45] },
+      { kind: 'item', path: gatewayPath, move: [0.3, 0.62], show: [0.3, 0.64] },
+      { kind: 'ring', at: 'gateway', window: [0.42, 0.6] },
+      { kind: 'item', shape: 'envelope', path: ['orchestrator', 'orchestrator'], move: [0.9, 1] },
+    ],
+  },
+  {
+    step: 5,
+    durationMs: 2600,
+    caption: 'Sending is a write, so it raises an ask in the Command Center. The run waits for the member who asked.',
+    pause: true,
+    lit: [{ part: 'commandCenter', from: 0.6 }],
+    effects: [
+      { kind: 'hop', path: ['orchestrator', 'commandCenter'], draw: [0, 0.6] },
+      { kind: 'item', shape: 'envelope', path: ['orchestrator', 'commandCenter'], move: [0, 0.6], show: [0, 1] },
+      { kind: 'ask', at: askTile, show: [0.65, 1] },
+    ],
+  },
+  {
+    step: 5,
+    durationMs: 2400,
+    caption: 'The member approves the ask, and the run resumes as that member.',
+    lit: [{ part: 'member', from: 0 }, { part: 'commandCenter', from: 0 }],
+    effects: [
+      { kind: 'ask', at: askTile, show: [0, 0.35], approved: true },
+      { kind: 'hop', path: ['commandCenter', 'omnibox'], draw: [0.3, 1] },
+      { kind: 'item', shape: 'envelope', path: ['commandCenter', 'omnibox'], move: [0.3, 1], show: [0, 1] },
+    ],
+  },
+  {
+    step: 6,
+    durationMs: 3000,
+    lit: [{ part: 'omnibox', from: 0 }],
+    effects: [
+      { kind: 'hop', path: ['omnibox', outOfTheSpace], draw: [0.1, 0.8] },
+      { kind: 'item', shape: 'envelope', path: ['omnibox', outOfTheSpace], move: [0.1, 0.8], show: [0, 0.9], fade: 0.1 },
     ],
   },
 ];
@@ -122,26 +177,32 @@ export const workedExampleFlow: FlowData = {
     {
       text: 'A member asks the orchestrator agent to find leads. The agent calls an action of the example Vector App, and Vector Space checks access as the member.',
       record: { text: 'Member asks the agent.', actor: 'Member' },
+      href: '#the-request',
     },
     {
       text: 'The app uses the space\'s Connectors for Apollo, Exa and BrightData, then qualifies the leads. It records "lead qualified" for each one.',
       record: { text: 'The platform records each connector call. The app records "lead qualified" for each lead.', actor: 'App' },
+      href: '#leads-found-qualified-and-saved',
     },
     {
       text: 'The app saves each qualified lead as a contact.',
       record: { text: 'The app saves the leads as contacts.', actor: 'App' },
+      href: '#leads-found-qualified-and-saved',
     },
     {
       text: 'The agent drafts one outreach email for a qualified lead. The model call goes through the AI gateway.',
       record: { text: 'The agent drafts the email through the AI gateway.', actor: 'Member' },
+      href: '#the-draft',
     },
     {
       text: 'Sending is a write, so it raises an ask in the Command Center. The member who asked approves it, and the run resumes as that member.',
       record: { text: 'The member approves the ask.', actor: 'Member' },
+      href: '#the-pause-for-approval',
     },
     {
       text: 'The email goes out through the Omnibox. The app records no act for this step.',
       record: { text: 'The email goes out through the Omnibox.', actor: 'Member' },
+      href: '#the-send',
     },
   ],
   scenes,

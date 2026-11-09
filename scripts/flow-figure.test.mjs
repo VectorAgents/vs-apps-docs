@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { advance, frameAt, layoutFlow, recordAt, sceneAt } from '../src/diagrams/figure/flow.ts';
+import { advance, captionAt, frameAt, layoutFlow, pausedAt, recordAt, sceneAt } from '../src/diagrams/figure/flow.ts';
 import { project } from '../src/diagrams/figure/geometry.ts';
 
 /** Three parts on one slab, and two scenes: a cube rides from a to b, then a ring pulses on c while two parts are lit. */
@@ -175,6 +175,96 @@ test('recordAt: a row appears once its step is done and a step without a scene a
   assert.deepEqual(recordAt({ ...fixture, scenes: [fixture.scenes[0]] }, 2).map((r) => r.actor), ['Member']);
 });
 
+/** The fixture with a third scene that raises an ask and pauses, a fourth that approves it, and an envelope and a draft card. */
+const asking = {
+  ...fixture,
+  steps: [...fixture.steps, { text: 'An ask waits.', record: { text: 'The ask waits.', actor: 'Member' } }],
+  scenes: [
+    fixture.scenes[0],
+    {
+      step: 2,
+      durationMs: 1000,
+      lit: [{ part: 'a', from: 0 }],
+      effects: [
+        { kind: 'draft', at: [1, 6, 8], to: 'Ava', subject: 'Hello', body: 'Could we talk?', type: [0.1, 0.6] },
+        { kind: 'item', shape: 'envelope', path: ['a', 'a'], move: [0.8, 1] },
+      ],
+    },
+    {
+      step: 3,
+      durationMs: 1000,
+      pause: true,
+      caption: 'The run waits.',
+      lit: [{ part: 'b', from: 0 }],
+      effects: [
+        { kind: 'item', shape: 'envelope', path: ['a', 'b'], move: [0, 0.6] },
+        { kind: 'ask', at: [8, 2, 10], show: [0.6, 1] },
+      ],
+    },
+    {
+      step: 3,
+      durationMs: 1000,
+      lit: [{ part: 'b', from: 0 }],
+      effects: [
+        { kind: 'ask', at: [8, 2, 10], show: [0, 0.4], approved: true },
+        { kind: 'item', shape: 'envelope', path: ['b', 'c'], move: [0.3, 1], show: [0, 0.9], fade: 0.1 },
+      ],
+    },
+  ],
+};
+const askLayout = layoutFlow(asking);
+
+test('pause: play stops at the end of a pause scene and a later advance from there runs the next scene', () => {
+  assert.equal(advance(asking, 0, 10_000), 3, 'stops where the ask waits');
+  assert.equal(advance(asking, 2.5, 10_000), 3);
+  assert.equal(advance(asking, 3, 500), 3.5, 'play from the pause approves it');
+  assert.equal(advance(asking, 3, 10_000), 4);
+  assert.deepEqual([2, 2.5, 3, 4].map((p) => pausedAt(asking, p)), [false, false, true, false]);
+});
+
+test('ask: shows once its window opens, as waiting in the pause scene and as approved in the next', () => {
+  assert.equal(frameAt(askLayout, 2.5).ask, null);
+  const waiting = frameAt(askLayout, 3).ask;
+  assert.equal(waiting.state, 'waiting');
+  near([waiting.x, waiting.y], project(8, 2, 10));
+  const approved = frameAt(askLayout, 3.2).ask;
+  assert.equal(approved.state, 'approved');
+  assert.equal(frameAt(askLayout, 4).ask, null, 'the ask is cleared when the approval has run');
+});
+
+test('item: an envelope is a flat tile, and it fades out over its own fade share', () => {
+  assert.equal(frameAt(askLayout, 2).items[0].shape, 'envelope');
+  assert.equal(frameAt(askLayout, 1.5).items.length, 0);
+  assert.equal(frameAt(askLayout, 3.4).items[0].shape, 'envelope');
+  const fading = frameAt(askLayout, 3.85).items[0];
+  assert.ok(fading.opacity > 0 && fading.opacity < 1, `opacity ${fading.opacity}`);
+  assert.deepEqual(frameAt(askLayout, 4).items, []);
+});
+
+test('draft: types the address, the subject and the body in turn, and says when it is ready', () => {
+  const empty = frameAt(askLayout, 1.1).draft;
+  assert.deepEqual([empty.state, empty.to, empty.subject, empty.body], ['drafting', '', '', '']);
+  const subject = frameAt(askLayout, 1.2).draft;
+  assert.deepEqual([subject.to, subject.subject, subject.body], ['Ava', 'H', '']);
+  const body = frameAt(askLayout, 1.35).draft;
+  assert.deepEqual([body.to, body.subject, body.body], ['Ava', 'Hello', 'Cou']);
+  const done = frameAt(askLayout, 2).draft;
+  assert.deepEqual([done.state, done.to, done.subject, done.body], ['ready', 'Ava', 'Hello', 'Could we talk?']);
+  assert.equal(frameAt(askLayout, 2.5).draft, null);
+});
+
+test('lit: a part that two scenes in a row light from their start stays up between them', () => {
+  assert.equal(frameAt(askLayout, 3).lit.b, 1);
+  assert.equal(frameAt(askLayout, 3.02).lit.b, 1);
+});
+
+test('caption: a scene can word the caption of its step, and the step text is the rest', () => {
+  assert.equal(captionAt(asking, 0), 'At rest.');
+  assert.equal(captionAt(asking, 3), 'The run waits.');
+  assert.equal(captionAt(asking, 4), 'An ask waits.');
+  assert.equal(captionAt(asking, 1), 'A sends work to B.');
+});
+
 const { workedExampleFlow: example } = await import('../src/diagrams/figures/worked-example-flow.ts');
 const exampleLayout = layoutFlow(example);
 const words = (text) => text.trim().split(/\s+/).length;
@@ -214,8 +304,23 @@ test('worked example: six steps with a record row each, the actors of the spec, 
   assert.doesNotMatch(JSON.stringify(example.steps), /outreach sent/);
 });
 
-test('worked example: scenes S1 to S3 play steps 1 to 3 for 5.6, 4.8 and 2.2 seconds', () => {
-  assert.deepEqual(example.scenes.map((s) => [s.step, s.durationMs]), [[1, 5600], [2, 4800], [3, 2200]]);
+test('worked example: seven scenes play the six steps, and only the scene that raises the ask pauses', () => {
+  assert.deepEqual(example.scenes.map((s) => [s.step, s.durationMs]), [[1, 5600], [2, 4800], [3, 2200], [4, 7000], [5, 2600], [5, 2400], [6, 3000]]);
+  assert.deepEqual(example.scenes.map((s) => s.pause === true), [false, false, false, false, true, false, false]);
+  assert.ok(example.scenes[4].caption && example.scenes[5].caption, 'the ask and the approval word their own captions');
+  for (const [i] of example.steps.entries()) assert.ok(example.scenes.some((s) => s.step === i + 1), `step ${i + 1} has a scene, so its pill works`);
+});
+
+test('worked example: auto-play halts at the ask and an approval plays the rest to the end', () => {
+  assert.equal(advance(example, 0, 60_000), 5);
+  assert.equal(pausedAt(example, 5), true);
+  assert.equal(advance(example, 5, 60_000), 7);
+  assert.equal(captionAt(example, 5), example.scenes[4].caption);
+  assert.match(captionAt(example, 5), /waits/);
+});
+
+test('worked example: every step names the heading that explains it, in order', () => {
+  assert.deepEqual(example.steps.map((s) => s.href), ['#the-request', '#leads-found-qualified-and-saved', '#leads-found-qualified-and-saved', '#the-draft', '#the-pause-for-approval', '#the-send']);
 });
 
 test('worked example: every waypoint resolves, every window is ordered and inside the scene, and every lit part exists', () => {
@@ -252,8 +357,35 @@ test('worked example: nothing is lit or drawn at rest, and the still pose of eac
   assert.equal(three.items.length, 3);
 });
 
-test('worked example: the record fills in as steps finish', () => {
-  assert.deepEqual([0, 1, 2, 3].map((p) => recordAt(example, p).length), [0, 1, 2, 3]);
+test('worked example: the draft is the still pose of scene 4, with a gateway ping and one envelope', () => {
+  const four = frameAt(exampleLayout, 4);
+  assert.deepEqual(Object.keys(four.lit).sort(), ['contacts', 'gateway', 'orchestrator']);
+  assert.deepEqual([four.draft.state, four.chat], ['ready', null]);
+  assert.ok(four.draft.to && four.draft.subject && four.draft.body);
+  assert.deepEqual(four.items.map((i) => i.shape), ['envelope']);
+  assert.equal(four.hops.filter((hop) => hop.current).length, 2, 'the cube to the agent and the call to the gateway');
+  assert.ok(frameAt(exampleLayout, 3.5).rings.some((ring) => !ring.hold), 'the gateway pings');
+  assert.equal(frameAt(exampleLayout, 3.3).draft.state, 'drafting');
+});
+
+test('worked example: the ask waits in the pause pose, the approval clears it and the email leaves through the Omnibox', () => {
+  const [five, six, seven] = [5, 6, 7].map((p) => frameAt(exampleLayout, p));
+  assert.deepEqual([five.ask.state, five.draft], ['waiting', null]);
+  assert.deepEqual(Object.keys(five.lit), ['commandCenter']);
+  assert.equal(frameAt(exampleLayout, 4.5).ask, null, 'the ask is not there while the envelope is on its way');
+  const near = ([x, y], at) => Math.hypot(x - exampleLayout.resolve(at)[0], y - exampleLayout.resolve(at)[1]);
+  assert.ok(near([five.items[0].x, five.items[0].y], 'commandCenter') < 2, 'the envelope waits at the Command Center');
+  assert.equal(frameAt(exampleLayout, 5.1).ask.state, 'approved');
+  assert.equal(six.ask, null);
+  assert.ok(near([six.items[0].x, six.items[0].y], 'omnibox') < 2, 'the envelope is at the Omnibox once approved');
+  assert.deepEqual(Object.keys(six.lit).sort(), ['commandCenter', 'member']);
+  assert.deepEqual(Object.keys(seven.lit), ['omnibox']);
+  assert.deepEqual(seven.items, [], 'the email is gone');
+  assert.equal(seven.hops.length, 10, 'every hop stays drawn');
+});
+
+test('worked example: the record fills in as steps finish, and the approval row waits for the approval', () => {
+  assert.deepEqual([0, 1, 2, 3, 4, 5, 6, 7].map((p) => recordAt(example, p).length), [0, 1, 2, 3, 4, 4, 5, 6]);
 });
 
 test('worked example: no dashes, no first person plural and no example app name', () => {

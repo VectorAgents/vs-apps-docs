@@ -24,6 +24,8 @@ export interface StepData {
   text: string;
   /** The row the step adds to the record table once it is done. */
   record: RecordRow;
+  /** The `#id` of the heading that explains the step on the page. */
+  href?: string;
 }
 
 /** A row of the record of work. Each cell is 15 words or fewer. */
@@ -50,6 +52,10 @@ export interface SceneData {
   step: number;
   /** How long the scene runs when it plays, in milliseconds. */
   durationMs: number;
+  /** Words for the caption while the scene shows, when the text of its step does not fit it. */
+  caption?: string;
+  /** Auto-play halts at the end of this scene, where an ask waits for a person. Approve plays on from there. */
+  pause?: boolean;
   /** Parts that lift and take an accent outline while the scene runs. They stay lit to the end of the scene. */
   lit: LitData[];
   /** What moves or appears. Each effect keeps to its own scene. */
@@ -63,7 +69,7 @@ export interface LitData {
   from: number;
 }
 
-export type EffectData = HopData | ItemData | RingData | DotsData | ChatData;
+export type EffectData = HopData | ItemData | RingData | DotsData | ChatData | DraftData | AskData;
 
 /**
  * An accent line along a path, the hop that the scene makes. It grows over `draw` and is thick while its scene runs. In every
@@ -75,15 +81,19 @@ export interface HopData {
   draw: Window;
 }
 
-/** A moving cube, a unit of work in progress. */
+/** A moving cube, a unit of work in progress, or a flat envelope, the email that the work produced. */
 export interface ItemData {
   kind: 'item';
+  /** The cube is the default. */
+  shape?: 'cube' | 'envelope';
   /** The cube starts at the first point and rides the path. */
   path: Waypoint[];
   /** When it rides. Before `move[0]` it waits at the start and after `move[1]` it stays at the end. */
   move: Window;
   /** When it shows. The default runs from the start of `move` to the end of the scene. */
   show?: Window;
+  /** Share of the scene over which it fades in or out at the ends of `show`. 0.03 when left out. */
+  fade?: number;
   /** Height units above the path. A stack is several cubes with rises 0.95 apart. */
   rise?: number;
   /** Local progress at which the cube turns accent, to show a lead that is qualified. Grey until then. */
@@ -123,4 +133,32 @@ export interface ChatData {
   type: Window;
   /** The card turns into a sent message at this local progress. */
   sendAt: number;
+}
+
+/**
+ * A chat-style card at a point that types an email: the address, then the subject, then the body, as one run of characters. It
+ * shows for the whole scene and says "Drafting" until the typing is done.
+ */
+export interface DraftData {
+  kind: 'draft';
+  /** The top left corner of the card stands at this point. */
+  at: Waypoint;
+  to: string;
+  subject: string;
+  body: string;
+  /** The text types across this window. */
+  type: Window;
+}
+
+/**
+ * An ask: a pause mark above a tile, at a point. It is waiting by default, and the scene shows the tooltip that tells the
+ * reader to approve. With `approved` it is the tile with a tick, the beat after the approval.
+ */
+export interface AskData {
+  kind: 'ask';
+  /** The centre of the tile. */
+  at: Waypoint;
+  /** When it shows. */
+  show: Window;
+  approved?: boolean;
 }
