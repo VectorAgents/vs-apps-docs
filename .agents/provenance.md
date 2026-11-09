@@ -2,7 +2,7 @@
 
 What each claim in these docs rests on. A ticket or spec named below without a link rests on a `.scratch/` folder that no longer exists, so the claim cannot be traced further.
 
-The sections below follow the page folders: Why Vector Space is under `docs/vector-space/`. Quickstart, Guides, How a Vector App works and Why Vector Apps are under `docs/vector-apps/`. App definition, Reference, SDK overview and Choose your path are under `docs/sdk/`. The Entry page is `docs/index.mdx`.
+The sections below follow the page folders: Why Vector Space is under `docs/vector-space/`. Quickstart, Guides, How a Vector App works and Why Vector Apps are under `docs/vector-apps/`. App definition, Reference and SDK overview are under `docs/sdk/`. The Entry page is `docs/index.mdx`.
 
 ## Sources
 
@@ -204,19 +204,33 @@ Source paths are in the sibling `vector-spaces` repo, under `docs/`. The product
 | A space gives an app governed model access: a model slot that a space manager sets, a ticket for the AI gateway on the organization's own AI accounts, and no AI provider key in the app. A production Vector Space publishes no gateway address to apps and refuses the request with `503`; a local stack runs the gateway. | `PROTOCOL.md` (The gateway ticket: the app chooses no model, the set model is the grant; an environment that publishes no gateway address answers 503), `systems/AI.md` (The gateway: "Dev runs the gateway; prod does not"), `product/OVERVIEW.md` ("One AI gateway"). |
 | An app declares acts and approvals. An approval is an ask, shown to the person who decides. | `product/GLOSSARY.md` (Act, Ask), `systems/COMMAND-CENTER.md` (App asks). |
 
-## Choose your path
+## Extending a space
 
-The three columns and seven rows are this repo's own comparison. The product docs describe the surfaces and not a choice between them. Each cell rests on the sources below.
+Source paths are in the sibling `vector-spaces` repo, under `docs/`. The page is `docs/vector-space/extending-a-space.md`. Claim-level sources are in the "extending-a-space" part of the build's How-group outline research, checked at `vector-spaces` commit `cb4c39e10`. Where a decision of the spec differs from the research (4 table rows, no "when a write asks" row, no "A2A inherits the space's access", no public-host rule, no #248 detail), the spec wins.
+
+Gate row 8 of the Vector Space concepts spec: a cell marked CODE rests on code and not on a master doc, and a cell marked INFERRED joins two statements that no master doc makes in one place. The section does not publish until the vector-spaces team confirms each marked cell, or the cell's row is cut.
 
 | Claim | Rests on |
 | --- | --- |
-| Vector App cells: app pages and agent catalog entries in the space; staff register, a space manager activates and configures; the user token identifies the member; allowed resources and the member list; model slot; approvals and acts. | `systems/apps/REGISTRY.md` (Registration and refresh, Agent catalog and endpoints), `BINDINGS.md` (Binding lifecycle, Resources and runtime config, User directory), `PROTOCOL.md` (Tokens). |
-| A2A agent cells: an A2A agent joins the agent tree as a sub-agent the space agent delegates to, and its remote owns its prompt, model and retrieval. | `systems/STUDIO.md` (Transport, A2A leaf, the agent tree). |
-| MCP server cell "Shows up as": a connector in the resource pool. | `systems/apps/PROTOCOL.md` (A2A and MCP exposure: an app-exposed MCP server is an ordinary `CONNECTOR` pool resource), `product/GLOSSARY.md` (Connector, Resource). |
-| "No" for the member, platform data and approvals and acts on the A2A agent and MCP server columns, "Who sets it up" for both, and "Your own" for model calls. | Not observed in the product docs, which describe only the app-exposed variants. `systems/STUDIO.md` (the outbound A2A client closes over a credential of the organization) fits the "No" for the member. A standalone MCP connector can need a platform approval for a write operation (`systems/COMMAND-CENTER.md`), which is why the row says app approvals and acts. |
-| The aside line links the guide Call Vector Space from your server for a caller outside Vector Space. | `docs/vector-apps/guides/call-space-from-your-server.md` and its provenance rows. |
-| An app gets the member, the data of the space and model calls through Vector Space. The page says what an app gets and never that an app is the only way. | "Only" is a product claim that can change. |
-| Closed lists are linked, never copied. | [Platform limits](../docs/sdk/reference/platform-limits.md). |
+| A Vector App is a web app that a space shows in an iframe. Staff register it and a space manager adds it. The space shows its pages and an agent calls its endpoints with a token that the space makes for the member. The token kinds are left to How a Vector App works. | `systems/apps/README.md` (The model), `systems/apps/REGISTRY.md` (Agent catalog and endpoints), `systems/apps/PROTOCOL.md` (Tokens: User token). |
+| An A2A agent is a remote agent. The space reads its agent card from a URL and it joins the agent tree as a leaf that hands work to no one. Its remote owns its prompt, model and retrieval. | `systems/STUDIO.md` (Vocabulary: A2A leaf; The agent tree; The A2A boundary). |
+| An A2A agent is added by "someone who may manage agents in the space". The page does not say a space manager, because who holds the verb is not read from the master docs. | `systems/access/AUTHORIZATION.md` (Policies: the manage-agents verb on the space), spec section 3.4. |
+| If the organization saved a stored credential for an A2A agent, the space sends it with each call. A stored credential is a secret the organization keeps for one outside service. Gate row 8: CODE. | `systems/credentials/README.md` (Scope & selector enforcement). The docs name no member in the call, and the code sends the stored credential: `packages/core/src/studio/a2a/a2a-client.service.ts`. |
+| An MCP server is added by a member as a connector in the Context Hub. It starts Restricted, so only that member reaches it until they share it. The space finds its tools and agents call them with the connector's stored credential. | `systems/access/RESOURCES.md` (General access: Create), `systems/context-hub/README.md` (Vocabulary), `systems/credentials/README.md` (Scope & selector enforcement). |
+| A standalone A2A agent or MCP server needs no vs-apps SDK. A Vector App can offer an A2A agent and an MCP server of its own, declared in the app definition. | `systems/apps/PROTOCOL.md` (A2A and MCP exposure). |
+| Table, Calling member, Vector App: named, with the capabilities the member holds. | `systems/apps/PROTOCOL.md` (Tokens: User token). |
+| Table, Calling member, A2A agent: named only if an app offers it, otherwise a stored credential and no member. Gate row 8: CODE for the standalone case. | `systems/apps/PROTOCOL.md` (Tokens: A2A and MCP bearers) for the app case. The standalone case rests on `a2a-client.service.ts`, which sends the stored credential and mints a member bearer only for an app's agent. |
+| Table, Calling member, MCP server: never named. Gate row 8: CODE. | `apps/server/src/domain/context-hub/operations/executors/mcp-executor-token.service.ts`, whose token signer takes no user. |
+| Table, Platform data, Vector App: only what a space manager attached and the member reaches. | `systems/apps/BINDINGS.md` (Capabilities and access; Invariants). |
+| Table, Platform data, A2A agent and MCP server: gets no token to call the space; an MCP server receives the call's arguments. Gate row 8: INFERRED from "Vector Space accepts only tokens it signed" and from a standalone agent holding no space token. A remote can still call the space with an API key its owner holds, which the page leaves to the guide it links. | `systems/apps/PROTOCOL.md` (Invariants), `docs/vector-apps/guides/call-space-from-your-server.md`. |
+| Table, Model calls, Vector App: a model slot that a space manager sets. The page does not say an app spends a model call in production (see the Why Vector Apps rows). | `systems/apps/BINDINGS.md` (Resources and runtime config: Model slots), `systems/apps/PROTOCOL.md` (The gateway ticket). |
+| Table, Model calls, A2A agent: the remote agent's own model. Whether the space meters it is not stated, and the page does not say. | `systems/STUDIO.md` (Vocabulary). |
+| Table, Model calls, MCP server: none, and the model call of the calling agent goes through the AI gateway. Gate row 7 of the spec: the gateway is stated as the design. | `systems/AI.md` (The gateway). |
+| Table, Acts: yes for a Vector App, no for a standalone A2A agent or MCP server. Only a Vector App records acts, also from an A2A agent that it offers. | `systems/INTELLIGENCE.md` (Admission: a route for apps that refuses a caller with no app binding), `systems/apps/PROTOCOL.md` (A2A and MCP exposure). |
+| Shared path: a call starts in an agent run that works as the member. Before the call the space decides what the run may reach. For an MCP tool the connector and the operation must pass though the server never learns who. The page makes no claim that an A2A agent inherits the space's access. | `systems/access/RUNTIME.md` (Run identity; Runtime gating), `systems/apps/BINDINGS.md` (Capabilities and access). |
+| Shared path: the space records each call. An MCP call is a record with its actor and fails open. An A2A call is a run. The remote runs outside the space, on its own origin. | `systems/context-hub/CALLS.md` (The call record), `systems/runs/README.md` (One record, every agent kind). |
+| Choosing a kind: a Vector App for screens and data of your own, an A2A agent for an agent that reasons, an MCP server for tools or an API with no screens or reasoning. | Backed by the rows above. |
+| The example is a placeholder ticket tracker offered three ways, so it names no vendor and no example app. | Spec section 3.4. |
 
 ## Agents in a space
 

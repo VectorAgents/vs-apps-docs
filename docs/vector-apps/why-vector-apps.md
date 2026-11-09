@@ -13,13 +13,9 @@ The `hello-app` of the [quickstart](./quickstart.md) is a small app with one [ap
 
 ## Where an app fits
 
-A space has three ways to plug in your code. Each one adds something different.
+[Extending a space](../vector-space/extending-a-space.md) compares the three ways to plug in your code: a Vector App, an [A2A](../vector-space/glossary.md#a2a) agent and an [MCP](../vector-space/glossary.md#mcp) server.
 
-- **Vector App.** Screens and a server that run inside the space.
-- **A2A agent.** A remote agent that the agent of the space delegates work to. [A2A](../vector-space/glossary.md#a2a) is the Agent2Agent protocol.
-- **MCP server.** A remote set of tools that agents call. [MCP](../vector-space/glossary.md#mcp) is the Model Context Protocol.
-
-An app can also offer an A2A agent and an MCP server of its own. You declare them in the [app definition](../sdk/glossary.md#app-definition), and Vector Space adds them to the space when a space manager adds the app. [Choose your path](../sdk/choose-your-path.md) compares the three ways row by row.
+An app can also offer an A2A agent and an MCP server of its own. You declare them in the [app definition](../sdk/glossary.md#app-definition), and Vector Space adds them to the space when a space manager adds the app.
 
 ## What a space gives an app
 
@@ -36,4 +32,4 @@ Your server checks every call. A check in your client is for display only.
 
 - [How a Vector App works](./how-a-vector-app-works.md): see the parts of an app, the six steps from build to removal and the tokens.
 - [Quickstart](./quickstart.md): run a small app on your machine, then in a space.
-- [Choose your path](../sdk/choose-your-path.md): compare a Vector App, an A2A agent and an MCP server.
+- [Extending a space](../vector-space/extending-a-space.md): compare a Vector App, an A2A agent and an MCP server.
