@@ -9,7 +9,7 @@ export interface FigureSlot {
 }
 
 /** Placeholders allowed in `docs/`. Lower it each time a real figure replaces one. */
-export const PLACEHOLDER_CAP = 8;
+export const PLACEHOLDER_CAP = 7;
 
 export const slots: readonly FigureSlot[] = [
   {
@@ -61,3 +61,10 @@ export const slots: readonly FigureSlot[] = [
     caption: 'A space calls a Vector App, an A2A agent and an MCP connector in the same way',
   },
 ];
+
+/** The row of one slot. A figure takes its caption from here, so the placeholder and the figure agree. */
+export function slotOf(id: string): FigureSlot {
+  const row = slots.find((s) => s.id === id);
+  if (!row) throw new Error(`Unknown figure slot "${id}"`);
+  return row;
+}

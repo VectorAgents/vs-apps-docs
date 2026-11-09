@@ -34,8 +34,11 @@ test('the sidebar lists What, Why and How with the 11 pages in order, then the g
   assert.deepEqual(labels, ['What', 'Why', 'How']);
 });
 
-test('each of the 8 slots shows a labelled figure with a dashed frame, "Diagram in progress" and its caption', () => {
-  for (const slot of slots) {
+const source = (slot) => readFileSync(join(root, 'docs/vector-space', `${slot.page}.md`), 'utf8');
+const placeholderSlots = slots.filter((s) => source(s).includes('<FigurePlaceholder'));
+
+test('each slot without a real figure yet shows a labelled figure with a dashed frame, "Diagram in progress" and its caption', () => {
+  for (const slot of placeholderSlots) {
     const html = built(`vector-space/${slot.page}`).replaceAll('<!-- -->', '');
     const figure = html.match(/<figure class="figure-placeholder"[\s\S]*?<\/figure>/)?.[0] ?? '';
     assert.ok(figure, slot.page);
@@ -46,8 +49,8 @@ test('each of the 8 slots shows a labelled figure with a dashed frame, "Diagram 
   }
 });
 
-test('a page without a slot shows no placeholder', () => {
-  const withSlot = new Set(slots.map((s) => s.page));
+test('a page without a placeholder slot shows no placeholder', () => {
+  const withSlot = new Set(placeholderSlots.map((s) => s.page));
   for (const page of pages.filter((p) => !withSlot.has(p))) assert.ok(!built(`vector-space/${page}`).includes('figure-placeholder'), page);
 });
 

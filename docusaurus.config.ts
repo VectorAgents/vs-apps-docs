@@ -29,7 +29,7 @@ const config: Config = {
       {
         docs: { path: docsDir, routeBasePath: '/', sidebarPath: './sidebars.ts', beforeDefaultRemarkPlugins: [embedFile] },
         blog: false,
-        theme: { customCss: './src/css/custom.css' },
+        theme: { customCss: ['./src/css/custom.css', './src/css/figure.css'] },
       },
     ],
   ],
