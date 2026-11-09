@@ -1,0 +1,248 @@
+/* Paint rules of the figure renderer (`src/diagrams/figure/`) and of the figure components. Colours come from the `--iso-*` tokens in custom.css. */
+
+.structure-figure {
+  margin: 1.5rem 0;
+}
+
+.structure-figure__stage {
+  overflow-x: auto;
+}
+
+.fig-svg {
+  display: block;
+  font-family: var(--iso-font);
+  height: auto;
+  min-width: 640px;
+  width: 100%;
+}
+
+.fig-tone-slab {
+  --fig-top: var(--iso-slab-top);
+  --fig-left: var(--iso-slab-left);
+  --fig-right: var(--iso-slab-right);
+}
+
+.fig-tone-core {
+  --fig-top: var(--iso-core-top);
+  --fig-left: var(--iso-core-left);
+  --fig-right: var(--iso-core-right);
+}
+
+.fig-tone-plug {
+  --fig-top: var(--iso-plug-top);
+  --fig-left: var(--iso-plug-left);
+  --fig-right: var(--iso-plug-right);
+}
+
+/* Four wall shades, from the dark +column side to the light +row side. The two middle shades mix the two outer tokens. */
+.fig-b0 {
+  --fig-wall: var(--fig-right);
+}
+
+.fig-b1 {
+  --fig-wall: color-mix(in srgb, var(--fig-left) 33%, var(--fig-right));
+}
+
+.fig-b2 {
+  --fig-wall: color-mix(in srgb, var(--fig-left) 67%, var(--fig-right));
+}
+
+.fig-b3 {
+  --fig-wall: var(--fig-left);
+}
+
+/* A wall stroke in its own fill hides the seam between two facets. */
+.fig-facet {
+  fill: var(--fig-wall);
+  stroke: var(--fig-wall);
+  stroke-linejoin: round;
+  stroke-width: 0.6;
+}
+
+.fig-top {
+  fill: var(--fig-top);
+  stroke: var(--iso-edge);
+  stroke-linejoin: round;
+  stroke-width: 0.8;
+}
+
+.fig-outline {
+  fill: none;
+  stroke: var(--iso-edge);
+  stroke-linejoin: round;
+  stroke-width: 0.8;
+}
+
+.fig-solid {
+  cursor: pointer;
+}
+
+.fig-active .fig-outline,
+.fig-active .fig-top {
+  stroke: var(--iso-accent);
+  stroke-width: 2.4;
+}
+
+.fig-label {
+  fill: var(--iso-ink);
+  font-size: 12px;
+  font-weight: 600;
+  pointer-events: none;
+  user-select: none;
+}
+
+.fig-label-slab {
+  font-size: 13px;
+}
+
+.fig-icon {
+  fill: none;
+  pointer-events: none;
+  stroke: var(--iso-ink);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+.fig-link {
+  fill: none;
+  pointer-events: none;
+  stroke: var(--iso-link);
+  stroke-linecap: round;
+  stroke-width: 1.8;
+}
+
+.fig-link-remote {
+  stroke-dasharray: 6 5;
+}
+
+.fig-lifted {
+  transform: translateY(calc(-1 * var(--fig-lift)));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .fig-solid {
+    transition: transform 0.15s ease-out;
+  }
+}
+
+/* Reduced motion drops the lift. The accent outline stays, so a pinned part still shows. */
+@media (prefers-reduced-motion: reduce) {
+  .fig-lifted {
+    transform: none;
+  }
+}
+
+.structure-figure__legend {
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 0.875rem;
+  gap: 0.5rem 1.5rem;
+  list-style: none;
+  margin: 0.75rem 0;
+  padding: 0;
+}
+
+.structure-figure__legend li {
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.structure-figure__swatch {
+  flex: none;
+  height: 22px;
+  width: 34px;
+}
+
+.structure-figure__card {
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 10px;
+  font-size: 0.9375rem;
+  margin: 0.75rem 0;
+  min-height: 4.5rem;
+  padding: 0.6rem 0.9rem;
+}
+
+.structure-figure__hint {
+  color: var(--ifm-color-emphasis-700);
+  margin: 0;
+}
+
+.structure-figure__items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  list-style: none;
+  margin: 0.4rem 0 0;
+  padding: 0;
+}
+
+.structure-figure__items li {
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  padding: 0 0.6rem;
+}
+
+.structure-figure__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  list-style: none;
+  margin: 0.75rem 0;
+  padding: 0;
+}
+
+.structure-figure__buttons button {
+  background: transparent;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 999px;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8125rem;
+  padding: 0.15rem 0.7rem;
+}
+
+.structure-figure__buttons button[aria-pressed='true'] {
+  border-color: var(--iso-accent);
+  outline: 2px solid var(--iso-accent);
+}
+
+.structure-figure__buttons button:focus-visible {
+  outline: 2px solid var(--iso-accent);
+  outline-offset: 2px;
+}
+
+/* Author fills stay light on a dark Canvas in forced colours, so the solids take system colours. A plug part is told apart by its heavier outline. */
+@media (forced-colors: active) {
+  .fig-facet,
+  .fig-top {
+    fill: Canvas;
+    stroke: CanvasText;
+  }
+
+  .fig-tone-plug .fig-outline,
+  .fig-tone-plug .fig-top {
+    stroke-width: 2.5;
+  }
+
+  .fig-label {
+    fill: CanvasText;
+  }
+
+  .fig-icon,
+  .fig-outline {
+    stroke: CanvasText;
+  }
+
+  .fig-link {
+    stroke: LinkText;
+  }
+
+  .fig-active .fig-outline,
+  .fig-active .fig-top {
+    stroke: Highlight;
+  }
+}

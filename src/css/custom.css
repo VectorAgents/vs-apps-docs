@@ -212,43 +212,58 @@
   }
 }
 
-/* Three face tones per kind, lit from the top left. `plug` is the one accent, for the pluggable parts. */
+/* Geist, latin subset, variable weight 400 to 600. It sets the text of every figure. */
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url('./fonts/geist-latin.woff2') format('woff2');
+}
+
+/*
+ * The Vector Space theme for figures: neutral greys with a teal accent. Three face tones per kind, lit from the top left.
+ * `plug` is the one accent, for the parts that plug in from outside. `--iso-accent` marks a selection.
+ */
 :root {
-  --iso-slab-top: #eef1f0;
-  --iso-slab-left: #d9dfdd;
-  --iso-slab-right: #c6cecb;
-  --iso-core-top: #dde4ea;
-  --iso-core-left: #c4cfd8;
-  --iso-core-right: #adbac5;
-  --iso-plug-top: #cdebdc;
-  --iso-plug-left: #9fd3b9;
-  --iso-plug-right: #7fbf9f;
+  --iso-slab-top: #f5f5f5;
+  --iso-slab-left: #e5e5e5;
+  --iso-slab-right: #d4d4d4;
+  --iso-core-top: #e5e5e5;
+  --iso-core-left: #d4d4d4;
+  --iso-core-right: #bdbdbd;
+  --iso-plug-top: #8fd9d0;
+  --iso-plug-left: #4fb9af;
+  --iso-plug-right: #2ea296;
   --iso-hi: #ffffff;
-  --iso-edge: #5d6b66;
-  --iso-link: #2e8555;
+  --iso-edge: #737373;
+  --iso-link: #009689;
   --iso-link-ink: #ffffff;
-  --iso-ink: #1c1e21;
-  --iso-badge-bg: #1c1e21;
-  --iso-badge-ink: #ffffff;
+  --iso-ink: #171717;
+  --iso-badge-bg: #171717;
+  --iso-badge-ink: #fafafa;
+  --iso-accent: #2b7fff;
+  --iso-font: 'Geist', ui-sans-serif, system-ui, sans-serif;
 }
 
 [data-theme='dark'] {
-  --iso-slab-top: #3a3e42;
-  --iso-slab-left: #2b2e31;
-  --iso-slab-right: #212326;
-  --iso-core-top: #4a5560;
-  --iso-core-left: #3a444d;
-  --iso-core-right: #2d353c;
-  --iso-plug-top: #1f7a60;
-  --iso-plug-left: #17604b;
-  --iso-plug-right: #124c3b;
-  --iso-hi: #8ff0d4;
-  --iso-edge: #9aa5a1;
-  --iso-link: #25c2a0;
-  --iso-link-ink: #0b2a22;
-  --iso-ink: #f2f2f2;
-  --iso-badge-bg: #f2f2f2;
-  --iso-badge-ink: #1b1b1d;
+  --iso-slab-top: #262626;
+  --iso-slab-left: #1c1c1c;
+  --iso-slab-right: #121212;
+  --iso-core-top: #404040;
+  --iso-core-left: #333333;
+  --iso-core-right: #292929;
+  --iso-plug-top: #00867a;
+  --iso-plug-left: #006a60;
+  --iso-plug-right: #00534b;
+  --iso-hi: #7df3e1;
+  --iso-edge: #a1a1a1;
+  --iso-link: #00d5be;
+  --iso-link-ink: #042f2a;
+  --iso-ink: #fafafa;
+  --iso-badge-bg: #fafafa;
+  --iso-badge-ink: #171717;
+  --iso-accent: #51a2ff;
 }
 
 .iso-diagram {
@@ -290,7 +305,7 @@
 }
 
 [data-theme='dark'] .iso-glow {
-  filter: drop-shadow(0 0 5px rgb(37 194 160 / 50%));
+  filter: drop-shadow(0 0 5px rgb(0 213 190 / 50%));
 }
 
 .iso-link {
@@ -309,7 +324,7 @@
 
 .iso-label {
   fill: var(--iso-ink);
-  font-family: var(--ifm-font-family-base);
+  font-family: var(--iso-font);
   font-weight: 700;
 }
 
@@ -325,7 +340,7 @@
 
 .iso-badge-text {
   fill: var(--iso-badge-ink);
-  font-family: var(--ifm-font-family-base);
+  font-family: var(--iso-font);
   font-size: 14px;
   font-weight: 700;
   text-anchor: middle;
@@ -363,7 +378,8 @@
 }
 
 .iso-diagram figcaption,
-.figure-placeholder figcaption {
+.figure-placeholder figcaption,
+.structure-figure figcaption {
   border-top: 1px solid var(--ifm-color-emphasis-300);
   color: var(--ifm-color-emphasis-700);
   font-family: var(--ifm-font-family-monospace);
