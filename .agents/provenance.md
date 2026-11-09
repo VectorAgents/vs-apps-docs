@@ -265,6 +265,24 @@ Source paths are in the sibling `vector-spaces` repo, under `docs/`. Claim-level
 | An approval is a second check and never grants access. | `systems/COMMAND-CENTER.md` (Deciding). |
 | Example: a Condition on a group limits a datasource to EU rows, and the member gets the same rows in an app and through the orchestrator agent. The API-key paragraph rests on the general claim only and is cut if gate row 6 fails. | `systems/access/RUNTIME.md` (Runtime gating, Datasource enforcement), `systems/access/README.md` (Conditions), `product/OVERVIEW.md` (What holds it together). |
 
+## What Vector Space is
+
+Source paths are in the sibling `vector-spaces` repo, under `docs/`. The page is `docs/vector-space/what-vector-space-is.md`. Claim-level sources are in the "Page 1: `what-vector-space-is`" part of the What group's outline research. The spec overrides: no "Organizations and spaces" or "What holds the platform together" H2, no list of the five kinds of people, the Governance slab is named "Governance" only, and the example is the scenario slice.
+
+| Claim | Rests on |
+| --- | --- |
+| Vector Space is where an organization's people and AI agents work on the organization's own data. Each run follows the organization's access rules, is paid on its own AI provider accounts and records who ran it. The page says "records who ran it", never "eliminates black-box execution". | `product/OVERVIEW.md` ("What it is", "What holds it together"). |
+| An organization is the company account that holds its users, keys, resources and spaces. A space is where one team works. | `product/OVERVIEW.md` ("How it fits"), `product/GLOSSARY.md` (Spaces and content: Space). |
+| A space starts with one orchestrator agent, which takes a member's request and hands parts of it to other agents. Members chat with agents and answer what agents ask them. | `product/OVERVIEW.md` ("Who uses it"), `systems/SPACES.md` (Provisioning and deletion), `systems/access/README.md` (Spaces), `product/GLOSSARY.md` (Agents and runs). |
+| The Context Hub lists what the space can reach: connectors, knowledge sources, datasources, skills and apps. Vector Modules sit in it too. Pages are not one of its kinds. | `product/OVERVIEW.md` ("The product's layers"), `product/GLOSSARY.md` (Context Hub). |
+| The Command Center is where an ask waits for a person. It is a plain part of a space, not a Vector Module. | `product/OVERVIEW.md` ("The product's layers"), `systems/COMMAND-CENTER.md` (opening). |
+| Vector Modules are first-party tools over connector data: `omnibox`, `contacts` and Calendar. Calendar is listed without a caveat by user decision (gate row 1). | `systems/context-hub/MODULES.md` (Vector Modules), `product/GLOSSARY.md` (Context Hub: Vector Module). |
+| Governance reads across the whole organization: what ran and as whom. | `product/OVERVIEW.md` ("The product's layers": Governance has an organization-wide view). |
+| A Vector App is a web app that a space shows in an iframe. | `product/GLOSSARY.md` (Apps: App). |
+| An A2A agent is a remote agent that joins the agent tree as a leaf. | `systems/STUDIO.md` (The agent tree, Vocabulary). |
+| An MCP connector is a connector whose provider is an MCP server. | `product/GLOSSARY.md` (Context Hub: Provider). |
+| The example is the page's own scenario slice. It states no fact beyond the rows above. | Spec of the Vector Space concepts, section 3.2. |
+
 ## Entry page
 
 Source paths are in the sibling `vector-spaces` repo, under `docs/`. The product docs hold no `APPS.md`: `product/OVERVIEW.md` and `product/GLOSSARY.md` are the sources, with `systems/apps/README.md` for apps.
@@ -310,3 +328,22 @@ Source paths are in the sibling `vector-spaces` repo, under `docs/`. Claim-level
 | A Restricted resource is closed even to the Organization admin unless a share names them. The rule lives on `one-access-model`. | `systems/access/RESOURCES.md` (General access). |
 | A share gives one user, group or app one role on one thing. Can use uses the resource, Can edit configures it and uses it. A role is not a set of people, and a group is. Those are the only two roles. On the space itself, Can edit makes a user a space manager. | `product/GLOSSARY.md` (Access: Share, Role, Group, Can edit on the space), `systems/access/README.md` (The access primitive), `spec/PERMISSIONS.md` (3. Custom roles: not built). |
 | The example is the page's own scenario slice: a new member cannot add a member, a space manager and the Organization admin can, and the admin can also create a space. The agent works for the member. | `systems/access/README.md` (Organization admin and space managers; Spaces), `systems/access/RUNTIME.md` (Run identity). |
+
+## What a space holds
+
+Source paths are in the sibling `vector-spaces` repo, under `docs/`. The page is `docs/vector-space/what-a-space-holds.md`. The spec overrides drop "Parts a space has built in", vendor examples, any Command Center description and any "restricted by default" statement. The H2 "Pages and widgets in a space" stands for the spec's "Space pages and widgets", because `scripts/terms.test.mjs` flags a capital-S "Space" in a heading.
+
+| Claim | Rests on |
+| --- | --- |
+| The Context Hub is the area of a space where its resources are listed and set up. The product shows the list as Resources. | `product/OVERVIEW.md` (The product's layers), `product/GLOSSARY.md` (Spaces and content; Access: Pool). |
+| The Context Hub holds six kinds of resource: connectors, knowledge sources, datasources, skills, apps and Vector Modules. Pages are not one of them (the master pool lists pages, the Context Hub does not). | `product/OVERVIEW.md` (The product's layers), `product/GLOSSARY.md` (Access: Resource). |
+| A connector links the space to one outside account or endpoint, such as a mailbox or a REST API. The page says "connector" and never "provider", which collides with "AI provider". | `product/GLOSSARY.md` (Context Hub: Connector, Provider). |
+| A knowledge source is content that a connector syncs and indexes for search, narrowed to folders or documents. Files and documents are the content of a source, not a kind of resource. | `product/GLOSSARY.md` (Context Hub: Source), `systems/context-hub/RESOURCE.md` (Sources on connectors). |
+| A datasource is a database that agents and widgets query. Each statement it runs only reads. The page gives no dialect and no query detail. | `product/GLOSSARY.md` (Context Hub: Datasource), `systems/access/RUNTIME.md` (Datasource enforcement). |
+| A skill is a set of named instructions with tools, given to an agent as a resource. | `product/GLOSSARY.md` (Agents and runs: Skill). |
+| A space page is a grid of widgets with page filters, and any member creates one. It is not an app page. | `product/GLOSSARY.md` (Spaces and content: Page, Filter), `systems/PAGES.md` (Sharing: "Any member creates a page"). |
+| A widget is one cell: a data widget (chart, table or key figure) runs a query against one datasource, or a document widget holds text. A collaborative document is edited live, and a managed one is written only by a schedule's runs. | `product/GLOSSARY.md` (Spaces and content: Widget), `systems/PAGES.md` (Widgets and `WidgetConfig`; Documents). |
+| A Vector App is a web app that a space shows in an iframe. A space manager turns it on for a space. The page leaves the concept to the Apps glossary. | `product/GLOSSARY.md` (Apps: App), `systems/apps/README.md`, `systems/apps/BINDINGS.md` (Binding lifecycle). |
+| A Vector Module is a first-party product over connector data or the space's own rows, a peer of apps and not an app or a connector. It draws on connectors attached to it. The modules are `omnibox` (conversations from a connected mailbox, read and reply) and `contacts` (the space's own rows). | `systems/context-hub/MODULES.md` (Vector Modules; Concept and residency; The omnibox module; The contacts module). |
+| Calendar is named as a third module and nothing more is said about it. The master lists `omnibox` and `contacts` only. | User statement of the product lead (gate row 1). Fallback: cut Calendar from the page. |
+| The example is the page's own scenario slice. It states no fact beyond the rows above. | Spec of the Vector Space concepts, section 3.2. |
