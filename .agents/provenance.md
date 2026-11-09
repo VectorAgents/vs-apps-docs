@@ -143,6 +143,21 @@ Source paths are in the sibling `vector-spaces` repo, under `docs/`. The product
 | The three platform rules: one access model, one AI gateway, one record of work. The page words the access rule as roles, shares, blocks and conditions, which is the product's "roles, shares, blocks and Conditions". | `product/OVERVIEW.md` ("What holds it together"). |
 | An organization is the tenant. A space is the unit of work, binds one orchestrator agent, and resolves access inside it for each member and action. | `product/OVERVIEW.md` ("How it fits"), `product/GLOSSARY.md` (Organization, Space, Agent). |
 
+## Organizations and spaces
+
+Source paths are in the sibling `vector-spaces` repo, under `docs/`. The page is `docs/vector-space/organizations-and-spaces.md`.
+
+| Claim | Rests on |
+| --- | --- |
+| An organization is the tenant. Every user, API key, resource and space belongs to one. A space is the unit of work and holds one orchestrator agent, resources, members and groups, pages, and the apps and Vector Modules turned on for it. | `product/OVERVIEW.md` ("How it fits"), `product/GLOSSARY.md` (Tenancy and people: Organization; Spaces and content: Space). |
+| Each organization has one Organization admin, who a transfer passes to another live member. The admin is a space manager of every space. | `product/GLOSSARY.md` (Tenancy and people: Organization admin), `systems/access/README.md` (Organization admin and space managers). |
+| AI provider accounts belong to the organization and pay for its model calls. An account reaches every space by default and can be limited to chosen spaces. The page therefore says each resource belongs to one space and never that spaces share nothing. | `product/OVERVIEW.md` ("What it is"), `systems/AI.md` (Data model, invariant 2: an all-spaces account is the default, a scoped account reaches the spaces with a grant row), `systems/credentials/README.md` (Core primitives: one credential can back resources in more than one space). |
+| A resource is owned by one space. No share reaches a resource of another space. An agent moves only within its space. | `systems/access/RESOURCES.md` (Resources), `systems/access/README.md` (The pool and tenancy), `systems/STUDIO.md` (The agent tree). |
+| Access is worked out inside a space, for each member and operation. Only users of the organization, service accounts included, join its spaces. Membership alone reaches what General access gives. | `product/OVERVIEW.md` ("How it fits"), `systems/access/README.md` (Spaces), `product/GLOSSARY.md` (Access: Member). |
+| A space manager manages the members, groups, shares, resources, agent and apps of the space. | `product/OVERVIEW.md` (Who uses it), `systems/access/README.md` (Organization admin and space managers). |
+| Left out on purpose: distributors, customers, licences and space deletion (administrative, not concepts), and who creates a space (`who-can-do-what`). | `systems/access/README.md` (The pool and tenancy), `systems/SPACES.md` (Provisioning and deletion). |
+| The example is the page's own scenario slice. It states no fact beyond the rows above. | Spec of the Vector Space concepts, section 3.2. |
+
 ## Why Vector Apps
 
 Source paths are in the sibling `vector-spaces` repo, under `docs/`. The product docs hold no `APPS.md`: `systems/apps/README.md`, `BINDINGS.md`, `REGISTRY.md` and `PROTOCOL.md` stand in for it, with `product/OVERVIEW.md` and `product/GLOSSARY.md`.
@@ -170,6 +185,22 @@ The three columns and seven rows are this repo's own comparison. The product doc
 | The aside line links the guide Call Vector Space from your server for a caller outside Vector Space. | `docs/vector-apps/guides/call-space-from-your-server.md` and its provenance rows. |
 | An app gets the member, the data of the space and model calls through Vector Space. The page says what an app gets and never that an app is the only way. | "Only" is a product claim that can change. |
 | Closed lists are linked, never copied. | [Platform limits](../docs/sdk/reference/platform-limits.md). |
+
+## Agents in a space
+
+Source paths are in the sibling `vector-spaces` repo, under `docs/`. Claim-level sources are in the "Page 4: `agents-in-a-space`" part of the build's outline research. The spec overrides drop "What an agent can reach" and "Where agents are set up", and name no depth.
+
+| Claim | Rests on |
+| --- | --- |
+| An agent is a configured model with instructions, tools and resources. Each space has exactly one orchestrator agent, created with the space. An organization has none. The member's request goes to it, and it hands parts to other agents. | `product/GLOSSARY.md` (Agents and runs: Agent), `systems/STUDIO.md` (The agent tree), `systems/runs/DELEGATION.md` (Levels), `systems/access/README.md` (Spaces). |
+| Agent Studio is where a person who manages agents sets up an agent. The page lists instructions and evaluations only. | `product/OVERVIEW.md` (The product's layers), `systems/STUDIO.md` (Draft, versions and publish). |
+| The orchestrator agent gives the member one reply: only its output reaches the user. | `systems/STUDIO.md` (output reaches the user only through the orchestrator). |
+| The tree: the orchestrator agent is the root, a configured agent can have child agents (the master says "sub-agent"), only agents built into the space have children, and an agent moves only within its space. The page names no depth, no level numbers and no limits, because `STUDIO.md` states no depth and `DELEGATION.md` numbers the levels inconsistently. | `systems/STUDIO.md` (The agent tree), `systems/runs/DELEGATION.md` (Levels). |
+| Leaves: a remote A2A agent whose owner controls its prompt, model and retrieval, which an app can offer; and a short-lived helper (the master's "subagent") that an agent starts for one task, which has no children and is retired when it finishes. | `systems/STUDIO.md` (The agent tree, Vocabulary: A2A leaf), `systems/runs/DELEGATION.md` (Levels). |
+| A connector is a resource an agent uses, not an agent it delegates to. | `systems/runs/DELEGATION.md` (Levels). |
+| A thread is one conversation with one agent, owned by one user, and no one else reads it, administrators included. Others get "not found". | `systems/runs/README.md` (Threads, instances, turns and runs), `systems/access/RUNTIME.md` (Threads), `product/GLOSSARY.md` (Thread). |
+| A run is one execution of one agent in a thread and closes when it ends. A delegated agent has a run of its own: inferred from the same sections, as no master sentence says it in these words. The page avoids "turn". | `systems/runs/README.md` (Threads, instances, turns and runs), `product/GLOSSARY.md` (Run). |
+| Each agent sees only what the member may see: an agent's reach is the space's resources narrowed to the person it works for. | `systems/access/RESOURCES.md` (Agent scope), `systems/access/RUNTIME.md` (Run identity: a chat in the web app runs as the thread's owner). The page states the web chat case only. |
 
 ## Entry page
 
