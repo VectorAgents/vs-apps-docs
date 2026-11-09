@@ -328,6 +328,13 @@ test('each call-a-model tree links the glossary at the first model slot and says
   }
 });
 
+test('each call-a-model tree says a production Vector Space refuses the call with status 503 and a local stack answers it', () => {
+  for (const text of Object.values(modelTrees)) {
+    assert.match(text, /A production Vector Space publishes no gateway address to apps, so it refuses the call with status `503`/);
+    assert.match(text, /A local stack runs the gateway/);
+  }
+});
+
 test('the Nest.js call-a-model tree injects SpaceAiService and passes the model slot key', () => {
   const body = titledSnippets(modelTrees.nest).map((c) => c.body).join('\n');
   assert.ok(titledSnippets(modelTrees.nest).every((c) => /^(client|server|shared)\//.test(c.title)));

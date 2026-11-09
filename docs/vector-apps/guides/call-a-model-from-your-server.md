@@ -88,7 +88,7 @@ The key works for this slot only. `model` is the slot's alias, not the model nam
 The key works for this slot only. `model` is the slot's alias, not the model name that the space manager picked. Send it as it is.
 <!-- /flavour -->
 
-If no one sets the slot, Vector Space refuses the call with status `409`. Vector Space refuses a slot key that the manifest does not declare with status `400`.
+If no one sets the slot, Vector Space refuses the call with status `409`. Vector Space refuses a slot key that the manifest does not declare with status `400`. A production Vector Space publishes no gateway address to apps, so it refuses the call with status `503`. A local stack runs the gateway and answers it.
 
 <!-- flavour node -->
 `platform.ai` throws a `SpaceActionError` that carries the status.
@@ -220,7 +220,7 @@ In a second terminal, request the route without a token. `SERVER_PORT` is the va
 curl -s -o /dev/null -w '%{http_code}\n' http://localhost:<SERVER_PORT>/api/summary
 ```
 
-**Check**: the command prints `401`, because the route refuses a request with no user token. Call the route from an app page with the user token, as `fetchHello` does in the quickstart. With a model set, it answers `200` and `{ "summary": "..." }`. With no model set, it answers `409`.
+**Check**: the command prints `401`, because the route refuses a request with no user token. Call the route from an app page with the user token, as `fetchHello` does in the quickstart. With a model set on a local stack, it answers `200` and `{ "summary": "..." }`. With no model set, it answers `409`.
 
 ## Result
 
