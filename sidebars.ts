@@ -74,7 +74,6 @@ const sidebars: SidebarsConfig = {
   ],
   sdk: [
     'sdk/overview',
-    'sdk/choose-your-path',
     'sdk/app-definition',
     { type: 'link', label: 'Definition builder', href: '/sdk/builder' },
     'sdk/examples',

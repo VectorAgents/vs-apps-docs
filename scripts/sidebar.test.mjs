@@ -36,8 +36,8 @@ test('the Vector Apps sidebar runs Why Vector Apps, How a Vector App works, Quic
   assert.deepEqual(topLevel('vectorApps'), ['vector-apps/why-vector-apps', 'vector-apps/how-a-vector-app-works', 'vector-apps/quickstart', 'Recipes', 'Guides', 'vector-apps/glossary']);
 });
 
-test('the SDK sidebar runs SDK overview, Choose your path, App definition, Definition builder, Examples, Reference, Glossary', () => {
-  assert.deepEqual(topLevel('sdk'), ['sdk/overview', 'sdk/choose-your-path', 'sdk/app-definition', 'Definition builder', 'sdk/examples', 'Reference', 'sdk/glossary']);
+test('the SDK sidebar runs SDK overview, App definition, Definition builder, Examples, Reference, Glossary', () => {
+  assert.deepEqual(topLevel('sdk'), ['sdk/overview', 'sdk/app-definition', 'Definition builder', 'sdk/examples', 'Reference', 'sdk/glossary']);
   const builder = sidebars.sdk.find((item) => item.label === 'Definition builder');
   assert.equal(builder.href, '/sdk/builder');
 });
