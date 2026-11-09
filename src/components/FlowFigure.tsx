@@ -1,8 +1,8 @@
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import type { CSSProperties, ReactElement } from 'react';
-import { CUBE, advance, frameAt, layoutFlow, recordAt } from '../diagrams/figure/flow.ts';
-import type { FlowLayout, Frame } from '../diagrams/figure/flow.ts';
+import { ASK_TILE, CUBE, ENVELOPE_SOLID, advance, captionAt, frameAt, layoutFlow, pausedAt, recordAt } from '../diagrams/figure/flow.ts';
+import type { FlowLayout, Frame, FrameItem } from '../diagrams/figure/flow.ts';
 import type { FlowData } from '../diagrams/figure/flow-types.ts';
 import { LIFT } from '../diagrams/figure/layout.ts';
 import { pointsAttr } from '../diagrams/figure/geometry.ts';
@@ -44,13 +44,15 @@ function useReducedMotion(): boolean {
   return reduced;
 }
 
-function Cube({ x, y, tone, opacity }: { x: number; y: number; tone: 'work' | 'done'; opacity: number }): ReactElement {
+/** A cube or an envelope, painted with its base centred on `x`, `y`. */
+function Item({ x, y, tone, shape, opacity }: FrameItem): ReactElement {
+  const solid = shape === 'envelope' ? ENVELOPE_SOLID : CUBE;
   return (
     <g className={`fig-item fig-tone-${tone === 'done' ? 'done' : 'cube'}`} transform={`translate(${x} ${y})`} opacity={opacity}>
-      {CUBE.facets.map((facet, i) => (
+      {solid.facets.map((facet, i) => (
         <polygon key={i} className={`fig-facet fig-b${facet.bucket}`} points={pointsAttr(facet.points)} />
       ))}
-      <polygon className="fig-top" points={pointsAttr(CUBE.top)} />
+      <polygon className="fig-top" points={pointsAttr(solid.top)} />
     </g>
   );
 }
@@ -69,9 +71,38 @@ function Motion({ frame }: { frame: Frame }): ReactElement {
         <circle key={i} className="fig-dot" cx={dot.x} cy={dot.y} r={dot.radius} />
       ))}
       {frame.items.map((item, i) => (
-        <Cube key={i} {...item} />
+        <Item key={i} {...item} />
       ))}
     </>
+  );
+}
+
+/** Screen units from the base of the ask tile up to the pause mark and up to the tip of the tooltip. */
+const PAUSE_RISE = 26;
+const TIP_RISE = 52;
+
+/**
+ * The ask: a tile with a pause mark while it waits and a tick once it is approved. While the run waits, a click on the tile
+ * approves, like the button in the tooltip. The tile is only a second target, so it is hidden from assistive technology.
+ */
+function AskTile({ ask, onApprove }: { ask: NonNullable<Frame['ask']>; onApprove: (() => void) | undefined }): ReactElement {
+  const waiting = ask.state === 'waiting';
+  return (
+    <g className={`fig-ask fig-tone-plug${onApprove ? ' fig-ask-ready' : ''}`} transform={`translate(${ask.x} ${ask.y})`} aria-hidden="true" onClick={onApprove}>
+      {ASK_TILE.facets.map((facet, i) => (
+        <polygon key={i} className={`fig-facet fig-b${facet.bucket}`} points={pointsAttr(facet.points)} />
+      ))}
+      <polygon className="fig-top" points={pointsAttr(ASK_TILE.top)} />
+      <text className="fig-label fig-ask-word" x="0" y="-1" textAnchor="middle">
+        {waiting ? 'Ask' : '\u2713'}
+      </text>
+      {waiting && (
+        <g className="fig-pause">
+          <rect x="-7" y={-PAUSE_RISE - 9} width="5" height="18" rx="1" />
+          <rect x="2" y={-PAUSE_RISE - 9} width="5" height="18" rx="1" />
+        </g>
+      )}
+    </g>
   );
 }
 
@@ -92,11 +123,36 @@ function Chat({ chat, box }: { chat: NonNullable<Frame['chat']>; box: readonly [
   );
 }
 
+/** The email that the agent drafts, as plain HTML beside the orchestrator agent. The caption does not repeat it, and it is example text, so it is hidden from assistive technology. */
+function Draft({ draft, box }: { draft: NonNullable<Frame['draft']>; box: readonly [x: number, y: number, w: number, h: number] }): ReactElement {
+  const style = { left: `min(${((draft.x - box[0]) / box[2]) * 100}%, calc(100% - var(--flow-draft-width)))`, top: `${((draft.y - box[1]) / box[3]) * 100}%` };
+  return (
+    <div className="flow-figure__draft" style={style} aria-hidden="true">
+      <p className="flow-figure__draft-head">
+        <span>Orchestrator agent</span>
+        <span>{draft.state === 'ready' ? 'Draft ready' : 'Drafting'}</span>
+      </p>
+      <p className="flow-figure__draft-line">
+        To: <b>{draft.to}</b>
+      </p>
+      <p className="flow-figure__draft-line">
+        Subject: <b>{draft.subject}</b>
+      </p>
+      <p className="flow-figure__draft-body">
+        {draft.body}
+        {draft.state === 'drafting' && <span className="flow-figure__caret" />}
+      </p>
+    </div>
+  );
+}
+
 /**
  * An isometric figure that plays. It auto-plays once when half of it shows, never loops, and has one icon button that plays,
  * pauses and replays. A step pill plays from the start of its scene. Under reduced motion nothing plays: the figure opens at
  * rest, Previous and Next step between the still poses of the scenes, and a pill jumps to one. The caption, the pills, the
- * record of work as a real table and a collapsed text version of the steps are the text alternative of the picture.
+ * record of work as a real table and a collapsed text version of the steps are the text alternative of the picture. A scene that
+ * pauses stops the play at an ask: an Approve button on the tooltip takes focus and the run goes on only when the reader uses
+ * it. A step has a link to the heading of the page that explains it.
  */
 export default function FlowFigure({ data, figure = 1 }: { data: FlowData; figure?: number }): ReactElement {
   const layout: FlowLayout = useMemo(() => layoutFlow(data), [data]);
@@ -116,6 +172,8 @@ export default function FlowFigure({ data, figure = 1 }: { data: FlowData; figur
   const progress = useRef(0);
   const stage = useRef<HTMLDivElement>(null);
   const started = useRef(false);
+  const approveButton = useRef<HTMLButtonElement>(null);
+  const focusAsk = useRef(false);
 
   const seek = useCallback((to: number, play: boolean) => {
     progress.current = to;
@@ -127,15 +185,19 @@ export default function FlowFigure({ data, figure = 1 }: { data: FlowData; figur
     if (!playing) return undefined;
     let last = performance.now();
     let frame = requestAnimationFrame(function tick(now) {
-      const next = advance(data, progress.current, Math.min(now - last, MAX_TICK));
+      const before = progress.current;
+      const next = advance(data, before, Math.min(now - last, MAX_TICK));
       last = now;
       progress.current = next;
       setP(next);
-      if (next >= end) setPlaying(false);
-      else frame = requestAnimationFrame(tick);
+      // A first tick can run with no time passed. Starting on a pause (the approval) must not stop on it again.
+      if (next >= end || (next > before && pausedAt(data, next))) {
+        focusAsk.current = !reduced && pausedAt(data, next);
+        setPlaying(false);
+      } else frame = requestAnimationFrame(tick);
     });
     return () => cancelAnimationFrame(frame);
-  }, [playing, data, end]);
+  }, [playing, data, end, reduced]);
 
   useEffect(() => {
     if (reduced) seek(Math.ceil(progress.current), false);
@@ -165,14 +227,21 @@ export default function FlowFigure({ data, figure = 1 }: { data: FlowData; figur
 
   const frame = useMemo(() => frameAt(layout, p), [layout, p]);
   const current = frame.scene === 0 ? null : data.scenes[frame.scene - 1].step;
-  const caption = current === null ? data.intro : data.steps[current - 1].text;
+  const caption = captionAt(data, p);
   const finished = p >= end;
+  const waiting = !playing && pausedAt(data, p);
   const label = playing ? 'Pause' : finished ? 'Replay' : 'Play';
+  useEffect(() => {
+    if (!waiting || !focusAsk.current) return;
+    focusAsk.current = false;
+    approveButton.current?.focus({ preventScroll: true });
+  }, [waiting]);
   const sceneOfStep = (step: number): number => data.scenes.findIndex((s) => s.step === step) + 1;
   const toggle = (): void => {
     if (playing) setPlaying(false);
     else seek(finished ? 0 : progress.current, true);
   };
+  const approve = (): void => seek(reduced ? Math.floor(progress.current + 1e-9) + 1 : progress.current, !reduced);
   const jump = (step: number): void => seek(reduced ? sceneOfStep(step) : sceneOfStep(step) - 1, !reduced);
   const [x0, y0, w, h] = scene.viewBox.split(' ').map(Number);
 
@@ -190,11 +259,21 @@ export default function FlowFigure({ data, figure = 1 }: { data: FlowData; figur
               <line key={link.id} className={link.remote ? 'fig-link fig-link-remote' : 'fig-link'} x1={link.points[0][0]} y1={link.points[0][1]} x2={link.points[1][0]} y2={link.points[1][1]} />
             ))}
             <Motion frame={frame} />
+            {frame.ask && <AskTile ask={frame.ask} onApprove={waiting ? approve : undefined} />}
           </svg>
           {frame.chat && <Chat chat={frame.chat} box={[x0, y0, w, h]} />}
+          {frame.draft && <Draft draft={frame.draft} box={[x0, y0, w, h]} />}
+          {frame.ask?.state === 'waiting' && (
+            <div className="flow-figure__tip" role="status" style={{ left: `${((frame.ask.x - x0) / w) * 100}%`, top: `${((frame.ask.y - TIP_RISE - y0) / h) * 100}%` }}>
+              Waiting for you. Approve to continue.
+              <button type="button" className="flow-figure__approve" ref={approveButton} disabled={!waiting} onClick={approve}>
+                Approve
+              </button>
+            </div>
+          )}
         </div>
         <div className="flow-figure__controls">
-          <button type="button" className="flow-figure__play" aria-label={label} title={label} onClick={toggle}>
+          <button type="button" className="flow-figure__play" aria-label={label} title={waiting ? 'Approve to continue' : label} disabled={waiting} onClick={toggle}>
             <svg viewBox="0 0 24 24" aria-hidden="true">
               {ICON_PATHS[label]}
             </svg>
@@ -202,12 +281,20 @@ export default function FlowFigure({ data, figure = 1 }: { data: FlowData; figur
           <button type="button" className="flow-figure__move" disabled={p <= 0} onClick={() => seek(Math.max(Math.ceil(progress.current - 1e-9) - 1, 0), false)}>
             Previous
           </button>
-          <button type="button" className="flow-figure__move" disabled={finished} onClick={() => seek(Math.min(Math.floor(progress.current + 1e-9) + 1, end), false)}>
-            Next
+          <button type="button" className="flow-figure__move" disabled={finished} onClick={() => (waiting ? approve() : seek(Math.min(Math.floor(progress.current + 1e-9) + 1, end), false))}>
+            {waiting ? 'Approve' : 'Next'}
           </button>
         </div>
         <section className="flow-figure__panel flow-figure__panel--steps" aria-label="Current step">
-          <p className="flow-figure__step">{current === null ? 'Start' : `Step ${current} of ${data.steps.length}`}</p>
+          <p className="flow-figure__step">
+            {current === null ? 'Start' : `Step ${current} of ${data.steps.length}`}
+            {current !== null && data.steps[current - 1].href && (
+              <>
+                {' '}
+                <a href={data.steps[current - 1].href}>Read this step</a>
+              </>
+            )}
+          </p>
           <p className="flow-figure__caption" aria-live="polite">
             {caption}
           </p>

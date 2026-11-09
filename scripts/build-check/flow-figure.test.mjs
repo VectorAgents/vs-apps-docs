@@ -41,7 +41,7 @@ test('the figure opens at rest with the intro caption in a polite live region, a
   assert.match(figure, /<p class="flow-figure__caption" aria-live="polite">A member of a space asks for leads\./);
   const pills = [...figure.matchAll(/<button type="button"( disabled="")? aria-label="Step (\d)"[^>]*>(\d)<\/button>/g)];
   assert.deepEqual(pills.map((m) => [m[2], m[3]]), ['1', '2', '3', '4', '5', '6'].map((n) => [n, n]));
-  assert.deepEqual(pills.map((m) => m[1] === undefined), [true, true, true, false, false, false], 'steps 4 to 6 have no scene yet');
+  assert.deepEqual(pills.map((m) => m[1] === undefined), [true, true, true, true, true, true], 'every step has a scene, so every pill works');
 });
 
 test('the record of work is a real table with a caption and column headers, and it has no row at rest', () => {

@@ -8,6 +8,12 @@ import type { StructureScene } from './layout.ts';
 const CUBE_SIDE = 0.9;
 /** Height units between the cubes of a stack, so a stack reads as many cubes and not one tall one. */
 export const STACK_STEP = 0.95;
+/** Sides of an envelope: a flat tile with a width, a depth and a height, in grid cells and height units. */
+const ENVELOPE = { w: 1.4, d: 0.95, h: 0.18 } as const;
+/** The shape of an envelope, its base centred on the origin. */
+export const ENVELOPE_SOLID: Solid = facetsOf(roundedPlan(-ENVELOPE.w / 2, -ENVELOPE.d / 2, ENVELOPE.w, ENVELOPE.d, 0.1), 0, ENVELOPE.h);
+/** The shape of the ask tile, its base centred on the origin: a flat tile a little wider than an envelope. */
+export const ASK_TILE: Solid = facetsOf(roundedPlan(-1.0, -0.85, 2.0, 1.7, 0.12), 0, 0.3);
 /** The shape of one cube, its base centred on the origin. Paint it at the screen point of an item. */
 export const CUBE: Solid = facetsOf(roundedPlan(-CUBE_SIDE / 2, -CUBE_SIDE / 2, CUBE_SIDE, CUBE_SIDE, 0.12), 0, CUBE_SIDE);
 
@@ -17,7 +23,7 @@ const PARK_RISE = 0.1;
 const PARK_SHARE = 0.2;
 /** Share of a scene over which a lit part rises, and over which the part of the scene before falls. */
 const LIT_RAMP = 0.1;
-/** Share of a scene over which an item that shows or hides part way fades. */
+/** Share of a scene over which an item that shows or hides part way fades, when the item names no share of its own. */
 const FADE = 0.03;
 /** Radius of a pulse ring when it starts and when it ends, in screen units. */
 const RING_RADII = [8, 44] as const;
@@ -68,12 +74,26 @@ export function layoutFlow(data: FlowData): FlowLayout {
   return { data, structure, resolve };
 }
 
+/** The caption at progress `p`: the intro at rest, then the words of the scene, or of its step when the scene has none of its own. */
+export function captionAt(data: FlowData, p: number): string {
+  const scene = sceneAt(data, p);
+  if (scene === 0) return data.intro;
+  const { caption, step } = data.scenes[scene - 1];
+  return caption ?? data.steps[step - 1].text;
+}
+
+/** True where `p` is the end of a scene that pauses for an ask. Play stops there until the reader approves. */
+export function pausedAt(data: FlowData, p: number): boolean {
+  const scene = Math.round(p);
+  return Math.abs(p - scene) < 1e-9 && scene >= 1 && scene <= data.scenes.length && data.scenes[scene - 1].pause === true;
+}
+
 /** The scene that plays at progress `p`: 0 at rest, then 1 for the first scene and so on. The end of a scene belongs to it. */
 export function sceneAt(data: FlowData, p: number): number {
   return clamp(Math.ceil(p - 1e-9), 0, data.scenes.length);
 }
 
-/** Progress after `ms` more milliseconds of play from `p`. Each scene runs for its own duration, and play stops at the end. */
+/** Progress after `ms` more milliseconds of play from `p`. Each scene runs for its own duration. Play stops at the end, and at a scene that pauses for an ask. */
 export function advance(data: FlowData, p: number, ms: number): number {
   const end = data.scenes.length;
   let left = ms;
@@ -85,6 +105,7 @@ export function advance(data: FlowData, p: number, ms: number): number {
     if (left >= needed) {
       left -= needed;
       at = scene;
+      if (data.scenes[scene - 1].pause) left = 0;
     } else {
       at += left / durationMs;
       left = 0;
@@ -116,6 +137,7 @@ export interface FrameItem {
   y: number;
   /** `work` is grey, `done` is accent. */
   tone: 'work' | 'done';
+  shape: 'cube' | 'envelope';
   opacity: number;
 }
 
@@ -142,6 +164,24 @@ export interface FrameChat {
   text: string;
 }
 
+/** The email card as it shows at one instant. The three fields hold what has been typed so far. */
+export interface FrameDraft {
+  /** Where the top left corner of the card stands. */
+  x: number;
+  y: number;
+  state: 'drafting' | 'ready';
+  to: string;
+  subject: string;
+  body: string;
+}
+
+/** An ask as it shows at one instant: the tile at `x`, `y`, waiting with a pause mark or approved with a tick. */
+export interface FrameAsk {
+  x: number;
+  y: number;
+  state: 'waiting' | 'approved';
+}
+
 /** Everything that is drawn at one progress value, in screen units. A component only maps it to elements. */
 export interface Frame {
   /** 0 at rest, then the scene number. */
@@ -153,6 +193,8 @@ export interface Frame {
   rings: FrameRing[];
   dots: FrameDot[];
   chat: FrameChat | null;
+  draft: FrameDraft | null;
+  ask: FrameAsk | null;
 }
 
 /** The polyline of `path` up to the share `f` of its length. */
@@ -182,14 +224,17 @@ export function frameAt(layout: FlowLayout, p: number): Frame {
   const scene = sceneAt(data, p);
   const u = scene === 0 ? 0 : p - (scene - 1);
   const path = (waypoints: Waypoint[]): Point[] => waypoints.map(resolve);
-  const frame: Frame = { scene, lit: {}, hops: [], items: [], rings: [], dots: [], chat: null };
+  const frame: Frame = { scene, lit: {}, hops: [], items: [], rings: [], dots: [], chat: null, draft: null, ask: null };
   if (scene === 0) return frame;
 
   const lit = (part: string, amount: number): void => {
     if (amount > 0) frame.lit[part] = Math.max(frame.lit[part] ?? 0, round(amount * 100) / 100);
   };
   for (const { part, from } of data.scenes[scene - 1].lit) lit(part, within([from, from + LIT_RAMP], u));
-  if (scene > 1) for (const { part } of data.scenes[scene - 2].lit) lit(part, 1 - within([0, LIT_RAMP], u));
+  if (scene > 1) {
+    const held = data.scenes[scene - 1].lit.filter((l) => l.from === 0).map((l) => l.part);
+    for (const { part } of data.scenes[scene - 2].lit) lit(part, held.includes(part) ? 1 : 1 - within([0, LIT_RAMP], u));
+  }
 
   data.scenes.slice(0, scene).forEach((earlier, i) => {
     for (const effect of earlier.effects) {
@@ -213,9 +258,17 @@ export function frameAt(layout: FlowLayout, p: number): Frame {
         const show = effect.show ?? [effect.move[0], 1];
         if (at < show[0] || at > show[1]) return;
         const [x, y] = along(path(effect.path), ease(within(effect.move, at)));
-        const opacity = Math.min(show[0] > 0 ? clamp((at - show[0]) / FADE) : 1, show[1] < 1 ? clamp((show[1] - at) / FADE) : 1);
+        const fade = effect.fade ?? FADE;
+        const opacity = Math.min(show[0] > 0 ? clamp((at - show[0]) / fade) : 1, show[1] < 1 ? clamp((show[1] - at) / fade) : 1);
+        const envelope = effect.shape === 'envelope';
         depths.push(round(y));
-        frame.items.push({ x: round(x), y: round(y - (effect.rise ?? 0) * HEIGHT_UNIT), tone: effect.qualifiedAt !== undefined && at >= effect.qualifiedAt ? 'done' : 'work', opacity });
+        frame.items.push({
+          x: round(x),
+          y: round(y - (effect.rise ?? 0) * HEIGHT_UNIT),
+          tone: envelope || (effect.qualifiedAt !== undefined && at >= effect.qualifiedAt) ? 'done' : 'work',
+          shape: envelope ? 'envelope' : 'cube',
+          opacity,
+        });
         return;
       }
       case 'ring': {
@@ -251,6 +304,24 @@ export function frameAt(layout: FlowLayout, p: number): Frame {
         if (at >= effect.sendAt) frame.chat = { x, y, state: 'sent', text: effect.text };
         else if (typed === 0) frame.chat = { x, y, state: 'placeholder', text: effect.placeholder };
         else frame.chat = { x, y, state: 'typing', text: effect.text.slice(0, typed) };
+        return;
+      }
+      case 'draft': {
+        const [x, y] = resolve(effect.at);
+        const fields = [effect.to, effect.subject, effect.body];
+        let left = Math.round(fields.join('').length * within(effect.type, at));
+        const [to, subject, body] = fields.map((field) => {
+          const typed = field.slice(0, left);
+          left -= typed.length;
+          return typed;
+        });
+        frame.draft = { x, y, state: at >= effect.type[1] ? 'ready' : 'drafting', to, subject, body };
+        return;
+      }
+      case 'ask': {
+        if (at < effect.show[0] || at > effect.show[1]) return;
+        const [x, y] = resolve(effect.at);
+        frame.ask = { x, y, state: effect.approved ? 'approved' : 'waiting' };
       }
     }
   }
