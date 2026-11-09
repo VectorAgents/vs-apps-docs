@@ -18,7 +18,7 @@ A line in a quickstart step that starts with `**Check**` and tells the reader wh
 - Maps to: no SDK symbol. The `Checks` assertion in `scripts/quickstart-page.test.mjs`.
 - Owner: docs.
 
-### Role
+### role line
 
 A line under a quickstart step heading that names who does the step: `**Role**: Organization admin.` on step 3, `**Role**: space manager.` on steps 4 and 5. It carries the role name and no persona. It mirrors the `**Check**` line.
 

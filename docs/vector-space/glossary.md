@@ -16,14 +16,14 @@ The Vector platform. It holds organizations and their spaces. It shows each app 
 
 ### space
 
-A shared place in Vector Space for one team. A space manager adds apps, shares capabilities and sets slots in it. It also holds space pages, a resource pool and members.
+A shared place in Vector Space for one team. A space manager adds apps, shares capabilities and sets slots in it. It also holds space pages, a [Context Hub](#context-hub) and members.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
 
 ### space manager
 
-A member of a space at Edit level, or an Organization admin. They add apps, grant capabilities and choose the models and connectors for the slots.
+A user who can edit on the space, or an Organization admin. They add apps, share capabilities and choose the models and connectors for the slots.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
@@ -31,13 +31,6 @@ A member of a space at Edit level, or an Organization admin. They add apps, gran
 ### Organization admin
 
 A member who manages the organization in Vector Space and sees **Organization** under **Settings**. Every Organization admin is a space manager.
-
-- Maps to: no SDK symbol.
-- Owner: Vector Space.
-
-### Edit level
-
-The access level that lets a member edit a space. A member at Edit level is a space manager.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
@@ -56,13 +49,6 @@ Vector employees who administer Vector Space itself. Only staff register apps, a
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
 
-### resource pool
-
-The list of everything a space holds: connectors, knowledge sources, skills, apps and space pages. A member or app reaches only what the pool lists. Vector Space shows the pool under Context Hub as **Resources**.
-
-- Maps to: no SDK symbol.
-- Owner: Vector Space.
-
 ### knowledge source
 
 A body of documents that Vector Space indexes for search. A space manager can attach one to an app, with an optional scope of folders or documents. Vector Space shows knowledge sources in the settings of an app.
@@ -72,7 +58,7 @@ A body of documents that Vector Space indexes for search. A space manager can at
 
 ### Context Hub
 
-The area of Vector Space for what a space can reach: connectors, knowledge sources, datasources and the resource pool.
+The area of a space for what it can reach. It holds six kinds of resource: [connectors](#connector), [knowledge sources](#knowledge-source), [datasources](#datasource), [skills](#skill), apps and [Vector Modules](#vector-module). Pages are not one of them. A member or app reaches only what the Context Hub lists. Vector Space shows the list as **Resources**.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
@@ -108,6 +94,265 @@ Agent2Agent. An open protocol that lets one agent find another through an agent 
 ### AI
 
 Artificial intelligence. In these docs it means a model that reads and writes language, such as a chat model, and the agents that run on it.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### organization
+
+The customer account in Vector Space. Every user, API key, resource and space belongs to one organization. It has one [Organization admin](#organization-admin).
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### member
+
+A person in an organization who is in a space. Membership alone reaches what [General access](#general-access) gives. A [share](#share) gives more.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### role
+
+Can use or Can edit: the permission set that a [share](#share) holds. A role is never a set of people. That is a [group](#group). An Organization role (Admin or Member) is a different thing, so say which.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### Can use
+
+The [role](#role) that lets a user use a resource without changing it.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### Can edit
+
+The [role](#role) that lets a user configure a resource and use it. On the space itself, it makes a user a [space manager](#space-manager).
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### share
+
+One subject's role on one object: the space, a resource or a child resource of it. The subject is a user, a [group](#group) or an app. A share on named capabilities of an app is a [capability grant](../vector-apps/glossary.md#capability-grant).
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### block
+
+A preset, Everything or Editing, that denies one user or group on one resource, whatever their shares give. A block wins whatever its source.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### condition
+
+A limit on the rows that one user or group sees in one resource. A group's condition binds every user the group holds. Datasources and connectors only.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### group
+
+A named set of users and groups of one space. A group holds every user of the groups it contains. Groups nest.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### General access
+
+The role that a resource gives every member of the space: Restricted, Can use or Can edit. A [share](#share) adds access on top.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### service account
+
+A user of an organization that is not a person. An API key, a [channel](#channel) or a [schedule](#schedule) can run as one.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### agent
+
+A model set up with instructions, tools and resources. It works inside one space and runs in a [thread](#thread).
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### orchestrator agent
+
+The one agent each space starts with. It takes a member's request and hands parts of it to other agents.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### thread
+
+One conversation with an agent. Only its owner reads it.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### run
+
+One execution of an agent in a [thread](#thread). It closes when it ends.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### schedule
+
+A background task that an agent or a person sets to run on a timer.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### connector
+
+A link from a space to one outside account or endpoint, such as a mailbox or a REST API.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### datasource
+
+A database that agents and [widgets](#widget) query. It is one of the six kinds of resource in the [Context Hub](#context-hub).
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### skill
+
+Named instructions with their tools, which an [agent](#agent) gets as a resource.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### widget
+
+One cell of a [space page](#space-page): a database query with its chart, or a document.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### Vector Module
+
+A first-party product that works over connector data and sits in the [Context Hub](#context-hub). The modules are `omnibox`, `contacts` and Calendar.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### Command Center
+
+The part of a space where an [ask](#ask) waits for a person. It is a plain part of a space, not a Vector Module.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### Agent Studio
+
+The part of Vector Space where a space manager sets up the [orchestrator agent](#orchestrator-agent): its canvas, its channels and its evaluations.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### standing approval
+
+Permission for an agent to run one operation, or for an app's approval to pass, without asking each time. Vector Space shows it as "always allow".
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### governance
+
+The record of what ran, as whom and at what spend. Vector Space shows it in four views: [Overview](#overview), [Health](#health), [Activity](#activity) and [Audit](#audit).
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### execution
+
+One unit of work that Vector Space records, such as an agent turn, a [schedule](#schedule) fire or a sync pass. Each execution has one [actor](#actor).
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### actor
+
+Who performed one action: a user, a [service account](#service-account), staff, an app or the platform. Every [execution](#execution) records one actor.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### Overview
+
+A [governance](#governance) view of what was spent, run or broken, by source. A figure opens the records behind it.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### Health
+
+A [governance](#governance) view of what is wrong now, such as a connector whose calls fail.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### Activity
+
+A [governance](#governance) view of what happened, in time order. It includes [acts](../vector-apps/glossary.md#acts) of kind `activity`.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### Audit
+
+A [governance](#governance) view of who changed what. It includes [acts](../vector-apps/glossary.md#acts) of kind `audit`.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### Intelligence
+
+The part of Vector Space where you read the [acts](../vector-apps/glossary.md#acts) of apps and their [Human Time Return](#human-time-return), apart from spend.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### Human Time Return
+
+The time that an app's work gives back to people, counted in seconds. It is an estimate, not a spend figure. Only successful [acts](../vector-apps/glossary.md#acts) with a baseline that staff approved are valued.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### AI gateway
+
+The service that every paid model call goes through. It uses the organization's own AI provider accounts.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### spend cap
+
+A limit on estimated AI spend, for one organization in one calendar month. The organization reads it. Staff set it.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### rate card
+
+The platform's list of prices for model calls. [Governance](#governance) prices each call from it, so spend is an estimate.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### agent card
+
+The public description of an agent under the [A2A](#a2a) protocol: its name, its skills and how to call it.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.

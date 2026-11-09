@@ -20,10 +20,10 @@ The glossary uses the published word where the product glossary uses an internal
 | --- | --- | --- |
 | allowed resources | Ceiling (`access.app_binding_resources`) | The resources a space manager attaches to an app. `ceiling` does not occur in `docs/`. |
 | the member's access | Floor | The overlap rule: an action runs only on resources that are allowed for the app and open to the member. |
-| resource pool | Pool | Vector Space lists it under Context Hub as **Resources**. |
+| Context Hub | Pool | The Context Hub row absorbs the pool. Vector Space lists what the space can reach as **Resources**. |
 | knowledge source | Source | Vector Space shows knowledge sources in the settings of an app. |
 | space page | Page (`pages.pages`) | A grid of widgets. `app page` names the SDK `pages[]` entry. |
-| capability grant | Grant | The noun only. The product grant is a standing approval, a different thing. |
+| capability grant | Share on named capabilities | A share at Can use on named capabilities of an app. The product grant is a standing approval, a different thing. |
 | Vector Space, space | Space | The platform is Vector Space. The workspace is a space. |
 | app token | service token | The SDK README calls it a service token. |
 | staff | Staff (`UserType.Staff`) | A platform operator, reaching organizations through the tenancy tree. |

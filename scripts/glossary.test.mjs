@@ -5,8 +5,13 @@ import { test } from 'node:test';
 
 const sections = {
   'vector-space': [
-    'Vector Space', 'space', 'space manager', 'Organization admin', 'Edit level', 'space page', 'staff', 'resource pool',
+    'Vector Space', 'space', 'space manager', 'Organization admin', 'space page', 'staff',
     'knowledge source', 'Context Hub', 'ask', 'channel', 'MCP', 'A2A', 'AI',
+    'organization', 'member', 'role', 'share', 'block', 'condition', 'service account', 'agent', 'orchestrator agent',
+    'thread', 'run', 'schedule', 'connector', 'Vector Module', 'Command Center', 'Agent Studio', 'governance',
+    'Activity', 'Audit', 'Intelligence', 'actor', 'standing approval', 'Human Time Return',
+    'widget', 'datasource', 'skill', 'group', 'Can use', 'Can edit', 'General access', 'AI gateway', 'execution',
+    'Overview', 'Health', 'spend cap', 'rate card', 'agent card',
   ],
   'vector-apps': [
     'app', 'app registration', 'manifest', 'app page', 'capability', 'capability grant', 'model slot', 'connector slot',
@@ -89,7 +94,7 @@ test('Vector Space, space and space manager entries open with the platform text'
   const first = (name) => entries.find((e) => e.name === name).body.trim().split('\n')[0];
   assert.match(first('Vector Space'), /^The Vector platform\./);
   assert.match(first('space'), /^A shared place in Vector Space\b/);
-  assert.equal(first('space manager'), 'A member of a space at Edit level, or an Organization admin. They add apps, grant capabilities and choose the models and connectors for the slots.');
+  assert.equal(first('space manager'), 'A user who can edit on the space, or an Organization admin. They add apps, share capabilities and choose the models and connectors for the slots.');
 });
 
 test('app page and space page entries tell the two pages apart', () => {
@@ -104,11 +109,57 @@ test('allowed resources entry states the overlap rule in the member\'s access', 
   assert.doesNotMatch(text, /\b(ceiling|floor)\b/i);
 });
 
-test('resource pool and knowledge source entries name the Vector Space screens', () => {
+test('Context Hub and knowledge source entries name the Vector Space screens', () => {
   const body = (name) => entries.find((e) => e.name === name).body;
-  assert.match(body('resource pool'), /Context Hub/);
-  assert.match(body('resource pool'), /Resources/);
+  assert.match(body('Context Hub'), /Resources/);
   assert.match(body('knowledge source'), /settings of an app/);
+});
+
+test('Context Hub holds six kinds of resource and pages are not one of them', () => {
+  const body = entries.find((e) => e.name === 'Context Hub').body;
+  for (const kind of ['connectors', 'knowledge sources', 'datasources', 'skills', 'apps', 'Vector Modules']) assert.match(body, new RegExp(kind), kind);
+  assert.match(body, /Pages are not one of them/);
+  assert.doesNotMatch(body, /resource pool/i);
+});
+
+test('no entry or link names the deleted terms', () => {
+  assert.ok(!entries.some((e) => /^(edit level|resource pool)$/i.test(e.name)));
+  assert.doesNotMatch(text, /\bEdit level\b|\bView level\b|resource pool/i);
+});
+
+test('the five access rows carry the access-change meanings', () => {
+  const first = (name) => entries.find((e) => e.name === name).body.trim().split('\n')[0];
+  assert.match(first('role'), /Can use or Can edit/);
+  assert.match(first('role'), /never a set of people/i);
+  assert.match(first('group'), /set of users and groups/);
+  assert.match(first('share'), /one subject's role on one object/i);
+  assert.match(first('block'), /Everything or Editing/);
+  assert.match(first('condition'), /Datasources and connectors only|datasources and connectors only/);
+  assert.match(first('member'), /General access/);
+});
+
+test('Vector Module lists Calendar and Human Time Return is an estimate', () => {
+  const body = (name) => entries.find((e) => e.name === name).body;
+  assert.match(body('Vector Module'), /`omnibox`/);
+  assert.match(body('Vector Module'), /`contacts`/);
+  assert.match(body('Vector Module'), /Calendar/);
+  assert.match(body('Human Time Return'), /estimate/);
+  assert.match(body('Human Time Return'), /seconds/);
+  assert.match(body('Human Time Return'), /not a spend figure/);
+});
+
+test('space manager and Command Center follow the access change', () => {
+  const body = (name) => entries.find((e) => e.name === name).body;
+  assert.match(body('Command Center'), /not a Vector Module/);
+  assert.match(body('orchestrator agent'), /one/i);
+});
+
+test('capability grant is a share on named capabilities and acts name Human Time Return', () => {
+  const body = (name) => entries.find((e) => e.name === name).body;
+  assert.ok(body('capability grant').trim().startsWith('A [share](../vector-space/glossary.md#share) on named capabilities, at Can use, for users or groups.'));
+  assert.match(body('share'), /capability grant/);
+  assert.match(body('acts'), /Human Time Return/);
+  assert.match(body('acts'), /\(\.\.\/vector-space\/glossary\.md#human-time-return\)/);
 });
 
 test('no entry is named grant', () => {

@@ -14,7 +14,7 @@ Each column is one path. Each row is one thing that you build or that Vector Spa
 | | Vector App | A2A agent | MCP server |
 | --- | --- | --- | --- |
 | You build | A client, a server and an [app definition](./glossary.md#app-definition). | An agent that serves an agent card and answers A2A messages. | A server that lists tools and answers MCP calls. |
-| Shows up as | [App pages](../vector-apps/glossary.md#app-page) in the space, and entries in the [agent catalog](./glossary.md#agent-catalog). | A sub-agent that the agent of the space delegates to. | A connector in the [resource pool](../vector-space/glossary.md#resource-pool) of the space. |
+| Shows up as | [App pages](../vector-apps/glossary.md#app-page) in the space, and entries in the [agent catalog](./glossary.md#agent-catalog). | A sub-agent that the agent of the space delegates to. | A connector in the [Context Hub](../vector-space/glossary.md#context-hub) of the space. |
 | Who sets it up | [Staff](../vector-space/glossary.md#staff) register it. A [space manager](../vector-space/glossary.md#space-manager) adds and configures it. | A space manager adds the agent card to the space. | A member of the space adds it as a connector. |
 | Knows the calling member | Yes. The user token identifies the member and lists their capabilities. | No, unless an app offers the agent. Then the A2A token can identify the member. | No. Vector Space does not pass the member on. |
 | Reads platform data | Yes. The [allowed resources](../vector-apps/glossary.md#allowed-resources) of the space, and the member list. | No. | No. |

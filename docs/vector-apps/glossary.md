@@ -44,7 +44,7 @@ A named permission of the form `<group>:<action>` with an `effect` of `read` or 
 
 ### capability grant
 
-The share of a declared capability with users or roles, made by a space manager. Only declared capabilities can be granted.
+A [share](../vector-space/glossary.md#share) on named capabilities, at Can use, for users or groups. A space manager makes it. Only declared capabilities can be shared.
 
 - Maps to: no SDK symbol. `useApp().capabilities` holds the capabilities granted to the current user.
 - Owner: Vector Space.
@@ -65,7 +65,7 @@ A named requirement for one external connector, such as ClickUp or a REST API. A
 
 ### acts
 
-Declared records of what the app did, such as an import. Each act has a `kind` of `activity` or `audit`. Vector Space refuses an undeclared act key.
+Declared records of what the app did, such as an import. Each act has a `kind` of `activity` or `audit`. Vector Space refuses an undeclared act key. An act is what [Human Time Return](../vector-space/glossary.md#human-time-return) values.
 
 - Maps to: `acts[]` in the definition.
 - Owner: SDK declares them. Vector Space bounds and records them.
@@ -100,7 +100,7 @@ An app attached to one space. The binding keeps a copy of the capabilities, acts
 
 ### allowed resources
 
-The resources a space manager attaches to an app, such as connectors and knowledge sources. They come from the [resource pool](../vector-space/glossary.md#resource-pool). An action runs only on resources that are allowed for the app and open to the member. The member's access never grows through the app.
+The resources a space manager attaches to an app, such as connectors and knowledge sources. They come from the [Context Hub](../vector-space/glossary.md#context-hub). An action runs only on resources that are allowed for the app and open to the member. The member's access never grows through the app.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
