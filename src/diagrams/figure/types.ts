@@ -50,8 +50,18 @@ export interface SlabData extends CardText {
 /** `core` is a part of the thing the figure shows, `plug` is a part that plugs in from outside. */
 export type PartTone = 'core' | 'plug';
 
+/** A vendor mark drawn on a part in place of its icon. */
+export interface PartMark {
+  /** Names the vendor, for the title of the mark. */
+  name: string;
+  /** Site-relative URL of a square image under `static/`, such as `/img/marks/apollo.png`. */
+  src: string;
+}
+
 export interface PartData extends CardText {
   icon: IconName;
+  /** Drawn in a row instead of `icon`, so a group part shows who is in it. */
+  marks?: PartMark[];
   tone: PartTone;
   /** Id of the slab the part stands on. */
   on: string;
@@ -73,9 +83,12 @@ export interface LinkData {
   remote?: boolean;
 }
 
-/** `core` and `plug` draw a swatch in the tone of that kind of part, `link` draws a plain line and `remote` a dashed line. */
+/**
+ * `core` and `plug` draw a swatch in the tone of that kind of part, `link` draws a plain line and `remote` a dashed line. The flow
+ * figures add `cube` (one moving cube), `stack` (a stack of cubes) and `hop` (the thick accent line of the current hop).
+ */
 export interface LegendItem {
-  swatch: PartTone | 'link' | 'remote';
+  swatch: PartTone | 'link' | 'remote' | 'cube' | 'stack' | 'hop';
   /** 15 words or fewer. */
   text: string;
 }
