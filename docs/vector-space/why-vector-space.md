@@ -1,36 +1,39 @@
 ---
 title: Why Vector Space
-description: What Vector Space is for, who it is for and the three rules that every part of it follows.
+description: The problem Vector Space solves, its three platform rules and the AI gateway.
 ---
 
-[Vector Space](./glossary.md#vector-space) is the platform where an organization's people and [AI](./glossary.md#ai) agents work on the organization's own data. This page says what it is for, who it is for and the three rules that every part of it follows.
+[Vector Space](./glossary.md#vector-space) is the platform where an [organization](./glossary.md#organization)'s people and [AI](./glossary.md#ai) agents work on the organization's own data, in shared places called [spaces](./glossary.md#space). It applies three rules to every piece of work: one for access, one for model keys and one for records.
 
-## What Vector Space is for
+Its aim is time given back to people. [Human Time Return](./glossary.md#human-time-return) is the time that an app's work gives back to people, counted in seconds. An app records an [act](../vector-apps/glossary.md#acts) for each batch of work it finishes, and [staff](./glossary.md#staff) approve the seconds per unit of an act.
 
-An organization builds agents, connects them to its systems and runs them in spaces. The systems include mail, files, customer databases and other APIs. A [space](./glossary.md#space) is a shared place for one team. It has its own members, resources, [space pages](./glossary.md#space-page) and apps.
+Only successful acts with an approved baseline are valued, and the platform shows how many are not. You read Human Time Return in [Intelligence](./glossary.md#intelligence), apart from spend. It is an estimate, and Vector Space computes no return figure from it. [The record of work](./the-record-of-work.md#acts-and-human-time-return) gives the detail.
 
-Every run follows the access rules of the organization. It is paid for through the AI provider accounts of the organization, and it records who it ran as.
+## The problem Vector Space solves
 
-[What Vector Space is](./what-vector-space-is.md) shows the parts of an organization and a space in one picture.
+An organization that lets agents act on its own data must answer three questions. Who may reach what? Whose keys and money does a model call use? Who did what? Each question has one rule in Vector Space.
 
-## Who it is for
-
-Vector Space is for organizations that want their people and their agents to work in one place, on their own data.
-
-- **Members** use it every day. They chat with agents, build space pages and answer what agents ask them.
-- An [Organization admin](./glossary.md#organization-admin) and [space managers](./glossary.md#space-manager) set it up. They decide who joins a space and what the space may reach.
-- You can add code of your own to a space. [Why Vector Apps](../vector-apps/why-vector-apps.md) says what a Vector App is and what a space gives it.
+A [member](./glossary.md#member) asks the [orchestrator agent](./glossary.md#orchestrator-agent) of a space to find leads and send an outreach email. The agent reaches only what that member may reach. The model call goes through the [AI gateway](./glossary.md#ai-gateway), on the organization's own AI provider account. Vector Space records the run under the member's name.
 
 ## The three platform rules
 
 Three rules hold for every part of Vector Space. Each rule is a promise that does not depend on which part you use.
 
-- **One access model.** Vector Space works out the access of a member to a resource for each action, from roles, shares, blocks and conditions. The same rules apply in the web app, in the API, to agents and to apps.
-- **One AI gateway.** Every paid model call goes through the AI gateway, on the AI provider accounts of the organization. No other process holds an AI provider key.
-- **One record of work.** Every run, call and [act](../vector-apps/glossary.md#acts) records who it ran as and what started it. So each number that [governance](./the-record-of-work.md) shows can be traced to the work behind it.
+- **One access model.** Vector Space works out access for each operation from [General access](./glossary.md#general-access), [shares](./glossary.md#share), [blocks](./glossary.md#block) and [Conditions](./glossary.md#condition). The same check covers the web app, the API, agents and apps. [One access model](./one-access-model.md) gives the detail.
+- **One AI gateway.** Every paid model call goes through the AI gateway, so the organization pays through its own accounts. The next section gives the detail.
+- **One record of work.** Each run, call and act records who it ran as and what started it. [The record of work](./the-record-of-work.md) shows how [governance](./glossary.md#governance) reads these records.
+
+## The AI gateway
+
+Every paid model call goes through the AI gateway, on the organization's own AI provider accounts. An AI provider account is the account of the organization with a company that sells model access. No other process holds an AI provider key.
+
+Vector Space keeps the keys of these accounts in a credential vault. Its servers write a key into the vault and never read one back. A caller holds a short-lived ticket in the place of a key. The ticket names the organization and, normally, who the call ran as.
+
+Because every call passes one gateway, the platform can price each call and add it to the spend of the organization. [The record of work](./the-record-of-work.md) says how Vector Space estimates and limits that spend.
 
 ## Where to go next
 
-- [What Vector Space is](./what-vector-space-is.md): see the building blocks, where your code plugs in and who the roles are.
-- [Why Vector Apps](../vector-apps/why-vector-apps.md): see what an app is and what a space gives it.
+- [One access model](./one-access-model.md): see what the access check reads and what wins.
+- [The record of work](./the-record-of-work.md): see who a run is recorded as, the four governance views and spend.
+- [How work moves through a space](./how-work-moves-through-a-space.md): follow one request from a member to the result.
 - [Vector Space glossary](./glossary.md): look up each term on this page.

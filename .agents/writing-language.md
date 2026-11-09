@@ -1,6 +1,6 @@
 # Docs language checklist
 
-Reader: a working developer who knows TypeScript, Node and React and has not used Space.
+Reader: a working developer who knows TypeScript, Node and React and has not used Space. This holds for build pages (`docs/vector-apps/`, `docs/sdk/`). The concept page section sets its own reader.
 Coverage: prose, tables, headings, code comments. Not identifiers or string values in code.
 Precedence: rules here win over any reference. A page-type section wins over the shared layer on that page.
 
@@ -47,10 +47,19 @@ Precedence: rules here win over any reference. A page-type section wins over the
 
 ## Concept page
 
+Scope: the concept pages of `docs/vector-space/` (What, Why and How groups).
+Reader: someone who works in or judges a space and has not used Vector Space. The page assumes no TypeScript, Node or React. A page never names who it is for.
+
 - **C1 Open with the definition.** First sentence says what the thing is. Second says what it does for the reader.
 - **C2 Example early.** A minimal example follows the definition and the main rule.
 - **C3 Rule, then reason.** State the rule, then the consequence in the same or the next sentence.
 - **C4 End with what next.** Last section gives a result and one next step.
+- **C5 Frame.** In order: lead, an "Example" H2, 2 to 4 detail H2s, "Where to go next". Exceptions: `what-vector-space-is` ends with a grouped list of all pages, `how-work-moves-through-a-space` has no "Example" H2, `why-vector-space` opens with the problem and has no figure, `the-record-of-work` may have 5 detail H2s.
+- **C6 One figure per major idea.** The figure sits inside the detail H2 that names its idea, never right after the lead. `what-a-space-holds` and `who-can-do-what` have none.
+- **C7 One scenario.** Each page tells one slice of the same scenario: a member asks the orchestrator agent to find leads and send an outreach email. `approvals-and-the-command-center` and `extending-a-space` use their own example. Vendor names appear only on the worked-example page.
+- **C8 Limits.** 4 to 6 H2s counting "Example" and "Where to go next"; 500 to 800 words; at most one table. `the-record-of-work` and `how-work-moves-through-a-space` are exempt from the H2 and word counts.
+- **C9 Stand alone.** Define each term at first use in one clause with a glossary link. A term owned by Vector Apps or the SDK gets one clause and a link.
+- **C10 Where to go next.** 2 to 4 links, ordered by what the reader does next, plus the glossary. Only `what-vector-space-is` and `extending-a-space` link outside the section.
 
 ## Tutorial page
 
