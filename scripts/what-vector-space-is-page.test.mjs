@@ -65,7 +65,7 @@ test('the Command Center is a plain part of a space, not a Vector Module', () =>
 test('the Vector Modules item lists omnibox, contacts and Calendar as sub-items with no caveat', () => {
   const parts = section(text, 'The parts of a space');
   const subItems = parts.split('\n').filter((l) => l.startsWith('  - '));
-  assert.deepEqual(subItems.map((l) => l.match(/^  - (`\w+`|Calendar)/)?.[1]), ['`omnibox`', '`contacts`', 'Calendar']);
+  assert.deepEqual(subItems.map((l) => l.match(/^  - (Omnibox|Contacts|Calendar)/)?.[1]), ['Omnibox', 'Contacts', 'Calendar']);
   assert.doesNotMatch(text, /Calendar[^.\n]*(not yet|coming|planned|soon|beta|later|may )/i);
   assert.equal(text.match(/Calendar/g)?.length, 1);
 });

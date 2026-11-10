@@ -140,8 +140,8 @@ test('the access rows define role, group, share, block, condition and member', (
 
 test('Vector Module lists Calendar and Human Time Return is an estimate', () => {
   const body = (name) => entries.find((e) => e.name === name).body;
-  assert.match(body('Vector Module'), /`omnibox`/);
-  assert.match(body('Vector Module'), /`contacts`/);
+  assert.match(body('Vector Module'), /Omnibox/);
+  assert.match(body('Vector Module'), /Contacts/);
   assert.match(body('Vector Module'), /Calendar/);
   assert.match(body('Human Time Return'), /estimate/);
   assert.match(body('Human Time Return'), /seconds/);

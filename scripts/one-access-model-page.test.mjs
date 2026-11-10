@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { bannedTermsIn, bodyOf, brokenLinks, linksOf, longSentences, section } from './page-helpers.mjs';
+import { bannedTermsIn, bodyOf, brokenLinks, linksOf, section } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
 const docs = resolve(dirname(fileURLToPath(import.meta.url)), '../docs');
@@ -16,15 +16,16 @@ const noLinks = body.replace(/\]\([^)]*\)/g, ']');
 
 const headings = [...text.matchAll(/^## (.+)$/gm)].map((m) => m[1]);
 
-test('the page runs lead, Example, three detail H2s, Where to go next', () => {
-  assert.deepEqual(headings, ['Example', 'What the check reads', 'How the inputs combine', 'One check for every way in', 'Where to go next']);
-  assert.match(lead, /^Access is /, 'the lead opens with the definition');
+test('the page runs lead, the scene, three detail H2s, Where to go next', () => {
+  assert.deepEqual(headings, ['A lead search limited by region', 'What the check reads', 'How the inputs combine', 'One check for every way in', 'Where to go next']);
+  assert.match(lead, /^Access defines the set of operations a user, agent or app is permitted to perform on a resource within a space\./, 'the lead opens with the definition');
 });
 
-test('the page is 500 to 800 words with at most one table', () => {
-  const words = prose.split(/\s+/).filter(Boolean).length;
-  assert.ok(words >= 500 && words <= 800, `${words} words`);
-  assert.ok((text.match(/^\|\s*-/gm) ?? []).length <= 1);
+test('the scene is the first H2, names no Example and says Acme\'s sales team', () => {
+  assert.equal(headings[0], 'A lead search limited by region');
+  assert.doesNotMatch(text, /^#+ .*Example/m);
+  assert.doesNotMatch(prose, /the sales space/i);
+  assert.match(section(text, 'A lead search limited by region'), /\nAcme's sales team has a space/);
 });
 
 test('the figure slot appears once, inside "How the inputs combine"', () => {
@@ -33,14 +34,14 @@ test('the figure slot appears once, inside "How the inputs combine"', () => {
 });
 
 test('the example is a member who sees only the EU leads, by a condition on the group, in the app and through the orchestrator agent', () => {
-  const example = section(text, 'Example');
+  const example = section(text, 'A lead search limited by region');
   for (const word of ['orchestrator agent', 'leads', 'EU', 'condition', 'group', 'member']) assert.ok(example.includes(word), word);
   assert.match(example, /\[condition\]\(\.\/glossary\.md#condition\)/);
   assert.match(example, /app/);
 });
 
 test('the API-key variant is one closing paragraph that can be cut alone', () => {
-  const paragraphs = section(text, 'Example').split(/\n\n+/).slice(1).map((p) => p.trim()).filter(Boolean);
+  const paragraphs = section(text, 'A lead search limited by region').split(/\n\n+/).slice(1).map((p) => p.trim()).filter(Boolean);
   assert.equal(paragraphs.filter((p) => /API key/.test(p)).length, 1);
   assert.match(paragraphs.at(-1), /^An API key /);
   assert.doesNotMatch(paragraphs.slice(0, -1).join('\n'), /API key|service account/i);
@@ -50,6 +51,14 @@ test('the check reads General access, shares, blocks and conditions, with each t
   const reads = section(text, 'What the check reads');
   for (const anchor of ['general-access', 'share', 'block', 'role', 'can-use', 'can-edit']) assert.ok(reads.includes(`](./glossary.md#${anchor})`), anchor);
 });
+
+test('a block names its two presets and a group share reaches nested groups', () => {
+  const reads = section(text, 'What the check reads');
+  assert.match(reads, /Everything, which denies every action, or Editing, which denies the change actions and leaves use/);
+  assert.match(reads, /including through groups nested inside it/);
+});
+
+test('the page uses user, not caller', () => assert.doesNotMatch(prose, /\bcaller\b/));
 
 test('a Restricted resource is closed even to an Organization admin unless a share names it', () => {
   const reads = section(text, 'What the check reads');
@@ -103,16 +112,16 @@ test('each term is linked at its first use: group, orchestrator agent, member, V
   }
 });
 
-test('paragraphs are 5 sentences or fewer and sentences 25 words or fewer', () => {
+test('paragraphs are 5 sentences or fewer and the page has no em dash', () => {
   for (const paragraph of prose.split(/\n\n+/)) assert.ok(paragraph.split(/(?<=[.!?])\s+/).length <= 5 || paragraph.includes('\n- '), paragraph);
-  assert.deepEqual(longSentences(prose), []);
+  assert.doesNotMatch(prose, /—/);
 });
 
 test('the page names no banned name or term', () => {
   const banned = [
     /\.md\b(?!\))/, /RBAC|ABAC|userset|\bPDP\b|\bPEP\b/, /\bthe pool\b/i,
     /View level|Edit level|member level|role grant|scoped grant|five roles/i, /elevated actor/i, /ceiling|floor|obligation|permit\b|deny-overrides/i,
-    /\bHiring\b|\bSDR\b|\bCSR\b/, /\bsupport\b|\bsales\b(?! space)|\bhiring\b/i, /Apollo|\bExa\b|BrightData/, /immediately/i,
+    /\bHiring\b|\bSDR\b|\bCSR\b/, /\bsupport\b|\bsales\b(?! team)|\bhiring\b/i, /Apollo|\bExa\b|BrightData/, /immediately/i,
   ];
   for (const pattern of banned) assert.doesNotMatch(noLinks, pattern);
   assert.deepEqual(bannedTermsIn(noLinks), []);

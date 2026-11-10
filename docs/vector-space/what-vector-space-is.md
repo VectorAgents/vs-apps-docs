@@ -37,8 +37,8 @@ The figure shows the five parts of a space and the three things that plug in fro
 - **[Command Center](./glossary.md#command-center)**: where an [ask](./glossary.md#ask) waits for a person. When an agent needs approval or an answer, the run pauses and the ask goes here, and the Command Center is a plain part of a space, not a Vector Module. [Approvals and the Command Center](./approvals-and-the-command-center.md) covers asks.
 - **[Context Hub](./glossary.md#context-hub)**: the list of what the space can reach, which holds connectors, knowledge sources, datasources, skills and apps. [What a space holds](./what-a-space-holds.md) describes each kind.
 - **[Vector Modules](./glossary.md#vector-module)**: first-party tools that work over connector data and sit in the Context Hub. [What a space holds](./what-a-space-holds.md) says more. The modules are:
-  - `omnibox`, which shows mail and LinkedIn conversations in one stream to read and reply to.
-  - `contacts`, which holds the contact rows of the space.
+  - Omnibox, which shows mail and LinkedIn conversations in one stream to read and reply to.
+  - Contacts, which holds the contact rows of the space.
   - Calendar, which shows the meetings of the connected calendars.
 
 The lowest slab of the figure is Governance. It reads across the whole organization to show what ran and as whom. [The record of work](./the-record-of-work.md) covers it.

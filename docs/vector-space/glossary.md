@@ -240,7 +240,7 @@ One cell of a [space page](#space-page): a database query with its chart, or a d
 
 ### Vector Module
 
-A first-party product that works over connector data and sits in the [Context Hub](#context-hub). The modules are `omnibox`, `contacts` and Calendar.
+A first-party product that works over connector data and sits in the [Context Hub](#context-hub). The modules are Omnibox, Contacts and Calendar.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
