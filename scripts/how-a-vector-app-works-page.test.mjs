@@ -1,12 +1,13 @@
 import assert from 'node:assert/strict';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { linksOf, section } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
-const docs = resolve(dirname(fileURLToPath(import.meta.url)), '../docs');
+const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const docs = resolve(root, 'docs');
 const file = resolve(docs, 'vector-apps/how-a-vector-app-works.md');
 const text = readFileSync(file, 'utf8');
 
@@ -23,11 +24,26 @@ test('the page runs parts, lifecycle, token kinds, next steps', () => {
   assert.deepEqual(headings(2), ['The parts of an app', 'The lifecycle', 'The six token kinds', 'Where to go next']);
 });
 
-test('the page embeds the apps diagram once, in the parts section, as Fig. 1', () => {
-  assert.match(text, /^import IsoDiagram from '@site\/src\/components\/IsoDiagram';$/m);
-  assert.match(text, /^import \{ appsOverview \} from '@site\/src\/diagrams\/apps-overview\.ts';$/m);
-  assert.equal(section(text, 'The parts of an app').match(/<IsoDiagram diagram=\{appsOverview\} figure=\{1\} \/>/g)?.length, 1);
-  assert.equal(text.match(/<IsoDiagram/g)?.length, 1);
+test('the page embeds the apps figure once, in the parts section, as Fig. 1', () => {
+  assert.match(text, /^import StructureFigure from '@site\/src\/components\/StructureFigure';$/m);
+  assert.match(text, /^import \{ appsOverview \} from '@site\/src\/diagrams\/figures\/apps-overview\.ts';$/m);
+  assert.equal(section(text, 'The parts of an app').match(/<StructureFigure data=\{appsOverview\} figure=\{1\} \/>/g)?.length, 1);
+  assert.equal(text.match(/<StructureFigure/g)?.length, 1);
+});
+
+test('the text names no line of the old diagram, and the token table says which token each call carries', () => {
+  assert.doesNotMatch(text, /\bline[s]? [a-d]\b|four lines|token path/i);
+  assert.match(section(text, 'The parts of an app'), /dashed/i);
+});
+
+test('the old isometric component, layout, data and test are gone, and nothing imports them', () => {
+  for (const old of ['src/components/IsoDiagram.tsx', 'src/diagrams/isoLayout.ts', 'src/diagrams/apps-overview.ts', 'scripts/iso-diagram.test.mjs', 'scripts/build-check/iso-diagram.test.mjs']) {
+    assert.ok(!existsSync(resolve(root, old)), old);
+  }
+  const sources = readdirSync(resolve(root, 'src'), { recursive: true }).filter((f) => /\.(tsx?|mdx?|css)$/.test(f));
+  for (const file of [...sources.map((f) => `src/${f}`), ...readdirSync(resolve(root, 'docs'), { recursive: true }).filter((f) => /\.mdx?$/.test(f)).map((f) => `docs/${f}`)]) {
+    assert.doesNotMatch(readFileSync(resolve(root, file), 'utf8'), /IsoDiagram|isoLayout|diagrams\/apps-overview|\.iso-diagram|\.iso-badge/m, file);
+  }
 });
 
 test('the lifecycle runs build, register, activate, configure, update, deprovision, in a table and in sections', () => {

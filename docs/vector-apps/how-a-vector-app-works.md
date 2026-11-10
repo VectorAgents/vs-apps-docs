@@ -3,8 +3,8 @@ title: How a Vector App works
 description: The parts of an app, the six steps from build to removal, who does each step, and the six kinds of token that Vector Space signs.
 ---
 
-import IsoDiagram from '@site/src/components/IsoDiagram';
-import { appsOverview } from '@site/src/diagrams/apps-overview.ts';
+import StructureFigure from '@site/src/components/StructureFigure';
+import { appsOverview } from '@site/src/diagrams/figures/apps-overview.ts';
 
 An [app](./glossary.md#app) is a web app that runs on its own origin and that a [space](../vector-space/glossary.md#space) shows inside [Vector Space](../vector-space/glossary.md#vector-space), the Vector platform. This page shows the parts of an app, the six steps from build to removal, and the tokens that Vector Space signs for it.
 
@@ -12,9 +12,11 @@ An [app](./glossary.md#app) is a web app that runs on its own origin and that a 
 
 You write three parts: a client, a server and a [manifest](./glossary.md#manifest). Your client runs in an iframe inside the space. Your server runs on your own origin and serves the manifest. Vector Space supplies the other two parts that your app uses: platform data and the [AI](../vector-space/glossary.md#ai) gateway.
 
-<IsoDiagram diagram={appsOverview} figure={1} />
+<StructureFigure data={appsOverview} figure={1} />
 
-The four lines show the token path. Lines a to c run each time someone uses the app. Line d runs when Vector registers the app and when you change it. Your server decides who may do what. A check in your client is for display only.
+The three dashed lines are calls. Your client calls your server and your server calls Vector Space each time someone uses the app. Vector Space reads the manifest when Vector registers the app and when you change it. [The token kinds](#the-six-token-kinds) say which token each call carries.
+
+Your server decides who may do what. A check in your client is for display only.
 
 ## The lifecycle
 
@@ -37,7 +39,7 @@ You describe the app in one [app definition](../sdk/app-definition.md). Your ser
 
 Staff give Vector Space the URL of your manifest. Vector Space reads and checks it, then shows staff what the manifest declares, such as model slots. Staff then create the [app registration](./glossary.md#app-registration).
 
-Registering does not add the app to any space. It uses line d of the diagram.
+Registering does not add the app to any space.
 
 ### Activate
 

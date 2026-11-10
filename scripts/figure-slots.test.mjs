@@ -69,9 +69,14 @@ test('each figure sits inside the H2 that the spec names for its slot', () => {
   }
 });
 
-test('no other page holds a figure, so no page has a second slot', () => {
+test('no other page of the section holds a figure, so no page has a second slot', () => {
   const owned = new Set(slots.map(pageOf));
-  for (const file of sourceFiles.filter((f) => !owned.has(f))) assert.deepEqual(figuresOf(read(file)), [], file);
+  for (const file of sourceFiles.filter((f) => f.startsWith('vector-space/') && !owned.has(f))) assert.deepEqual(figuresOf(read(file)), [], file);
+});
+
+test('outside the section, only the Apps overview holds a figure', () => {
+  const outside = sourceFiles.filter((f) => !f.startsWith('vector-space/') && figuresOf(read(f)).length > 0);
+  assert.deepEqual(outside, ['vector-apps/how-a-vector-app-works.md']);
 });
 
 test('the placeholder count is within PLACEHOLDER_CAP, which starts at 8', () => {
