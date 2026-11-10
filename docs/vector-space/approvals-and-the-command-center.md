@@ -8,9 +8,9 @@ import { approvalsFlow } from '@site/src/diagrams/figures/approvals-flow.ts';
 
 An [ask](./glossary.md#ask) is anything that an agent or an app waits on a person for, such as approval to make a change. The [Command Center](./glossary.md#command-center) is the part of a [space](./glossary.md#space) where asks wait. It also lists the [standing approvals](./glossary.md#standing-approval) that let a call run without asking and the [schedules](./glossary.md#schedule) that a person runs.
 
-## Example
+## A status note that waits for approval
 
-A [member](./glossary.md#member) asks the [orchestrator agent](./glossary.md#orchestrator-agent) to post a status note to the team chat. The post goes out through a [connector](./glossary.md#connector), and it changes something outside the space. So the [run](./glossary.md#run) stops, and an ask appears in the Command Center.
+Acme's sales team has a space, and a [member](./glossary.md#member) of it asks the [orchestrator agent](./glossary.md#orchestrator-agent) to post a status note to the team chat. The post goes out through a [connector](./glossary.md#connector), and it changes something outside the space. So the [run](./glossary.md#run) stops, and an ask appears in the Command Center.
 
 The member reads the ask and approves it. The run continues and the note is posted. The member also ticks "always allow", so the same post runs later with no ask.
 
@@ -20,17 +20,24 @@ An agent raises an ask when its run reaches an operation that writes, such as a 
 
 The Command Center is a plain part of a space. It is not a [Vector Module](./glossary.md#vector-module).
 
-Each ask goes to the person who answers for the run. For the run of a member, that is the member. A [service account](./glossary.md#service-account) cannot decide. When a service account does the work, the owner of its key answers. If there is none, the owner of the [thread](./glossary.md#thread) or background task that it ran for answers.
+Each ask goes to its answerer, the person who answers for the run:
 
-An ask that an app raises from its own server goes to the [space managers](./glossary.md#space-manager). A space manager also sees an ask whose answerer can no longer view the space. Anyone who leaves a space stops seeing its asks.
+- **Member**: answers for their own run.
+- **[Service account](./glossary.md#service-account)**: cannot decide. The owner of its key answers. If there is none, the owner of the [thread](./glossary.md#thread) or background task that it ran for answers.
+- **App**: an ask that an app raises from its own server goes to the [space managers](./glossary.md#space-manager).
+
+A space manager also sees an ask whose answerer can no longer view the space. Anyone who leaves a space stops seeing and deciding its asks.
 
 <FlowFigure data={approvalsFlow} />
 
 ## After a decision
 
-A run that raises an ask stops where it is and waits. After an approval, the run continues as its own [actor](./glossary.md#actor), the same identity as before. The identity of the person who decided never reaches the run. A decision is a second check, never extra access.
+A run that raises an ask stops where it is and waits. A decision is a second check, never extra access. Each way an ask ends:
 
-A rejection goes back to the run. A new message in the thread also ends the ask. An ask that an app raises pauses no run, because no run waits. The decision is sent back to the app.
+- **Approved**: the run continues as its own [actor](./glossary.md#actor), the same identity as before. The identity of the person who decided never reaches the run.
+- **Rejected**: the rejection goes back to the run.
+- **A new message in the thread**: ends the ask.
+- **An app's ask**: pauses no run, because no run waits. The decision is sent back to the app.
 
 ## Standing approvals
 
@@ -42,7 +49,7 @@ A standing approval covers only calls that were approved. It applies from the ne
 
 ## Schedules
 
-A schedule is a background task that an agent or a person sets to run on a timer. A person can create one in the Command Center, and an agent can create one from a conversation. The Command Center lists the schedules that you own, and only the owner edits, pauses or deletes a schedule.
+A schedule is a background task that an agent or a person sets to run on a timer. A person can create one in the Command Center, and an agent can create one from a conversation. The Command Center lists the schedules that you own, and only the owner edits, pauses, runs or deletes a schedule.
 
 Every run of a schedule acts as one identity. That is a service account chosen when the schedule was set up, or else the person who created it. A service account uses its own standing approvals. Any other identity uses the approvals of the owner.
 
@@ -50,6 +57,6 @@ A schedule whose agent writes stops at an ask. If the creator ticked "always all
 
 ## Where to go next
 
-- [How work moves through a space](./how-work-moves-through-a-space.md): follow one request through an ask to a sent email.
-- [The record of work](./the-record-of-work.md): see where a decided ask shows in Activity.
-- [Vector Space glossary](./glossary.md): look up each term on this page.
+- [How work moves through a space](./how-work-moves-through-a-space.md): one request followed through an ask to a sent email.
+- [The record of work](./the-record-of-work.md): where a decided ask shows in Activity.
+- [Glossary](./glossary.md): every term of Vector Space, each defined in a sentence.
