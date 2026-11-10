@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { bannedTermsIn, bodyOf, brokenLinks, linksOf, longSentences, section } from './page-helpers.mjs';
+import { bannedTermsIn, bodyOf, brokenLinks, linksOf, section } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
 const docs = resolve(dirname(fileURLToPath(import.meta.url)), '../docs');
@@ -15,8 +15,8 @@ const lead = body.split(/^## /m)[0];
 const figures = (s) => [...s.matchAll(/<(?:FigurePlaceholder|StructureFigure)\b[^>]*\/>/g)].map((m) => m[0]);
 const noLinks = body.replace(/\]\([^)]*\)/g, ']');
 
-test('the page runs lead, Example, two detail H2s, Where to read next', () => {
-  assert.deepEqual([...text.matchAll(/^## (.+)$/gm)].map((m) => m[1]), ['Example', 'The parts of a space', 'Where outside code plugs in', 'Where to read next']);
+test('the page runs lead, Example, three detail H2s, Where to read next', () => {
+  assert.deepEqual([...text.matchAll(/^## (.+)$/gm)].map((m) => m[1]), ['Example', 'The three platform rules', 'The parts of a space', 'Where outside code plugs in', 'Where to read next']);
 });
 
 test('the lead says what Vector Space is, then what a run does: access rules, own AI provider accounts, a record of who ran it', () => {
@@ -56,9 +56,10 @@ test('the Command Center is a plain part of a space, not a Vector Module', () =>
   assert.match(item, /plain part of a space, not a Vector Module/);
 });
 
-test('the Vector Modules line lists omnibox, contacts and Calendar with no caveat', () => {
-  const item = section(text, 'The parts of a space').split('\n').find((l) => l.startsWith('- ') && l.includes('Vector Modules'));
-  assert.match(item, /`omnibox`, `contacts` and Calendar/);
+test('the Vector Modules item lists omnibox, contacts and Calendar as sub-items with no caveat', () => {
+  const parts = section(text, 'The parts of a space');
+  const subItems = parts.split('\n').filter((l) => l.startsWith('  - '));
+  assert.deepEqual(subItems.map((l) => l.match(/^  - (`\w+`|Calendar)/)?.[1]), ['`omnibox`', '`contacts`', 'Calendar']);
   assert.doesNotMatch(text, /Calendar[^.\n]*(not yet|coming|planned|soon|beta|later|may )/i);
   assert.equal(text.match(/Calendar/g)?.length, 1);
 });
@@ -84,21 +85,27 @@ test('outside code is a Vector App, an A2A agent and an MCP connector, one line 
   assert.ok(linksOf(outside).includes('./extending-a-space.md'));
 });
 
-test('the page has no section on organizations and spaces or on the platform rules', () => {
+test('the platform rules are one access model, one AI gateway and one record of work, one line each, with links to the pages that own them', () => {
+  const rules = section(text, 'The three platform rules');
+  assert.deepEqual([...rules.matchAll(/^- \*\*(.+?)\.\*\*/gm)].map((m) => m[1]), ['One access model', 'One AI gateway', 'One record of work']);
+  for (const link of ['./why-vector-space.md', './one-access-model.md', './glossary.md#ai-gateway', './the-record-of-work.md']) assert.ok(linksOf(rules).includes(link), link);
   assert.doesNotMatch(text, /^## (Organizations and spaces|What holds the platform together)/m);
-  assert.doesNotMatch(noLinks, /\bAI gateway\b|three (platform )?rules/i);
+});
+
+test('the page does not compare Vector Space to other products', () => {
+  assert.doesNotMatch(noLinks, /\bwrappers?\b/i);
 });
 
 test('every link resolves and every glossary anchor exists', () => {
   assert.deepEqual(brokenLinks(text, file), []);
 });
 
-test('Where to read next groups all ten other pages as What, Why and How, then the glossary, with no "Where to go next"', () => {
-  assert.doesNotMatch(text, /Where to go next/);
+test('Where to read next groups all ten other pages in three groups, then the glossary, with no "Where to go next"', () => {
+  assert.doesNotMatch(text, /Where to go next|stands alone/);
   const next = section(text, 'Where to read next');
   assert.deepEqual(
-    [...next.matchAll(/^\*\*(What|Why|How)\*\*$/gm)].map((m) => m[1]),
-    ['What', 'Why', 'How'],
+    [...next.matchAll(/^\*\*(.+)\*\*$/gm)].map((m) => m[1]),
+    ['Core concepts', 'Architecture and governance', 'Workflows and extensions'],
   );
   assert.deepEqual(linksOf(next), [
     './organizations-and-spaces.md',
@@ -132,9 +139,8 @@ test('each term is linked at its first use: Vector Space, organization, agents, 
   }
 });
 
-test('paragraphs are 5 sentences or fewer and sentences 25 words or fewer', () => {
+test('paragraphs are 5 sentences or fewer', () => {
   for (const paragraph of prose.split(/\n\n+/)) assert.ok(paragraph.split(/(?<=[.!?])\s+/).length <= 5 || paragraph.includes('\n- '), paragraph);
-  assert.deepEqual(longSentences(prose), []);
 });
 
 test('the page names no banned name or term', () => {

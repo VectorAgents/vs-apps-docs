@@ -4,7 +4,7 @@ const sidebars: SidebarsConfig = {
   vectorSpace: [
     {
       type: 'category',
-      label: 'What',
+      label: 'Core concepts',
       collapsed: false,
       items: [
         'vector-space/what-vector-space-is',
@@ -16,13 +16,13 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: 'Why',
+      label: 'Architecture and governance',
       collapsed: false,
       items: ['vector-space/why-vector-space', 'vector-space/one-access-model', 'vector-space/the-record-of-work'],
     },
     {
       type: 'category',
-      label: 'How',
+      label: 'Workflows and extensions',
       collapsed: false,
       items: [
         'vector-space/how-work-moves-through-a-space',

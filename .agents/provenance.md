@@ -273,7 +273,7 @@ Source paths are in the sibling `vector-spaces` repo, under `docs/`. The spec ov
 
 ## What Vector Space is
 
-Source paths are in the sibling `vector-spaces` repo, under `docs/`. The page is `docs/vector-space/what-vector-space-is.md`. The spec overrides: no "Organizations and spaces" or "What holds the platform together" H2, no list of the five kinds of people, the Governance slab is named "Governance" only, and the example is the scenario slice.
+Source paths are in the sibling `vector-spaces` repo, under `docs/`. The page is `docs/vector-space/what-vector-space-is.md`. The page adds a "The three platform rules" H2 that states each rule in one line and links the page that owns it. It has no "Organizations and spaces" H2 and no list of the five kinds of people, the Governance slab is named "Governance" only, and the example is the scenario slice.
 
 | Claim | Rests on |
 | --- | --- |
@@ -283,6 +283,7 @@ Source paths are in the sibling `vector-spaces` repo, under `docs/`. The page is
 | The Context Hub lists what the space can reach: connectors, knowledge sources, datasources, skills and apps. Vector Modules sit in it too. Pages are not one of its kinds. | `product/OVERVIEW.md` ("The product's layers"), `product/GLOSSARY.md` (Context Hub). |
 | The Command Center is where an ask waits for a person. It is a plain part of a space, not a Vector Module. | `product/OVERVIEW.md` ("The product's layers"), `systems/COMMAND-CENTER.md` (opening). |
 | Vector Modules are first-party tools over connector data: `omnibox`, `contacts` and Calendar. Calendar is listed without a caveat by product decision. The master lists `omnibox` and `contacts` only, so Calendar is unverified. | `systems/context-hub/MODULES.md` (Vector Modules), `product/GLOSSARY.md` (Context Hub: Vector Module). |
+| The page states the three platform rules (one access model, one AI gateway, one record of work) in one line each. The AI gateway is unverified for production, as in the AI gateway row, so that line is the first to cut. | `product/OVERVIEW.md` ("What holds it together"), `systems/AI.md` (The gateway). |
 | Governance reads across the whole organization: what ran and as whom. | `product/OVERVIEW.md` ("The product's layers": Governance has an organization-wide view). |
 | A Vector App is a web app that a space shows in an iframe. | `product/GLOSSARY.md` (Apps: App). |
 | An A2A agent is a remote agent that joins the agent tree as a leaf. | `systems/STUDIO.md` (The agent tree, Vocabulary). |

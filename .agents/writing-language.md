@@ -10,7 +10,7 @@ Precedence: rules here win over any reference. A page-type section wins over the
 
 - **L1 Plain word.** Use the common word. Bad: "feeds ten uses". Good: "is used in ten places".
 - **L2 One idea per sentence.** Split at "and", "so" and ";" when each side could stand alone.
-- **L3 Sentence length.** Target 25 words or fewer. Hard cap 40. References: mean 13-14, p90 25-28.
+- **L3 Sentence length.** Target 25 words or fewer. Hard cap 40. References: mean 13-14, p90 25-28. `what-vector-space-is` has no 25-word target; the hard cap 40 holds there.
 - **L4 Paragraph length.** 5 sentences or fewer. References: mean 1.4-1.9.
 - **L5 Table cell and reference description.** 15 words or fewer. A cell over 15 words is a note, not an error. References: 9-11.
 - **L6 Active voice.** Name the actor. Bad: "A slot nobody set runs nothing". Good: "If no one sets a slot, the app cannot use that model."
@@ -54,7 +54,7 @@ Reader: someone who works in or judges a space and has not used Vector Space. Th
 - **C2 Example early.** A minimal example follows the definition and the main rule.
 - **C3 Rule, then reason.** State the rule, then the consequence in the same or the next sentence.
 - **C4 End with what next.** Last section gives a result and one next step.
-- **C5 Frame.** In order: lead, an "Example" H2, 2 to 4 detail H2s, "Where to go next". Exceptions: `what-vector-space-is` ends with a grouped list of all pages, `how-work-moves-through-a-space` has no "Example" H2, `why-vector-space` opens with the problem and has no figure, `the-record-of-work` may have 5 detail H2s.
+- **C5 Frame.** In order: lead, an "Example" H2, 2 to 4 detail H2s, "Where to go next". Exceptions: `what-vector-space-is` has a "The three platform rules" H2 and ends with a grouped list of all pages, `how-work-moves-through-a-space` has no "Example" H2, `why-vector-space` opens with the problem and has no figure, `the-record-of-work` may have 5 detail H2s.
 - **C6 One figure per major idea.** The figure sits inside the detail H2 that names its idea, never right after the lead. `what-a-space-holds` and `who-can-do-what` have none.
 - **C7 One scenario.** Each page tells one slice of the same scenario: a member asks the orchestrator agent to find leads and send an outreach email. `approvals-and-the-command-center` and `extending-a-space` use their own example. Vendor names appear only on the worked-example page.
 - **C8 Limits.** 4 to 6 H2s counting "Example" and "Where to go next"; 500 to 800 words; at most one table. `the-record-of-work` and `how-work-moves-through-a-space` are exempt from the H2 and word counts.

@@ -26,12 +26,12 @@ test('the Vector Space navbar tab opens What Vector Space is', () => {
   assert.match(nav, /href="[^"]*\/vector-space\/what-vector-space-is"/);
 });
 
-test('the sidebar lists What, Why and How with the 11 pages in order, then the glossary', () => {
+test('the sidebar lists Core concepts, Architecture and governance and Workflows and extensions with the 11 pages in order, then the glossary', () => {
   const sidebar = built('vector-space/what-vector-space-is').match(/<nav[^>]*menu[^>]*>[\s\S]*?<\/nav>/)?.[0] ?? '';
   const hrefs = [...sidebar.matchAll(/<a class="menu__link(?: menu__link--active)?"[^>]*href="[^"]*\/vector-space\/([\w-]+)"/g)].map((m) => m[1]);
   assert.deepEqual(hrefs, [...pages, 'glossary']);
   const labels = [...sidebar.matchAll(/<span class="categoryLinkLabel_\w+">([^<]+)<\/span>/g)].map((m) => m[1]);
-  assert.deepEqual(labels, ['What', 'Why', 'How']);
+  assert.deepEqual(labels, ['Core concepts', 'Architecture and governance', 'Workflows and extensions']);
 });
 
 const source = (slot) => readFileSync(join(root, 'docs/vector-space', `${slot.page}.md`), 'utf8');

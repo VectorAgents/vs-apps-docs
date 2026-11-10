@@ -55,18 +55,18 @@ test('Glossary is the last item of each section', () => {
   assert.equal(idOf(sidebars.sdk.at(-1)), 'sdk/glossary');
 });
 
-test('the Vector Space sidebar runs the What, Why and How categories, then the Glossary, with no page of their own', () => {
-  assert.deepEqual(topLevel('vectorSpace'), ['What', 'Why', 'How', 'vector-space/glossary']);
-  for (const label of ['What', 'Why', 'How']) assert.equal(categoryOf('vectorSpace', label).link, undefined, label);
-  assert.deepEqual(docIds(categoryOf('vectorSpace', 'What').items).map((id) => id.replace('vector-space/', '')), [
+test('the Vector Space sidebar runs the Core concepts, Architecture and governance and Workflows and extensions categories, then the Glossary, with no page of their own', () => {
+  assert.deepEqual(topLevel('vectorSpace'), ['Core concepts', 'Architecture and governance', 'Workflows and extensions', 'vector-space/glossary']);
+  for (const label of ['Core concepts', 'Architecture and governance', 'Workflows and extensions']) assert.equal(categoryOf('vectorSpace', label).link, undefined, label);
+  assert.deepEqual(docIds(categoryOf('vectorSpace', 'Core concepts').items).map((id) => id.replace('vector-space/', '')), [
     'what-vector-space-is',
     'organizations-and-spaces',
     'what-a-space-holds',
     'agents-in-a-space',
     'who-can-do-what',
   ]);
-  assert.deepEqual(docIds(categoryOf('vectorSpace', 'Why').items).map((id) => id.replace('vector-space/', '')), ['why-vector-space', 'one-access-model', 'the-record-of-work']);
-  assert.deepEqual(docIds(categoryOf('vectorSpace', 'How').items).map((id) => id.replace('vector-space/', '')), [
+  assert.deepEqual(docIds(categoryOf('vectorSpace', 'Architecture and governance').items).map((id) => id.replace('vector-space/', '')), ['why-vector-space', 'one-access-model', 'the-record-of-work']);
+  assert.deepEqual(docIds(categoryOf('vectorSpace', 'Workflows and extensions').items).map((id) => id.replace('vector-space/', '')), [
     'how-work-moves-through-a-space',
     'approvals-and-the-command-center',
     'extending-a-space',
