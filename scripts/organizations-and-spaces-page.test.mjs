@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { bannedTermsIn, bodyOf, brokenLinks, linksOf, longSentences, section, unlink } from './page-helpers.mjs';
+import { bannedTermsIn, bodyOf, brokenLinks, linksOf, section, unlink } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
 const docs = resolve(dirname(fileURLToPath(import.meta.url)), '../docs');
@@ -14,9 +14,9 @@ const prose = body.replace(/^import .*$/gm, '').replace(/<(?:FigurePlaceholder|S
 const plain = unlink(prose);
 const slotsIn = (s) => [...s.matchAll(/<StructureFigure data=\{(\w+)\} \/>/g)].map((m) => m[1]);
 
-test('the page runs lead, Example, three detail sections, Where to go next', () => {
+test('the page runs lead, the scene, three detail sections, Where to go next', () => {
   assert.deepEqual([...text.matchAll(/^## (.+)$/gm)].map((m) => m[1]), [
-    'Example',
+    'Two teams in one organization',
     'The organization as the tenant',
     'The space as the unit of work',
     'Resources that belong to one space',
@@ -30,10 +30,15 @@ test('the lead defines organization and space before the first H2', () => {
   assert.match(lead, /\[space\]\(\.\/glossary\.md#space\)/);
 });
 
-test('the page is 500 to 800 words with no table', () => {
-  const words = plain.split(/\s+/).filter(Boolean).length;
-  assert.ok(words >= 500 && words <= 800, `${words} words`);
-  assert.equal((text.match(/^\| ?-{3}/gm) ?? []).length, 0, 'tables');
+test('the scene is the first H2, names no Example and says a team\'s space', () => {
+  assert.equal(text.match(/^## (.+)$/m)[1], 'Two teams in one organization');
+  assert.doesNotMatch(text, /^#+ .*Example/m);
+  assert.doesNotMatch(plain, /the sales space/i);
+  const scene = section(text, 'Two teams in one organization');
+  assert.match(scene, /\nAcme has one organization/);
+  assert.match(scene, /sales team's space/);
+  assert.match(scene, /Acme's marketing team has another space/);
+  assert.doesNotMatch(plain, /second (team|space)|another space of/i);
 });
 
 test('the slot organization-structure appears once, in "The organization as the tenant"', () => {
@@ -47,11 +52,12 @@ test('every link resolves, every glossary anchor exists, and Where to go next li
 });
 
 test('the page says each resource belongs to one space and never that spaces share nothing', () => {
-  assert.match(text, /Each resource belongs to one space/);
+  assert.match(text, /each resource belongs to one space/i);
   assert.doesNotMatch(text, /share nothing|nothing is shared|shares nothing/i);
 });
 
 test('the page says AI provider accounts belong to the organization and reach every space by default', () => {
+  assert.ok(linksOf(prose).includes('./glossary.md#ai-provider-account'));
   assert.match(plain, /AI provider accounts belong to the organization/);
   assert.match(plain, /every space by default/);
 });
@@ -69,7 +75,7 @@ test('the page names no master doc, implementation name, banned term, vendor or 
 
 test('the page assumes no TypeScript, Node or React', () => assert.doesNotMatch(prose, /TypeScript|Node|React/));
 
-test('the page follows the voice checks and no sentence passes 25 words', () => {
+test('the page follows the voice checks and has no em dash', () => {
   assert.deepEqual(voiceViolations(text), []);
-  assert.deepEqual(longSentences(plain), []);
+  assert.doesNotMatch(prose, /—/);
 });

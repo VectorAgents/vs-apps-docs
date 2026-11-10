@@ -236,9 +236,9 @@ test('the four structure figures of the concept pages have data', () => {
 test('organization-structure: one Organization slab under two space slabs, with the admin on the Organization slab', async () => {
   const data = await load('organization-structure');
   const bySlab = (id) => labels(data.parts.filter((p) => p.on === id));
-  assert.deepEqual(data.slabs.map((s) => [s.label, s.level]), [['Organization', 0], ['Sales space', 1], ['Second space', 1]]);
+  assert.deepEqual(data.slabs.map((s) => [s.label, s.level]), [['Organization', 0], ['Sales team’s space', 1], ['Marketing team’s space', 1]]);
   assert.deepEqual(bySlab('organization'), ['Organization admin']);
-  for (const id of ['salesSpace', 'secondSpace']) assert.deepEqual(bySlab(id), ['Members', 'Orchestrator agent', 'Context Hub']);
+  for (const id of ['salesSpace', 'marketingSpace']) assert.deepEqual(bySlab(id), ['Members', 'Orchestrator agent', 'Context Hub']);
 });
 
 test('organization-structure: each resource belongs to one space and the spaces are never said to share nothing', async () => {

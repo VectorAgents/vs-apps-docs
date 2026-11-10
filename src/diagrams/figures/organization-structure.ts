@@ -14,17 +14,17 @@ function spaceParts(id: string, name: string, [c, r]: [number, number]): PartDat
 export const organizationStructure: StructureData = {
   id: 'organization-structure',
   title: 'One organization and its spaces',
-  desc: 'Two slabs stand side by side on one Organization slab: the sales space and a second space. Each space slab holds its own Members, Orchestrator agent and Context Hub. The Organization admin stands on the Organization slab, outside both spaces.',
+  desc: 'Two slabs stand side by side on one Organization slab: the sales team’s space and the marketing team’s space. Each space slab holds its own Members, Orchestrator agent and Context Hub. The Organization admin stands on the Organization slab, outside both spaces.',
   caption: slotOf('organization-structure').caption,
   slabs: [
-    { id: 'organization', label: 'Organization', text: 'The company account. Every user, key, resource and space belongs to one organization.', level: 0, c: 0, r: 0, w: 23.8, d: 16 },
-    { id: 'salesSpace', label: 'Sales space', text: 'One team’s place for its members, its agents and its data. Access is worked out inside it.', level: 1, c: 1, r: 1, w: 10.4, d: 9.6 },
-    { id: 'secondSpace', label: 'Second space', text: 'Another team’s space in the same organization. It has its own members, orchestrator agent and Context Hub.', level: 1, c: 12.4, r: 1, w: 10.4, d: 9.6 },
+    { id: 'organization', label: 'Organization', text: 'The company account. Every user, API key, resource and space belongs to one organization.', level: 0, c: 0, r: 0, w: 23.8, d: 16 },
+    { id: 'salesSpace', label: 'Sales team’s space', text: 'One team’s place for its members, its agents and its data. Access is worked out inside it.', level: 1, c: 1, r: 1, w: 10.4, d: 9.6 },
+    { id: 'marketingSpace', label: 'Marketing team’s space', text: 'Acme’s marketing team works here, in the same organization. It has its own members, orchestrator agent and Context Hub.', level: 1, c: 12.4, r: 1, w: 10.4, d: 9.6 },
   ],
   parts: [
     { id: 'admin', label: 'Organization admin', text: 'The one person who manages the organization’s users and spaces. A transfer passes the place to another member.', icon: 'admin', tone: 'plug', on: 'organization', c: 1.4, r: 12, w: 3.2, d: 2.8 },
-    ...spaceParts('salesSpace', 'sales space', [1, 1]),
-    ...spaceParts('secondSpace', 'second space', [12.4, 1]),
+    ...spaceParts('salesSpace', 'sales team’s space', [1, 1]),
+    ...spaceParts('marketingSpace', 'marketing team’s space', [12.4, 1]),
   ],
   links: [],
   legend: [

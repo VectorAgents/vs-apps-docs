@@ -182,7 +182,7 @@ Source paths are in the sibling `vector-spaces` repo, under `docs/`. The spec ov
 
 ## Organizations and spaces
 
-Source paths are in the sibling `vector-spaces` repo, under `docs/`. The page is `docs/vector-space/organizations-and-spaces.md`.
+Source paths are in the sibling `vector-spaces` repo, under `docs/`. The page is `docs/vector-space/organizations-and-spaces.md`. Its AI provider account sentence links the glossary entry and does not define the term inline.
 
 | Claim | Rests on |
 | --- | --- |
@@ -191,9 +191,10 @@ Source paths are in the sibling `vector-spaces` repo, under `docs/`. The page is
 | AI provider accounts belong to the organization and pay for its model calls. An account reaches every space by default and can be limited to chosen spaces. The page therefore says each resource belongs to one space and never that spaces share nothing. | `product/OVERVIEW.md` ("What it is"), `systems/AI.md` (Data model, invariant 2: an all-spaces account is the default, a scoped account reaches the spaces with a grant row), `systems/credentials/README.md` (Core primitives: one credential can back resources in more than one space). |
 | A resource is owned by one space. No share reaches a resource of another space. An agent moves only within its space. | `systems/access/RESOURCES.md` (Resources), `systems/access/README.md` (The pool and tenancy), `systems/STUDIO.md` (The agent tree). |
 | Access is worked out inside a space, for each member and operation. Only users of the organization, service accounts included, join its spaces. Membership alone reaches what General access gives. | `product/OVERVIEW.md` ("How it fits"), `systems/access/README.md` (Spaces), `product/GLOSSARY.md` (Access: Member). |
+| A service account is a user that is not a person, such as the identity behind an API key or a schedule. | `product/GLOSSARY.md` (Tenancy and people: Service account). |
 | A space manager manages the members, groups, shares, resources, agent and apps of the space. | `product/OVERVIEW.md` (Who uses it), `systems/access/README.md` (Organization admin and space managers). |
 | Left out on purpose: distributors, customers, licences and space deletion (administrative, not concepts), and who creates a space (`who-can-do-what`). | `systems/access/README.md` (The pool and tenancy), `systems/SPACES.md` (Provisioning and deletion). |
-| The example is the page's own scenario slice. It states no fact beyond the rows above. | Spec of the Vector Space concepts, section 3.2. |
+| The scene "Two teams in one organization" is the page's own scenario slice. It states no fact beyond the rows above. | Spec of the Vector Space concepts, section 3.2. |
 
 ## Why Vector Apps
 
@@ -279,20 +280,20 @@ Source paths are in the sibling `vector-spaces` repo, under `docs/`. The page is
 | --- | --- |
 | Vector Space is where an organization's people and AI agents work on the organization's own data. Each run follows the organization's access rules, is paid on its own AI provider accounts and records who ran it. The page says "records who ran it", never "eliminates black-box execution". | `product/OVERVIEW.md` ("What it is", "What holds it together"). |
 | The lead says Vector Space is one platform "rather than a set of separate AI tools". This contrast is editorial wording and rests on no master doc. | Decision of the page owner. |
-| An organization is the company account that holds its users, keys, resources and spaces. A space is where one team works. | `product/OVERVIEW.md` ("How it fits"), `product/GLOSSARY.md` (Spaces and content: Space). |
+| An organization is the company account that holds its users, API keys, resources and spaces. A space is where one team works. | `product/OVERVIEW.md` ("How it fits"), `product/GLOSSARY.md` (Spaces and content: Space). |
 | A space page is a grid of widgets. A widget shows a query result as a chart, a table or a key figure, or holds text. | `product/GLOSSARY.md` (Spaces and content: Space page, Widget). |
 | A member can talk to the data in plain language. The widget builder or an agent queries a datasource and returns a chart, a table or a key figure. The widget builder's text-to-SQL assist and the agents' datasource queries are in the master docs. That an agent returns a chart or a widget is unverified in the master docs. | `systems/PAGES.md` (Widgets), `product/GLOSSARY.md` (Context Hub: Datasource). Agent-made charts: decision of the page owner. |
 | A space starts with one orchestrator agent, which takes a member's request and hands parts of it to other agents. Members chat with agents and answer what agents ask them. | `product/OVERVIEW.md` ("Who uses it"), `systems/SPACES.md` (Provisioning and deletion), `systems/access/README.md` (Spaces), `product/GLOSSARY.md` (Agents and runs). |
 | The Context Hub lists what the space can reach: connectors, knowledge sources, datasources, skills and apps. Vector Modules sit in it too. Pages are not one of its kinds. | `product/OVERVIEW.md` ("The product's layers"), `product/GLOSSARY.md` (Context Hub). |
 | The Command Center is where an ask waits for a person. It is a plain part of a space, not a Vector Module. | `product/OVERVIEW.md` ("The product's layers"), `systems/COMMAND-CENTER.md` (opening). |
-| Vector Modules are first-party tools over connector data: `omnibox`, `contacts` and Calendar. Calendar is listed without a caveat by product decision. The master lists `omnibox` and `contacts` only, so Calendar is unverified. | `systems/context-hub/MODULES.md` (Vector Modules), `product/GLOSSARY.md` (Context Hub: Vector Module). |
+| Vector Modules are first-party tools over connector data: `omnibox`, `contacts` and Calendar. Calendar is listed without a caveat by product decision, and its sentence ("shows the meetings of the connected calendars") is an approved description of its purpose, not shipped behaviour. The master lists `omnibox` and `contacts` only, and the client shows Calendar as not available yet, so Calendar is unverified. | `systems/context-hub/MODULES.md` (Vector Modules), `product/GLOSSARY.md` (Context Hub: Vector Module). |
 | The lead-in to the rules states the three questions an organization must answer: who may reach what, whose keys and money a model call uses, and who did what. | The page [Why Vector Space](../docs/vector-space/why-vector-space.md), "The problem Vector Space solves". |
 | The page states the three platform rules (one access model, one AI gateway, one record of work) in one line each. The AI gateway is unverified for production, as in the AI gateway row, so that line is the first to cut. | `product/OVERVIEW.md` ("What holds it together"), `systems/AI.md` (The gateway). |
 | Governance reads across the whole organization: what ran and as whom. | `product/OVERVIEW.md` ("The product's layers": Governance has an organization-wide view). |
 | A Vector App is a web app that a space shows in an iframe. | `product/GLOSSARY.md` (Apps: App). |
 | An A2A agent is a remote agent that joins the agent tree as a leaf. | `systems/STUDIO.md` (The agent tree, Vocabulary). |
 | An MCP connector is a connector whose provider is an MCP server. | `product/GLOSSARY.md` (Context Hub: Provider). |
-| The example is the page's own scenario slice: a member of a sales team's space asks the orchestrator agent to find leads, and the page shows the access check, the AI gateway and the record in that one request. It states no fact beyond the rows above. | Spec of the Vector Space concepts, section 3.2. |
+| The example is the page's own scenario slice: a member of a space asks the orchestrator agent to find leads, and the page shows the access check, the AI gateway and the record in that one request. It states no fact beyond the rows above. | Spec of the Vector Space concepts, section 3.2. |
 
 ## Entry page
 

@@ -94,7 +94,7 @@ test('outside code is a Vector App, an A2A agent and an MCP connector, one line 
 test('the platform rules are one access model, one AI gateway and one record of work, one line each, with links to the pages that own them', () => {
   const rules = section(text, 'The three platform rules');
   assert.deepEqual([...rules.matchAll(/^- \*\*(.+?)\*\*:/gm)].map((m) => m[1]), ['One access model', 'One AI gateway', 'One record of work']);
-  for (const link of ['./why-vector-space.md', './one-access-model.md', './the-record-of-work.md']) assert.ok(linksOf(rules).includes(link), link);
+  for (const link of ['./one-access-model.md', './the-record-of-work.md']) assert.ok(linksOf(rules).includes(link), link);
   assert.ok(linksOf(body).includes('./glossary.md#ai-gateway'));
   assert.doesNotMatch(text, /^## (Organizations and spaces|What holds the platform together)/m);
 });
