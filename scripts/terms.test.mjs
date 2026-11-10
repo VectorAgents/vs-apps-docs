@@ -96,8 +96,8 @@ test('published pages use the current terms', () => {
 
 test('diagram labels and text use the current terms', async () => {
   const dir = new URL('../src/diagrams/figures/', import.meta.url);
-  for (const file of ['apps-overview.ts']) {
-    const data = Object.values(await import(new URL(file, dir)))[0];
+  for (const file of readdirSync(dir).filter((f) => f.endsWith('.ts'))) {
+    const data = await import(new URL(file, dir));
     const text = JSON.stringify(data).replace(/","|":"|[{}[\]]/g, '\n');
     const violations = termViolations(text);
     assert.deepEqual(violations, [], `${file}: ${violations.map((v) => `${v.rule} "${v.text}"`).join(', ')}`);

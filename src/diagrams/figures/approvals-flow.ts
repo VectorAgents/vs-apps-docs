@@ -1,7 +1,7 @@
 import type { FlowData, SceneData, Waypoint } from '../figure/flow-types.ts';
 import { slotOf } from './slots.ts';
 
-/** Where the post leaves the space: past the right edge of the Space slab, level with the Connector and at the height of the part tops. */
+/** Where the post leaves the space: past the right edge of the space slab, level with the Connector and at the height of the part tops. */
 const outOfTheSpace: Waypoint = [13.2, 2.4, 6.6];
 /** The centre of the ask tile, above the Command Center. */
 const askTile: Waypoint = [2.6, 2.6, 14.5];
@@ -144,10 +144,10 @@ const scenes: SceneData[] = [
 export const approvalsFlow: FlowData = {
   id: 'approvals-flow',
   title: 'Three ways a write is cleared',
-  desc: 'One slab, Space, with four parts: Member, Orchestrator agent, Command Center and a Connector to a team chat. Three loops play on it. In the first, a run stops at an ask that the member approves. In the second, a standing approval lets a later run go through with no ask. In the third, a schedule runs a post that stops at an ask until the member approves it and ticks always allow.',
+  desc: 'One slab, space, with four parts: Member, Orchestrator agent, Command Center and a Connector to a team chat. Three loops play on it. In the first, a run stops at an ask that the member approves. In the second, a standing approval lets a later run go through with no ask. In the third, a schedule runs a post that stops at an ask until the member approves it and ticks always allow.',
   caption: slotOf('approvals-flow').caption,
   intro: 'A write needs a person to say yes, unless something has already said it for them. Follow three ways it is cleared. The post to a team chat is an example.',
-  slabs: [{ id: 'space', label: 'Space', text: 'The place where a team works. Access is worked out for each member and each action.', level: 0, c: 0, r: 0, w: 12.4, d: 10.2 }],
+  slabs: [{ id: 'space', label: 'space', text: 'The place where a team works. Access is worked out for each member and each action.', level: 0, c: 0, r: 0, w: 12.4, d: 10.2 }],
   parts: [
     { id: 'commandCenter', label: 'Command Center', text: 'Where an ask waits for a person to decide. It also lists standing approvals and schedules.', icon: 'commandCenter', tone: 'core', on: 'space', c: 1.0, r: 1.2, w: 3.2, d: 2.8 },
     { id: 'member', label: 'Member', text: 'A person in the space. Every run here works as a member.', icon: 'member', tone: 'core', on: 'space', c: 1.0, r: 5.6, w: 3.2, d: 2.8 },

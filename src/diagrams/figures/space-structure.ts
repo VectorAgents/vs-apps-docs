@@ -5,12 +5,12 @@ import { slotOf } from './slots.ts';
 export const spaceStructure: StructureData = {
   id: 'space-structure',
   title: 'The parts of a space',
-  desc: 'Three slabs, from the bottom: Governance, Organization and Space. The Space slab holds five parts: Members, Orchestrator agent, Command Center, Context Hub and Vector Modules. The Organization slab holds three parts outside the space: an A2A agent, an MCP connector and a Vector App, each joined to the space by a dashed link.',
+  desc: 'Three slabs, from the bottom: Governance, Organization and space. The space slab holds five parts: Members, Orchestrator agent, Command Center, Context Hub and Vector Modules. The Organization slab holds three parts outside the space: an A2A agent, an MCP connector and a Vector App, each joined to the space by a dashed link.',
   caption: slotOf('space-structure').caption,
   slabs: [
     { id: 'governance', label: 'Governance', text: 'Reads across the whole organization: who ran what, and what it cost.', level: 0, c: -1, r: -1, w: 20.6, d: 16 },
     { id: 'organization', label: 'Organization', text: 'The customer account. Every user, key, resource and space belongs to one organization.', level: 1, c: 0, r: 0, w: 18.6, d: 14 },
-    { id: 'space', label: 'Space', text: 'The place where a team works. Access is worked out for each member and each action.', level: 2, c: 1, r: 1, w: 11.8, d: 11 },
+    { id: 'space', label: 'space', text: 'The place where a team works. Access is worked out for each member and each action.', level: 2, c: 1, r: 1, w: 11.8, d: 11 },
   ],
   parts: [
     { id: 'members', label: 'Members', text: 'The people of the space. What each member can do depends on their access.', icon: 'member', tone: 'core', on: 'space', c: 1.6, r: 1.8, w: 3.2, d: 2.8 },

@@ -5,10 +5,10 @@ import { slotOf } from './slots.ts';
 export const accessCheck: StructureData = {
   id: 'access-check',
   title: 'One access check for every way in',
-  desc: 'One Space slab. Four callers stand in a column on the left: a member in the app, an orchestrator agent, a Vector App and a service account that calls through the API. The access check stands in the middle. The Context Hub stands on the right. A line joins each caller to the access check, and one line joins the access check to the Context Hub.',
+  desc: 'One space slab. Four callers stand in a column on the left: a member in the app, an orchestrator agent, a Vector App and a service account that calls through the API. The access check stands in the middle. The Context Hub stands on the right. A line joins each caller to the access check, and one line joins the access check to the Context Hub.',
   caption: slotOf('access-check').caption,
   slabs: [
-    { id: 'space', label: 'Space', text: 'Access is worked out inside a space, for each caller and each operation.', level: 0, c: 0, r: 0, w: 24.2, d: 17.8 },
+    { id: 'space', label: 'space', text: 'Access is worked out inside a space, for each caller and each operation.', level: 0, c: 0, r: 0, w: 24.2, d: 17.8 },
   ],
   parts: [
     { id: 'member', label: 'Member', text: 'A person who works in the web app. The work runs as the member, and the check reads what that member may do.', icon: 'member', tone: 'plug', on: 'space', c: 1.4, r: 1.2, w: 3.2, d: 2.8 },

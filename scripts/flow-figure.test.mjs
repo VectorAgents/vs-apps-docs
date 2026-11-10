@@ -279,9 +279,9 @@ const exampleLayout = layoutFlow(example);
 const words = (text) => text.trim().split(/\s+/).length;
 const part = (id) => example.parts.find((p) => p.id === id);
 
-test('worked example: 8 parts on 3 slabs, the AI gateway on Governance and Connectors in the Space slab', () => {
+test('worked example: 8 parts on 3 slabs, the AI gateway on Governance and Connectors in the space slab', () => {
   assert.equal(example.parts.length, 8);
-  assert.deepEqual([...example.slabs].sort((a, b) => a.level - b.level).map((s) => s.label), ['Governance', 'Organization', 'Space']);
+  assert.deepEqual([...example.slabs].sort((a, b) => a.level - b.level).map((s) => s.label), ['Governance', 'Organization', 'space']);
   assert.equal(part('gateway').on, 'governance');
   assert.equal(part('connectors').on, 'space');
   assert.equal(part('app').on, 'organization');
@@ -289,7 +289,7 @@ test('worked example: 8 parts on 3 slabs, the AI gateway on Governance and Conne
 });
 
 test('worked example: the labels are names only', () => {
-  for (const item of [...example.parts, ...example.slabs]) assert.match(item.label, /^[A-Z][A-Za-z ]*$/, item.label);
+  for (const item of [...example.parts, ...example.slabs]) assert.match(item.label, /^[A-Za-z][A-Za-z ]*$/, item.label);
 });
 
 test('worked example: a legend of 4 that explains cube, stack, hop and dashed line', () => {
@@ -438,7 +438,7 @@ for (const [name, data, laid] of [['approvals-flow', approvals, approvalsLayout]
   });
 
   test(`${name}: names only on parts and slabs, no dashes, no first person plural, no vendor, short cells, every actor the member`, () => {
-    for (const item of [...data.parts, ...data.slabs]) assert.match(item.label, /^[A-Z][A-Za-z0-9 ]*$/, item.label);
+    for (const item of [...data.parts, ...data.slabs]) assert.match(item.label, /^[A-Za-z][A-Za-z0-9 ]*$/, item.label);
     const text = JSON.stringify(data);
     assert.doesNotMatch(text, /[–—]/);
     assert.doesNotMatch(text, /\b(we|our|ours|us)\b/i);
@@ -460,9 +460,9 @@ for (const [name, data, laid] of [['approvals-flow', approvals, approvalsLayout]
   });
 }
 
-test('approvals-flow: Member, Orchestrator agent, Command Center and a Connector on one Space slab, and no Omnibox', () => {
+test('approvals-flow: Member, Orchestrator agent, Command Center and a Connector on one space slab, and no Omnibox', () => {
   assert.deepEqual(approvals.parts.map((p) => p.label).sort(), ['Command Center', 'Connector', 'Member', 'Orchestrator agent']);
-  assert.deepEqual(approvals.slabs.map((s) => s.label), ['Space']);
+  assert.deepEqual(approvals.slabs.map((s) => s.label), ['space']);
   assert.doesNotMatch(JSON.stringify(approvals), /Omnibox/);
 });
 
@@ -512,9 +512,9 @@ test('approvals-flow: the legend has the cube and the hop, and the text names no
   assert.doesNotMatch(JSON.stringify(approvals), /poll|\b\d+ (fires|runs|skipped)\b/i);
 });
 
-test('extending-flow: Member, Orchestrator agent and Context Hub in the Space, and the three kinds outside on dashed links', () => {
+test('extending-flow: Member, Orchestrator agent and Context Hub in the space, and the three kinds outside on dashed links', () => {
   const on = (id) => extending.parts.filter((p) => p.on === id).map((p) => p.label).sort();
-  assert.deepEqual(extending.slabs.map((s) => s.label).sort(), ['Organization', 'Space']);
+  assert.deepEqual(extending.slabs.map((s) => s.label).sort(), ['Organization', 'space']);
   assert.deepEqual(on('space'), ['Context Hub', 'Member', 'Orchestrator agent']);
   assert.deepEqual(on('organization'), ['A2A agent', 'MCP connector', 'Vector App']);
   assert.ok(extending.links.length === 3 && extending.links.every((l) => l.remote));

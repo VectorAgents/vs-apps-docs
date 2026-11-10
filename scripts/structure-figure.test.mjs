@@ -194,9 +194,9 @@ for (const slot of real) {
 const { spaceStructure } = await import(join(figures, 'space-structure.ts'));
 const byId = (id) => spaceStructure.parts.find((p) => p.id === id);
 
-test('space-structure: 8 parts on 3 slabs, Governance under Organization under Space', () => {
+test('space-structure: 8 parts on 3 slabs, Governance under Organization under space', () => {
   assert.equal(spaceStructure.parts.length, 8);
-  assert.deepEqual([...spaceStructure.slabs].sort((a, b) => a.level - b.level).map((s) => s.label), ['Governance', 'Organization', 'Space']);
+  assert.deepEqual([...spaceStructure.slabs].sort((a, b) => a.level - b.level).map((s) => s.label), ['Governance', 'Organization', 'space']);
 });
 
 test('space-structure: five parts in the space, three outside it on dashed links, and no other link', () => {
@@ -236,7 +236,7 @@ test('the four structure figures of the concept pages have data', () => {
   for (const id of concept) assert.ok(existsSync(join(figures, `${id}.ts`)), id);
 });
 
-test('organization-structure: one Organization slab under two Space slabs, with the admin on the Organization slab', async () => {
+test('organization-structure: one Organization slab under two space slabs, with the admin on the Organization slab', async () => {
   const data = await load('organization-structure');
   const bySlab = (id) => labels(data.parts.filter((p) => p.on === id));
   assert.deepEqual(data.slabs.map((s) => [s.label, s.level]), [['Organization', 0], ['Sales space', 1], ['Second space', 1]]);

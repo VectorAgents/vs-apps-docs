@@ -46,12 +46,12 @@ const scenes: SceneData[] = [
 export const extendingFlow: FlowData = {
   id: 'extending-flow',
   title: 'How a space calls outside code',
-  desc: 'Two slabs: Organization and Space. The Space slab holds three parts: Member, Orchestrator agent and Context Hub. The Organization slab holds three parts outside the space: a Vector App, an A2A agent and an MCP connector. The Orchestrator agent is joined to the Vector App and to the A2A agent by dashed links, and the Context Hub is joined to the MCP connector by a dashed link. A request starts in a run and then calls each of the three in turn.',
+  desc: 'Two slabs: Organization and space. The space slab holds three parts: Member, Orchestrator agent and Context Hub. The Organization slab holds three parts outside the space: a Vector App, an A2A agent and an MCP connector. The Orchestrator agent is joined to the Vector App and to the A2A agent by dashed links, and the Context Hub is joined to the MCP connector by a dashed link. A request starts in a run and then calls each of the three in turn.',
   caption: slotOf('extending-flow').caption,
   intro: 'A member asks about open tickets. A team can offer its tracker to the space as a Vector App, an A2A agent or an MCP server. Follow one call to each.',
   slabs: [
     { id: 'organization', label: 'Organization', text: 'The customer account. Every user, key, resource and space belongs to one organization.', level: 0, c: 0, r: 0, w: 18.6, d: 14 },
-    { id: 'space', label: 'Space', text: 'The place where a team works. Access is worked out for each member and each action.', level: 1, c: 1, r: 1, w: 11.8, d: 11 },
+    { id: 'space', label: 'space', text: 'The place where a team works. Access is worked out for each member and each action.', level: 1, c: 1, r: 1, w: 11.8, d: 11 },
   ],
   parts: [
     { id: 'member', label: 'Member', text: 'A person in the space. Every call starts in a run that works as this member.', icon: 'member', tone: 'core', on: 'space', c: 3.2, r: 3.65, w: 3.2, d: 2.8 },
