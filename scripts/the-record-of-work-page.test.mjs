@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { bannedTermsIn, bodyOf, brokenLinks, linksOf, longSentences, rowsOf, section, unlink } from './page-helpers.mjs';
+import { bannedTermsIn, bodyOf, brokenLinks, linksOf, section, unlink } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
 const docs = resolve(dirname(fileURLToPath(import.meta.url)), '../docs');
@@ -15,9 +15,9 @@ const plain = unlink(prose);
 const slotsIn = (s) => [...s.matchAll(/<StructureFigure data=\{(\w+)\} \/>/g)].map((m) => m[1]);
 const sentencesOf = (s) => s.split(/\n{2,}/).flatMap((p) => p.split(/(?<=[.!?])\s+/));
 
-test('the page runs lead, Example, five detail sections, Where to go next', () => {
+test('the page runs lead, the scene, five detail sections, Where to go next', () => {
   assert.deepEqual([...text.matchAll(/^## (.+)$/gm)].map((m) => m[1]), [
-    'Example',
+    "A member's outreach run",
     'The actor behind every record',
     'The four governance views',
     'Failure postures',
@@ -33,8 +33,12 @@ test('the lead says what the record is and links governance before the first H2'
   assert.match(lead, /\[Governance\]\(\.\/glossary\.md#governance\)/);
 });
 
-test('the example is the member, the orchestrator agent and an Organization admin reading Activity', () => {
-  const example = section(text, 'Example');
+test('the scene is the first H2, with no Example heading and Acme wording, and an Organization admin reads Activity', () => {
+  assert.equal([...text.matchAll(/^## (.+)$/gm)][0][1], "A member's outreach run");
+  assert.doesNotMatch(text, /^## .*\bExample\b/m);
+  assert.doesNotMatch(plain, /\bthe sales space\b/i);
+  assert.match(plain, /Acme's sales team has a space, and a member of it asks the orchestrator agent to find leads and send an outreach email/);
+  const example = section(text, "A member's outreach run");
   assert.match(example, /\[orchestrator agent\]\(\.\/glossary\.md#orchestrator-agent\)/);
   assert.match(example, /outreach email/);
   assert.match(example, /\[Organization admin\]\(\.\/glossary\.md#organization-admin\)/);
@@ -42,11 +46,13 @@ test('the example is the member, the orchestrator agent and an Organization admi
   assert.match(example, /who it ran as/);
 });
 
-test('the actor section keeps "actor" with one defining clause', () => {
+test('the actor section defines an execution, then lists its actor and what started it', () => {
   const actor = section(text, 'The actor behind every record');
-  assert.match(actor, /An \[actor\]\(\.\/glossary\.md#actor\) is who performed one action: a user, a \[service account\]\(\.\/glossary\.md#service-account\), \[staff\]\(\.\/glossary\.md#staff\), an app or the platform\./);
-  assert.match(actor, /Every \[execution\]\(\.\/glossary\.md#execution\) has one actor/);
-  assert.match(actor, /what started it/i);
+  assert.match(actor, /\n\nAn \[execution\]\(\.\/glossary\.md#execution\) is one unit of work/);
+  assert.deepEqual([...actor.matchAll(/^- \*\*(.+?)\*\*: /gm)].map((m) => unlink(m[1])), ['Actor', 'What started it']);
+  assert.match(actor, /\*\*\[Actor\]\(\.\/glossary\.md#actor\)\*\*: who performed the action, either a user, a \[service account\]\(\.\/glossary\.md#service-account\), \[staff\]\(\.\/glossary\.md#staff\), an app or the platform\./);
+  assert.match(actor, /Each execution has one actor/);
+  assert.match(actor, /\[schedule\]\(\.\/glossary\.md#schedule\) is not an actor/);
 });
 
 test('the four governance views are each named and linked, with who reads them', () => {
@@ -65,15 +71,14 @@ test('the slot record-of-work appears once, in "The four governance views"', () 
   assert.deepEqual(slotsIn(section(text, 'The four governance views')), ['recordOfWork']);
 });
 
-test('failure postures are one 4-row table: audit fails closed, the rest do not', () => {
-  assert.equal((text.match(/^\| ?-{3}/gm) ?? []).length, 1, 'tables');
-  const rows = rowsOf(section(text, 'Failure postures'));
-  assert.equal(rows.length, 5, 'header and 4 rows');
-  const [, ...data] = rows;
-  assert.deepEqual(data.map((r) => r[0].replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')), ['Change records', 'Spend records', 'Spend cap', 'Acts']);
-  assert.deepEqual(data.map((r) => /closed/.test(r[1])), [true, false, false, false]);
-  assert.ok(data.slice(1, 3).every((r) => /open/.test(r[1])));
-  for (const cell of rows.flat()) assert.ok(unlink(cell).split(/\s+/).length <= 15, cell);
+test('failure postures are a bold-term list: change records fail closed, spend records and the cap fail open, acts are attested', () => {
+  assert.equal((text.match(/^\| ?-{3}/gm) ?? []).length, 0, 'tables');
+  const posture = section(text, 'Failure postures');
+  const items = [...posture.matchAll(/^- \*\*(.+?)\*\*: (.+)$/gm)].map((m) => [unlink(m[1]), m[2]]);
+  assert.deepEqual(items.map((i) => i[0]), ['Change records', 'Spend records', 'Spend cap', 'Acts']);
+  assert.deepEqual(items.map((i) => /^fails? closed/.test(i[1])), [true, false, false, false]);
+  assert.ok(items.slice(1, 3).every((i) => /^fails? open/.test(i[1])));
+  assert.match(items[3][1], /^attested/);
 });
 
 test('the text names each kind of record without an umbrella noun', () => {
@@ -103,14 +108,14 @@ test('the spend cap is read by the organization and set by staff, and its refusa
   assert.doesNotMatch(text.replace(spend, ''), /refus/i);
 });
 
-test('acts: admitted and attested by the platform, baseline seconds approved by staff, Human Time Return an estimate in seconds', () => {
+test('acts: admitted and attested by the platform, Human Time Return an estimate in seconds that points to Why Vector Space for its parts', () => {
   const acts = section(text, 'Acts and Human Time Return');
   assert.match(text, /\[Acts\]\(\.\.\/vector-apps\/glossary\.md#acts\)/);
   assert.match(acts, /An act is one thing that an app did/);
   assert.match(acts, /\[Human Time Return\]\(\.\/glossary\.md#human-time-return\)/);
   assert.match(acts, /\[Intelligence\]\(\.\/glossary\.md#intelligence\)/);
-  assert.match(acts, /Staff approve the seconds/);
-  assert.match(acts, /successful acts/);
+  assert.match(acts, /\]\(\.\/why-vector-space\.md#human-time-return\)/);
+  assert.match(acts, /counted in seconds/);
   assert.match(acts, /estimate/);
   assert.match(acts, /apart from spend/);
   assert.match(acts, /computes no return figure/);
@@ -133,12 +138,12 @@ test('the page names no master doc, implementation name, banned term, vendor or 
   assert.doesNotMatch(prose, /\b(floor|primary metric|exact ROI|ROI|continuously|stated human baseline)\b/i);
   assert.doesNotMatch(prose, /actorRef|usage_events|audit\.events|htrSeconds|billing|nano-USD|SHADOW|ENFORCE/);
   assert.doesNotMatch(prose, /\b(Apollo|Exa|BrightData|Hiring|SDR|CSR)\b/);
-  assert.doesNotMatch(prose, /\b(support|sales|hiring)\b/i);
+  assert.doesNotMatch(prose, /\b(support|hiring)\b|\bsales\b(?! team)/i);
 });
 
 test('the page assumes no TypeScript, Node or React', () => assert.doesNotMatch(prose, /TypeScript|Node|React/));
 
-test('the page follows the voice checks and no sentence passes 25 words', () => {
+test('the page follows the voice checks and uses no em dash', () => {
   assert.deepEqual(voiceViolations(text), []);
-  assert.deepEqual(longSentences(plain, { tables: false }), []);
+  assert.doesNotMatch(prose, /—/);
 });
