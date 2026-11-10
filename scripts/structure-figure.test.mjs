@@ -65,14 +65,11 @@ test('layout: the view box holds every silhouette, lifted by one lift, and every
   for (const link of scene.links) for (const [x, y] of link.points) assert.ok(x >= x0 && x <= x0 + w && y >= y0 && y <= y0 + h, link.id);
 });
 
-test('layout: a part label sits at the centre of its top face and a slab label skews onto its front-left face', () => {
+test('layout: a part label sits at the centre of its top face', () => {
   const scene = layoutStructure(small);
   const front = scene.solids.find((s) => s.id === 'front');
   const [cx, cy] = project(8.5, 6.5, 4 + 2.5);
   assert.ok(Math.abs(front.label.x - cx) < 0.1 && Math.abs(front.label.y - cy) < 0.1);
-  const base = scene.solids.find((s) => s.id === 'base');
-  assert.equal(base.label.skew, true);
-  assert.equal(front.label.skew, false);
 });
 
 test('layout: a link joins the facing sides of its two ends and keeps the remote flag', () => {

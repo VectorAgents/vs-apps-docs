@@ -1,4 +1,4 @@
-import { HEIGHT_UNIT, facetsOf, project, roundedPlan } from './geometry.ts';
+import { HEIGHT_UNIT, clamp, facetsOf, project, round, roundedPlan } from './geometry.ts';
 import type { Facet, Point } from './geometry.ts';
 import type { IconName } from './icons.ts';
 import type { LegendItem, StructureData } from './types.ts';
@@ -26,8 +26,6 @@ export interface SceneLabel {
   text: string;
   x: number;
   y: number;
-  /** A slab name is skewed 30 degrees onto the slab's front-left face. A part name stays upright. */
-  skew: boolean;
 }
 
 /** One slab or part, ready to paint: its wall facets, top face, silhouette and label, in screen units. */
@@ -97,8 +95,6 @@ interface Footprint {
 }
 
 const depth = (b: { c: number; r: number; w: number; d: number }): number => b.c + b.w + b.r + b.d;
-const clamp = (n: number, low: number, high: number): number => Math.min(Math.max(n, low), high);
-const round = (n: number): number => Math.round(n * 10) / 10;
 
 /**
  * The two ends of a link between two boxes. Each end is on the side that faces the other box, kept 0.5 cells from the corners.
@@ -138,7 +134,7 @@ export function layoutStructure(data: StructureData): StructureScene {
     const z = s.level * SLAB_HEIGHT;
     const { facets, top, hull } = facetsOf(roundedPlan(s.c, s.r, s.w, s.d, SLAB_RADIUS), z, SLAB_HEIGHT);
     const [x, y] = project(s.c + SLAB_LABEL_INSET, s.r + s.d, z + SLAB_HEIGHT);
-    const label = { text: s.label, x: round(x), y: round(y + (SLAB_HEIGHT * HEIGHT_UNIT) / 2 + SLAB_LABEL_BASELINE), skew: true };
+    const label = { text: s.label, x: round(x), y: round(y + (SLAB_HEIGHT * HEIGHT_UNIT) / 2 + SLAB_LABEL_BASELINE) };
     solids.push({ id: s.id, kind: 'slab', tone: 'slab', facets, top, hull, label, lift: 0 });
   }
   for (const p of [...data.parts].sort((a, b) => depth(a) - depth(b) || a.c - b.c)) {
@@ -149,7 +145,7 @@ export function layoutStructure(data: StructureData): StructureScene {
     const [x, y] = project(p.c + p.w / 2, p.r + p.d / 2, z + PART_HEIGHT);
     footprints.set(p.id, { ...p, z: z + PART_HEIGHT / 2 });
     const marks = p.marks?.map(({ name, src }, i, all): SceneMark => ({ name, src, x: round(x + (i - (all.length - 1) / 2) * MARK_GAP), y: round(y - ICON_RISE) }));
-    solids.push({ id: p.id, kind: 'part', tone: p.tone, facets, top, hull, label: { text: p.label, x: round(x), y: round(y), skew: false }, icon: p.icon, ...(marks && { marks }), lift: LIFT });
+    solids.push({ id: p.id, kind: 'part', tone: p.tone, facets, top, hull, label: { text: p.label, x: round(x), y: round(y) }, icon: p.icon, ...(marks && { marks }), lift: LIFT });
   }
 
   const links: SceneLink[] = data.links.map((l) => {

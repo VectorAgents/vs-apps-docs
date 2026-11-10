@@ -1,6 +1,6 @@
 import type { EffectData, FlowData, RecordRow, Waypoint, Window } from './flow-types.ts';
-import { HEIGHT_UNIT, facetsOf, project, roundedPlan } from './geometry.ts';
-import type { Point, Solid } from './geometry.ts';
+import { HEIGHT_UNIT, clamp, facetsOf, project, round, roundedPlan } from './geometry.ts';
+import type { Point, SolidFaces } from './geometry.ts';
 import { PART_HEIGHT, SLAB_HEIGHT, layoutStructure } from './layout.ts';
 import type { StructureScene } from './layout.ts';
 
@@ -11,11 +11,11 @@ export const STACK_STEP = 0.95;
 /** Sides of an envelope: a flat tile with a width, a depth and a height, in grid cells and height units. */
 const ENVELOPE = { w: 1.4, d: 0.95, h: 0.18 } as const;
 /** The shape of an envelope, its base centred on the origin. */
-export const ENVELOPE_SOLID: Solid = facetsOf(roundedPlan(-ENVELOPE.w / 2, -ENVELOPE.d / 2, ENVELOPE.w, ENVELOPE.d, 0.1), 0, ENVELOPE.h);
+export const ENVELOPE_SOLID: SolidFaces = facetsOf(roundedPlan(-ENVELOPE.w / 2, -ENVELOPE.d / 2, ENVELOPE.w, ENVELOPE.d, 0.1), 0, ENVELOPE.h);
 /** The shape of the ask tile, its base centred on the origin: a flat tile a little wider than an envelope. */
-export const ASK_TILE: Solid = facetsOf(roundedPlan(-1.0, -0.85, 2.0, 1.7, 0.12), 0, 0.3);
+export const ASK_TILE: SolidFaces = facetsOf(roundedPlan(-1.0, -0.85, 2.0, 1.7, 0.12), 0, 0.3);
 /** The shape of one cube, its base centred on the origin. Paint it at the screen point of an item. */
-export const CUBE: Solid = facetsOf(roundedPlan(-CUBE_SIDE / 2, -CUBE_SIDE / 2, CUBE_SIDE, CUBE_SIDE, 0.12), 0, CUBE_SIDE);
+export const CUBE: SolidFaces = facetsOf(roundedPlan(-CUBE_SIDE / 2, -CUBE_SIDE / 2, CUBE_SIDE, CUBE_SIDE, 0.12), 0, CUBE_SIDE);
 
 /** Height units that a payload parks above the top face of a part. */
 const PARK_RISE = 0.1;
@@ -41,8 +41,6 @@ const DOT_RISE = 1.2;
  */
 export const ASK_TIP_REACH = 100;
 
-const clamp = (n: number, low = 0, high = 1): number => Math.min(Math.max(n, low), high);
-const round = (n: number): number => Math.round(n * 10) / 10;
 /** Share of a window that has passed at local progress `u`, from 0 to 1. */
 const within = ([from, to]: Window, u: number): number => clamp((u - from) / (to - from));
 /** Slow at both ends. */
@@ -180,6 +178,7 @@ export interface FrameDraft {
   x: number;
   y: number;
   state: 'drafting' | 'ready';
+  from: string;
   to: string;
   subject: string;
   body: string;
@@ -257,11 +256,7 @@ export function frameAt(layout: FlowLayout, p: number): Frame {
   });
 
   const depths: number[] = [];
-  for (const effect of data.scenes[scene - 1].effects) drawEffect(effect, u);
-  frame.items = frame.items.map((item, i) => ({ item, depth: depths[i] })).sort((a, b) => a.depth - b.depth || a.item.y - b.item.y).map(({ item }) => item);
-  return frame;
-
-  function drawEffect(effect: EffectData, at: number): void {
+  const drawEffect = (effect: EffectData, at: number): void => {
     switch (effect.kind) {
       case 'hop':
         return;
@@ -326,7 +321,7 @@ export function frameAt(layout: FlowLayout, p: number): Frame {
           left -= typed.length;
           return typed;
         });
-        frame.draft = { x, y, state: at >= effect.type[1] ? 'ready' : 'drafting', to, subject, body };
+        frame.draft = { x, y, state: at >= effect.type[1] ? 'ready' : 'drafting', from: effect.from, to, subject, body };
         return;
       }
       case 'ask': {
@@ -335,5 +330,9 @@ export function frameAt(layout: FlowLayout, p: number): Frame {
         frame.ask = { x, y, state: effect.approved ? 'approved' : 'waiting' };
       }
     }
-  }
+  };
+
+  for (const effect of data.scenes[scene - 1].effects) drawEffect(effect, u);
+  frame.items = frame.items.map((item, i) => ({ item, depth: depths[i] })).sort((a, b) => a.depth - b.depth || a.item.y - b.item.y).map(({ item }) => item);
+  return frame;
 }

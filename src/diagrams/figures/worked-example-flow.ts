@@ -1,4 +1,5 @@
 import type { FlowData, SceneData, Waypoint } from '../figure/flow-types.ts';
+import { STACK_STEP } from '../figure/flow.ts';
 import { slotOf } from './slots.ts';
 
 /**
@@ -65,7 +66,7 @@ const scenes: SceneData[] = [
       { kind: 'hop', path: queryPath(i), draw: [0, 0.22] },
       { kind: 'ring', at: `connectors#${i}`, window: [search, leave], pulses: 2 },
       { kind: 'dots', at: `connectors#${i}`, pop: [search + 0.04, search + 0.29], gather: [leave - 0.1, leave] },
-      { kind: 'item', path: [...queryPath(i)].reverse(), move: [leave, back], rise: i * 0.95, qualifiedAt: back + 0.03 },
+      { kind: 'item', path: [...queryPath(i)].reverse(), move: [leave, back], rise: i * STACK_STEP, qualifiedAt: back + 0.03 },
     ]),
   },
   {
@@ -74,7 +75,7 @@ const scenes: SceneData[] = [
     lit: [{ part: 'app', from: 0 }, { part: 'contacts', from: 0 }],
     effects: [
       { kind: 'hop', path: savePath, draw: [0, 1] },
-      ...[0, 1, 2].map((i): SceneData['effects'][number] => ({ kind: 'item', path: savePath, move: [0, 1], rise: i * 0.95, qualifiedAt: 0 })),
+      ...[0, 1, 2].map((i): SceneData['effects'][number] => ({ kind: 'item', path: savePath, move: [0, 1], rise: i * STACK_STEP, qualifiedAt: 0 })),
     ],
   },
   {
@@ -84,7 +85,7 @@ const scenes: SceneData[] = [
     effects: [
       { kind: 'hop', path: draftPath, draw: [0, 0.22] },
       { kind: 'item', path: draftPath, move: [0, 0.22], show: [0, 0.26], qualifiedAt: 0 },
-      { kind: 'draft', at: [12.1, 4.0, 15], to: 'Ava Clarke, Northwind Capital', subject: 'About your lending desk', body: "Hi Ava, Northwind's new UK lending desk caught my eye. Could you spare 15 minutes this week?", type: [0.3, 0.85] },
+      { kind: 'draft', at: [12.1, 4.0, 15], from: 'Orchestrator agent', to: 'Ava Clarke, Northwind Capital', subject: 'About your lending desk', body: "Hi Ava, Northwind's new UK lending desk caught my eye. Could you spare 15 minutes this week?", type: [0.3, 0.85] },
       { kind: 'hop', path: gatewayPath.slice(0, 2), draw: [0.3, 0.45] },
       { kind: 'item', path: gatewayPath, move: [0.3, 0.62], show: [0.3, 0.64] },
       { kind: 'ring', at: 'gateway', window: [0.42, 0.6] },

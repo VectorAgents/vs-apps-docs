@@ -14,7 +14,7 @@ export interface Facet {
 }
 
 /** The faces of one rounded solid on screen. `hull` is its silhouette. */
-export interface Solid {
+export interface SolidFaces {
   /** Visible wall facets, from the dark (+column) side to the light (+row) side. */
   facets: Facet[];
   top: Point[];
@@ -29,8 +29,12 @@ const COS30 = Math.cos(Math.PI / 6);
 const ARC_SEGMENTS = 6;
 const BUCKETS = 4;
 
+export const clamp = (n: number, low = 0, high = 1): number => Math.min(Math.max(n, low), high);
+/** Rounds to a tenth of a unit. */
+export const round = (n: number): number => Math.round(n * 10) / 10;
+
 /** The `points` attribute of an SVG polygon, rounded to a tenth of a unit. */
-export const pointsAttr = (points: readonly Point[]): string => points.map(([x, y]) => `${Math.round(x * 10) / 10},${Math.round(y * 10) / 10}`).join(' ');
+export const pointsAttr = (points: readonly Point[]): string => points.map(([x, y]) => `${round(x)},${round(y)}`).join(' ');
 
 /** True 30 degree isometric: a column step goes right and down, a row step goes left and down, height goes up. */
 export function project(c: number, r: number, z: number): Point {
@@ -78,7 +82,7 @@ export function hullOf(points: readonly Point[]): Point[] {
  * A wall segment is visible when its outward normal faces the viewer, and its shade follows the angle of that normal: the
  * facets of a curved corner step through every bucket between the two flat walls.
  */
-export function facetsOf(plan: readonly PlanPoint[], z: number, height: number): Solid {
+export function facetsOf(plan: readonly PlanPoint[], z: number, height: number): SolidFaces {
   const top = plan.map(([c, r]) => project(c, r, z + height));
   const bottom = plan.map(([c, r]) => project(c, r, z));
   const facets: Facet[] = [];

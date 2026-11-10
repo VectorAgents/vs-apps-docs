@@ -195,7 +195,7 @@ const asking = {
       durationMs: 1000,
       lit: [{ part: 'a', from: 0 }],
       effects: [
-        { kind: 'draft', at: [1, 6, 8], to: 'Ava', subject: 'Hello', body: 'Could we talk?', type: [0.1, 0.6] },
+        { kind: 'draft', at: [1, 6, 8], from: 'Writer', to: 'Ava', subject: 'Hello', body: 'Could we talk?', type: [0.1, 0.6] },
         { kind: 'item', shape: 'envelope', path: ['a', 'a'], move: [0.8, 1] },
       ],
     },
@@ -252,6 +252,7 @@ test('item: an envelope is a flat tile, and it fades out over its own fade share
 
 test('draft: types the address, the subject and the body in turn, and says when it is ready', () => {
   const empty = frameAt(askLayout, 1.1).draft;
+  assert.equal(empty.from, 'Writer', 'the card names its author from the data');
   assert.deepEqual([empty.state, empty.to, empty.subject, empty.body], ['drafting', '', '', '']);
   const subject = frameAt(askLayout, 1.2).draft;
   assert.deepEqual([subject.to, subject.subject, subject.body], ['Ava', 'H', '']);
@@ -371,6 +372,7 @@ test('worked example: the draft is the still pose of scene 4, with a gateway pin
   assert.deepEqual(Object.keys(four.lit).sort(), ['contacts', 'gateway', 'orchestrator']);
   assert.deepEqual([four.draft.state, four.chat], ['ready', null]);
   assert.ok(four.draft.to && four.draft.subject && four.draft.body);
+  assert.equal(four.draft.from, 'Orchestrator agent');
   assert.deepEqual(four.items.map((i) => i.shape), ['envelope']);
   assert.equal(four.hops.filter((hop) => hop.current).length, 2, 'the cube to the agent and the call to the gateway');
   assert.ok(frameAt(exampleLayout, 3.5).rings.some((ring) => !ring.hold), 'the gateway pings');

@@ -64,12 +64,14 @@ export const Solid = memo(function Solid({ solid, active = false, lifted = false
   );
 });
 
+const LINE_CLASS = { link: 'fig-link', remote: 'fig-link fig-link-remote', hop: 'fig-hop fig-hop-current' } as const;
+
 /** The small picture in front of a legend item, on a 34 by 22 grid. */
 export function Swatch({ item }: { item: LegendItem }): ReactElement {
   if (item.swatch === 'remote' || item.swatch === 'link' || item.swatch === 'hop') {
     return (
       <svg className="structure-figure__swatch" viewBox="0 0 34 22" aria-hidden="true">
-        <line className={item.swatch === 'remote' ? 'fig-link fig-link-remote' : item.swatch === 'link' ? 'fig-link' : 'fig-hop fig-hop-current'} x1="2" y1="11" x2="32" y2="11" />
+        <line className={LINE_CLASS[item.swatch]} x1="2" y1="11" x2="32" y2="11" />
       </svg>
     );
   }

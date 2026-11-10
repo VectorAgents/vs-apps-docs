@@ -96,7 +96,7 @@ export interface ItemData {
   show?: Window;
   /** Share of the scene over which it fades in or out at the ends of `show`. 0.03 when left out. */
   fade?: number;
-  /** Height units above the path. A stack is several cubes with rises 0.95 apart. */
+  /** Height units above the path. A stack is several cubes with rises `STACK_STEP` apart. */
   rise?: number;
   /** Local progress at which the cube turns accent, to show a lead that is qualified. Grey until then. */
   qualifiedAt?: number;
@@ -145,6 +145,8 @@ export interface DraftData {
   kind: 'draft';
   /** The top left corner of the card stands at this point. */
   at: Waypoint;
+  /** The name on the card header: who wrote the email. */
+  from: string;
   to: string;
   subject: string;
   body: string;

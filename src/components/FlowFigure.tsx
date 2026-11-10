@@ -107,7 +107,7 @@ function AskTile({ ask, onApprove }: { ask: NonNullable<Frame['ask']>; onApprove
 }
 
 /**
- * The chat card beside the Member, as plain HTML on top of the figure. Its right edge never goes left of the card's own width, so
+ * The chat card at the point of its effect, as plain HTML on top of the figure. Its right edge never goes left of the card's own width, so
  * the card stays inside the stage. The caption repeats its words, so it is hidden from assistive technology.
  */
 function Chat({ chat, box }: { chat: NonNullable<Frame['chat']>; box: readonly [x: number, y: number, w: number, h: number] }): ReactElement {
@@ -123,13 +123,13 @@ function Chat({ chat, box }: { chat: NonNullable<Frame['chat']>; box: readonly [
   );
 }
 
-/** The email that the agent drafts, as plain HTML beside the orchestrator agent. The caption does not repeat it, and it is example text, so it is hidden from assistive technology. */
+/** The email that an agent drafts, as plain HTML at the point of its effect. The caption does not repeat it, and it is example text, so it is hidden from assistive technology. */
 function Draft({ draft, box }: { draft: NonNullable<Frame['draft']>; box: readonly [x: number, y: number, w: number, h: number] }): ReactElement {
   const style = { left: `min(${((draft.x - box[0]) / box[2]) * 100}%, calc(100% - var(--flow-draft-width)))`, top: `${((draft.y - box[1]) / box[3]) * 100}%` };
   return (
     <div className="flow-figure__draft" style={style} aria-hidden="true">
       <p className="flow-figure__draft-head">
-        <span>Orchestrator agent</span>
+        <span>{draft.from}</span>
         <span>{draft.state === 'ready' ? 'Draft ready' : 'Drafting'}</span>
       </p>
       <p className="flow-figure__draft-line">
