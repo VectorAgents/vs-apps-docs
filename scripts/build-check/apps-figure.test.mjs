@@ -10,7 +10,7 @@ const url = '/vector-apps/how-a-vector-app-works';
 const page = readFileSync(join(root, 'build', url, 'index.html'), 'utf8').replaceAll('<!-- -->', '');
 const figure = page.match(/<figure class="structure-figure">[\s\S]*?<\/figure>/)?.[0] ?? '';
 
-test('the page holds one structure figure and none of the old isometric markup', () => {
+test('the page holds one structure figure and no iso-diagram markup', () => {
   assert.ok(figure, 'the page holds a structure figure');
   assert.equal(page.match(/<figure class="structure-figure">/g)?.length, 1);
   assert.doesNotMatch(page, /iso-diagram|iso-legend|iso-badge/);

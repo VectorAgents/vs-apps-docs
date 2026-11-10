@@ -94,7 +94,7 @@ test('Vector Space, space and space manager entries open with the platform text'
   const first = (name) => entries.find((e) => e.name === name).body.trim().split('\n')[0];
   assert.match(first('Vector Space'), /^The Vector platform\./);
   assert.match(first('space'), /^A shared place in Vector Space\b/);
-  assert.equal(first('space manager'), 'A user who can edit on the space, or an Organization admin. They add apps, share capabilities and choose the models and connectors for the slots.');
+  assert.equal(first('space manager'), 'A user who can edit on the space, or the Organization admin. They add apps, share capabilities and choose the models and connectors for the slots.');
 });
 
 test('app page and space page entries tell the two pages apart', () => {
@@ -122,12 +122,12 @@ test('Context Hub holds six kinds of resource and pages are not one of them', ()
   assert.doesNotMatch(body, /resource pool/i);
 });
 
-test('no entry or link names the deleted terms', () => {
+test('no entry or link uses Edit level, View level or resource pool', () => {
   assert.ok(!entries.some((e) => /^(edit level|resource pool)$/i.test(e.name)));
   assert.doesNotMatch(text, /\bEdit level\b|\bView level\b|resource pool/i);
 });
 
-test('the five access rows carry the access-change meanings', () => {
+test('the access rows define role, group, share, block, condition and member', () => {
   const first = (name) => entries.find((e) => e.name === name).body.trim().split('\n')[0];
   assert.match(first('role'), /Can use or Can edit/);
   assert.match(first('role'), /never a set of people/i);
@@ -148,7 +148,7 @@ test('Vector Module lists Calendar and Human Time Return is an estimate', () => 
   assert.match(body('Human Time Return'), /not a spend figure/);
 });
 
-test('space manager and Command Center follow the access change', () => {
+test('Command Center is not a Vector Module and the orchestrator agent entry says one', () => {
   const body = (name) => entries.find((e) => e.name === name).body;
   assert.match(body('Command Center'), /not a Vector Module/);
   assert.match(body('orchestrator agent'), /one/i);

@@ -20,7 +20,7 @@ The glossary uses the published word where the product glossary uses an internal
 | --- | --- | --- |
 | allowed resources | Ceiling (`access.app_binding_resources`) | The resources a space manager attaches to an app. `ceiling` does not occur in `docs/`. |
 | the member's access | Floor | The overlap rule: an action runs only on resources that are allowed for the app and open to the member. |
-| Context Hub | Pool | The Context Hub row absorbs the pool. Vector Space lists what the space can reach as **Resources**. |
+| Context Hub | Pool | Vector Space lists what the space can reach as **Resources**, under the Context Hub. |
 | knowledge source | Source | Vector Space shows knowledge sources in the settings of an app. |
 | space page | Page (`pages.pages`) | A grid of widgets. `app page` names the SDK `pages[]` entry. |
 | capability grant | Share on named capabilities | A share at Can use on named capabilities of an app. The product grant is a standing approval, a different thing. |
@@ -53,7 +53,7 @@ Labels and toasts drift with the Space UI.
 
 ## The record of work
 
-Source paths are in the sibling `vector-spaces` repo, under `docs/`. The page is `docs/vector-space/the-record-of-work.md`. Claim-level sources are in the "the-record-of-work" part of the build's Why-group outline research. The spec overrides name each kind of record without an umbrella noun, leave out replay and retention figures, and keep the gateway off the page.
+Source paths are in the sibling `vector-spaces` repo, under `docs/`. The page is `docs/vector-space/the-record-of-work.md`. The spec overrides name each kind of record without an umbrella noun, leave out replay and retention figures, and keep the gateway off the page.
 
 | Claim | Rests on |
 | --- | --- |
@@ -62,14 +62,14 @@ Source paths are in the sibling `vector-spaces` repo, under `docs/`. The page is
 | The Organization admin reads the whole organization and a space manager reads their own space. Another user's thread is never readable there. A figure that cannot be read shows as missing, never as zero. | `product/OVERVIEW.md` (Who uses it), `systems/governance/SURFACE.md` (How the planes are read). |
 | Audit fails closed: a change that cannot be recorded does not happen. Spend records fail open: the call works, that window goes unrecorded and the platform counts what it dropped. The spend cap fails open: a down store admits calls. The page words acts as attested, not as fail open, because an audit act is refused when it cannot be kept (spec row: "the rest fail open" read with this exception). | `systems/governance/README.md` (The planes), `systems/governance/AUDIT.md`, `systems/governance/METERING.md` (The write path fails open), `systems/governance/LIMITS.md` (Refusal must be survivable), `systems/INTELLIGENCE.md` (Posture: per kind, and attested). |
 | Spend is an estimate at list price from the rate card and never reconciled against an invoice. A call is priced at the version in force when it started. A call with no price is counted and shown beside the total, never as free. | `systems/AI.md` (The rate card), `systems/governance/METERING.md` (Cost). |
-| The spend cap limits estimated spend on model calls per organization per calendar month. The organization reads it and staff set it. The refusal sentence rests on an enforced cap, which is gate row 5 of the Vector Space concepts spec (not checked against production). The sentence stands alone so it can be cut. | `systems/governance/LIMITS.md` (Cost is the unit, the month is the period; Observe before refuse). |
+| The spend cap limits estimated spend on model calls per organization per calendar month. The organization reads it and staff set it. The refusal sentence assumes the cap is enforced in production. That is unverified. The sentence stands alone so it can be cut. | `systems/governance/LIMITS.md` (Cost is the unit, the month is the period; Observe before refuse). |
 | An act is one thing an app did. Only apps record acts. The platform admits an act when the app is live in the space and the actor is real, and does not vouch for the work. An act has a kind, activity or audit, and the matching view shows it. | `systems/INTELLIGENCE.md` (opening; Posture: per kind, and attested; Where an act is read). |
-| Human Time Return is time given back to people, counted in seconds. Staff approve the seconds per unit (the baseline). Only successful acts with an approved baseline are valued, and the unvalued count shows beside the total. An act settles once. It is read in Intelligence apart from spend, it is an estimate and the platform computes no return figure. The page leaves out machine time, saved time and the master's word for the saving as a limit. | `systems/INTELLIGENCE.md` (The credibility rule, Settlement, Where an act is read), `systems/governance/README.md` (The planes). Wording: spec section 3.3, decision 6 of the page outlines. |
+| Human Time Return is time given back to people, counted in seconds. Staff approve the seconds per unit (the baseline). Only successful acts with an approved baseline are valued, and the unvalued count shows beside the total. An act settles once. It is read in Intelligence apart from spend, it is an estimate and the platform computes no return figure. The page leaves out machine time, saved time and the master's word for the saving as a limit. | `systems/INTELLIGENCE.md` (The credibility rule, Settlement, Where an act is read), `systems/governance/README.md` (The planes). The wording is the product decision that the figure is an estimate in seconds. |
 | The example is the page's own scenario slice. A chat in the web app as what started the work, the model-call cost and the Organization admin reading Activity rest on the Activity rows above. | `systems/governance/SURFACE.md` (Activity is one list of series and executions). |
 
 ## Approvals and the Command Center
 
-Source paths are in the sibling `vector-spaces` repo, under `docs/`. The page is `docs/vector-space/approvals-and-the-command-center.md`. Claim-level sources are in the "approvals-and-the-command-center" part of the build's How-group outline research, checked against `systems/COMMAND-CENTER.md` at `vector-spaces` commit `cb4c39e10`. The spec leaves out actor-only powers, polling schedules, simultaneous decisions, and numbers for retention or skipped fires.
+Source paths are in the sibling `vector-spaces` repo, under `docs/`. The page is `docs/vector-space/approvals-and-the-command-center.md`. Checked against `systems/COMMAND-CENTER.md` at `vector-spaces` commit `cb4c39e10`. The spec leaves out actor-only powers, polling schedules, simultaneous decisions, and numbers for retention or skipped fires.
 
 | Claim | Rests on |
 | --- | --- |
@@ -167,17 +167,16 @@ Source paths are in the sibling `vector-spaces` repo, under `docs/systems/apps/`
 
 ## Why Vector Space
 
-Source paths are in the sibling `vector-spaces` repo, under `docs/`. Claim-level sources are in the "1. why-vector-space" part of the Why group's outline research. The spec overrides: no "Who it is for" section, no figure slot, and the early example sits in the problem section with no Example H2. The product docs hold no `APPS.md`, so `product/OVERVIEW.md` and `product/GLOSSARY.md` are the sources.
+Source paths are in the sibling `vector-spaces` repo, under `docs/`. The spec overrides: no "Who it is for" section, no figure slot, and the early example sits in the problem section with no Example H2. The product docs hold no `APPS.md`, so `product/OVERVIEW.md` and `product/GLOSSARY.md` are the sources.
 
 | Claim | Rests on |
 | --- | --- |
 | Vector Space is where the people and AI agents of an organization work on the organization's own data, in spaces. | `product/OVERVIEW.md` ("What it is"). |
-| Human Time Return is the time an app's work gives back to people, counted in seconds. An app records an act for each batch of work it finishes. Staff approve the seconds per unit. Only successful acts with an approved baseline are valued and the platform shows how many are not. It is read in Intelligence apart from spend. It is an estimate and the platform computes no return figure. The page avoids "floor", "primary metric", "exact ROI", "continuously" and "stated human baseline". | `systems/INTELLIGENCE.md` (The credibility rule; Settlement; Where an act is read; Machine time, and what was saved), checked in the outline research, part 0.5. Spec decision 6 sets the wording. |
+| Human Time Return is the time an app's work gives back to people, counted in seconds. An app records an act for each batch of work it finishes. Staff approve the seconds per unit. Only successful acts with an approved baseline are valued and the platform shows how many are not. It is read in Intelligence apart from spend. It is an estimate and the platform computes no return figure. The page avoids "floor", "primary metric", "exact ROI", "continuously" and "stated human baseline". | `systems/INTELLIGENCE.md` (The credibility rule; Settlement; Where an act is read; Machine time, and what was saved). The wording is the product decision that the figure is an estimate in seconds. |
 | The problem is three questions: who may reach what, whose keys and money a model call uses, who did what. Each maps to one platform rule. No master doc states a problem, so the framing is derived from the three rules. | `product/OVERVIEW.md` ("What holds it together"). Framing approved by the spec, section 3.3. |
-| The early example: a member asks the orchestrator agent to find leads and send an outreach email. The agent reaches only what the member may reach, the model call goes through the gateway on the organization's own account, and the run is recorded under the member's name (the thread's owner). | `product/OVERVIEW.md` ("What it is"), `systems/access/RUNTIME.md` (Run identity). Gateway part: gate row 7. |
+| The early example: a member asks the orchestrator agent to find leads and send an outreach email. The agent reaches only what the member may reach, the model call goes through the gateway on the organization's own account, and the run is recorded under the member's name (the thread's owner). | `product/OVERVIEW.md` ("What it is"), `systems/access/RUNTIME.md` (Run identity). The gateway part is unverified for production (see the AI gateway row). |
 | The three platform rules. The access rule reads "General access, shares, blocks and Conditions", the current master line. The record rule says "who it ran as and what started it" and makes no claim that every number traces back. | `product/OVERVIEW.md` ("What holds it together"). |
-| Every paid model call goes through the AI gateway, on the organization's own AI provider accounts, and no other process holds an AI provider key. The page states the design. `systems/AI.md` says "Dev runs the gateway; prod does not". The section stays by user decision and publishes only after the vector-spaces team confirms gate row 7. Fallback: cut the gateway sentences. | `product/OVERVIEW.md` ("What holds it together"), `systems/AI.md` (opening; The gateway). Gate row 7. |
-| Keys sit in a credential vault. The servers write a key in and never read one back. A caller holds a short-lived ticket in place of a key. The ticket names the organization and normally who the call ran as. | `systems/AI.md` (opening; The ticket). |
+| Every paid model call goes through the AI gateway, on the organization's own AI provider accounts, and no other process holds an AI provider key. The page states the design. `systems/AI.md` says "Dev runs the gateway; prod does not". Unverified: whether production runs the gateway. The vector-spaces team has not confirmed it, so the gateway sentences are the first to cut. | `product/OVERVIEW.md` ("What holds it together"), `systems/AI.md` (opening; The gateway). |
 | The gateway lets the platform price each call and add it to spend, an estimate. The page says no more about the cap and links the record of work. | `systems/AI.md` (The rate card), `systems/governance/METERING.md` (Cost). |
 | An organization is the tenant. A space is the unit of work, binds one orchestrator agent, and resolves access inside it for each member and action. | `product/OVERVIEW.md` ("How it fits"), `product/GLOSSARY.md` (Organization, Space, Agent). |
 
@@ -212,7 +211,7 @@ Source paths are in the sibling `vector-spaces` repo, under `docs/`. The product
 
 ## Extending a space
 
-Source paths are in the sibling `vector-spaces` repo, under `docs/`. The page is `docs/vector-space/extending-a-space.md`. Claim-level sources are in the "extending-a-space" part of the build's How-group outline research, checked at `vector-spaces` commit `cb4c39e10`. Where a decision of the spec differs from the research (4 table rows, no "when a write asks" row, no "A2A inherits the space's access", no public-host rule, no #248 detail), the spec wins.
+Source paths are in the sibling `vector-spaces` repo, under `docs/`. The page is `docs/vector-space/extending-a-space.md`. Checked at `vector-spaces` commit `cb4c39e10`. The page has 4 table rows, no "when a write asks" row, no "A2A inherits the space's access", no public-host rule and no #248 detail.
 
 Gate row 8 of the Vector Space concepts spec: a cell marked CODE rests on code and not on a master doc, and a cell marked INFERRED joins two statements that no master doc makes in one place. The section does not publish until the vector-spaces team confirms each marked cell, or the cell's row is cut.
 
@@ -241,7 +240,7 @@ Gate row 8 of the Vector Space concepts spec: a cell marked CODE rests on code a
 
 ## Agents in a space
 
-Source paths are in the sibling `vector-spaces` repo, under `docs/`. Claim-level sources are in the "Page 4: `agents-in-a-space`" part of the build's outline research. The spec overrides drop "What an agent can reach" and "Where agents are set up", and name no depth.
+Source paths are in the sibling `vector-spaces` repo, under `docs/`. The spec overrides drop "What an agent can reach" and "Where agents are set up", and name no depth.
 
 | Claim | Rests on |
 | --- | --- |
@@ -257,7 +256,7 @@ Source paths are in the sibling `vector-spaces` repo, under `docs/`. Claim-level
 
 ## One access model
 
-Source paths are in the sibling `vector-spaces` repo, under `docs/`. Claim-level sources are in the "2. one-access-model" part of the Why group's outline research. The spec overrides drop "People who skip the check" and "What the check does not decide", name no step order, and keep the API-key variant of the example as a separate closing paragraph (gate row 6).
+Source paths are in the sibling `vector-spaces` repo, under `docs/`. The spec overrides drop "People who skip the check" and "What the check does not decide", name no step order, and keep the API-key variant of the example as a separate closing paragraph. The API-key behaviour is unverified.
 
 | Claim | Rests on |
 | --- | --- |
@@ -268,13 +267,13 @@ Source paths are in the sibling `vector-spaces` repo, under `docs/`. Claim-level
 | Conditions apply to datasources and connectors only. On a datasource a Condition becomes a row filter in every query. On a connector it guards the call's arguments and the response is not filtered afterwards. | `systems/access/README.md` (Conditions), `systems/access/RUNTIME.md` (Runtime gating, Datasource enforcement). |
 | The rules are the same for every way in and the subject differs: a web chat runs as the thread's owner, a personal token as its owner, a service-account key as that account. | `systems/access/RUNTIME.md` (Run identity), `product/GLOSSARY.md` (Tenancy and people). |
 | An agent reaches what its person reaches, and the agent's own scope narrows that and never grants. | `systems/access/RESOURCES.md` (Agent scope), `systems/access/RUNTIME.md` (Runtime gating). |
-| A Vector App reaches only the overlap of its own shares and the person's access. A capability grant is a share on named capabilities of a Vector App at Can use. | `systems/apps/BINDINGS.md` (Capabilities and access, Invariants). Spec decision 7 of the outline ticket replaces ticket 17's "not a share". |
+| A Vector App reaches only the overlap of its own shares and the person's access. A capability grant is a share on named capabilities of a Vector App at Can use. | `systems/apps/BINDINGS.md` (Capabilities and access, Invariants). A capability grant is a share, so the page never calls it "not a share". |
 | An approval is a second check and never grants access. | `systems/COMMAND-CENTER.md` (Deciding). |
-| Example: a Condition on a group limits a datasource to EU rows, and the member gets the same rows in an app and through the orchestrator agent. The API-key paragraph rests on the general claim only and is cut if gate row 6 fails. | `systems/access/RUNTIME.md` (Runtime gating, Datasource enforcement), `systems/access/README.md` (Conditions), `product/OVERVIEW.md` (What holds it together). |
+| Example: a Condition on a group limits a datasource to EU rows, and the member gets the same rows in an app and through the orchestrator agent. The API-key paragraph rests on the general claim only and is unverified for the API key itself. | `systems/access/RUNTIME.md` (Runtime gating, Datasource enforcement), `systems/access/README.md` (Conditions), `product/OVERVIEW.md` (What holds it together). |
 
 ## What Vector Space is
 
-Source paths are in the sibling `vector-spaces` repo, under `docs/`. The page is `docs/vector-space/what-vector-space-is.md`. Claim-level sources are in the "Page 1: `what-vector-space-is`" part of the What group's outline research. The spec overrides: no "Organizations and spaces" or "What holds the platform together" H2, no list of the five kinds of people, the Governance slab is named "Governance" only, and the example is the scenario slice.
+Source paths are in the sibling `vector-spaces` repo, under `docs/`. The page is `docs/vector-space/what-vector-space-is.md`. The spec overrides: no "Organizations and spaces" or "What holds the platform together" H2, no list of the five kinds of people, the Governance slab is named "Governance" only, and the example is the scenario slice.
 
 | Claim | Rests on |
 | --- | --- |
@@ -283,7 +282,7 @@ Source paths are in the sibling `vector-spaces` repo, under `docs/`. The page is
 | A space starts with one orchestrator agent, which takes a member's request and hands parts of it to other agents. Members chat with agents and answer what agents ask them. | `product/OVERVIEW.md` ("Who uses it"), `systems/SPACES.md` (Provisioning and deletion), `systems/access/README.md` (Spaces), `product/GLOSSARY.md` (Agents and runs). |
 | The Context Hub lists what the space can reach: connectors, knowledge sources, datasources, skills and apps. Vector Modules sit in it too. Pages are not one of its kinds. | `product/OVERVIEW.md` ("The product's layers"), `product/GLOSSARY.md` (Context Hub). |
 | The Command Center is where an ask waits for a person. It is a plain part of a space, not a Vector Module. | `product/OVERVIEW.md` ("The product's layers"), `systems/COMMAND-CENTER.md` (opening). |
-| Vector Modules are first-party tools over connector data: `omnibox`, `contacts` and Calendar. Calendar is listed without a caveat by user decision (gate row 1). | `systems/context-hub/MODULES.md` (Vector Modules), `product/GLOSSARY.md` (Context Hub: Vector Module). |
+| Vector Modules are first-party tools over connector data: `omnibox`, `contacts` and Calendar. Calendar is listed without a caveat by product decision. The master lists `omnibox` and `contacts` only, so Calendar is unverified. | `systems/context-hub/MODULES.md` (Vector Modules), `product/GLOSSARY.md` (Context Hub: Vector Module). |
 | Governance reads across the whole organization: what ran and as whom. | `product/OVERVIEW.md` ("The product's layers": Governance has an organization-wide view). |
 | A Vector App is a web app that a space shows in an iframe. | `product/GLOSSARY.md` (Apps: App). |
 | An A2A agent is a remote agent that joins the agent tree as a leaf. | `systems/STUDIO.md` (The agent tree, Vocabulary). |
@@ -303,25 +302,25 @@ Source paths are in the sibling `vector-spaces` repo, under `docs/`. The product
 
 ## How work moves through a space
 
-Source paths are in the sibling `vector-spaces` repo, under `docs/`. Claim-level sources are in the "1. `how-work-moves-through-a-space`" part of the How group's outline research. The spec overrides: one H2 per step with no Example H2, the box is named "Connectors", the page does not name Can edit on contacts, it does not say that each further lead raises an ask, and the actors are Member for steps 1, 4, 5 and 6 and App for steps 2 and 3. The agent is not an actor.
+Source paths are in the sibling `vector-spaces` repo, under `docs/`. The spec overrides: one H2 per step with no Example H2, the box is named "Connectors", the page does not name Can edit on contacts, it does not say that each further lead raises an ask, and the actors are Member for steps 1, 4, 5 and 6 and App for steps 2 and 3. The agent is not an actor.
 
 | Claim | Rests on |
 | --- | --- |
 | A member asks the space's one orchestrator agent in a thread. The run works as the thread's owner, the member, and each call is decided for that member. | `systems/STUDIO.md` (The agent tree), `product/GLOSSARY.md` (Agents and runs), `systems/access/RUNTIME.md` (Run identity, Runtime gating). |
 | The agent reaches the app only if the member reaches it. | `systems/apps/BINDINGS.md` (Capabilities and access: One reach rule; Invariants). |
-| Finding leads is a read action, so it raises no ask. An app endpoint call asks unless the request is a GET, so the page names the action a read (gate row 14). | `systems/apps/REGISTRY.md` (Agent catalog and endpoints), `systems/COMMAND-CENTER.md` (The ask). |
-| The app uses Apollo, Exa and BrightData as the space's Connectors. BrightData is a user statement, not a provider on main (gate row 2). | User statement. `systems/context-hub/CALLS.md` for the connector call record. |
+| Finding leads is a read action, so it raises no ask. An app endpoint call asks unless the request is a GET, so the page names the action a read. Unverified: that an app's search endpoint is a GET. | `systems/apps/REGISTRY.md` (Agent catalog and endpoints), `systems/COMMAND-CENTER.md` (The ask). |
+| The app uses Apollo, Exa and BrightData as the space's Connectors. BrightData is a user statement, not a provider on main. | User statement. `systems/context-hub/CALLS.md` for the connector call record. |
 | The app records "lead qualified" as an act for each lead. Only apps record acts. | `systems/INTELLIGENCE.md` (lead paragraph; Admission; The manifest is the act vocabulary). |
-| The app saves each lead as a contact in the contacts Vector Module (gate row 10: the step stays by user decision). The page does not name the access on contacts. | `systems/context-hub/MODULES.md` (Consumption: agents, apps, client; The contacts module). |
-| The agent drafts the email from the contacts. The model call goes through the AI gateway, the one route for every paid model call (gate row 7). | `systems/context-hub/MODULES.md` (Consumption: agents, apps, client), `systems/AI.md` (The gateway). |
+| The app saves each lead as a contact in the contacts Vector Module (the step stays by product decision). The page does not name the access on contacts. | `systems/context-hub/MODULES.md` (Consumption: agents, apps, client; The contacts module). |
+| The agent drafts the email from the contacts. The model call goes through the AI gateway, the one route for every paid model call. Unverified for production, as in the AI gateway row. | `systems/context-hub/MODULES.md` (Consumption: agents, apps, client), `systems/AI.md` (The gateway). |
 | Sending is a write, and sends through the Omnibox need approval by default. The run stops and an ask appears in the Command Center. | `systems/context-hub/MODULES.md` (The omnibox module), `systems/COMMAND-CENTER.md` (The ask; Grants: The default, and what loosens it; Raised and resolved). |
 | The member who asked decides, because a person answers for their own run. After approval the run resumes as the same actor, and an approval is a second check and never gives access. | `systems/COMMAND-CENTER.md` (The audience; Deciding). |
-| The email goes out through the Omnibox as the member. The app records no act for the send (user decision, ticket 18). | `systems/context-hub/MODULES.md` (Access & visibility; The omnibox module), `systems/COMMAND-CENTER.md` (Deciding), `systems/access/RUNTIME.md` (Run identity). |
-| The record names an actor per step: Member for 1, 4, 5 and 6, App for 2 and 3. The actor kind of an app's connector call is not stated in the docs (gate rows 3 and 9). The agent is not an actor: the master has six actor arms. | `systems/governance/README.md` (The attribution envelope; `actorRef`: one grammar over six arms), `systems/governance/EXECUTION.md` (The record), `systems/INTELLIGENCE.md` (Admission). |
+| The email goes out through the Omnibox as the member. The app records no act for the send (product decision). | `systems/context-hub/MODULES.md` (Access & visibility; The omnibox module), `systems/COMMAND-CENTER.md` (Deciding), `systems/access/RUNTIME.md` (Run identity). |
+| The record names an actor per step: Member for 1, 4, 5 and 6, App for 2 and 3. The actor kind of an app's connector call is not stated in the docs. The agent is not an actor: the master has six actor arms. | `systems/governance/README.md` (The attribution envelope; `actorRef`: one grammar over six arms), `systems/governance/EXECUTION.md` (The record), `systems/INTELLIGENCE.md` (Admission). |
 
 ## Who can do what
 
-Source paths are in the sibling `vector-spaces` repo, under `docs/`. Claim-level sources are in the "Page 5: `who-can-do-what`" part of the What group's outline research. The spec overrides collapse the research H2s Members, Organization admin, Space managers, Staff and Machines into one table, give staff two sentences, and leave out View level, Edit level, role as a set of people and custom roles. The page has no figure slot.
+Source paths are in the sibling `vector-spaces` repo, under `docs/`. The spec overrides collapse the research H2s Members, Organization admin, Space managers, Staff and Machines into one table, give staff two sentences, and leave out View level, Edit level, role as a set of people and custom roles. The page has no figure slot.
 
 | Claim | Rests on |
 | --- | --- |
@@ -352,5 +351,5 @@ Source paths are in the sibling `vector-spaces` repo, under `docs/`. The page is
 | A widget is one cell: a data widget (chart, table or key figure) runs a query against one datasource, or a document widget holds text. A collaborative document is edited live, and a managed one is written only by a schedule's runs. | `product/GLOSSARY.md` (Spaces and content: Widget), `systems/PAGES.md` (Widgets and `WidgetConfig`; Documents). |
 | A Vector App is a web app that a space shows in an iframe. A space manager turns it on for a space. The page leaves the concept to the Apps glossary. | `product/GLOSSARY.md` (Apps: App), `systems/apps/README.md`, `systems/apps/BINDINGS.md` (Binding lifecycle). |
 | A Vector Module is a first-party product over connector data or the space's own rows, a peer of apps and not an app or a connector. It draws on connectors attached to it. The modules are `omnibox` (conversations from a connected mailbox, read and reply) and `contacts` (the space's own rows). | `systems/context-hub/MODULES.md` (Vector Modules; Concept and residency; The omnibox module; The contacts module). |
-| Calendar is named as a third module and nothing more is said about it. The master lists `omnibox` and `contacts` only. | User statement of the product lead (gate row 1). Fallback: cut Calendar from the page. |
+| Calendar is named as a third module and nothing more is said about it. The master lists `omnibox` and `contacts` only. | User statement of the product lead. Unverified in the master docs. |
 | The example is the page's own scenario slice. It states no fact beyond the rows above. | Spec of the Vector Space concepts, section 3.2. |

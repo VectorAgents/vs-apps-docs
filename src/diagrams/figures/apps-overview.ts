@@ -1,6 +1,6 @@
 import type { StructureData } from '../figure/types.ts';
 
-/** The overview of `how-a-vector-app-works`. It is not a slot of the Vector Space section, so its caption is not in the registry. */
+/** The overview of `how-a-vector-app-works`. */
 export const appsOverview: StructureData = {
   id: 'apps-overview',
   title: 'How a Vector App fits in a space',

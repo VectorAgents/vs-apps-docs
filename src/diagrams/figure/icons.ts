@@ -5,8 +5,7 @@ export type IconElement = readonly [tag: 'path' | 'circle' | 'rect' | 'ellipse' 
  * Icons of the Vector Space client, on a 24 by 24 grid, drawn with a 2 unit round stroke. The shapes are Lucide icons
  * (ISC licence): `User`, `UserCog`, `Bot`, `Inbox`, `Database`, `LayoutGrid`, `Globe`, `Cpu`, `Workflow`, `ContactRound`, `Plug`,
  * `ShieldCheck`, `KeyRound`, `Timer`, `Play`, `LayoutDashboard`, `HeartPulse`, `Activity` and `ScrollText`, plus `Search`
- * for the Omnibox (the client draws an inbox for both, and the worked example keeps the magnifier on purpose) and `Shield` for the
- * AI gateway (not checked against the client).
+ * for the Omnibox and `Shield` for the AI gateway.
  */
 export const ICONS = {
   member: [['path', { d: 'M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2' }], ['circle', { cx: '12', cy: '7', r: '4' }]],

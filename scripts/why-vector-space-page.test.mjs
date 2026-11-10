@@ -147,8 +147,8 @@ test('the page follows the voice checks and no sentence passes 25 words', () => 
   for (const sentence of plain.replace(/^#.*$/gm, '').split(/(?<=[.!?])\s+|\n/)) assert.ok(sentence.trim().split(/\s+/).length <= 25, sentence);
 });
 
-test('provenance names the master docs behind the page and gate row 7', () => {
+test('provenance names the master docs behind the page and says the gateway is unverified for production', () => {
   const provenance = readFileSync(resolve(root, '.agents/provenance.md'), 'utf8');
   const part = provenance.split(/^## /m).find((p) => p.startsWith('Why Vector Space\n')) ?? '';
-  for (const source of ['product/OVERVIEW.md', 'systems/AI.md', 'systems/INTELLIGENCE.md', 'gate row 7']) assert.ok(part.includes(source), source);
+  for (const source of ['product/OVERVIEW.md', 'systems/AI.md', 'systems/INTELLIGENCE.md', 'Unverified: whether production runs the gateway']) assert.ok(part.includes(source), source);
 });

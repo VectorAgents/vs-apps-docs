@@ -31,12 +31,12 @@ test('the page embeds the apps figure once, in the parts section, as Fig. 1', ()
   assert.equal(text.match(/<StructureFigure/g)?.length, 1);
 });
 
-test('the text names no line of the old diagram, and the token table says which token each call carries', () => {
+test('the text names no numbered diagram line, and the token table says which token each call carries', () => {
   assert.doesNotMatch(text, /\bline[s]? [a-d]\b|four lines|token path/i);
   assert.match(section(text, 'The parts of an app'), /dashed/i);
 });
 
-test('the old isometric component, layout, data and test are gone, and nothing imports them', () => {
+test('no isometric diagram component, layout, data or test exists, and nothing imports one', () => {
   for (const old of ['src/components/IsoDiagram.tsx', 'src/diagrams/isoLayout.ts', 'src/diagrams/apps-overview.ts', 'scripts/iso-diagram.test.mjs', 'scripts/build-check/iso-diagram.test.mjs']) {
     assert.ok(!existsSync(resolve(root, old)), old);
   }

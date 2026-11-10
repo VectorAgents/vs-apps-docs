@@ -12,7 +12,6 @@ const toTheAsk: Waypoint[] = ['orchestrator', 'commandCenter'];
 const throughThePost: Waypoint[] = ['commandCenter', 'orchestrator', 'connector', outOfTheSpace];
 const withNoAsk: Waypoint[] = ['orchestrator', 'connector', outOfTheSpace];
 
-/** Loop 1, the ask: 4 frames. Loop 2, the standing approval: 3 frames. Loop 3, the schedule: 4 frames. */
 const scenes: SceneData[] = [
   {
     step: 1,

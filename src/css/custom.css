@@ -222,8 +222,9 @@
 }
 
 /*
- * The Vector Space theme for figures: neutral greys with a teal accent. Three face tones per kind, lit from the top left.
- * `plug` is the one accent, for the parts that plug in from outside. `--iso-accent` marks a selection.
+ * The Vector Space theme for figures: neutral greys with a teal `plug` tone. Three face tones per kind, lit from the top left.
+ * `plug` is for the parts that plug in from outside, and `--iso-link` is the teal of a plain line. `--iso-accent` is blue (the
+ * page primary is teal) and marks a selection, the current hop and a pulse.
  * A flow figure adds the grey `cube` for work in progress and the blue `done` for work that is qualified.
  */
 :root {

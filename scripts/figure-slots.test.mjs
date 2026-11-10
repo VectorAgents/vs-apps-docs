@@ -24,7 +24,7 @@ const sourceFiles = readdirSync(docs, { recursive: true })
 const read = (file) => readFileSync(join(docs, file), 'utf8');
 const pageOf = (slot) => `vector-space/${slot.page}.md`;
 
-/** The H2 that holds each slot's figure, as the spec names it. */
+/** The H2 that holds each slot's figure. */
 const headings = {
   'space-structure': 'The parts of a space',
   'organization-structure': 'The organization as the tenant',
@@ -79,7 +79,7 @@ test('outside the section, only the Apps overview holds a figure', () => {
   assert.deepEqual(outside, ['vector-apps/how-a-vector-app-works.md']);
 });
 
-test('the placeholder count is within PLACEHOLDER_CAP, which starts at 8', () => {
+test('the placeholder count is within PLACEHOLDER_CAP, which is at most 8', () => {
   const placeholders = sourceFiles.flatMap((file) => figuresOf(read(file))).filter((f) => f.tag === 'FigurePlaceholder');
   assert.ok(PLACEHOLDER_CAP <= 8);
   assert.ok(placeholders.length <= PLACEHOLDER_CAP, `${placeholders.length} placeholders`);

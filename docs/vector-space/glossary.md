@@ -23,7 +23,7 @@ A shared place in Vector Space for one team. A space manager adds apps, shares c
 
 ### space manager
 
-A user who can edit on the space, or an Organization admin. They add apps, share capabilities and choose the models and connectors for the slots.
+A user who can edit on the space, or the Organization admin. They add apps, share capabilities and choose the models and connectors for the slots.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
