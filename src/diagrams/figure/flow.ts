@@ -35,6 +35,12 @@ const DOT_RADIUS = 4.6;
 /** Height units that the dots start above their point. */
 const DOT_RISE = 1.2;
 
+/**
+ * Screen units from the base of the ask tile to the top of its tooltip, which the view box must hold. The tooltip is HTML on top of
+ * the figure, so a tile near the top of the picture would otherwise push it out of the stage.
+ */
+export const ASK_TIP_REACH = 100;
+
 const clamp = (n: number, low = 0, high = 1): number => Math.min(Math.max(n, low), high);
 const round = (n: number): number => Math.round(n * 10) / 10;
 /** Share of a window that has passed at local progress `u`, from 0 to 1. */
@@ -71,6 +77,10 @@ export function layoutFlow(data: FlowData): FlowLayout {
     if (!found) throw new Error(`Waypoint "${at}" names no mark`);
     return [found.x, found.y];
   };
+  const tops = data.scenes.flatMap((scene) => scene.effects.flatMap((e) => (e.kind === 'ask' ? [resolve(e.at)[1] - ASK_TIP_REACH] : [])));
+  const [x0, y0, w, h] = structure.viewBox.split(' ').map(Number);
+  const top = Math.min(y0, ...tops);
+  if (top < y0) structure.viewBox = [x0, round(top), w, round(h + y0 - top)].join(' ');
   return { data, structure, resolve };
 }
 
@@ -236,10 +246,11 @@ export function frameAt(layout: FlowLayout, p: number): Frame {
     for (const { part } of data.scenes[scene - 2].lit) lit(part, held.includes(part) ? 1 : 1 - within([0, LIT_RAMP], u));
   }
 
-  data.scenes.slice(0, scene).forEach((earlier, i) => {
+  const loopStart = Math.max(data.scenes.slice(0, scene).map((s) => s.fresh === true).lastIndexOf(true), 0);
+  data.scenes.slice(loopStart, scene).forEach((earlier, j) => {
     for (const effect of earlier.effects) {
       if (effect.kind !== 'hop') continue;
-      const current = i === scene - 1;
+      const current = loopStart + j === scene - 1;
       const share = current ? ease(within(effect.draw, u)) : 1;
       if (share > 0) frame.hops.push({ points: grow(path(effect.path), share), current });
     }

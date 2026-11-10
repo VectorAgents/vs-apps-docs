@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { advance, captionAt, frameAt, layoutFlow, pausedAt, recordAt, sceneAt } from '../src/diagrams/figure/flow.ts';
+import { ASK_TIP_REACH, advance, captionAt, frameAt, layoutFlow, pausedAt, recordAt, sceneAt } from '../src/diagrams/figure/flow.ts';
 import { project } from '../src/diagrams/figure/geometry.ts';
 
 /** Three parts on one slab, and two scenes: a cube rides from a to b, then a ring pulses on c while two parts are lit. */
@@ -101,6 +101,15 @@ test('hop: stays as a thin line in every later scene', () => {
   assert.equal(later.length, 1);
   assert.equal(later[0].current, false);
   near(later[0].points[1], layout.resolve('b'));
+});
+
+test('fresh: a scene that starts a new loop leaves out the hops of the scenes before it', () => {
+  const second = { ...fixture.scenes[1], fresh: true, effects: [{ kind: 'hop', path: ['b', 'c'], draw: [0, 1] }] };
+  const loops = layoutFlow({ ...fixture, scenes: [fixture.scenes[0], second, { ...fixture.scenes[0], step: 2 }] });
+  assert.equal(frameAt(loops, 1.5).hops.length, 1, 'only the hop of the new loop');
+  assert.equal(frameAt(loops, 2).hops.length, 1);
+  assert.equal(frameAt(loops, 3).hops.length, 2, 'the scene after a fresh one keeps its hop as a thin line');
+  assert.equal(frameAt(layout, 2).hops.length, 1, 'with no fresh scene every hop stays');
 });
 
 test('item: waits at the start, rides the path and rests at the end; it is absent before it shows', () => {
@@ -393,4 +402,142 @@ test('worked example: no dashes, no first person plural and no example app name'
   assert.doesNotMatch(text, /[–—]/);
   assert.doesNotMatch(text, /\b(we|our|ours|us)\b/i);
   assert.doesNotMatch(text, /Hiring|SDR|CSR|RedemptAI/);
+});
+
+const { approvalsFlow: approvals } = await import('../src/diagrams/figures/approvals-flow.ts');
+const { extendingFlow: extending } = await import('../src/diagrams/figures/extending-flow.ts');
+const { slotOf } = await import('../src/diagrams/figures/slots.ts');
+const approvalsLayout = layoutFlow(approvals);
+const extendingLayout = layoutFlow(extending);
+
+for (const [name, data, laid] of [['approvals-flow', approvals, approvalsLayout], ['extending-flow', extending, extendingLayout]]) {
+  test(`${name}: the data carries the slot id and the registry caption, and every step has a scene in order`, () => {
+    assert.equal(data.id, name);
+    assert.equal(data.caption, slotOf(name).caption);
+    for (const [i] of data.steps.entries()) assert.ok(data.scenes.some((s) => s.step === i + 1), `step ${i + 1}`);
+    const order = data.scenes.map((s) => s.step);
+    assert.deepEqual(order, [...order].sort((a, b) => a - b));
+  });
+
+  test(`${name}: every waypoint resolves inside the view box, every window is ordered and every lit part exists`, () => {
+    const [x0, y0, w, h] = laid.structure.viewBox.split(' ').map(Number);
+    const windows = (effect) => [effect.draw, effect.move, effect.show, effect.window, effect.pop, effect.gather, effect.type].filter(Boolean);
+    for (const scene of data.scenes) {
+      for (const { part: id, from } of scene.lit) {
+        assert.ok(data.parts.some((p) => p.id === id), id);
+        assert.ok(from >= 0 && from < 1);
+      }
+      for (const effect of scene.effects) {
+        for (const at of (effect.path ?? [effect.at]).filter(Boolean)) {
+          const [x, y] = laid.resolve(at);
+          assert.ok(x >= x0 && x <= x0 + w && y >= y0 && y <= y0 + h, `${at} is inside the view box`);
+        }
+        for (const [from, to] of windows(effect)) assert.ok(from >= 0 && from < to && to <= 1, `${effect.kind} window ${from}, ${to}`);
+      }
+    }
+  });
+
+  test(`${name}: names only on parts and slabs, no dashes, no first person plural, no vendor, short cells, every actor the member`, () => {
+    for (const item of [...data.parts, ...data.slabs]) assert.match(item.label, /^[A-Z][A-Za-z0-9 ]*$/, item.label);
+    const text = JSON.stringify(data);
+    assert.doesNotMatch(text, /[–—]/);
+    assert.doesNotMatch(text, /\b(we|our|ours|us)\b/i);
+    assert.doesNotMatch(text, /Apollo|Exa\b|BrightData|Slack|Hiring|SDR|CSR|RedemptAI|\bgrant\b/);
+    for (const step of data.steps) assert.ok(words(step.record.text) <= 15 && words(step.text) <= 40, step.text);
+    assert.deepEqual([...new Set(data.steps.map((s) => s.record.actor))], ['Member']);
+    for (const scene of data.scenes) if (scene.caption) assert.ok(words(scene.caption) <= 40, scene.caption);
+  });
+
+  test(`${name}: the view box leaves room above every ask tile for its tooltip`, () => {
+    const y0 = Number(laid.structure.viewBox.split(' ')[1]);
+    for (const scene of data.scenes) for (const effect of scene.effects) if (effect.kind === 'ask') assert.ok(laid.resolve(effect.at)[1] - ASK_TIP_REACH >= y0 - 1e-6, `${effect.at}`);
+  });
+
+  test(`${name}: nothing is drawn at rest and no ask is left in the last pose`, () => {
+    const rest = frameAt(laid, 0);
+    assert.deepEqual([rest.scene, rest.hops, rest.items, rest.ask], [0, [], [], null]);
+    assert.equal(frameAt(laid, data.scenes.length).ask, null);
+  });
+}
+
+test('approvals-flow: Member, Orchestrator agent, Command Center and a Connector on one Space slab, and no Omnibox', () => {
+  assert.deepEqual(approvals.parts.map((p) => p.label).sort(), ['Command Center', 'Connector', 'Member', 'Orchestrator agent']);
+  assert.deepEqual(approvals.slabs.map((s) => s.label), ['Space']);
+  assert.doesNotMatch(JSON.stringify(approvals), /Omnibox/);
+});
+
+test('approvals-flow: three loops of 4, 3 and 4 frames, 11 in all, each loop one step with its own heading and a caption on every frame', () => {
+  assert.equal(approvals.steps.length, 3);
+  assert.deepEqual(approvals.steps.map((s) => s.href), ['#the-ask-and-who-decides-it', '#standing-approvals', '#schedules']);
+  assert.deepEqual([1, 2, 3].map((step) => approvals.scenes.filter((s) => s.step === step).length), [4, 3, 4]);
+  assert.equal(approvals.scenes.length, 11);
+  assert.ok(approvals.scenes.every((s) => s.caption));
+  assert.deepEqual(approvals.scenes.map((s, i) => s.fresh === true), approvals.scenes.map((s, i) => i === 4 || i === 7));
+});
+
+test('approvals-flow: play halts at the ask of loop 1 and at the ask of loop 3, and an approval plays on from each', () => {
+  assert.deepEqual(approvals.scenes.map((s) => s.pause === true), approvals.scenes.map((s, i) => i === 1 || i === 9));
+  assert.equal(advance(approvals, 0, 600_000), 2);
+  assert.equal(pausedAt(approvals, 2), true);
+  assert.equal(advance(approvals, 2, 600_000), 10);
+  assert.equal(pausedAt(approvals, 10), true);
+  assert.equal(advance(approvals, 10, 600_000), 11);
+});
+
+test('approvals-flow: each ask waits in its pause pose, is approved in the next frame and is gone once the call goes through', () => {
+  const ask = (p) => frameAt(approvalsLayout, p).ask?.state ?? null;
+  assert.deepEqual([1, 2, 3, 4].map(ask), [null, 'waiting', 'approved', null]);
+  assert.deepEqual([5, 6, 7].map(ask), ['approved', null, null], 'loop 2 shows the approval with its tick and raises no new ask');
+  assert.deepEqual([8, 9, 10, 11].map(ask), [null, null, 'waiting', null]);
+});
+
+test('approvals-flow: a new loop starts on a clean picture, and the record gains one row per loop', () => {
+  assert.ok(frameAt(approvalsLayout, 4).hops.length >= 3, 'loop 1 ends with its hops drawn');
+  assert.ok(frameAt(approvalsLayout, 5).hops.every((h) => h.current), 'loop 2 starts clean');
+  assert.ok(frameAt(approvalsLayout, 8).hops.every((h) => h.current), 'loop 3 starts clean');
+  assert.deepEqual([3.9, 4, 7, 11].map((p) => recordAt(approvals, p).length), [0, 1, 2, 3]);
+});
+
+test('approvals-flow: the ask stands above the Command Center, and the approved call reaches the Connector', () => {
+  const [x, y] = approvalsLayout.resolve('commandCenter');
+  const tile = frameAt(approvalsLayout, 2).ask;
+  assert.ok(Math.abs(tile.x - x) < 40 && tile.y < y, 'the tile is above the Command Center');
+  assert.ok(approvals.scenes[3].lit.some((l) => l.part === 'connector'));
+  const [cx, cy] = approvalsLayout.resolve('connector');
+  near(frameAt(approvalsLayout, 4).hops.find((h) => h.current).points.at(-1), [cx, cy], 200);
+});
+
+test('approvals-flow: the legend has the cube and the hop, and the text names no polling and no skip count', () => {
+  assert.deepEqual(approvals.legend.map((i) => i.swatch), ['cube', 'hop']);
+  assert.doesNotMatch(JSON.stringify(approvals), /poll|\b\d+ (fires|runs|skipped)\b/i);
+});
+
+test('extending-flow: Member, Orchestrator agent and Context Hub in the Space, and the three kinds outside on dashed links', () => {
+  const on = (id) => extending.parts.filter((p) => p.on === id).map((p) => p.label).sort();
+  assert.deepEqual(extending.slabs.map((s) => s.label).sort(), ['Organization', 'Space']);
+  assert.deepEqual(on('space'), ['Context Hub', 'Member', 'Orchestrator agent']);
+  assert.deepEqual(on('organization'), ['A2A agent', 'MCP connector', 'Vector App']);
+  assert.ok(extending.links.length === 3 && extending.links.every((l) => l.remote));
+  assert.deepEqual(extending.links.map((l) => [l.from, l.to]).sort(), [['contextHub', 'mcp'], ['orchestrator', 'a2a'], ['orchestrator', 'app']]);
+});
+
+test('extending-flow: four steps with one scene each, the shared start and then one call per kind, with no pause', () => {
+  assert.equal(extending.steps.length, 4);
+  assert.deepEqual(extending.scenes.map((s) => s.step), [1, 2, 3, 4]);
+  assert.ok(extending.scenes.every((s) => !s.pause));
+  assert.equal(advance(extending, 0, 600_000), 4);
+  assert.deepEqual(extending.steps.map((s) => s.href), ['#what-the-space-does-for-every-call', '#the-three-kinds-and-how-each-gets-in', '#the-three-kinds-and-how-each-gets-in', '#the-three-kinds-and-how-each-gets-in']);
+  assert.match(extending.steps[1].text, /token/);
+  assert.match(extending.steps[2].text, /stored credential/);
+  assert.match(extending.steps[3].text, /never learns who asked/);
+});
+
+test('extending-flow: each call rides its dashed link to its part, and the last pose keeps every hop', () => {
+  const hops = (p) => frameAt(extendingLayout, p).hops;
+  assert.deepEqual([1, 2, 3, 4].map((p) => hops(p).length), [1, 2, 3, 4]);
+  for (const [p, part] of [[2, 'app'], [3, 'a2a'], [4, 'mcp']]) near(hops(p).find((h) => h.current).points.at(-1), extendingLayout.resolve(part), 12);
+});
+
+test('extending-flow: the legend has 4 items that explain encodings', () => {
+  assert.deepEqual(extending.legend.map((i) => i.swatch), ['plug', 'remote', 'cube', 'hop']);
 });

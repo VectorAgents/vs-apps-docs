@@ -3,7 +3,8 @@ title: Extending a space
 description: A Vector App, an A2A agent and an MCP server compared.
 ---
 
-import FigurePlaceholder from '@site/src/components/FigurePlaceholder';
+import FlowFigure from '@site/src/components/FlowFigure';
+import { extendingFlow } from '@site/src/diagrams/figures/extending-flow.ts';
 
 Outside code reaches a [space](./glossary.md#space) in three ways. A [Vector App](../vector-apps/glossary.md#app) is a web app that a space shows in an iframe. An [A2A](./glossary.md#a2a) agent is a remote agent that an agent of the space hands work to. An [MCP](./glossary.md#mcp) server is a remote set of tools that agents call. This page compares the three from the side of the space.
 
@@ -25,7 +26,7 @@ An MCP server is added by a member as a connector in the [Context Hub](./glossar
 
 A standalone A2A agent or MCP server needs no vs-apps SDK. A Vector App can offer an A2A agent and an MCP server of its own. You declare them in the [app definition](../sdk/glossary.md#app-definition).
 
-<FigurePlaceholder slot="extending-flow" />
+<FlowFigure data={extendingFlow} />
 
 ## The comparison
 

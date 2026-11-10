@@ -56,6 +56,8 @@ export interface SceneData {
   caption?: string;
   /** Auto-play halts at the end of this scene, where an ask waits for a person. Approve plays on from there. */
   pause?: boolean;
+  /** Starts a new loop: the hops of every scene before this one are left out, so a figure of several loops starts each on a clean picture. */
+  fresh?: boolean;
   /** Parts that lift and take an accent outline while the scene runs. They stay lit to the end of the scene. */
   lit: LitData[];
   /** What moves or appears. Each effect keeps to its own scene. */

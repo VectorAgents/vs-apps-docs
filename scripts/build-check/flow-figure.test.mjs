@@ -3,6 +3,8 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
+import { approvalsFlow } from '../../src/diagrams/figures/approvals-flow.ts';
+import { extendingFlow } from '../../src/diagrams/figures/extending-flow.ts';
 import { workedExampleFlow } from '../../src/diagrams/figures/worked-example-flow.ts';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '../..');
@@ -82,3 +84,50 @@ test('search indexes the part names and the steps of the text version', () => {
   for (const label of ['Orchestrator agent', 'Command Center', 'AI gateway', 'Connectors']) assert.ok(text.includes(label), label);
   assert.ok(text.includes('Sending is a write'));
 });
+
+const flows = [
+  { data: approvalsFlow, page: 'approvals-and-the-command-center', title: 'Three ways a write is cleared', legend: 2, pills: 3 },
+  { data: extendingFlow, page: 'extending-a-space', title: 'How a space calls outside code', legend: 4, pills: 4 },
+];
+
+for (const { data, page: slug, title, legend, pills } of flows) {
+  const html = readFileSync(join(root, 'build/vector-space', slug, 'index.html'), 'utf8').replaceAll('<!-- -->', '');
+  const flow = html.match(/<figure class="flow-figure">[\s\S]*?<\/figure>/)?.[0] ?? '';
+  const picture = flow.match(/<svg class="fig-svg"[\s\S]*?<\/svg>/)?.[0] ?? '';
+
+  test(`${data.id}: the page shows the real flow figure with its Fig. 1 caption, and no placeholder`, () => {
+    assert.ok(flow, 'the page holds a flow figure');
+    assert.ok(!html.includes('figure-placeholder'));
+    assert.ok(flow.includes(`<figcaption>Fig. 1 · ${data.caption}</figcaption>`));
+  });
+
+  test(`${data.id}: the SVG is an image named and described by its own title and desc, with a name on every part and slab`, () => {
+    assert.match(picture, /role="img"/);
+    assert.match(picture, new RegExp(`<title id="[^"]+">${title}</title>`));
+    assert.match(picture, /<desc id="[^"]+">[^<]+<\/desc>/);
+    const names = [...picture.matchAll(/<text class="fig-label[^"]*"[^>]*>([^<]+)<\/text>/g)].map((m) => m[1]);
+    assert.deepEqual(names.sort(), [...data.parts, ...data.slabs].map((i) => i.label).sort());
+  });
+
+  test(`${data.id}: the legend has ${legend} items, the pills number the ${pills} steps and all work, and the caption is a polite live region`, () => {
+    assert.equal((flow.match(/<ul class="[^"]*structure-figure__legend"[\s\S]*?<\/ul>/)[0].match(/<li>/g) ?? []).length, legend);
+    const found = [...flow.matchAll(/<button type="button"( disabled="")? aria-label="Step (\d)"[^>]*>(\d)<\/button>/g)];
+    assert.deepEqual(found.map((m) => m[3]), Array.from({ length: pills }, (_, i) => String(i + 1)));
+    assert.ok(found.every((m) => m[1] === undefined));
+    assert.match(flow, /<p class="flow-figure__caption" aria-live="polite">[^<]+/);
+  });
+
+  test(`${data.id}: the record of work is a real table with no row at rest, and the text version is a collapsed list of the steps`, () => {
+    const table = flow.match(/<table>[\s\S]*?<\/table>/)?.[0] ?? '';
+    assert.match(table, /<caption>Record of work<\/caption>/);
+    assert.equal((table.match(/<th scope="col">/g) ?? []).length, 2);
+    assert.ok(!/<td>/.test(table));
+    const details = flow.match(/<details class="flow-figure__text">[\s\S]*?<\/details>/)?.[0] ?? '';
+    assert.ok(details && !/<details[^>]* open/.test(details));
+    assert.equal((details.match(/<li>/g) ?? []).length, data.steps.length);
+  });
+
+  test(`${data.id}: one icon button plays, pauses and replays`, () => {
+    assert.equal((flow.match(/class="flow-figure__play"/g) ?? []).length, 1);
+  });
+}

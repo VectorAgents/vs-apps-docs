@@ -10,10 +10,10 @@ const docs = resolve(dirname(fileURLToPath(import.meta.url)), '../docs');
 const file = resolve(docs, 'vector-space/extending-a-space.md');
 const text = readFileSync(file, 'utf8');
 const body = text.replace(/^---\n[\s\S]*?\n---\n/, '');
-const prose = body.replace(/^import .*$/gm, '').replace(/<FigurePlaceholder[^>]*\/>/g, '');
+const prose = body.replace(/^import .*$/gm, '').replace(/<(?:FigurePlaceholder|FlowFigure)[^>]*\/>/g, '');
 const unlinked = (s) => s.replace(/\[([^\]]*)\]\([^)]*\)/g, '$1');
 const plain = unlinked(prose);
-const slotsIn = (s) => [...s.matchAll(/<FigurePlaceholder slot="([^"]+)" \/>/g)].map((m) => m[1]);
+const slotsIn = (s) => [...s.matchAll(/<FigurePlaceholder slot="([^"]+)" \/>|<FlowFigure data=\{extendingFlow\} \/>/g)].map((m) => m[1] ?? 'extending-flow');
 const rows = (s) =>
   s
     .split('\n')

@@ -3,7 +3,8 @@ title: Approvals and the Command Center
 description: Asks, standing approvals and schedules.
 ---
 
-import FigurePlaceholder from '@site/src/components/FigurePlaceholder';
+import FlowFigure from '@site/src/components/FlowFigure';
+import { approvalsFlow } from '@site/src/diagrams/figures/approvals-flow.ts';
 
 An [ask](./glossary.md#ask) is anything that an agent or an app waits on a person for, such as approval to make a change. The [Command Center](./glossary.md#command-center) is the part of a [space](./glossary.md#space) where asks wait. It also lists the [standing approvals](./glossary.md#standing-approval) that let a call run without asking and the [schedules](./glossary.md#schedule) that a person runs.
 
@@ -23,7 +24,7 @@ Each ask goes to the person who answers for the run. For the run of a member, th
 
 An ask that an app raises from its own server goes to the [space managers](./glossary.md#space-manager). A space manager also sees an ask whose answerer can no longer view the space. Anyone who leaves a space stops seeing its asks.
 
-<FigurePlaceholder slot="approvals-flow" />
+<FlowFigure data={approvalsFlow} />
 
 ## After a decision
 
