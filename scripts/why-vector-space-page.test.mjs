@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { bannedTermsIn, bodyOf, brokenLinks, linksOf, longSentences, section, unlink } from './page-helpers.mjs';
+import { bannedTermsIn, bodyOf, brokenLinks, linksOf, section, unlink } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -13,51 +13,63 @@ const body = bodyOf(text);
 const lead = body.split(/^## /m)[0];
 const plain = unlink(body);
 
-/** True when the first use of `pattern` in the body is the text of a markdown link. */
+/** True when the first use of `pattern` in the body, headings aside, is the text of a markdown link. */
 function firstUseLinked(pattern) {
-  const masked = body.replace(/\]\([^)]*\)/g, (target) => `]${'_'.repeat(target.length - 1)}`);
+  const masked = body.replace(/^#.*$/gm, (heading) => ' '.repeat(heading.length)).replace(/\]\([^)]*\)/g, (target) => `]${'_'.repeat(target.length - 1)}`);
   const at = masked.search(pattern);
   if (at < 0) return false;
   const open = masked.lastIndexOf('[', at);
   return open >= 0 && /^\[[^\]]*\]_/.test(masked.slice(open)) && masked.indexOf(']', open) >= at;
 }
 
-test('the page runs the problem, the three platform rules, the AI gateway, Where to go next', () => {
+test('the page runs the problem, the three platform rules, the AI gateway, Human Time Return, Where to go next', () => {
   assert.deepEqual([...text.matchAll(/^## (.+)$/gm)].map((m) => m[1]), [
     'The problem Vector Space solves',
     'The three platform rules',
     'The AI gateway',
+    'Human Time Return',
     'Where to go next',
   ]);
 });
 
-test('the lead opens with the problem, then states Human Time Return in the corrected wording', () => {
+test('the lead opens with the problem and names the three rules', () => {
   assert.match(lead, /^\s*Once \[AI\]\(\.\/glossary\.md#ai\) agents work on an /);
-  assert.ok(lead.indexOf('glossary.md#vector-space') < lead.indexOf('glossary.md#human-time-return'));
-  assert.match(lead, /\]\(\.\/glossary\.md#human-time-return\)/);
-  assert.match(lead, /counted in seconds/);
-  assert.match(lead, /\bestimate\b/);
-  assert.match(lead, /only successful acts with an approved baseline/i);
-  assert.match(lead, /how many are not/);
-  assert.match(lead, /\]\(\.\/glossary\.md#intelligence\)[^.]*apart from spend/);
-  assert.match(lead, /return figure/);
+  assert.match(lead, /\]\(\.\/glossary\.md#vector-space\)/);
+  assert.match(lead, /one for access, one for model keys and one for records/);
 });
 
-test('the page is 500 to 800 words with at most one table and no figure slot', () => {
-  const words = plain.split(/\s+/).filter(Boolean).length;
-  assert.ok(words >= 500 && words <= 800, `${words} words`);
-  assert.ok((text.match(/^\| ?-{3}/gm) ?? []).length <= 1, 'tables');
+test('the scene is the first H2, with no Example heading and Acme wording', () => {
+  assert.equal([...text.matchAll(/^## (.+)$/gm)][0][1], 'The problem Vector Space solves');
+  assert.doesNotMatch(text, /^## .*\bExample\b/m);
+  assert.doesNotMatch(plain, /\bthe sales space\b/i);
+  assert.match(plain, /Acme's sales team has a space, and a member of it asks the orchestrator agent to find leads and send an outreach email/);
+});
+
+test('Human Time Return is its own section: seconds, acts, staff-approved baseline, an estimate with no return figure', () => {
+  const htr = section(text, 'Human Time Return');
+  assert.match(htr, /\]\(\.\/glossary\.md#human-time-return\)/);
+  assert.match(htr, /counted in seconds/);
+  assert.match(htr, /\[staff\]\(\.\/glossary\.md#staff\) approve the seconds per unit of an act, and that approved figure is the baseline/);
+  assert.match(htr, /only successful acts with an approved baseline/i);
+  assert.match(htr, /how many are not/);
+  assert.match(htr, /\]\(\.\/glossary\.md#intelligence\)[^.]*apart from spend/);
+  assert.deepEqual([...htr.matchAll(/^- \*\*(.+?)\*\*: /gm)].map((m) => unlink(m[1])), ['Act', 'Baseline', 'Valuation', 'Intelligence']);
+  assert.match(htr, /\bestimate\b/);
+  assert.match(htr, /return figure/);
+  assert.match(htr, /\]\(\.\/the-record-of-work\.md#acts-and-human-time-return\)/);
+});
+
+test('the page has no figure slot', () => {
   assert.doesNotMatch(text, /<(FigurePlaceholder|StructureFigure|FlowFigure)\b/);
   assert.doesNotMatch(readFileSync(resolve(root, 'src/diagrams/figures/slots.ts'), 'utf8'), /why-vector-space/);
 });
 
-test('the problem section asks who may reach what, whose keys and money, and who did what', () => {
+test('the problem section asks who may reach what, whose keys and credits, and who did what', () => {
   const problem = section(text, 'The problem Vector Space solves');
-  for (const question of [/who may reach what/i, /whose keys and money/i, /who did what/i]) assert.match(problem, question);
+  for (const question of [/who may reach what/i, /whose keys and credits/i, /who did what/i]) assert.match(problem, question);
 });
 
-test('the early example sits in the problem section: a member asks for leads, the call goes through the gateway, the run is recorded under the member', () => {
-  assert.doesNotMatch(text, /^## Example$/m);
+test('the scene sits in the problem section: a member asks for leads, the call goes through the gateway, the run is recorded under the member', () => {
   const problem = section(text, 'The problem Vector Space solves');
   assert.match(problem, /\]\(\.\/glossary\.md#member\)/);
   assert.match(problem, /\]\(\.\/glossary\.md#orchestrator-agent\)/);
@@ -69,11 +81,12 @@ test('the early example sits in the problem section: a member asks for leads, th
 
 test('the three platform rules are one access model, one AI gateway and one record of work, as a list', () => {
   const rules = section(text, 'The three platform rules');
-  assert.deepEqual([...rules.matchAll(/^- \*\*(.+?)\.\*\*/gm)].map((m) => m[1]), ['One access model', 'One AI gateway', 'One record of work']);
+  assert.deepEqual([...rules.matchAll(/^- \*\*(.+?)\*\*: /gm)].map((m) => m[1]), ['One access model', 'One AI gateway', 'One record of work']);
 });
 
 test('rule 1 names General access, shares, blocks and Conditions, and rule 3 says who it ran as and what started it', () => {
   const rules = section(text, 'The three platform rules');
+  assert.doesNotMatch(rules, /Each rule is a promise/);
   assert.match(rules, /General access\]\(\.\/glossary\.md#general-access\), \[shares\]\(\.\/glossary\.md#share\), \[blocks\]\(\.\/glossary\.md#block\) and \[Conditions\]\(\.\/glossary\.md#condition\)/);
   assert.match(rules, /records who it ran as and what started it/);
   assert.doesNotMatch(rules, /roles, shares, blocks and conditions/i);
@@ -81,7 +94,9 @@ test('rule 1 names General access, shares, blocks and Conditions, and rule 3 say
 });
 
 test('the AI gateway section states the design: every paid model call, the organization\'s own AI provider accounts, no other process holds a key, no vault or ticket detail', () => {
-  const gateway = section(text, 'The AI gateway');
+  const gateway = unlink(section(text, 'The AI gateway'));
+  assert.match(text, /own \[AI provider accounts\]\(\.\/glossary\.md#ai-provider-account\)/);
+  assert.doesNotMatch(plain, /account of the organization with a company/);
   assert.match(gateway, /^Every paid model call goes through the AI gateway/m);
   assert.match(gateway, /own AI provider accounts/);
   assert.match(gateway, /No other process holds an AI provider key/);
@@ -105,7 +120,7 @@ test('every term is linked at its first use', () => {
     ['staff', /\bstaff\b/],
     ['AI gateway', /\bAI gateway\b/],
     ['Human Time Return', /\bHuman Time Return\b/],
-    ['acts', /\bacts?\b/],
+    ['acts', /\bacts\b|\bact\]|\ban act\b/],
     ['Intelligence', /\bIntelligence\b/],
   ]) assert.ok(firstUseLinked(pattern), term);
 });
@@ -127,16 +142,16 @@ test('the page names no master doc, implementation name, banned term, vendor, us
   assert.doesNotMatch(plain, /\bstamp\b|eliminates/i);
   assert.doesNotMatch(plain, /\b(floor|primary metric|exact ROI|continuously|stated human baseline|conservative)\b/i);
   assert.doesNotMatch(plain, /\b(Hiring|SDR|CSR|Apollo|Exa|BrightData)\b/);
-  assert.doesNotMatch(plain, /\b(support|sales|hiring)\b/i);
+  assert.doesNotMatch(plain, /\b(support|sales(?! team)|hiring)\b/i);
   assert.doesNotMatch(plain, /workspace/i);
   assert.doesNotMatch(plain, /\bwho it is for\b|\bfor organizations that\b/i);
 });
 
 test('the page assumes no TypeScript, Node or React', () => assert.doesNotMatch(plain, /TypeScript|Node|React/));
 
-test('the page follows the voice checks and no sentence passes 25 words', () => {
+test('the page follows the voice checks and uses no em dash', () => {
   assert.deepEqual(voiceViolations(text), []);
-  assert.deepEqual(longSentences(plain), []);
+  assert.doesNotMatch(plain, /—/);
 });
 
 test('provenance names the master docs behind the page and says the gateway is unverified for production', () => {

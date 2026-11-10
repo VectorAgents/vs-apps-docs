@@ -27,7 +27,7 @@ Four views read the records. Each answers one question.
 - [Overview](./glossary.md#overview): what was spent, run or broken, by source. A figure opens the records behind it.
 - [Health](./glossary.md#health): what is wrong now, such as a connector whose calls fail.
 - [Activity](./glossary.md#activity): what happened, in time order. A decided [ask](./glossary.md#ask) shows here.
-- [Audit](./glossary.md#audit): who changed what. It covers changes to access, to what the organization may use and to keys. Audit reads the change records.
+- [Audit](./glossary.md#audit): who changed what. It covers changes to access, to what the organization may use and to credentials and keys. Audit reads the change records.
 
 The Organization admin reads the whole organization. A [space manager](./glossary.md#space-manager) reads the same views for their own space. Another user's [thread](./glossary.md#thread) is never readable here. A figure that cannot be read shows as missing, never as zero.
 

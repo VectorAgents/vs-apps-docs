@@ -6,11 +6,11 @@ description: What Vector Space is, how its work is organized, the three rules ev
 import StructureFigure from '@site/src/components/StructureFigure';
 import { spaceStructure } from '@site/src/diagrams/figures/space-structure.ts';
 
-[Vector Space](./glossary.md#vector-space) is where the people and [AI](./glossary.md#ai) [agents](./glossary.md#agent) of an [organization](./glossary.md#organization) work together on the organization's own data, as one platform rather than a set of separate AI tools. It brings the organization's systems, knowledge and processes into one place, where an [orchestrator agent](./glossary.md#orchestrator-agent) can use them. Each [run](./glossary.md#run) of an agent follows the organization's access rules, uses its own [AI provider accounts](./glossary.md#ai-provider-account) and leaves a record of who ran it.
+[Vector Space](./glossary.md#vector-space) is where the people and [AI](./glossary.md#ai) [agents](./glossary.md#agent) of an [organization](./glossary.md#organization) work together on the organization's own data, as one platform rather than a set of separate AI tools. It brings the organization's systems, knowledge and processes into one place, where an [orchestrator agent](./glossary.md#orchestrator-agent) can use them. Each [run](./glossary.md#run) of an agent follows the organization's access rules, uses its own [AI provider accounts](./glossary.md#ai-provider-account) and registers a record of who ran it.
 
 Work sits in three nested levels:
 
-- **An organization** is the company account that holds all its users, keys, resources and spaces.
+- **An organization** is the company account that holds all its users, API keys, resources and spaces.
 - **A [space](./glossary.md#space)** is where one team works. It belongs to one organization, an agent works only inside its own space, and no resource is shared across spaces.
 - **Pages and widgets** lay out the content of a space. A [space page](./glossary.md#space-page) is a grid of [widgets](./glossary.md#widget) of two kinds. A data widget runs one saved query on a [datasource](./glossary.md#datasource) and renders the result as a chart, a table or a key figure. A document widget holds text that people edit together or that a schedule writes. A [member](./glossary.md#member) can prompt the widget builder in natural language and it writes the query, and an agent can do the same.
 
