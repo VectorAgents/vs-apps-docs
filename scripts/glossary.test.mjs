@@ -10,7 +10,7 @@ const sections = {
     'organization', 'member', 'role', 'share', 'block', 'condition', 'service account', 'agent', 'orchestrator agent',
     'thread', 'run', 'schedule', 'connector', 'Vector Module', 'Command Center', 'Agent Studio', 'governance',
     'Activity', 'Audit', 'Intelligence', 'actor', 'standing approval', 'Human Time Return',
-    'widget', 'datasource', 'skill', 'group', 'Can use', 'Can edit', 'General access', 'AI gateway', 'execution',
+    'widget', 'datasource', 'skill', 'group', 'Can use', 'Can edit', 'General access', 'AI gateway', 'AI provider account', 'execution',
     'Overview', 'Health', 'spend cap', 'rate card', 'agent card',
   ],
   'vector-apps': [

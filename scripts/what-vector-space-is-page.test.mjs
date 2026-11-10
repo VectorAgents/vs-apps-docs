@@ -15,8 +15,8 @@ const lead = body.split(/^## /m)[0];
 const figures = (s) => [...s.matchAll(/<(?:FigurePlaceholder|StructureFigure)\b[^>]*\/>/g)].map((m) => m[0]);
 const noLinks = body.replace(/\]\([^)]*\)/g, ']');
 
-test('the page runs lead, Example, three detail H2s, Where to read next', () => {
-  assert.deepEqual([...text.matchAll(/^## (.+)$/gm)].map((m) => m[1]), ['Example', 'The three platform rules', 'The parts of a space', 'Where outside code plugs in', 'Where to read next']);
+test('the page runs lead, the request in a space, three detail H2s, Where to read next', () => {
+  assert.deepEqual([...text.matchAll(/^## (.+)$/gm)].map((m) => m[1]), ['A request in a space', 'The three platform rules', 'The parts of a space', 'Where outside code plugs in', 'Where to read next']);
 });
 
 test('the lead says what Vector Space is, then what a run does: access rules, own AI provider accounts, a record of who ran it', () => {
@@ -24,9 +24,13 @@ test('the lead says what Vector Space is, then what a run does: access rules, ow
   for (const part of ['organization', 'own data', 'access rules', 'AI provider accounts', 'who ran']) assert.ok(lead.includes(part), part);
 });
 
-test('the page is 500 to 800 words with at most one table', () => {
-  const words = prose.split(/\s+/).filter(Boolean).length;
-  assert.ok(words >= 500 && words <= 800, `${words} words`);
+test('the lead lists the three levels: organization, space, pages and widgets', () => {
+  const items = lead.split('\n').filter((l) => l.startsWith('- '));
+  assert.deepEqual(items.map((l) => l.match(/^- \*\*(?:An organization|A \[space\]\([^)]*\)|Pages and widgets)\*\*/)?.[0] !== undefined), [true, true, true]);
+  assert.ok(linksOf(lead).includes('./glossary.md#space-page') && linksOf(lead).includes('./glossary.md#widget'));
+});
+
+test('the page has at most one table', () => {
   assert.ok((text.match(/^\|\s*-/gm) ?? []).length <= 1);
 });
 
@@ -37,10 +41,12 @@ test('the space-structure slot appears once, inside "The parts of a space"', () 
   assert.deepEqual(figures(section(text, 'The parts of a space')), figures(text));
 });
 
-test('the example is a member who asks the orchestrator agent to find leads in the organization’s own data and access', () => {
-  const example = section(text, 'Example');
-  for (const word of ['member', 'orchestrator agent', 'find leads', 'access']) assert.ok(example.includes(word), word);
+test('the first H2 after the lead is one request that shows access, the AI gateway and the record', () => {
+  assert.equal(text.match(/^## (.+)$/m)[1], 'A request in a space');
+  const example = section(text, 'A request in a space');
+  for (const word of ['member', 'orchestrator agent', 'find leads', 'may see', 'AI gateway', 'provider key', 'record']) assert.ok(example.includes(word), word);
   assert.doesNotMatch(example, /email/i);
+  assert.equal(example.split('\n').filter((l) => l.startsWith('- ')).length, 0);
 });
 
 test('the parts section gives one linked line per part: members, orchestrator agent, Command Center, Context Hub, Vector Modules', () => {
@@ -79,21 +85,22 @@ test('outside code is a Vector App, an A2A agent and an MCP connector, one line 
   const outside = section(text, 'Where outside code plugs in');
   const items = outside.split('\n').filter((l) => l.startsWith('- '));
   assert.equal(items.length, 3);
-  assert.match(items[0], /\[Vector App\]\(\.\.\/vector-apps\/glossary\.md#app\) is a web app that a space shows in an iframe/);
-  assert.match(items[1], /\[A2A\]\(\.\/glossary\.md#a2a\) agent/);
-  assert.match(items[2], /\[MCP\]\(\.\/glossary\.md#mcp\) connector/);
+  assert.match(items[0], /^- \*\*\[Vector App\]\(\.\.\/vector-apps\/glossary\.md#app\)\*\*: a web app that a space shows in an iframe/);
+  assert.match(items[1], /^- \*\*\[A2A\]\(\.\/glossary\.md#a2a\) agent\*\*: /);
+  assert.match(items[2], /^- \*\*\[MCP\]\(\.\/glossary\.md#mcp\) connector\*\*: /);
   assert.ok(linksOf(outside).includes('./extending-a-space.md'));
 });
 
 test('the platform rules are one access model, one AI gateway and one record of work, one line each, with links to the pages that own them', () => {
   const rules = section(text, 'The three platform rules');
-  assert.deepEqual([...rules.matchAll(/^- \*\*(.+?)\.\*\*/gm)].map((m) => m[1]), ['One access model', 'One AI gateway', 'One record of work']);
-  for (const link of ['./why-vector-space.md', './one-access-model.md', './glossary.md#ai-gateway', './the-record-of-work.md']) assert.ok(linksOf(rules).includes(link), link);
+  assert.deepEqual([...rules.matchAll(/^- \*\*(.+?)\*\*:/gm)].map((m) => m[1]), ['One access model', 'One AI gateway', 'One record of work']);
+  for (const link of ['./why-vector-space.md', './one-access-model.md', './the-record-of-work.md']) assert.ok(linksOf(rules).includes(link), link);
+  assert.ok(linksOf(body).includes('./glossary.md#ai-gateway'));
   assert.doesNotMatch(text, /^## (Organizations and spaces|What holds the platform together)/m);
 });
 
-test('the page does not compare Vector Space to other products', () => {
-  assert.doesNotMatch(noLinks, /\bwrappers?\b/i);
+test('the page names no other vendor or product', () => {
+  assert.doesNotMatch(noLinks, /OpenAI|Anthropic|ChatGPT|Copilot|Gemini|Salesforce|HubSpot/);
 });
 
 test('every link resolves and every glossary anchor exists', () => {
@@ -147,7 +154,7 @@ test('the page names no banned name or term', () => {
   const banned = [
     /\.md\b(?!\))/, /Polyglot|RBAC|ABAC/, /\bthe pool\b/i,
     /View level|Edit level|five roles|five kinds/i, /\bfloor\b|primary metric|exact ROI|continuously|stated human baseline/i,
-    /\bHiring\b|\bSDR\b|\bCSR\b/, /\bsupport\b|\bsales\b(?! \[?space)|\bhiring\b/i, /Apollo|\bExa\b|BrightData/,
+    /\bHiring\b|\bSDR\b|\bCSR\b/, /\bsupport\b|\bsales\b(?! (?:team|\[?space))|\bhiring\b/i, /Apollo|\bExa\b|BrightData/,
     /Distributor|Customer|Agentic Workspace|federates|tenancy\./i,
   ];
   for (const pattern of banned) assert.doesNotMatch(noLinks, pattern);

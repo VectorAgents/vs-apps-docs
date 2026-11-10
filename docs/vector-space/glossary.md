@@ -331,7 +331,14 @@ The time that an app's work gives back to people, counted in seconds. It is an e
 
 ### AI gateway
 
-The service that every paid model call goes through. It uses the organization's own AI provider accounts.
+The service that every paid model call goes through. It uses the organization's own [AI provider accounts](#ai-provider-account).
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### AI provider account
+
+The organization's own account with a company that supplies AI models. It belongs to the organization, not to one space, and no agent or app holds its key.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
