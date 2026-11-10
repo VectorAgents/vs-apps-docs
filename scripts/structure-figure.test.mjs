@@ -193,7 +193,7 @@ const byId = (id) => spaceStructure.parts.find((p) => p.id === id);
 
 test('space-structure: 8 parts on 3 slabs, Governance under Organization under space', () => {
   assert.equal(spaceStructure.parts.length, 8);
-  assert.deepEqual([...spaceStructure.slabs].sort((a, b) => a.level - b.level).map((s) => s.label), ['Governance', 'Organization', 'space']);
+  assert.deepEqual([...spaceStructure.slabs].sort((a, b) => a.level - b.level).map((s) => s.label), ['Governance', 'Organization', 'Workspace']);
 });
 
 test('space-structure: five parts in the space, three outside it on dashed links, and no other link', () => {

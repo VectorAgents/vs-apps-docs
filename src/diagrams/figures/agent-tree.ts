@@ -5,11 +5,11 @@ import { slotOf } from './slots.ts';
 export const agentTree: StructureData = {
   id: 'agent-tree',
   title: 'The agent tree of a space',
-  desc: 'The orchestrator agent stands at the back of the space slab. Below it are two agents for specific jobs, a lead search agent and an email agent. The lead search agent has a child agent. The email agent has a short-lived helper. A dashed line joins the orchestrator agent to an A2A agent that stands on the Organization slab, outside the space.',
+  desc: 'The orchestrator agent stands at the back of the Workspace slab. Below it are two agents for specific jobs, a lead search agent and an email agent. The lead search agent has a child agent. The email agent has a short-lived helper. A dashed line joins the orchestrator agent to an A2A agent that stands on the Organization slab, outside the space.',
   caption: slotOf('agent-tree').caption,
   slabs: [
     { id: 'organization', label: 'Organization', text: 'The company account. A remote agent that a space reaches runs outside the space.', level: 0, c: 0, r: 0, w: 18, d: 16 },
-    { id: 'space', label: 'space', text: 'The place where a team works. Its agents work only inside it.', level: 1, c: 1, r: 1, w: 11.4, d: 14 },
+    { id: 'space', label: 'Workspace', text: 'The place where a team works. Its agents work only inside it.', level: 1, c: 1, r: 1, w: 11.4, d: 14 },
   ],
   parts: [
     { id: 'orchestrator', label: 'Orchestrator agent', text: 'The one agent that each space starts with. It takes the request of a member and gives parts of it to the agents below it.', icon: 'orchestrator', tone: 'core', on: 'space', c: 5, r: 2.2, w: 3.2, d: 2.8 },

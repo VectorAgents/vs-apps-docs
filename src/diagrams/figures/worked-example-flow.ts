@@ -130,13 +130,13 @@ const scenes: SceneData[] = [
 export const workedExampleFlow: FlowData = {
   id: 'worked-example-flow',
   title: 'How one request moves through a space',
-  desc: 'Three slabs, from the bottom: Governance, Organization and space. The space slab holds six parts: Member, Orchestrator agent, Command Center, Contacts, Omnibox and Connectors, which shows the marks of Apollo, Exa and BrightData. The Organization slab holds the example Vector App, joined to the space by two dashed links. The AI gateway stands on the Governance slab, outside the Organization. A request moves through these parts in six steps.',
+  desc: 'Three slabs, from the bottom: Governance, Organization and Workspace. The Workspace slab holds six parts: Member, Orchestrator agent, Command Center, Contacts, Omnibox and Connectors, which shows the marks of Apollo, Exa and BrightData. The Organization slab holds the example Vector App, joined to the space by two dashed links. The AI gateway stands on the Governance slab, outside the Organization. A request moves through these parts in six steps.',
   caption: slotOf('worked-example-flow').caption,
   intro: 'A member of a space asks for leads. Follow that one request until an email goes out. The app is an example.',
   slabs: [
     { id: 'governance', label: 'Governance', text: 'Reads across the whole organization: who ran what, and what it cost.', level: 0, c: -1, r: -4.2, w: 26, d: 19.6 },
     { id: 'organization', label: 'Organization', text: 'The customer account. Every user, key, resource and space belongs to one organization.', level: 1, c: 0, r: 0, w: 24, d: 14.4 },
-    { id: 'space', label: 'space', text: 'The place where a team works. Access is worked out for each member and each action.', level: 2, c: 1.2, r: 3.2, w: 15.4, d: 9.8 },
+    { id: 'space', label: 'Workspace', text: 'The place where a team works. Access is worked out for each member and each action.', level: 2, c: 1.2, r: 3.2, w: 15.4, d: 9.8 },
   ],
   parts: [
     { id: 'omnibox', label: 'Omnibox', text: 'The Vector Module that sends a message out of the space, such as an email.', icon: 'omnibox', tone: 'core', on: 'space', c: 2.0, r: 4.0, w: 3.2, d: 2.8 },

@@ -282,7 +282,7 @@ const part = (id) => example.parts.find((p) => p.id === id);
 
 test('worked example: 8 parts on 3 slabs, the AI gateway on Governance and Connectors in the space slab', () => {
   assert.equal(example.parts.length, 8);
-  assert.deepEqual([...example.slabs].sort((a, b) => a.level - b.level).map((s) => s.label), ['Governance', 'Organization', 'space']);
+  assert.deepEqual([...example.slabs].sort((a, b) => a.level - b.level).map((s) => s.label), ['Governance', 'Organization', 'Workspace']);
   assert.equal(part('gateway').on, 'governance');
   assert.equal(part('connectors').on, 'space');
   assert.equal(part('app').on, 'organization');
@@ -464,7 +464,7 @@ for (const [name, data, laid] of [['approvals-flow', approvals, approvalsLayout]
 
 test('approvals-flow: Member, Orchestrator agent, Command Center and a Connector on one space slab, and no Omnibox', () => {
   assert.deepEqual(approvals.parts.map((p) => p.label).sort(), ['Command Center', 'Connector', 'Member', 'Orchestrator agent']);
-  assert.deepEqual(approvals.slabs.map((s) => s.label), ['space']);
+  assert.deepEqual(approvals.slabs.map((s) => s.label), ['Workspace']);
   assert.doesNotMatch(JSON.stringify(approvals), /Omnibox/);
 });
 
@@ -516,7 +516,7 @@ test('approvals-flow: the legend has the cube and the hop, and the text names no
 
 test('extending-flow: Member, Orchestrator agent and Context Hub in the space, and the three kinds outside on dashed links', () => {
   const on = (id) => extending.parts.filter((p) => p.on === id).map((p) => p.label).sort();
-  assert.deepEqual(extending.slabs.map((s) => s.label).sort(), ['Organization', 'space']);
+  assert.deepEqual(extending.slabs.map((s) => s.label).sort(), ['Organization', 'Workspace']);
   assert.deepEqual(on('space'), ['Context Hub', 'Member', 'Orchestrator agent']);
   assert.deepEqual(on('organization'), ['A2A agent', 'MCP connector', 'Vector App']);
   assert.ok(extending.links.length === 3 && extending.links.every((l) => l.remote));
