@@ -62,7 +62,7 @@ At the cap, the platform refuses further model calls.
 
 An act is one thing that an app did, such as qualifying a lead. Only apps record acts. The platform admits an act only if the app is turned on for the space and the actor is real. It does not check that the work happened.
 
-Each act has a kind, `activity` or `audit`, and the matching view shows it.
+An app declares each act as an activity or an audit entry, and the matching view shows it.
 
 [Human Time Return](./glossary.md#human-time-return) is the time that an app's work gives back to people, counted in seconds. An app records an act for each batch of work it finishes. Staff approve the seconds per unit of an act, and that approved figure is the baseline. Only successful acts with an approved baseline are valued, and the platform shows how many are not.
 

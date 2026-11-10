@@ -275,7 +275,7 @@ The record of what ran, as whom and at what spend. Vector Space shows it in four
 
 ### execution
 
-One unit of work that Vector Space records, such as an agent turn, a [schedule](#schedule) fire or a sync pass. Each execution has one [actor](#actor).
+One unit of work that Vector Space records, such as a [run](#run), a [schedule](#schedule) fire or a sync pass. Each execution has one [actor](#actor).
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
@@ -303,14 +303,14 @@ A [governance](#governance) view of what is wrong now, such as a connector whose
 
 ### Activity
 
-A [governance](#governance) view of what happened, in time order. It includes [acts](../vector-apps/glossary.md#acts) of kind `activity`.
+A [governance](#governance) view of what happened, in time order. It includes the [acts](../vector-apps/glossary.md#acts) that apps declare as activity.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
 
 ### Audit
 
-A [governance](#governance) view of who changed what. It includes [acts](../vector-apps/glossary.md#acts) of kind `audit`.
+A [governance](#governance) view of who changed what. It includes the [acts](../vector-apps/glossary.md#acts) that apps declare as audit.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.

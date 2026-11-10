@@ -31,8 +31,9 @@ test('the page runs the problem, the three platform rules, the AI gateway, Where
   ]);
 });
 
-test('the lead defines Vector Space, then states Human Time Return in the corrected wording', () => {
-  assert.match(lead, /^\s*\[Vector Space\]\(\.\/glossary\.md#vector-space\) is the platform /);
+test('the lead opens with the problem, then states Human Time Return in the corrected wording', () => {
+  assert.match(lead, /^\s*Once \[AI\]\(\.\/glossary\.md#ai\) agents work on an /);
+  assert.ok(lead.indexOf('glossary.md#vector-space') < lead.indexOf('glossary.md#human-time-return'));
   assert.match(lead, /\]\(\.\/glossary\.md#human-time-return\)/);
   assert.match(lead, /counted in seconds/);
   assert.match(lead, /\bestimate\b/);
@@ -79,12 +80,12 @@ test('rule 1 names General access, shares, blocks and Conditions, and rule 3 say
   assert.doesNotMatch(rules, /traced/);
 });
 
-test('the AI gateway section states the design: every paid model call, the organization\'s own AI provider accounts, no other process holds a key', () => {
+test('the AI gateway section states the design: every paid model call, the organization\'s own AI provider accounts, no other process holds a key, no vault or ticket detail', () => {
   const gateway = section(text, 'The AI gateway');
   assert.match(gateway, /^Every paid model call goes through the AI gateway/m);
   assert.match(gateway, /own AI provider accounts/);
   assert.match(gateway, /No other process holds an AI provider key/);
-  assert.match(gateway, /short-lived ticket/);
+  assert.doesNotMatch(gateway, /vault|ticket|read one back/i);
   assert.doesNotMatch(gateway, /\bproduction\b|\bdev\b/i);
 });
 

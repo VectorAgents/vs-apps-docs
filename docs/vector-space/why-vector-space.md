@@ -3,7 +3,7 @@ title: Why Vector Space
 description: The problem Vector Space solves, its three platform rules and the AI gateway.
 ---
 
-[Vector Space](./glossary.md#vector-space) is the platform where an [organization](./glossary.md#organization)'s people and [AI](./glossary.md#ai) agents work on the organization's own data, in shared places called [spaces](./glossary.md#space). It applies three rules to every piece of work: one for access, one for model keys and one for records.
+Once [AI](./glossary.md#ai) agents work on an [organization](./glossary.md#organization)'s own data, the organization needs a way to control them. [Vector Space](./glossary.md#vector-space) is the platform that does this. People and agents work on that data in shared places called [spaces](./glossary.md#space). Three rules cover all of it: one for access, one for model keys and one for records.
 
 Its aim is time given back to people. [Human Time Return](./glossary.md#human-time-return) is the time that an app's work gives back to people, counted in seconds. An app records an [act](../vector-apps/glossary.md#acts) for each batch of work it finishes, and [staff](./glossary.md#staff) approve the seconds per unit of an act.
 
@@ -26,8 +26,6 @@ Three rules hold for every part of Vector Space. Each rule is a promise that doe
 ## The AI gateway
 
 Every paid model call goes through the AI gateway, on the organization's own AI provider accounts. An AI provider account is the account of the organization with a company that sells model access. No other process holds an AI provider key.
-
-Vector Space keeps the keys of these accounts in a credential vault. Its servers write a key into the vault and never read one back. A caller holds a short-lived ticket in the place of a key. The ticket names the organization and, normally, who the call ran as.
 
 Because every call passes one gateway, the platform can price each call and add it to the spend of the organization. [The record of work](./the-record-of-work.md) says how Vector Space estimates and limits that spend.
 

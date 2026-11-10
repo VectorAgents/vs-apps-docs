@@ -46,7 +46,7 @@ A schedule is a background task that an agent or a person sets to run on a timer
 
 Every run of a schedule acts as one identity. That is a service account chosen when the schedule was set up, or else the person who created it. A service account uses its own standing approvals. Any other identity uses the approvals of the owner.
 
-A schedule whose agent writes stops at an ask. Its later runs are skipped while the ask waits. If the creator ticked "always allow" first, every later run goes through with no ask.
+A schedule whose agent writes stops at an ask. If the creator ticked "always allow" first, every later run goes through with no ask.
 
 ## Where to go next
 

@@ -18,7 +18,7 @@ Each call starts in the member's run. What the space sends with the call differs
 
 ## The three kinds and how each gets in
 
-A Vector App comes in two steps. [Staff](./glossary.md#staff) register it, and a [space manager](./glossary.md#space-manager) adds it to the space. The space then shows its pages. An agent calls its endpoints with a token that the space makes for the member. [How a Vector App works](../vector-apps/how-a-vector-app-works.md) lists the token kinds.
+A Vector App comes in two steps. [Staff](./glossary.md#staff) register it, and a [space manager](./glossary.md#space-manager) adds it to the space. The space then shows its pages. An agent calls its endpoints with a token that the space makes for the member.
 
 An A2A agent is added by someone who may manage agents in the space. The space reads its [agent card](./glossary.md#agent-card) from a URL. The agent joins the agent tree as a leaf, an agent that hands work to no one. If the organization saved a stored credential for it, the space sends that credential with each call. A stored credential is a secret that the organization keeps for one outside service.
 
@@ -56,8 +56,6 @@ The remote side runs outside the space, on its own origin.
 - **Vector App.** Members use your screens inside the space, with your own data and workflow.
 - **A2A agent.** You have an agent that does its own reasoning, and the space hands tasks to it.
 - **MCP server.** You have tools or an API that agents call. It needs no screens and no reasoning.
-
-To call a space from your own server instead, see [Call Vector Space from your server](../vector-apps/guides/call-space-from-your-server.md).
 
 ## Where to go next
 

@@ -103,6 +103,11 @@ test('choosing a kind gives one fit for each kind', () => {
   assert.match(choosing, /\*\*MCP server\.\*\*/);
 });
 
+test('outside Where to go next the body links only glossaries and concept pages, no build page or guide', () => {
+  const body = text.replace(section(text, 'Where to go next'), '');
+  for (const link of linksOf(body)) assert.doesNotMatch(link, /how-a-vector-app-works|guides\/|quickstart|sdk\/overview/, link);
+});
+
 test('every link resolves and every glossary anchor exists', () => {
   for (const link of linksOf(text)) {
     const [path, anchor] = link.split('#');

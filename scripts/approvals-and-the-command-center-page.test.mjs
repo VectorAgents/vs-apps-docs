@@ -84,7 +84,7 @@ test('a schedule is a background task on a timer that runs as one identity and s
   assert.match(schedules, /background task/);
   assert.match(schedules, /timer/);
   assert.match(schedules, /service account/);
-  assert.match(schedules, /skipped/);
+  assert.doesNotMatch(schedules, /skipped/);
   assert.match(schedules, /always allow/);
 });
 

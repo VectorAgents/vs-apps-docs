@@ -118,7 +118,7 @@ const scenes: SceneData[] = [
   {
     step: 3,
     durationMs: 3200,
-    caption: 'The run reaches a write with no standing approval for this post. It stops and raises an ask, and later runs are skipped while it waits.',
+    caption: 'The run reaches a write with no standing approval for this post. It stops and raises an ask.',
     pause: true,
     lit: [{ part: 'orchestrator', from: 0 }, { part: 'commandCenter', from: 0.6 }],
     effects: [
@@ -171,7 +171,7 @@ export const approvalsFlow: FlowData = {
       href: '#standing-approvals',
     },
     {
-      text: 'A schedule runs on a timer as the member. Its run stops at an ask, and later runs are skipped while it waits. After the member approves and ticks "always allow", every later run goes through.',
+      text: 'A schedule runs on a timer as the member. Its run stops at an ask. After the member approves and ticks "always allow", every later run goes through.',
       record: { text: 'The schedule and each run are recorded.', actor: 'Member' },
       href: '#schedules',
     },

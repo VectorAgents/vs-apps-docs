@@ -509,7 +509,7 @@ test('approvals-flow: the ask stands above the Command Center, and the approved 
 
 test('approvals-flow: the legend has the cube and the hop, and the text names no polling and no skip count', () => {
   assert.deepEqual(approvals.legend.map((i) => i.swatch), ['cube', 'hop']);
-  assert.doesNotMatch(JSON.stringify(approvals), /poll|\b\d+ (fires|runs|skipped)\b/i);
+  assert.doesNotMatch(JSON.stringify(approvals), /poll|skipped|\b\d+ (fires|runs)\b/i);
 });
 
 test('extending-flow: Member, Orchestrator agent and Context Hub in the space, and the three kinds outside on dashed links', () => {
