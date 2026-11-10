@@ -1,15 +1,15 @@
 import assert from 'node:assert/strict';
-import { existsSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { linksOf, section } from './page-helpers.mjs';
+import { bannedTermsIn, bodyOf, brokenLinks, linksOf, longSentences, section } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
 const docs = resolve(dirname(fileURLToPath(import.meta.url)), '../docs');
 const file = resolve(docs, 'vector-space/agents-in-a-space.md');
 const text = readFileSync(file, 'utf8');
-const body = text.replace(/^---\n[\s\S]*?\n---\n/, '').replace(/^import .*$/gm, '').trim();
+const body = bodyOf(text).replace(/^import .*$/gm, '').trim();
 const prose = body.replace(/<(?:FigurePlaceholder|StructureFigure)[^>]*\/>/g, '').replace(/\]\([^)]*\)/g, ']').replace(/[#*`|]/g, '');
 const lead = body.split(/^## /m)[0];
 
@@ -65,14 +65,7 @@ test('each term is linked at its first use: agent, orchestrator agent, A2A, thre
 });
 
 test('every link resolves, and Where to go next has 2 to 4 links ordered how-work-moves, one-access-model, glossary', () => {
-  for (const link of linksOf(text)) {
-    const [path, anchor] = link.split('#');
-    assert.ok(existsSync(resolve(dirname(file), path)), link);
-    if (anchor && path.endsWith('glossary.md')) {
-      const terms = readFileSync(resolve(dirname(file), path), 'utf8').split('\n').filter((l) => l.startsWith('### '));
-      assert.ok(terms.some((l) => l.slice(4).toLowerCase().replaceAll(' ', '-') === anchor), link);
-    }
-  }
+  assert.deepEqual(brokenLinks(text, file), []);
   const next = linksOf(section(text, 'Where to go next'));
   assert.deepEqual(next, ['./how-work-moves-through-a-space.md', './one-access-model.md', './glossary.md']);
 });
@@ -84,19 +77,17 @@ test('the example is a slice of the lead scenario: one agent finds leads, anothe
 });
 
 test('sentences are 25 words or fewer', () => {
-  for (const sentence of prose.split(/\n+/).flatMap((line) => line.split(/(?<=[.!?])\s+/)).filter((line) => /[.!?]$/.test(line))) assert.ok(sentence.split(/\s+/).length <= 25, sentence);
+  assert.deepEqual(longSentences(prose), []);
 });
 
 test('the page names no banned name or term', () => {
   const banned = [
     /\.md\b(?!\))/, /LangGraph/, /checkpoint/i, /invokeAgent/, /spawnSubagent/, /hard leaf/i, /agent_instances/, /runtimeType/, /BullMQ/, /\bSSE\b/,
-    /AuthZEN|XACML|Zanzibar|Yjs/, /operating system/i, /resource pool/i, /actor stamp/i, /\bplane\b/i, /immutably|black-box/i, /workspace/i,
-    /\binstance\b/i, /\bHiring\b|\bSDR\b|\bCSR\b/, /\binbound\b/i,
+    /workspace/i, /\binstance\b/i, /\bHiring\b|\bSDR\b|\bCSR\b/, /\binbound\b/i,
   ];
   const noLinks = body.replace(/\]\([^)]*\)/g, ']');
   for (const pattern of banned) assert.doesNotMatch(noLinks, pattern);
-  assert.doesNotMatch(noLinks, /(?<!Vector )\bSpace\b/);
-  assert.doesNotMatch(noLinks, /\bgrants?\b/i);
+  assert.deepEqual(bannedTermsIn(noLinks), []);
 });
 
 test('the page follows the voice checks', () => assert.deepEqual(voiceViolations(text), []));

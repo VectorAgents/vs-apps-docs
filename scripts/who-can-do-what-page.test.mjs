@@ -1,17 +1,16 @@
 import assert from 'node:assert/strict';
-import { existsSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { linksOf, section } from './page-helpers.mjs';
+import { bannedTermsIn, bodyOf, brokenLinks, linksOf, longSentences, section, unlink } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
 const docs = resolve(dirname(fileURLToPath(import.meta.url)), '../docs');
 const file = resolve(docs, 'vector-space/who-can-do-what.md');
 const glossaryFile = resolve(docs, 'vector-space/glossary.md');
 const text = readFileSync(file, 'utf8');
-const body = text.replace(/^---\n[\s\S]*?\n---\n/, '');
-const unlink = (s) => s.replace(/\[([^\]]*)\]\([^)]*\)/g, '$1');
+const body = bodyOf(text);
 const plain = unlink(body);
 const rows = (s) => s.split('\n').filter((l) => /^\|/.test(l) && !/^\| ?-{3}/.test(l)).slice(1).map((l) => l.split('|').slice(1, -1).map((c) => c.trim()));
 
@@ -45,12 +44,7 @@ test('the page has no figure slot', () => {
 });
 
 test('every link resolves, every glossary anchor exists, and Where to go next links its two pages and the glossary', () => {
-  const anchors = readFileSync(glossaryFile, 'utf8').split('\n').filter((l) => l.startsWith('### ')).map((l) => l.slice(4).toLowerCase().replaceAll(' ', '-'));
-  for (const link of linksOf(text)) {
-    const [path, anchor] = link.split('#');
-    assert.ok(existsSync(resolve(dirname(file), path)), link);
-    if (anchor && path.endsWith('glossary.md')) assert.ok(anchors.includes(anchor), link);
-  }
+  assert.deepEqual(brokenLinks(text, file), []);
   assert.deepEqual(linksOf(section(text, 'Where to go next')), ['./one-access-model.md', './organizations-and-spaces.md', './glossary.md']);
 });
 
@@ -91,15 +85,15 @@ test('the page has no View level, Edit level or custom roles', () => {
 
 test('the page names no master doc, implementation name, banned term, vendor or use case', () => {
   assert.doesNotMatch(text, /(PROTOCOL|BINDINGS|REGISTRY|OVERVIEW|RESOURCES|SPACES|README)\.md/);
-  assert.doesNotMatch(plain, /AuthZEN|XACML|Zanzibar|Yjs|operating system|resource pool|actor stamp|\bplane\b|black-box|\bgrant\b|OrganizationRole|five roles/i);
+  assert.deepEqual(bannedTermsIn(plain), []);
+  assert.doesNotMatch(plain, /OrganizationRole|five roles/i);
   assert.doesNotMatch(plain, /\b(Apollo|Exa|BrightData|Hiring|SDR|CSR)\b/);
   assert.doesNotMatch(plain, /\b(support|hiring)\b/i);
-  assert.doesNotMatch(plain, /(?<!Vector )\bSpace\b/);
 });
 
 test('the page assumes no TypeScript, Node or React', () => assert.doesNotMatch(plain, /TypeScript|Node|React/));
 
 test('the page follows the voice checks and no sentence passes 25 words', () => {
   assert.deepEqual(voiceViolations(text), []);
-  for (const sentence of plain.replace(/^#.*$/gm, '').replace(/^\|.*$/gm, '').split(/(?<=[.!?])\s+/)) assert.ok(sentence.trim().split(/\s+/).length <= 25, sentence);
+  assert.deepEqual(longSentences(plain, { tables: false }), []);
 });

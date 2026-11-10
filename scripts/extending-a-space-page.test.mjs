@@ -1,18 +1,17 @@
 import assert from 'node:assert/strict';
-import { existsSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { linksOf, section } from './page-helpers.mjs';
+import { bannedTermsIn, bodyOf, brokenLinks, linksOf, longSentences, section, unlink } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
 const docs = resolve(dirname(fileURLToPath(import.meta.url)), '../docs');
 const file = resolve(docs, 'vector-space/extending-a-space.md');
 const text = readFileSync(file, 'utf8');
-const body = text.replace(/^---\n[\s\S]*?\n---\n/, '');
+const body = bodyOf(text);
 const prose = body.replace(/^import .*$/gm, '').replace(/<(?:FigurePlaceholder|FlowFigure)[^>]*\/>/g, '');
-const unlinked = (s) => s.replace(/\[([^\]]*)\]\([^)]*\)/g, '$1');
-const plain = unlinked(prose);
+const plain = unlink(prose);
 const slotsIn = (s) => [...s.matchAll(/<FigurePlaceholder slot="([^"]+)" \/>|<FlowFigure data=\{extendingFlow\} \/>/g)].map((m) => m[1] ?? 'extending-flow');
 const rows = (s) =>
   s
@@ -43,7 +42,7 @@ test('the example offers one ticket tracker three ways and names no vendor', () 
   assert.match(example, /ticket tracker/);
   assert.match(example, /\[member\]\(\.\/glossary\.md#member\)/);
   assert.match(example, /\[orchestrator agent\]\(\.\/glossary\.md#orchestrator-agent\)/);
-  for (const kind of ['Vector App', 'A2A agent', 'MCP server']) assert.ok(unlinked(example).includes(kind), kind);
+  for (const kind of ['Vector App', 'A2A agent', 'MCP server']) assert.ok(unlink(example).includes(kind), kind);
   assert.doesNotMatch(example, /Jira|Linear|GitHub|Zendesk|ClickUp/);
 });
 
@@ -53,7 +52,7 @@ test('the slot extending-flow appears once, in "The three kinds and how each get
 });
 
 test('the paths section says how each kind gets in and that a standalone one needs no SDK', () => {
-  const paths = unlinked(section(text, 'The three kinds and how each gets in'));
+  const paths = unlink(section(text, 'The three kinds and how each gets in'));
   assert.match(paths, /someone who may manage agents in the space/);
   assert.match(paths, /agent card/);
   assert.match(paths, /stored credential/);
@@ -70,9 +69,9 @@ test('the comparison is one table of the 4 rows of the spec, with cells of 15 wo
   assert.deepEqual(data.map((r) => r[0]), ['Calling member', 'Platform data', 'Model calls', 'Acts']);
   for (const row of data) {
     assert.equal(row.length, 4);
-    for (const cell of row) assert.ok(unlinked(cell).split(/\s+/).length <= 15, cell);
+    for (const cell of row) assert.ok(unlink(cell).split(/\s+/).length <= 15, cell);
   }
-  const cells = data.map((r) => r.slice(1).map(unlinked));
+  const cells = data.map((r) => r.slice(1).map(unlink));
   assert.match(cells[0][0], /^Named, with the capabilities they hold/);
   assert.match(cells[0][1], /Named only if an app offers it/);
   assert.match(cells[0][1], /stored credential/);
@@ -87,7 +86,7 @@ test('the comparison is one table of the 4 rows of the spec, with cells of 15 wo
 });
 
 test('the shared call path says each call starts in a run, is gated first and is recorded', () => {
-  const shared = unlinked(section(text, 'What the space does for every call'));
+  const shared = unlink(section(text, 'What the space does for every call'));
   assert.match(shared, /\brun\b/);
   assert.match(shared, /works as the member/);
   assert.match(shared, /before the call/i);
@@ -97,7 +96,7 @@ test('the shared call path says each call starts in a run, is gated first and is
 });
 
 test('choosing a kind gives one fit for each kind', () => {
-  const choosing = unlinked(section(text, 'Choosing a kind'));
+  const choosing = unlink(section(text, 'Choosing a kind'));
   assert.match(choosing, /\*\*Vector App\.\*\*/);
   assert.match(choosing, /\*\*A2A agent\.\*\*/);
   assert.match(choosing, /\*\*MCP server\.\*\*/);
@@ -109,14 +108,7 @@ test('outside Where to go next the body links only glossaries and concept pages,
 });
 
 test('every link resolves and every glossary anchor exists', () => {
-  for (const link of linksOf(text)) {
-    const [path, anchor] = link.split('#');
-    assert.ok(existsSync(resolve(dirname(file), path)), link);
-    if (anchor && path.endsWith('glossary.md')) {
-      const terms = readFileSync(resolve(dirname(file), path), 'utf8').split('\n').filter((l) => l.startsWith('### '));
-      assert.ok(terms.some((l) => l.slice(4).toLowerCase().replaceAll(' ', '-') === anchor), link);
-    }
-  }
+  assert.deepEqual(brokenLinks(text, file), []);
 });
 
 test('Where to go next links the Apps quickstart, the SDK overview and the glossary, and no page links /a2a/ or /mcp/', () => {
@@ -138,10 +130,9 @@ test('the page holds 500 to 800 words', () => {
 test('the page names no master doc, implementation name, banned term, vendor or use case', () => {
   assert.doesNotMatch(text, /(COMMAND-CENTER|PROTOCOL|BINDINGS|REGISTRY|OVERVIEW|SURFACE|STUDIO|INTELLIGENCE|README)\.md/);
   assert.doesNotMatch(prose, /private_key_jwt|outbox|event plane|events plane|CloudEvents|JWKS|RS256|signMcpToken|McpExecutorTokenService|credentialInstanceId|fetchAgentCardOnly|appKey|appId|vs-span|connector#run|manage_agents|approvalRequired/);
-  assert.doesNotMatch(prose, /AuthZEN|Yjs|operating system|resource pool|actor stamp|\bplane\b|black-box|immutabl|\bgrant\b/i);
+  assert.deepEqual(bannedTermsIn(prose), []);
   assert.doesNotMatch(prose, /\b(Apollo|Exa|BrightData|Hiring|SDR|CSR|Slack)\b/);
   assert.doesNotMatch(prose, /\b(support|sales|hiring)\b/i);
-  assert.doesNotMatch(prose, /(?<!Vector )\bSpace\b/);
   assert.doesNotMatch(prose, /public host|#\d{3}\b/);
 });
 
@@ -149,5 +140,5 @@ test('the page assumes no TypeScript, Node or React', () => assert.doesNotMatch(
 
 test('the page follows the voice checks and no sentence passes 25 words', () => {
   assert.deepEqual(voiceViolations(text), []);
-  for (const sentence of plain.replace(/^#.*$/gm, '').replace(/^\|.*$/gm, '').split(/(?<=[.!?])\s+/)) assert.ok(sentence.trim().split(/\s+/).length <= 25, sentence);
+  assert.deepEqual(longSentences(plain, { tables: false }), []);
 });

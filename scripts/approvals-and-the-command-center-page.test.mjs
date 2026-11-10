@@ -1,17 +1,17 @@
 import assert from 'node:assert/strict';
-import { existsSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { linksOf, section } from './page-helpers.mjs';
+import { bannedTermsIn, bodyOf, brokenLinks, linksOf, longSentences, section, unlink } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
 const docs = resolve(dirname(fileURLToPath(import.meta.url)), '../docs');
 const file = resolve(docs, 'vector-space/approvals-and-the-command-center.md');
 const text = readFileSync(file, 'utf8');
-const body = text.replace(/^---\n[\s\S]*?\n---\n/, '');
+const body = bodyOf(text);
 const prose = body.replace(/^import .*$/gm, '').replace(/<(?:FigurePlaceholder|FlowFigure)[^>]*\/>/g, '');
-const plain = prose.replace(/\[([^\]]*)\]\([^)]*\)/g, '$1');
+const plain = unlink(prose);
 const slotsIn = (s) => [...s.matchAll(/<FigurePlaceholder slot="([^"]+)" \/>|<FlowFigure data=\{approvalsFlow\} \/>/g)].map((m) => m[1] ?? 'approvals-flow');
 
 test('the page runs lead, Example, four detail sections, Where to go next', () => {
@@ -98,14 +98,7 @@ test('the page holds 500 to 800 words', () => {
 });
 
 test('every link resolves, every glossary anchor exists, and Where to go next links its two pages and the glossary', () => {
-  for (const link of linksOf(text)) {
-    const [path, anchor] = link.split('#');
-    assert.ok(existsSync(resolve(dirname(file), path)), link);
-    if (anchor && path.endsWith('glossary.md')) {
-      const terms = readFileSync(resolve(dirname(file), path), 'utf8').split('\n').filter((l) => l.startsWith('### '));
-      assert.ok(terms.some((l) => l.slice(4).toLowerCase().replaceAll(' ', '-') === anchor), link);
-    }
-  }
+  assert.deepEqual(brokenLinks(text, file), []);
   assert.deepEqual(linksOf(section(text, 'Where to go next')), ['./how-work-moves-through-a-space.md', './the-record-of-work.md', './glossary.md']);
 });
 
@@ -119,15 +112,14 @@ test('the page leaves out actor-only powers, polling, simultaneous decisions and
 test('the page names no master doc, implementation name, banned term, vendor or use case', () => {
   assert.doesNotMatch(text, /(COMMAND-CENTER|PROTOCOL|BINDINGS|REGISTRY|OVERVIEW|SURFACE|INTELLIGENCE|README)\.md/);
   assert.doesNotMatch(prose, /LangGraph|interrupt|runs\.asks|AskProjectionService|moduleExecute|connectorExecute|actorRef|space#manage_approvals|approvalDefault|approvalRequired|events plane|outbox|private_key_jwt/);
-  assert.doesNotMatch(prose, /AuthZEN|Yjs|operating system|resource pool|actor stamp|\bplane\b|black-box|immutabl|\bgrant\b/i);
+  assert.deepEqual(bannedTermsIn(prose), []);
   assert.doesNotMatch(prose, /\b(Apollo|Exa|BrightData|Hiring|SDR|CSR|Slack)\b/);
   assert.doesNotMatch(prose, /\b(support|sales|hiring)\b/i);
-  assert.doesNotMatch(prose, /(?<!Vector )\bSpace\b/);
 });
 
 test('the page assumes no TypeScript, Node or React', () => assert.doesNotMatch(prose, /TypeScript|Node|React/));
 
 test('the page follows the voice checks and no sentence passes 25 words', () => {
   assert.deepEqual(voiceViolations(text), []);
-  for (const sentence of plain.replace(/^#.*$/gm, '').replace(/^\|.*$/gm, '').split(/(?<=[.!?])\s+/)) assert.ok(sentence.trim().split(/\s+/).length <= 25, sentence);
+  assert.deepEqual(longSentences(plain, { tables: false }), []);
 });

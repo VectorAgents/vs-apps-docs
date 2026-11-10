@@ -1,17 +1,17 @@
 import assert from 'node:assert/strict';
-import { existsSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { linksOf, section } from './page-helpers.mjs';
+import { bannedTermsIn, bodyOf, brokenLinks, linksOf, longSentences, section, unlink } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const file = resolve(root, 'docs/vector-space/why-vector-space.md');
 const text = readFileSync(file, 'utf8');
-const body = text.replace(/^---\n[\s\S]*?\n---\n/, '');
+const body = bodyOf(text);
 const lead = body.split(/^## /m)[0];
-const plain = body.replace(/\[([^\]]*)\]\([^)]*\)/g, '$1');
+const plain = unlink(body);
 
 /** True when the first use of `pattern` in the body is the text of a markdown link. */
 function firstUseLinked(pattern) {
@@ -111,15 +111,7 @@ test('every term is linked at its first use', () => {
 });
 
 test('every link resolves, every glossary anchor exists, and Where to go next links its three pages and the glossary in order', () => {
-  for (const link of linksOf(text)) {
-    const [path, anchor] = link.split('#');
-    const target = resolve(dirname(file), path);
-    assert.ok(existsSync(target), link);
-    if (anchor && path.endsWith('glossary.md')) {
-      const terms = readFileSync(target, 'utf8').split('\n').filter((l) => l.startsWith('### '));
-      assert.ok(terms.some((l) => l.slice(4).toLowerCase().replaceAll(' ', '-') === anchor), link);
-    }
-  }
+  assert.deepEqual(brokenLinks(text, file), []);
   assert.deepEqual(linksOf(section(text, 'Where to go next')), [
     './one-access-model.md',
     './the-record-of-work.md',
@@ -130,13 +122,13 @@ test('every link resolves, every glossary anchor exists, and Where to go next li
 
 test('the page names no master doc, implementation name, banned term, vendor, use case or audience', () => {
   assert.doesNotMatch(text, /(PROTOCOL|BINDINGS|REGISTRY|OVERVIEW|AI|INTELLIGENCE|APPS|GLOSSARY|README)\.md/);
-  assert.doesNotMatch(plain, /AuthZEN|XACML|Zanzibar|JWKS|ai-gw-svc|AI_GW_SVC_APP_URL|logicalModel|nano-USD|usage_events|price_versions|Redis/);
-  assert.doesNotMatch(plain, /operating system|resource pool|actor stamp|\bplane\b|\bstamp\b|black-box|immutably|eliminates|\bgrant\b/i);
+  assert.deepEqual(bannedTermsIn(plain), []);
+  assert.doesNotMatch(plain, /JWKS|ai-gw-svc|AI_GW_SVC_APP_URL|logicalModel|nano-USD|usage_events|price_versions|Redis/);
+  assert.doesNotMatch(plain, /\bstamp\b|eliminates/i);
   assert.doesNotMatch(plain, /\b(floor|primary metric|exact ROI|continuously|stated human baseline|conservative)\b/i);
   assert.doesNotMatch(plain, /\b(Hiring|SDR|CSR|Apollo|Exa|BrightData)\b/);
   assert.doesNotMatch(plain, /\b(support|sales|hiring)\b/i);
   assert.doesNotMatch(plain, /workspace/i);
-  assert.doesNotMatch(plain.replace(/^#.*$/gm, ''), /(?<!Vector )\bSpace\b/);
   assert.doesNotMatch(plain, /\bwho it is for\b|\bfor organizations that\b/i);
 });
 
@@ -144,7 +136,7 @@ test('the page assumes no TypeScript, Node or React', () => assert.doesNotMatch(
 
 test('the page follows the voice checks and no sentence passes 25 words', () => {
   assert.deepEqual(voiceViolations(text), []);
-  for (const sentence of plain.replace(/^#.*$/gm, '').split(/(?<=[.!?])\s+|\n/)) assert.ok(sentence.trim().split(/\s+/).length <= 25, sentence);
+  assert.deepEqual(longSentences(plain), []);
 });
 
 test('provenance names the master docs behind the page and says the gateway is unverified for production', () => {

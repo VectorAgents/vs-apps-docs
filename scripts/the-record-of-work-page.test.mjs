@@ -1,20 +1,19 @@
 import assert from 'node:assert/strict';
-import { existsSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { linksOf, section } from './page-helpers.mjs';
+import { bannedTermsIn, bodyOf, brokenLinks, linksOf, longSentences, rowsOf, section, unlink } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
 const docs = resolve(dirname(fileURLToPath(import.meta.url)), '../docs');
 const file = resolve(docs, 'vector-space/the-record-of-work.md');
 const text = readFileSync(file, 'utf8');
-const body = text.replace(/^---\n[\s\S]*?\n---\n/, '');
+const body = bodyOf(text);
 const prose = body.replace(/^import .*$/gm, '').replace(/<(?:FigurePlaceholder|StructureFigure)[^>]*\/>/g, '');
-const plain = prose.replace(/\[([^\]]*)\]\([^)]*\)/g, '$1');
+const plain = unlink(prose);
 const slotsIn = (s) => [...s.matchAll(/<StructureFigure data=\{(\w+)\} \/>/g)].map((m) => m[1]);
 const sentencesOf = (s) => s.split(/\n{2,}/).flatMap((p) => p.split(/(?<=[.!?])\s+/));
-const rowsOf = (s) => s.split('\n').filter((l) => /^\|/.test(l) && !/^\| ?-{3}/.test(l)).map((l) => l.split('|').slice(1, -1).map((c) => c.trim()));
 
 test('the page runs lead, Example, five detail sections, Where to go next', () => {
   assert.deepEqual([...text.matchAll(/^## (.+)$/gm)].map((m) => m[1]), [
@@ -74,7 +73,7 @@ test('failure postures are one 4-row table: audit fails closed, the rest do not'
   assert.deepEqual(data.map((r) => r[0].replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')), ['Change records', 'Spend records', 'Spend cap', 'Acts']);
   assert.deepEqual(data.map((r) => /closed/.test(r[1])), [true, false, false, false]);
   assert.ok(data.slice(1, 3).every((r) => /open/.test(r[1])));
-  for (const cell of rows.flat()) assert.ok(cell.replace(/\[([^\]]*)\]\([^)]*\)/g, '$1').split(/\s+/).length <= 15, cell);
+  for (const cell of rows.flat()) assert.ok(unlink(cell).split(/\s+/).length <= 15, cell);
 });
 
 test('the text names each kind of record without an umbrella noun', () => {
@@ -118,14 +117,7 @@ test('acts: admitted and attested by the platform, baseline seconds approved by 
 });
 
 test('every link resolves, every glossary anchor exists, and Where to go next links its two pages and the glossary', () => {
-  for (const link of linksOf(text)) {
-    const [path, anchor] = link.split('#');
-    assert.ok(existsSync(resolve(dirname(file), path)), link);
-    if (anchor && path.endsWith('glossary.md')) {
-      const terms = readFileSync(resolve(dirname(file), path), 'utf8').split('\n').filter((l) => l.startsWith('### '));
-      assert.ok(terms.some((l) => l.slice(4).toLowerCase().replaceAll(' ', '-') === anchor), link);
-    }
-  }
+  assert.deepEqual(brokenLinks(text, file), []);
   assert.deepEqual(linksOf(section(text, 'Where to go next')), ['./why-vector-space.md', './approvals-and-the-command-center.md', './glossary.md']);
 });
 
@@ -136,17 +128,17 @@ test('the page leaves out replay, retention, the gateway and any number of days 
 
 test('the page names no master doc, implementation name, banned term, vendor or use case', () => {
   assert.doesNotMatch(text, /(PROTOCOL|BINDINGS|REGISTRY|OVERVIEW|SURFACE|INTELLIGENCE|METERING|LIMITS|AUDIT|README)\.md/);
-  assert.doesNotMatch(prose, /AuthZEN|Yjs|operating system|resource pool|actor stamp|\bstamp\b|\bplane\b|black-box|immutabl|\bgrant\b/i);
+  assert.deepEqual(bannedTermsIn(prose), []);
+  assert.doesNotMatch(prose, /\bstamp\b/i);
   assert.doesNotMatch(prose, /\b(floor|primary metric|exact ROI|ROI|continuously|stated human baseline)\b/i);
   assert.doesNotMatch(prose, /actorRef|usage_events|audit\.events|htrSeconds|billing|nano-USD|SHADOW|ENFORCE/);
   assert.doesNotMatch(prose, /\b(Apollo|Exa|BrightData|Hiring|SDR|CSR)\b/);
   assert.doesNotMatch(prose, /\b(support|sales|hiring)\b/i);
-  assert.doesNotMatch(prose, /(?<!Vector )\bSpace\b/);
 });
 
 test('the page assumes no TypeScript, Node or React', () => assert.doesNotMatch(prose, /TypeScript|Node|React/));
 
 test('the page follows the voice checks and no sentence passes 25 words', () => {
   assert.deepEqual(voiceViolations(text), []);
-  for (const sentence of plain.replace(/^#.*$/gm, '').replace(/^\|.*$/gm, '').split(/(?<=[.!?])\s+/)) assert.ok(sentence.trim().split(/\s+/).length <= 25, sentence);
+  assert.deepEqual(longSentences(plain, { tables: false }), []);
 });

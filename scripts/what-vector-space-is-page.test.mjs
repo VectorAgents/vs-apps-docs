@@ -1,15 +1,15 @@
 import assert from 'node:assert/strict';
-import { existsSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { linksOf, section } from './page-helpers.mjs';
+import { bannedTermsIn, bodyOf, brokenLinks, linksOf, longSentences, section } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
 const docs = resolve(dirname(fileURLToPath(import.meta.url)), '../docs');
 const file = resolve(docs, 'vector-space/what-vector-space-is.md');
 const text = readFileSync(file, 'utf8');
-const body = text.replace(/^---\n[\s\S]*?\n---\n/, '').replace(/^import .*$/gm, '').trim();
+const body = bodyOf(text).replace(/^import .*$/gm, '').trim();
 const prose = body.replace(/<(?:StructureFigure|FigurePlaceholder)[^>]*\/>/g, '').replace(/\]\([^)]*\)/g, ']').replace(/[#*`|]/g, '');
 const lead = body.split(/^## /m)[0];
 const figures = (s) => [...s.matchAll(/<(?:FigurePlaceholder|StructureFigure)\b[^>]*\/>/g)].map((m) => m[0]);
@@ -90,14 +90,7 @@ test('the page has no section on organizations and spaces or on the platform rul
 });
 
 test('every link resolves and every glossary anchor exists', () => {
-  for (const link of linksOf(text)) {
-    const [path, anchor] = link.split('#');
-    assert.ok(existsSync(resolve(dirname(file), path)), link);
-    if (anchor && path.endsWith('glossary.md')) {
-      const terms = readFileSync(resolve(dirname(file), path), 'utf8').split('\n').filter((l) => l.startsWith('### '));
-      assert.ok(terms.some((l) => l.slice(4).toLowerCase().replaceAll(' ', '-') === anchor), link);
-    }
-  }
+  assert.deepEqual(brokenLinks(text, file), []);
 });
 
 test('Where to read next groups all ten other pages as What, Why and How, then the glossary, with no "Where to go next"', () => {
@@ -141,19 +134,18 @@ test('each term is linked at its first use: Vector Space, organization, agents, 
 
 test('paragraphs are 5 sentences or fewer and sentences 25 words or fewer', () => {
   for (const paragraph of prose.split(/\n\n+/)) assert.ok(paragraph.split(/(?<=[.!?])\s+/).length <= 5 || paragraph.includes('\n- '), paragraph);
-  for (const sentence of prose.split(/\n+/).flatMap((line) => line.split(/(?<=[.!?])\s+/)).filter((line) => /[.!?]$/.test(line))) assert.ok(sentence.split(/\s+/).length <= 25, sentence);
+  assert.deepEqual(longSentences(prose), []);
 });
 
 test('the page names no banned name or term', () => {
   const banned = [
-    /\.md\b(?!\))/, /AuthZEN|XACML|Zanzibar|Yjs|Polyglot|RBAC|ABAC/, /operating system/i, /resource pool/i, /\bthe pool\b/i, /actor stamp/i, /\bplane\b/i,
+    /\.md\b(?!\))/, /Polyglot|RBAC|ABAC/, /\bthe pool\b/i,
     /View level|Edit level|five roles|five kinds/i, /\bfloor\b|primary metric|exact ROI|continuously|stated human baseline/i,
-    /\bHiring\b|\bSDR\b|\bCSR\b/, /immutably|black-box/i, /\bsupport\b|\bsales\b(?! \[?space)|\bhiring\b/i, /Apollo|\bExa\b|BrightData/,
+    /\bHiring\b|\bSDR\b|\bCSR\b/, /\bsupport\b|\bsales\b(?! \[?space)|\bhiring\b/i, /Apollo|\bExa\b|BrightData/,
     /Distributor|Customer|Agentic Workspace|federates|tenancy\./i,
   ];
   for (const pattern of banned) assert.doesNotMatch(noLinks, pattern);
-  assert.doesNotMatch(noLinks, /(?<!Vector )\bSpace\b/);
-  assert.doesNotMatch(noLinks, /\bgrants?\b/i);
+  assert.deepEqual(bannedTermsIn(noLinks), []);
 });
 
 test('the page follows the voice checks', () => assert.deepEqual(voiceViolations(text), []));

@@ -1,20 +1,18 @@
 import assert from 'node:assert/strict';
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { linksOf, section } from './page-helpers.mjs';
+import { bannedTermsIn, bodyOf, brokenLinks, linksOf, longSentences, rowsOf, section, unlink } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
 const docs = resolve(dirname(fileURLToPath(import.meta.url)), '../docs');
 const file = resolve(docs, 'vector-space/how-work-moves-through-a-space.md');
 const text = readFileSync(file, 'utf8');
-const body = text.replace(/^---\n[\s\S]*?\n---\n/, '');
+const body = bodyOf(text);
 const prose = body.replace(/^import .*$/gm, '').replace(/<(?:FigurePlaceholder|FlowFigure)[^>]*\/>/g, '');
-const plain = prose.replace(/\[([^\]]*)\]\([^)]*\)/g, '$1');
+const plain = unlink(prose);
 const slotsIn = (s) => [...s.matchAll(/<FigurePlaceholder slot="([^"]+)" \/>|<FlowFigure data=\{workedExampleFlow\} \/>/g)].map((m) => m[1] ?? 'worked-example-flow');
-const rowsOf = (s) => s.split('\n').filter((l) => /^\|/.test(l) && !/^\| ?-{3}/.test(l)).map((l) => l.split('|').slice(1, -1).map((c) => c.trim()));
-const unlink = (s) => s.replace(/\[([^\]]*)\]\([^)]*\)/g, '$1');
 
 test('the H2s follow the steps and there is no Example H2', () => {
   assert.deepEqual([...text.matchAll(/^## (.+)$/gm)].map((m) => m[1]), [
@@ -118,24 +116,17 @@ test('Where to go next links the approvals, extending and record pages, then the
 });
 
 test('every link resolves and every glossary anchor exists', () => {
-  for (const link of linksOf(text)) {
-    const [path, anchor] = link.split('#');
-    assert.ok(existsSync(resolve(dirname(file), path)), link);
-    if (anchor && path.endsWith('glossary.md')) {
-      const terms = readFileSync(resolve(dirname(file), path), 'utf8').split('\n').filter((l) => l.startsWith('### '));
-      assert.ok(terms.some((l) => l.slice(4).toLowerCase().replaceAll(' ', '-') === anchor), link);
-    }
-  }
+  assert.deepEqual(brokenLinks(text, file), []);
 });
 
 test('the page names no master doc, implementation name, banned term or use case', () => {
   assert.doesNotMatch(text, /(PROTOCOL|BINDINGS|REGISTRY|OVERVIEW|SURFACE|INTELLIGENCE|METERING|LIMITS|AUDIT|README|COMMAND-CENTER|MODULES|CALLS)\.md/);
-  assert.doesNotMatch(prose, /AuthZEN|XACML|Zanzibar|Yjs|operating system|resource pool|actor stamp|\bstamp\b|\bplane\b|black-box|immutabl|\bgrant\b/i);
+  assert.deepEqual(bannedTermsIn(prose), []);
+  assert.doesNotMatch(prose, /\bstamp\b/i);
   assert.doesNotMatch(prose, /\b(floor|primary metric|exact ROI|ROI|continuously|stated human baseline)\b/i);
   assert.doesNotMatch(prose, /LangGraph|interrupt|actorRef|ModuleKey|approvalDefault|approvalRequired|outbox|private_key_jwt|vector-flows|RedemptAI/);
   assert.doesNotMatch(prose, /\b(Hiring|SDR|CSR)\b/);
   assert.doesNotMatch(prose, /\b(support|sales|hiring)\b/i);
-  assert.doesNotMatch(prose, /(?<!Vector )\bSpace\b/);
 });
 
 const { workedExampleFlow } = await import('../src/diagrams/figures/worked-example-flow.ts');
@@ -155,5 +146,5 @@ test('the page assumes no TypeScript, Node or React', () => assert.doesNotMatch(
 
 test('the page follows the voice checks and no sentence passes 25 words', () => {
   assert.deepEqual(voiceViolations(text), []);
-  for (const sentence of plain.replace(/^#.*$/gm, '').replace(/^\|.*$/gm, '').split(/(?<=[.!?])\s+/)) assert.ok(sentence.trim().split(/\s+/).length <= 25, sentence);
+  assert.deepEqual(longSentences(plain, { tables: false }), []);
 });
