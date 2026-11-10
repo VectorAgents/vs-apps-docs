@@ -3,6 +3,7 @@ import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, 
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { fileMeta, readEmbedded } from '../src/plugins/embed-file.mjs';
+import { writeStamp } from './ensure-stamp.mjs';
 import { combinations } from './generate.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -131,11 +132,7 @@ export function checkSnippets({
     const installed = JSON.parse(
       readFileSync(join(root, 'node_modules/@vectoragents/vs-apps/package.json'), 'utf8'),
     ).version;
-    mkdirSync(dirname(stampFile), { recursive: true });
-    writeFileSync(
-      stampFile,
-      `${JSON.stringify({ package: installed, verifiedAt: new Date().toISOString(), snippets: origins.size }, null, 2)}\n`,
-    );
+    writeStamp(stampFile, { package: installed, verifiedAt: new Date().toISOString(), snippets: origins.size });
     return { ok: true, count: origins.size, failed, output: '' };
   } finally {
     rmSync(work, { recursive: true, force: true });
