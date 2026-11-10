@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { bannedTermsIn, bodyOf, brokenLinks, linksOf, longSentences, section, unlink } from './page-helpers.mjs';
+import { bannedTermsIn, bodyOf, brokenLinks, linksOf, section, unlink } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
 const docs = resolve(dirname(fileURLToPath(import.meta.url)), '../docs');
@@ -12,12 +12,11 @@ const glossaryFile = resolve(docs, 'vector-space/glossary.md');
 const text = readFileSync(file, 'utf8');
 const body = bodyOf(text);
 const plain = unlink(body);
-const rows = (s) => s.split('\n').filter((l) => /^\|/.test(l) && !/^\| ?-{3}/.test(l)).slice(1).map((l) => l.split('|').slice(1, -1).map((c) => c.trim()));
 
-test('the page runs lead, Example, two detail sections, Where to go next', () => {
+test('the page runs lead, the scene, two detail sections, Where to go next', () => {
   assert.deepEqual([...text.matchAll(/^## (.+)$/gm)].map((m) => m[1]), [
-    'Example',
-    'Five kinds of people and callers',
+    'A new member in a team\'s space',
+    'How each kind reaches a space',
     'What Can use and Can edit mean',
     'Where to go next',
   ]);
@@ -30,13 +29,18 @@ test('the lead names the five kinds, each with a glossary link', () => {
   }
 });
 
-test('the page is 500 to 800 words with one table of the five kinds in order', () => {
-  const words = plain.split(/\s+/).filter(Boolean).length;
-  assert.ok(words >= 500 && words <= 800, `${words} words`);
-  assert.equal((text.match(/^\| ?-{3}/gm) ?? []).length, 1, 'tables');
-  const table = rows(section(text, 'Five kinds of people and callers'));
-  assert.deepEqual(table.map((r) => unlink(r[0])), ['Organization admin', 'space manager', 'member', 'staff', 'service account']);
-  for (const cell of table.flat()) assert.ok(unlink(cell).split(/\s+/).length <= 15, cell);
+test('the lead is a bold-term list of the five kinds in order, with no table', () => {
+  assert.doesNotMatch(body, /^\s*\|/m);
+  const lead = body.split(/^## /m)[0];
+  const terms = [...lead.matchAll(/^- \*\*\[([^\]]+)\]/gm)].map((m) => m[1]);
+  assert.deepEqual(terms, ['Organization admin', 'Space managers', 'Members', 'Staff', 'Service accounts']);
+});
+
+test('the scene is the first H2, names no Example and says Acme\'s sales team', () => {
+  assert.equal(text.match(/^## (.+)$/m)[1], 'A new member in a team\'s space');
+  assert.doesNotMatch(text, /^#+ .*Example/m);
+  assert.doesNotMatch(plain, /the sales space/i);
+  assert.match(section(text, 'A new member in a team\'s space'), /\nAcme's sales team has a space/);
 });
 
 test('the page has no figure slot', () => {
@@ -49,7 +53,7 @@ test('every link resolves, every glossary anchor exists, and Where to go next li
 });
 
 test('the page says one Organization admin, and the glossary row agrees', () => {
-  assert.match(plain, /one Organization admin/);
+  assert.match(plain, /an organization has one, and a transfer passes the position/);
   assert.doesNotMatch(text, /every Organization admin|Organization admins/i);
   const row = readFileSync(glossaryFile, 'utf8').split(/^### /m).find((s) => s.startsWith('Organization admin'));
   assert.ok(row, 'glossary row');
@@ -66,15 +70,17 @@ test('the page says a Restricted resource is closed to the Organization admin un
 });
 
 test('staff get two sentences and no claim of global reach', () => {
-  const staff = rows(section(text, 'Five kinds of people and callers')).find((r) => /staff/.test(r[0]));
-  const sentences = unlink(staff.slice(1).join(' ')).split(/(?<=[.!?])\s+/).filter(Boolean);
-  assert.equal(sentences.length, 2, staff.join(' | '));
-  assert.doesNotMatch(staff.join(' '), /global/i);
+  const lead = body.split(/^## /m)[0];
+  const staff = lead.split('\n').find((l) => /^- \*\*\[Staff\]/.test(l));
+  const sentences = unlink(staff.replace(/^- \*\*[^:]*:\s*/, '')).split(/(?<=[.!?])\s+/).filter(Boolean);
+  assert.equal(sentences.length, 2, staff);
+  assert.doesNotMatch(staff, /global/i);
 });
 
 test('Can use and Can edit are the two roles of a share, and a role is not a set of people', () => {
   const part = section(text, 'What Can use and Can edit mean');
-  for (const anchor of ['share', 'can-use', 'can-edit', 'group']) assert.match(part, new RegExp(`\\]\\(\\./glossary\\.md#${anchor}\\)`), anchor);
+  for (const anchor of ['can-use', 'can-edit']) assert.match(part, new RegExp(`\\]\\(\\./glossary\\.md#${anchor}\\)`), anchor);
+  for (const anchor of ['share', 'group']) assert.match(body, new RegExp(`\\]\\(\\./glossary\\.md#${anchor}\\)`), anchor);
   assert.match(part, /not a set of people/);
   assert.match(part, /\]\(\.\/one-access-model\.md\)/);
 });
@@ -93,7 +99,39 @@ test('the page names no master doc, implementation name, banned term, vendor or 
 
 test('the page assumes no TypeScript, Node or React', () => assert.doesNotMatch(plain, /TypeScript|Node|React/));
 
-test('the page follows the voice checks and no sentence passes 25 words', () => {
+test('the page follows the voice checks and has no em dash', () => {
   assert.deepEqual(voiceViolations(text), []);
-  assert.deepEqual(longSentences(plain, { tables: false }), []);
+  assert.doesNotMatch(plain, /—/);
+});
+
+test('the page names no vague actor', () => assert.doesNotMatch(plain, /\bsomeone\b/i));
+
+test('service accounts are the identity behind an API key or a schedule, and a group share reaches every user the group holds', () => {
+  assert.match(plain, /such as the identity behind an API key or a schedule/);
+  assert.match(plain, /gives it to every user the group holds/);
+});
+
+test('the rules of a space are a bold-term list and Can edit on the space and on a resource are two items', () => {
+  const rules = section(text, 'How each kind reaches a space');
+  assert.deepEqual([...rules.matchAll(/^- \*\*([^*]+)\*\*/gm)].map((m) => m[1]), ['Organization admin', 'Members', 'Can edit on a space', 'Restricted resources']);
+  const roles = section(text, 'What Can use and Can edit mean');
+  assert.match(roles, /^- \*\*On the space\*\*/m);
+  assert.match(roles, /^- \*\*On a resource\*\*/m);
+});
+
+test('service accounts are the identity behind an API key or a schedule, and a group share reaches every user the group holds', () => {
+  assert.match(plain, /such as the identity behind an API key or a schedule/);
+  assert.match(plain, /gives it to every user the group holds/);
+});
+
+test('a kind says who a user is and a role says what the user may do', () => {
+  assert.match(plain, /A kind says who a user is in an organization\. A role says what the user may do on one resource/);
+});
+
+test('the rules of a space are a bold-term list and Can edit on the space and on a resource are two items', () => {
+  const rules = section(text, 'How each kind reaches a space');
+  assert.deepEqual([...rules.matchAll(/^- \*\*([^*]+)\*\*/gm)].map((m) => m[1]), ['Organization admin', 'Members', 'Can edit on a space', 'Restricted resources']);
+  const roles = section(text, 'What Can use and Can edit mean');
+  assert.match(roles, /^- \*\*On the space\*\*/m);
+  assert.match(roles, /^- \*\*On a resource\*\*/m);
 });

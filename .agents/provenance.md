@@ -326,7 +326,7 @@ Source paths are in the sibling `vector-spaces` repo, under `docs/`. The spec ov
 
 ## Who can do what
 
-Source paths are in the sibling `vector-spaces` repo, under `docs/`. The spec overrides collapse the research H2s Members, Organization admin, Space managers, Staff and Machines into one table, give staff two sentences, and leave out View level, Edit level, role as a set of people and custom roles. The page has no figure slot.
+Source paths are in the sibling `vector-spaces` repo, under `docs/`. The spec overrides collapse the research H2s Members, Organization admin, Space managers, Staff and Machines into one bold-term list in the lead, give staff two sentences, and leave out View level, Edit level, role as a set of people and custom roles. The page has no figure slot.
 
 | Claim | Rests on |
 | --- | --- |
@@ -336,10 +336,10 @@ Source paths are in the sibling `vector-spaces` repo, under `docs/`. The spec ov
 | Only someone who already manages the space gives Can edit on the space. A group can hold it and reaches every user of the group. A service account never holds it, not even through a group. | `systems/access/README.md` (Organization admin and space managers: Bootstrap, groups, service accounts). |
 | A member works in a space: chats with agents, builds pages and answers what agents ask. Membership alone reaches what General access gives, and a share gives more. A member can create resources, and each starts private to its creator. | `product/OVERVIEW.md` (Who uses it), `product/GLOSSARY.md` (Access: Member), `systems/access/RESOURCES.md` (General access: Create), `systems/PAGES.md` (Sharing). |
 | Staff are Vector employees who run the platform across organizations. They run the app registry and set an organization's AI spend cap. The page says no more and never calls their reach global. | `product/OVERVIEW.md` (Who uses it), `systems/access/README.md` (Staff), `systems/governance/LIMITS.md` (Limits). |
-| A service account is a user of an organization that is not a person. It owns no resources, never gains platform rights and resolves like any member. | `product/GLOSSARY.md` (Tenancy and people: Service account), `systems/access/README.md` (Service accounts; Organization admin and space managers). |
+| A service account is a user of an organization that is not a person, such as the identity behind an API key or a schedule. It owns no resources, never gains platform rights and resolves like any member. | `product/GLOSSARY.md` (Tenancy and people: Service account), `systems/access/README.md` (Service accounts; Organization admin and space managers). |
 | A Restricted resource is closed even to the Organization admin unless a share names them. The rule lives on `one-access-model`. | `systems/access/RESOURCES.md` (General access). |
-| A share gives one user, group or app one role on one thing. Can use uses the resource, Can edit configures it and uses it. A role is not a set of people, and a group is. Those are the only two roles. On the space itself, Can edit makes a user a space manager. | `product/GLOSSARY.md` (Access: Share, Role, Group, Can edit on the space), `systems/access/README.md` (The access primitive), `spec/PERMISSIONS.md` (3. Custom roles: not built). |
-| The example is the page's own scenario slice: a new member cannot add a member, a space manager and the Organization admin can, and the admin can also create a space. The agent works for the member. | `systems/access/README.md` (Organization admin and space managers; Spaces), `systems/access/RUNTIME.md` (Run identity). |
+| A share gives one user, group or app one role on one thing. Can use uses the resource, Can edit configures it and uses it. A role is not a set of people, and a group is. A share of a group reaches every user the group holds. Those are the only two roles. On the space itself, Can edit makes a user a space manager. | `product/GLOSSARY.md` (Access: Share, Role, Group, Can edit on the space), `systems/access/README.md` (The access primitive), `spec/PERMISSIONS.md` (3. Custom roles: not built). |
+| Scene "A new member in a team's space", with Acme's sales team: a new member cannot add a member, a space manager and the Organization admin can, and the admin can also create a space. The agent works for the member. | `systems/access/README.md` (Organization admin and space managers; Spaces), `systems/access/RUNTIME.md` (Run identity). |
 
 ## What a space holds
 

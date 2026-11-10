@@ -4,7 +4,7 @@ import { test } from 'node:test';
 
 const NOUN_GRANT = /\b(?:an?|the|each|every|one|no|any|all|your|their|its|this|that|these|those|which|of|for|per|with|new|existing|revoked|standing)\s+grants?\b/gi;
 
-/** Fence and code-span text, link targets and the bold Vector Space menu labels `**Space**` and `**Spaces**` are not prose. */
+/** Fence and code-span text, link targets, the bold Vector Space menu labels `**Space**` and `**Spaces**` and the list term `**[Space managers]**` at the start of a list item are not prose. */
 const proseLines = (markdown) => {
   let fence = null;
   return markdown.split('\n').map((line) => {
@@ -20,7 +20,8 @@ const proseLines = (markdown) => {
     return line
       .replace(/`[^`]*`/g, '')
       .replace(/\]\([^)]*\)/g, ']')
-      .replace(/\*\*Spaces?\*\*/g, '');
+      .replace(/\*\*Spaces?\*\*/g, '')
+      .replace(/^(\s*[-*] \*\*\[?)Space managers\b/, '$1');
   });
 };
 
@@ -50,6 +51,11 @@ test('Space: flagged on its own, allowed inside Vector Space', () => {
   assert.deepEqual(rules('Space reads the manifest.'), ['space']);
   assert.deepEqual(rules('Each Space has members.'), ['space']);
   assert.deepEqual(rules('Many Spaces exist.'), ['space']);
+});
+
+test('Space: the list term Space managers is allowed at the start of a list item only', () => {
+  assert.deepEqual(rules('- **[Space managers](./glossary.md#space-manager)**: users who hold Can edit.'), []);
+  assert.deepEqual(rules('Space managers hold Can edit.'), ['space']);
 });
 
 test('Space: code spans, fences, link targets and menu labels are excluded', () => {

@@ -76,8 +76,8 @@ const BANNED_TERMS = [
   /(?<!Vector )\bSpace\b/,
 ];
 
-/** The shared banned terms found in `text`, as pattern strings. "Capability grant" is a term of the platform, so it is allowed. */
+/** The shared banned terms found in `text`, as pattern strings. "Capability grant" is a term of the platform, so it is allowed, and so is the list term "Space managers" at the start of a list item. */
 export const bannedTermsIn = (text) => {
-  const prose = text.replace(/capability grants?/gi, '');
+  const prose = text.replace(/capability grants?/gi, '').replace(/^(\s*[-*] (?:\*\*)?)Space managers\b/gm, '$1');
   return BANNED_TERMS.filter((pattern) => pattern.test(prose)).map(String);
 };
