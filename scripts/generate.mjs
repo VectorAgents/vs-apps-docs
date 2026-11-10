@@ -1,5 +1,6 @@
-import { copyFileSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const pageFile = /\.mdx?$/;
@@ -198,11 +199,42 @@ export function generate({ root, config }) {
   return { todos };
 }
 
+const filesOf = (dir) => readdirSync(dir, { recursive: true }).filter((rel) => statSync(join(dir, rel)).isFile());
+
+/**
+ * Runs `generate` into a temp folder and copies only changed files into `outDir`. `generate` deletes its
+ * output folder, which detaches a running dev server's file watcher from it, so the folder is never recreated.
+ */
+export function generateInPlace({ root, config }) {
+  const out = join(root, config.outDir);
+  const temp = mkdtempSync(join(tmpdir(), 'vs-apps-docs-'));
+  try {
+    const { todos } = generate({ root, config: { ...config, outDir: relative(root, temp) } });
+    const fresh = new Set(filesOf(temp));
+    for (const rel of fresh) {
+      const next = readFileSync(join(temp, rel));
+      let same = false;
+      try {
+        same = readFileSync(join(out, rel)).equals(next);
+      } catch {}
+      if (same) continue;
+      mkdirSync(dirname(join(out, rel)), { recursive: true });
+      writeFileSync(join(out, rel), next);
+    }
+    try {
+      for (const rel of filesOf(out)) if (!fresh.has(rel)) rmSync(join(out, rel));
+    } catch {}
+    return { todos };
+  } finally {
+    rmSync(temp, { recursive: true, force: true });
+  }
+}
+
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const root = join(dirname(fileURLToPath(import.meta.url)), '..');
   const config = JSON.parse(readFileSync(join(root, 'flavours.config.json'), 'utf8'));
   try {
-    const { todos } = generate({ root, config });
+    const { todos } = generateInPlace({ root, config });
     console.log(`${config.outDir} generated, ${todos} open todo notice(s) of ${config.todoCap}`);
   } catch (error) {
     console.error(error.message);

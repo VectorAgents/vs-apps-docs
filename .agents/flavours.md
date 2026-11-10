@@ -26,7 +26,7 @@ How to write a page that differs by flavour. Terms: axis, flavour, pair, flavour
 - `docs-gen/pairs/<client>/<server>/` holds one copy of each flavoured page per pair, with only that pair's blocks and no wrappers. It is for `check-snippets`, `starter-sync` and the page tests, and is never published.
 - `docs-gen/flavours.json` lists each flavoured page with its URL, its axes and, per tree (the flavours of the axes it varies on), the pair copy that holds it.
 - Every page keeps its source path, so a relative link resolves in `site/`.
-- `pnpm start` generates once at launch. After an edit to `docs/`, restart it: the dev server does not watch `docs/`.
+- `pnpm start` generates once at launch, then runs `scripts/watch-docs.mjs`, which starts the dev server and regenerates on every change under `docs/`. It copies only changed files into `docs-gen/` and never recreates the folder, because `generate` deletes its output folder and that detaches the dev server's file watcher. A change to `flavours.config.json` needs a restart.
 - `flavours.config.json` holds `docsRoot` (the source folder), `outDir`, the `axes` with their flavour names and labels, the `defaults` and `todoCap` (the most `todo` blocks allowed).
 - The generator fails on a marker error, on a flavour name that equals a top-level folder of `docs/` (`vector-apps`, `sdk`) and when the `todo` blocks exceed `todoCap`. `pnpm check`, `pnpm test`, `pnpm build` and `pnpm start` run it first.
 

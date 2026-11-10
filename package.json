@@ -5,7 +5,7 @@
   "scripts": {
     "prepare": "git config core.hooksPath .githooks",
     "prestart": "node scripts/generate.mjs && node scripts/ensure-stamp.mjs",
-    "start": "docusaurus start --port 8080",
+    "start": "node scripts/watch-docs.mjs",
     "generate": "node scripts/generate.mjs",
     "build": "node scripts/generate.mjs && node scripts/check-snippets.mjs && docusaurus build",
     "check:snippets": "node scripts/check-snippets.mjs",
