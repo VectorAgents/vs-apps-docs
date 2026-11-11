@@ -70,6 +70,13 @@ Anything an agent or an app waits on a person for. An approval of an app is one 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
 
+### human in the loop
+
+Also written HITL. A run that pauses until a person decides. The agent or app raises an [ask](#ask), and the run resumes when a person answers it in the [Command Center](#command-center).
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
 ### channel
 
 An agent that a person reaches from outside the web app, with its own prompt. The channel is the agent, not the service it is reached through: WhatsApp, Messenger and Instagram are Meta messaging services.
