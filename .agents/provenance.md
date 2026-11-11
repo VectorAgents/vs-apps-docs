@@ -278,7 +278,7 @@ Source paths are in the sibling `vector-spaces` repo, under `docs/`. The page is
 | Claim | Rests on |
 | --- | --- |
 | Vector Space is where an organization's people and AI agents work on the organization's own data. Each run follows the organization's access rules, is paid on its own AI provider accounts and records who ran it. The page says "records who ran it", never "eliminates black-box execution". | `product/OVERVIEW.md` ("What it is", "What holds it together"). |
-| The lead says Vector Space is one platform "rather than a set of separate AI tools". This contrast is editorial wording and rests on no master doc. | Decision of the page owner. |
+| The lead says Vector Space is one platform "rather than scattered AI tools". This contrast is editorial wording and rests on no master doc. | Decision of the page owner. |
 | An organization is the company account that holds its users, API keys, resources and spaces. A space is where one team works. | `product/OVERVIEW.md` ("How it fits"), `product/GLOSSARY.md` (Spaces and content: Space). |
 | A page is a grid of widgets. A widget shows a query result as a chart, a table or a key figure, or holds text. | `product/GLOSSARY.md` (Spaces and content: Page, Widget). |
 | A member can talk to the data in plain language. The widget builder or an agent queries a datasource and returns a chart, a table or a key figure. The widget builder's text-to-SQL assist and the agents' datasource queries are in the master docs. That an agent returns a chart or a widget is unverified in the master docs. | `systems/PAGES.md` (Widgets), `product/GLOSSARY.md` (Context Hub: Datasource). Agent-made charts: decision of the page owner. |

@@ -6,7 +6,7 @@ description: What Vector Space is, how its work is organized, the three rules ev
 import StructureFigure from '@site/src/components/StructureFigure';
 import { spaceStructure } from '@site/src/diagrams/figures/space-structure.ts';
 
-[Vector Space](./glossary.md#vector-space) is where the people and [AI](./glossary.md#ai) [agents](./glossary.md#agent) of an [organization](./glossary.md#organization) work together on the organization's own data, as one platform rather than a set of separate AI tools. It brings the organization's systems, knowledge and processes into one place, where an [orchestrator agent](./glossary.md#orchestrator-agent) can use them. Each [run](./glossary.md#run) of an agent follows the organization's access rules, uses its own [AI provider accounts](./glossary.md#ai-provider-account) and registers a record of who ran it.
+[Vector Space](./glossary.md#vector-space) is where the people and [AI](./glossary.md#ai) [agents](./glossary.md#agent) of an [organization](./glossary.md#organization) work together on the organization's own data, as one platform rather than scattered AI tools. It brings the organization's systems, knowledge and processes into one place, where an [orchestrator agent](./glossary.md#orchestrator-agent) can use them. Each [run](./glossary.md#run) of an agent follows the organization's access rules, uses its own [AI provider accounts](./glossary.md#ai-provider-account) and registers a record of who ran it.
 
 Work sits in three nested levels:
 
