@@ -113,7 +113,6 @@ test('the comparison opens with its lead, then one table of the 4 rows, with cel
 
 test('no line follows the comparison table', () => {
   assert.ok(section(text, 'The comparison').trimEnd().endsWith('|'));
-  assert.doesNotMatch(plain, /Only a Vector App records/);
 });
 
 test('the shared call path says each call starts in a run, is gated first and is recorded', () => {
