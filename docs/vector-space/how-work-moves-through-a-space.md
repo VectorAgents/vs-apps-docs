@@ -30,6 +30,6 @@ Each step ends with its [actor](./glossary.md#actor), the identity that it ran a
 ## Where to go next
 
 - [Approvals and the Command Center](./approvals-and-the-command-center.md): how an ask waits for a person and is decided.
-- [Extending a space](./extending-a-space.md): the three kinds of extension that a space can call.
+- [Extending a space](./extending-a-space.md): the three extensions that a space can call.
 - [The record of work](./the-record-of-work.md): how each step is recorded, who can see it, and the four views that read the records.
 - [Vector Space glossary](./glossary.md): every term on this page, defined in a sentence.
