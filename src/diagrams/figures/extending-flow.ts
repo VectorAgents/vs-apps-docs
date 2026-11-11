@@ -42,11 +42,11 @@ const scenes: SceneData[] = [
   { step: 4, durationMs: 4200, ...call(toTheMcpConnector, 'mcp', [{ part: 'orchestrator', from: 0 }, { part: 'contextHub', from: 0.4 }, { part: 'mcp', from: 0.8 }]) },
 ];
 
-/** Slot `extending-flow` of `extending-a-space`: a space calls a Vector App, an A2A agent and an MCP connector in the same way. */
+/** Slot `extending-flow` of `extending-a-space`: a space calls a Vector App, an A2A agent and an MCP server in the same way. */
 export const extendingFlow: FlowData = {
   id: 'extending-flow',
   title: 'How a space calls its extensions',
-  desc: 'Two slabs: Organization and Workspace. The Workspace slab holds three parts: Member, Orchestrator agent and Context Hub. The Organization slab holds three parts outside the space: a Vector App, an A2A agent and an MCP connector. The Orchestrator agent is joined to the Vector App and to the A2A agent by dashed links, and the Context Hub is joined to the MCP connector by a dashed link. A request starts in a run and then calls each of the three in turn.',
+  desc: 'Two slabs: Organization and Workspace. The Workspace slab holds three parts: Member, Orchestrator agent and Context Hub. The Organization slab holds three parts outside the space: a Vector App, an A2A agent and an MCP server. The Orchestrator agent is joined to the Vector App and to the A2A agent by dashed links, and the Context Hub is joined to the MCP server by a dashed link. A request starts in a run and then calls each of the three in turn.',
   caption: slotOf('extending-flow').caption,
   intro: 'A member asks about open tickets. A team can offer its tracker to the space as a Vector App, an A2A agent or an MCP server. Follow one call to each.',
   slabs: [
@@ -59,7 +59,7 @@ export const extendingFlow: FlowData = {
     { id: 'contextHub', label: 'Context Hub', text: 'Everything the space can reach. A connector to an MCP server is added here.', icon: 'contextHub', tone: 'core', on: 'space', c: 6.0, r: 8.6, w: 5.2, d: 3.2, items: ['Connectors', 'Knowledge sources', 'Datasources', 'Skills', 'Apps'] },
     { id: 'a2a', label: 'A2A agent', text: 'A remote agent that speaks the Agent2Agent (A2A) protocol. The orchestrator agent can hand work to it.', icon: 'a2a', tone: 'plug', on: 'organization', c: 14.4, r: 1.6, w: 3.2, d: 2.8 },
     { id: 'app', label: 'Vector App', text: 'A web app that runs on its own origin and opens as a page of the space.', icon: 'app', tone: 'plug', on: 'organization', c: 14.4, r: 5.7, w: 3.2, d: 2.8 },
-    { id: 'mcp', label: 'MCP connector', text: 'A remote server of tools, reached with the Model Context Protocol (MCP). Agents in the space can call it.', icon: 'mcp', tone: 'plug', on: 'organization', c: 14.4, r: 9.8, w: 3.2, d: 2.8 },
+    { id: 'mcp', label: 'MCP server', text: 'A remote server of tools, reached with the Model Context Protocol (MCP). Agents in the space can call it.', icon: 'mcp', tone: 'plug', on: 'organization', c: 14.4, r: 9.8, w: 3.2, d: 2.8 },
   ],
   links: [
     { id: 'orchestrator-a2a', from: 'orchestrator', to: 'a2a', remote: true },

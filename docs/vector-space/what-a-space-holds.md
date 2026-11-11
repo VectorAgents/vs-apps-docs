@@ -14,13 +14,13 @@ Members and agents use these parts to read data, show it and act on it.
 
 ## A lead search in a team's space
 
-Acme's sales team has a space, and a [member](./glossary.md#member) of it asks the [orchestrator agent](./glossary.md#orchestrator-agent) to find leads and send an outreach email. The orchestrator agent uses the connectors in the space's Context Hub, which link messaging channels and a CRM. The team follows the outreach on a page, where data widgets show lead status in tables and conversion in charts. The logic that finds leads runs in a Vector App that the space shows.
+Acme's sales team has a space, and a [member](./glossary.md#member) of it asks the [orchestrator agent](./glossary.md#orchestrator-agent) to find leads and send an outreach email. The orchestrator agent uses the connectors in the space's Context Hub, which link messaging channels and a customer-contact system. The team follows the outreach on a page, where data widgets show lead status in tables and conversion in charts. The logic that finds leads runs in a Vector App that the space shows.
 
 ## The Context Hub
 
 The Context Hub holds six kinds of resource, and a resource is a thing that a space holds and that access rules cover. Vector Space shows the list of them as **Resources**:
 
-- **[Connector](./glossary.md#connector)**: links the space to one outside account or endpoint, such as a mailbox or a REST API.
+- **[Connector](./glossary.md#connector)**: links the space to one outside account or endpoint, such as a mailbox or an outside API.
 - **[Knowledge source](./glossary.md#knowledge-source)**: a body of documents that Vector Space indexes, so that agents can search it, and it can be narrowed to chosen folders or documents.
 - **[Datasource](./glossary.md#datasource)**: a database that agents and widgets query, where each query only reads data and never changes it.
 - **[Skill](./glossary.md#skill)**: a set of named instructions with their tools, which an agent gets as a resource.

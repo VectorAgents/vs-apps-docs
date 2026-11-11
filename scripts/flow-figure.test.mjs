@@ -518,7 +518,7 @@ test('extending-flow: Member, Orchestrator agent and Context Hub in the space, a
   const on = (id) => extending.parts.filter((p) => p.on === id).map((p) => p.label).sort();
   assert.deepEqual(extending.slabs.map((s) => s.label).sort(), ['Organization', 'Workspace']);
   assert.deepEqual(on('space'), ['Context Hub', 'Member', 'Orchestrator agent']);
-  assert.deepEqual(on('organization'), ['A2A agent', 'MCP connector', 'Vector App']);
+  assert.deepEqual(on('organization'), ['A2A agent', 'MCP server', 'Vector App']);
   assert.ok(extending.links.length === 3 && extending.links.every((l) => l.remote));
   assert.deepEqual(extending.links.map((l) => [l.from, l.to]).sort(), [['contextHub', 'mcp'], ['orchestrator', 'a2a'], ['orchestrator', 'app']]);
 });

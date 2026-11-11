@@ -58,7 +58,7 @@ export const slots: readonly FigureSlot[] = [
     id: 'extending-flow',
     page: 'extending-a-space',
     kind: 'flow',
-    caption: 'A space calls a Vector App, an A2A agent and an MCP connector in the same way',
+    caption: 'A space calls a Vector App, an A2A agent and an MCP server in the same way',
   },
 ];
 

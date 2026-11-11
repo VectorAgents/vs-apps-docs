@@ -32,7 +32,7 @@ test('the scene is the first H2, names no Example and says a team\'s space', () 
   assert.doesNotMatch(plain, /the sales space/i);
   const scene = section(text, 'A lead search in a team\'s space');
   assert.match(scene, /\nAcme's sales team has a space/);
-  assert.match(scene, /messaging channels and a CRM/);
+  assert.match(scene, /messaging channels and a customer-contact system/);
 });
 
 test('the page has no figure slot and no figure component', () => {

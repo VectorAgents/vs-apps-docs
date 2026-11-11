@@ -11,7 +11,7 @@ import { spaceStructure } from '@site/src/diagrams/figures/space-structure.ts';
 Work sits in three nested levels:
 
 - **An organization** is the company account that holds all its users, API keys, resources and spaces.
-- **A [space](./glossary.md#space)** is where one team works. It belongs to one organization, an agent works only inside its own space, and no resource is shared across spaces.
+- **A [space](./glossary.md#space)** is where one team works. It belongs to one organization, and an agent works only inside its own space.
 - **Pages and widgets** lay out the content of a space. A [page](./glossary.md#page) is a grid of [widgets](./glossary.md#widget) of two kinds. A data widget runs one saved query on a [datasource](./glossary.md#datasource) and renders the result as a chart, a table or a key figure. A document widget holds text that people edit together or that a schedule writes. A [member](./glossary.md#member) can prompt the widget builder in natural language and it writes the query, and an agent can do the same.
 
 ## A request in a space
@@ -49,7 +49,7 @@ When a team needs logic of its own, it adds an extension to its space. An extens
 
 - **[Vector App](../vector-apps/glossary.md#app)**: a web app that a space shows in an iframe.
 - **[A2A](./glossary.md#a2a) agent**: a remote agent that agents of the space hand work to.
-- **[MCP](./glossary.md#mcp) connector**: a connector to a remote set of tools that agents of the space call.
+- **[MCP](./glossary.md#mcp) server**: a remote set of tools that agents of the space call.
 
 ## Where to read next
 
@@ -72,7 +72,6 @@ To explore the platform, choose the section that matches your goal: understandin
 
 - [How work moves through a space](./how-work-moves-through-a-space.md): one request followed from a member's question to a sent email in six steps.
 - [Approvals and the Command Center](./approvals-and-the-command-center.md): the part of a space where asks wait for a person, with the standing approvals and the schedules that a person runs.
-- [Extending a space](./extending-a-space.md): the three kinds of extension, a Vector App, an A2A agent and an MCP connector, compared from the side of the space.
+- [Extending a space](./extending-a-space.md): the three kinds of extension, a Vector App, an A2A agent and an MCP server, compared from the side of the space.
 
 Look up any term in the [Vector Space glossary](./glossary.md).
-<!-- hmr-probe -->

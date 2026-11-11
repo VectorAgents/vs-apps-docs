@@ -200,7 +200,7 @@ test('space-structure: five parts in the space, three outside it on dashed links
   const inSpace = spaceStructure.parts.filter((p) => p.on === 'space').map((p) => p.label);
   assert.deepEqual(inSpace, ['Members', 'Orchestrator agent', 'Command Center', 'Context Hub', 'Vector Modules']);
   const outside = spaceStructure.parts.filter((p) => p.tone === 'plug');
-  assert.deepEqual(outside.map((p) => p.label).sort(), ['A2A agent', 'MCP connector', 'Vector App']);
+  assert.deepEqual(outside.map((p) => p.label).sort(), ['A2A agent', 'MCP server', 'Vector App']);
   assert.ok(outside.every((p) => p.on === 'organization'));
   assert.deepEqual(spaceStructure.links.map((l) => l.to).sort(), outside.map((p) => p.id).sort());
   assert.ok(spaceStructure.links.every((l) => l.remote && l.from === 'space'));

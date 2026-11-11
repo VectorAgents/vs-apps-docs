@@ -5,7 +5,7 @@ import { slotOf } from './slots.ts';
 export const spaceStructure: StructureData = {
   id: 'space-structure',
   title: 'The parts of a space',
-  desc: 'Three slabs, from the bottom: Governance, Organization and Workspace. The Workspace slab holds five parts: Members, Orchestrator agent, Command Center, Context Hub and Vector Modules. The Organization slab holds three parts outside the space: an A2A agent, an MCP connector and a Vector App, each joined to the space by a dashed link.',
+  desc: 'Three slabs, from the bottom: Governance, Organization and Workspace. The Workspace slab holds five parts: Members, Orchestrator agent, Command Center, Context Hub and Vector Modules. The Organization slab holds three parts outside the space: an A2A agent, an MCP server and a Vector App, each joined to the space by a dashed link.',
   caption: slotOf('space-structure').caption,
   slabs: [
     { id: 'governance', label: 'Governance', text: 'Reads across the whole organization: who ran what, and what it cost.', level: 0, c: -1, r: -1, w: 20.6, d: 16 },
@@ -19,7 +19,7 @@ export const spaceStructure: StructureData = {
     { id: 'contextHub', label: 'Context Hub', text: 'Everything the space can reach. It holds six kinds of resource, and the figure draws Vector Modules beside it.', icon: 'contextHub', tone: 'core', on: 'space', c: 1.6, r: 5.9, w: 5.2, d: 3.2, items: ['Connectors', 'Knowledge sources', 'Datasources', 'Skills', 'Apps'] },
     { id: 'modules', label: 'Vector Modules', text: 'First-party tools that work over connector data. They sit in the Context Hub.', icon: 'modules', tone: 'core', on: 'space', c: 7.4, r: 5.9, w: 4.8, d: 3.2, items: ['Omnibox', 'Contacts', 'Calendar'] },
     { id: 'a2a', label: 'A2A agent', text: 'A remote agent that speaks the Agent2Agent (A2A) protocol. The orchestrator agent can hand work to it.', icon: 'a2a', tone: 'plug', on: 'organization', c: 14.4, r: 1.6, w: 3.2, d: 2.8 },
-    { id: 'mcp', label: 'MCP connector', text: 'A remote server of tools, reached with the Model Context Protocol (MCP). Agents in the space can call it.', icon: 'mcp', tone: 'plug', on: 'organization', c: 14.4, r: 5.7, w: 3.2, d: 2.8 },
+    { id: 'mcp', label: 'MCP server', text: 'A remote server of tools, reached with the Model Context Protocol (MCP). Agents in the space can call it.', icon: 'mcp', tone: 'plug', on: 'organization', c: 14.4, r: 5.7, w: 3.2, d: 2.8 },
     { id: 'app', label: 'Vector App', text: 'A web app that runs on its own origin and opens as a page of the space.', icon: 'app', tone: 'plug', on: 'organization', c: 14.4, r: 9.8, w: 3.2, d: 2.8 },
   ],
   links: [

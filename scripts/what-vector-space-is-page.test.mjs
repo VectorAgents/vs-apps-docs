@@ -81,13 +81,13 @@ test('the Governance slab is named as Governance only', () => {
   assert.doesNotMatch(parts, /Intelligence/);
 });
 
-test('the extensions are a Vector App, an A2A agent and an MCP connector, one line each, with a link to extending-a-space', () => {
+test('the extensions are a Vector App, an A2A agent and an MCP server, one line each, with a link to extending-a-space', () => {
   const outside = section(text, 'Ways to extend a space');
   const items = outside.split('\n').filter((l) => l.startsWith('- '));
   assert.equal(items.length, 3);
   assert.match(items[0], /^- \*\*\[Vector App\]\(\.\.\/vector-apps\/glossary\.md#app\)\*\*: a web app that a space shows in an iframe/);
   assert.match(items[1], /^- \*\*\[A2A\]\(\.\/glossary\.md#a2a\) agent\*\*: /);
-  assert.match(items[2], /^- \*\*\[MCP\]\(\.\/glossary\.md#mcp\) connector\*\*: /);
+  assert.match(items[2], /^- \*\*\[MCP\]\(\.\/glossary\.md#mcp\) server\*\*: /);
   assert.ok(linksOf(outside).includes('./extending-a-space.md'));
 });
 

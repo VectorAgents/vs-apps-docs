@@ -22,7 +22,7 @@ Each kind gets in by its own path:
 - **A2A agent**: added by someone who may manage agents in the space. The space reads its [agent card](./glossary.md#agent-card) from a URL. The agent joins the agent tree as a leaf, an agent that hands work to no one. If the organization saved a stored credential for it, the space sends that credential with each call. A stored credential is a secret that the organization keeps for one outside service.
 - **MCP server**: added by a member as a connector in the [Context Hub](./glossary.md#context-hub). The connector starts as Restricted, so only that member reaches it until they share it. The space finds the tools of the server, and agents call them with the stored credential of the connector. [General access](./glossary.md#general-access) explains Restricted.
 
-A standalone A2A agent or MCP server needs no vs-apps SDK. A Vector App can offer an A2A agent and an MCP server of its own. You declare them in the [app definition](../sdk/glossary.md#app-definition).
+A standalone A2A agent or MCP server needs no vs-apps [SDK](../sdk/glossary.md#sdk). A Vector App can offer an A2A agent and an MCP server of its own. You declare them in the [app definition](../sdk/glossary.md#app-definition).
 
 <FlowFigure data={extendingFlow} />
 

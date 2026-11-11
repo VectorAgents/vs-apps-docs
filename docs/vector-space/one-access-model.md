@@ -1,12 +1,12 @@
 ---
 title: One access model
-description: How a request is decided, the same for the UI, the API, agents and apps.
+description: How a request is decided, the same for the web app, the API, agents and apps.
 ---
 
 import StructureFigure from '@site/src/components/StructureFigure';
 import { accessCheck } from '@site/src/diagrams/figures/access-check.ts';
 
-Access defines the set of operations a user, agent or app is permitted to perform on a resource within a space. Vector Space works it out for each operation with one check, the same for the UI, the API, agents and apps, and the check reads four inputs, with clear rules that say which input wins.
+Access defines the set of operations a user, agent or app is permitted to perform on a resource within a space. Vector Space works it out for each operation with one check, the same for the web app, the API, agents and apps, and the check reads four inputs, with clear rules that say which input wins.
 
 ## A lead search limited by region
 
