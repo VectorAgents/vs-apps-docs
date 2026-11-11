@@ -91,6 +91,11 @@ test('the extensions are a Vector App, an A2A agent and an MCP server, one line 
   assert.ok(linksOf(outside).includes('./extending-a-space.md'));
 });
 
+test('the page defines an extension as a Vector App, an A2A agent or an MCP server and never calls them kinds', () => {
+  assert.match(prose, /An extension is a Vector App, an A2A agent or an MCP server\./);
+  assert.doesNotMatch(prose, /kinds? of extension|one of three kinds|three kinds/i);
+});
+
 test('the platform rules are one access model, one AI gateway and one record of work, one line each, with links to the pages that own them', () => {
   const rules = section(text, 'The three platform rules');
   assert.deepEqual([...rules.matchAll(/^- \*\*(.+?)\*\*:/gm)].map((m) => m[1]), ['One access model', 'One AI gateway', 'One record of work']);

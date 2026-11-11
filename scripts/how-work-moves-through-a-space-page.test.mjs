@@ -105,6 +105,11 @@ test('Where to go next links the approvals, extending and record pages, then the
   for (const [, line] of section(text, 'Where to go next').matchAll(/^- \[.+?\]\(.+?\): (.+)$/gm)) assert.doesNotMatch(line, /^(read|see|look|learn|find)\b/i, line);
 });
 
+test('Where to go next calls the three things a space can call extensions, not kinds', () => {
+  assert.match(section(text, 'Where to go next'), /the three extensions that a space can call/);
+  assert.doesNotMatch(plain, /kinds? of extension/i);
+});
+
 test('every link resolves and every glossary anchor exists', () => {
   assert.deepEqual(brokenLinks(text, file), []);
 });
