@@ -6,6 +6,9 @@ import { fileURLToPath } from 'node:url';
 import { bannedTermsIn, bodyOf, brokenLinks, linksOf, section, unlink } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
+const { agentStudioAccess } = await import('../src/diagrams/figures/agent-studio-access.ts');
+const { agentStudioLifecycle } = await import('../src/diagrams/figures/agent-studio-lifecycle.ts');
+
 const docs = resolve(dirname(fileURLToPath(import.meta.url)), '../docs');
 const file = resolve(docs, 'vector-space/agent-studio.md');
 const text = readFileSync(file, 'utf8');
@@ -153,4 +156,11 @@ test('the page follows the voice checks with a paragraph cap of 7 sentences, and
     assert.ok(sentences.length <= PARAGRAPH_MAX, paragraph);
   }
   assert.doesNotMatch(prose, /—/);
+});
+
+test('every figure step links to a heading of the page', () => {
+  const slugs = headings.map((h) => `#${h.toLowerCase().replace(/[^a-z0-9 -]/g, '').replace(/ /g, '-')}`);
+  for (const figure of [agentStudioAccess, agentStudioLifecycle]) {
+    for (const step of figure.steps) assert.ok(slugs.includes(step.href), step.href);
+  }
 });

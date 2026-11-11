@@ -49,4 +49,5 @@ An agent moves only within its own space. A [connector](./glossary.md#connector)
 
 - [How work moves through a space](./how-work-moves-through-a-space.md): one request followed from the member to the sent email.
 - [One access model](./one-access-model.md): the check that decides what a user, an agent or an app may do in a space.
+- [Agent Studio](./agent-studio.md): how the agents of a space are set up, tested and published.
 - [Glossary](./glossary.md): every term of Vector Space, each defined in a sentence.

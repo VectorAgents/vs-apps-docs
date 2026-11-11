@@ -105,11 +105,11 @@ export const agentStudioAccess: FlowData = {
     { swatch: 'link', text: 'A plain line joins an agent to what it may reach' },
   ],
   steps: [
-    { text: 'A member asks the analyst agent a question. The run takes the access of that member, and no more.', record: { text: 'Member asks the agent.', actor: 'Member' } },
-    { text: 'The access check lists what the member may use in the space. Only those tools and skills are offered.', record: { text: 'The platform checks what the member may use.', actor: 'Platform' } },
-    { text: "The agent's own scope can only shorten the list. A tool outside the scope is not offered, even if the member may use it.", record: { text: "The agent's scope shortens the list.", actor: 'Platform' } },
-    { text: 'The agent queries the datasource. A condition filters the rows, so the agent never sees rows the member may not see.', record: { text: 'The agent queries the datasource. The condition filters the rows.', actor: 'Member' } },
-    { text: 'The agent proposes a write, such as sharing the result. A write raises an ask in the Command Center, and the run waits.', record: { text: 'The agent raises an ask for a write, and the member approves it.', actor: 'Member' } },
+    { text: 'A member asks the analyst agent a question. The run takes the access of that member, and no more.', record: { text: 'Member asks the agent.', actor: 'Member' }, href: '#what-a-run-may-use' },
+    { text: 'The access check lists what the member may use in the space. Only those tools and skills are offered.', record: { text: 'The platform checks what the member may use.', actor: 'Platform' }, href: '#what-a-run-may-use' },
+    { text: "The agent's own scope can only shorten the list. A tool outside the scope is not offered, even if the member may use it.", record: { text: "The agent's scope shortens the list.", actor: 'Platform' }, href: '#what-a-run-may-use' },
+    { text: 'The agent queries the datasource. A condition filters the rows, so the agent never sees rows the member may not see.', record: { text: 'The agent queries the datasource. The condition filters the rows.', actor: 'Member' }, href: '#what-a-run-may-use' },
+    { text: 'The agent proposes a write, such as sharing the result. A write raises an ask in the Command Center, and the run waits.', record: { text: 'The agent raises an ask for a write, and the member approves it.', actor: 'Member' }, href: '#skills-channels-and-approvals' },
   ],
   scenes,
 };

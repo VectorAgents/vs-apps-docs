@@ -44,8 +44,9 @@ test('the page says child agent, never sub-agent, subagent or turn', () => {
   assert.doesNotMatch(prose, /\bturns?\b/i);
 });
 
-test('Agent Studio gets one sentence, in "Agents and the orchestrator agent", linked to the glossary', () => {
-  assert.equal(text.match(/Agent Studio/g)?.length, 1);
+test('Agent Studio gets one sentence, in "Agents and the orchestrator agent", linked to the glossary, and one link in Where to go next', () => {
+  assert.equal(text.match(/Agent Studio/g)?.length, 2);
+  assert.equal(section(text, 'Agents and the orchestrator agent').match(/Agent Studio/g)?.length, 1);
   const studio = section(text, 'Agents and the orchestrator agent');
   assert.match(studio, /\[Agent Studio\]\(\.\/glossary\.md#agent-studio\)/);
 });
@@ -66,10 +67,10 @@ test('each term is linked at its first use: agent, orchestrator agent, A2A, thre
   }
 });
 
-test('every link resolves, and Where to go next has 2 to 4 links ordered how-work-moves, one-access-model, glossary', () => {
+test('every link resolves, and Where to go next has 2 to 4 links ordered how-work-moves, one-access-model, agent-studio, glossary', () => {
   assert.deepEqual(brokenLinks(text, file), []);
   const next = linksOf(section(text, 'Where to go next'));
-  assert.deepEqual(next, ['./how-work-moves-through-a-space.md', './one-access-model.md', './glossary.md']);
+  assert.deepEqual(next, ['./how-work-moves-through-a-space.md', './one-access-model.md', './agent-studio.md', './glossary.md']);
 });
 
 test('the scene is a slice of the lead scenario: one agent finds leads, another drafts the email, each sees what the member may see', () => {

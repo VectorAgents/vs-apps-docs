@@ -107,12 +107,12 @@ export const agentStudioLifecycle: FlowData = {
     { swatch: 'link', text: 'A plain line joins a draft to what it feeds' },
   ],
   steps: [
-    { text: 'A member edits an agent in Agent Studio. The edit changes the draft and saves a new version at once.', record: { text: 'The member edits the draft.', actor: 'Member' } },
-    { text: 'The member runs an evaluation on the draft. Each saved question runs as a real run, and a judge scores the answers.', record: { text: 'The member runs an evaluation on the draft.', actor: 'Member' } },
-    { text: 'The member publishes. One step moves every agent of the tree from its draft to its published version.', record: { text: 'The member publishes the agents.', actor: 'Member' } },
-    { text: 'A message in a linked chat now runs on the published agents. A run that has started keeps its version, even if the draft moves on.', record: { text: 'A linked chat runs on the published agents.', actor: 'Platform' } },
-    { text: 'The new draft turns out worse. The member restores an older version. The draft goes back and the published agents stay as they are.', record: { text: 'The member restores an older version.', actor: 'Member' } },
-    { text: 'Publishing again puts the restored version live. The next run uses it.', record: { text: 'The member publishes the restored version.', actor: 'Member' } },
+    { text: 'A member edits an agent in Agent Studio. The edit changes the draft and saves a new version at once.', record: { text: 'The member edits the draft.', actor: 'Member' }, href: '#the-life-of-a-change' },
+    { text: 'The member runs an evaluation on the draft. Each saved question runs as a real run, and a judge scores the answers.', record: { text: 'The member runs an evaluation on the draft.', actor: 'Member' }, href: '#the-life-of-a-change' },
+    { text: 'The member publishes. One step moves every agent of the tree from its draft to its published version.', record: { text: 'The member publishes the agents.', actor: 'Member' }, href: '#the-life-of-a-change' },
+    { text: 'A message in a linked chat now runs on the published agents. A run that has started keeps its version, even if the draft moves on.', record: { text: 'A linked chat runs on the published agents.', actor: 'Platform' }, href: '#the-life-of-a-change' },
+    { text: 'The new draft turns out worse. The member restores an older version. The draft goes back and the published agents stay as they are.', record: { text: 'The member restores an older version.', actor: 'Member' }, href: '#the-life-of-a-change' },
+    { text: 'Publishing again puts the restored version live. The next run uses it.', record: { text: 'The member publishes the restored version.', actor: 'Member' }, href: '#the-life-of-a-change' },
   ],
   scenes,
 };
