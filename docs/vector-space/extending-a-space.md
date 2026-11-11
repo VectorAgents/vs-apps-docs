@@ -30,16 +30,14 @@ A standalone A2A agent or MCP server needs no vs-apps [SDK](../sdk/glossary.md#s
 
 ## The comparison
 
-Each column is one extension. Each row is one thing that the space sends or gives.
+Here is what each extension learns from the space and what it can do there.
 
 | | Vector App | A2A agent | MCP server |
 | --- | --- | --- | --- |
-| Calling member | Named, with the capabilities they hold | Named only if an app offers it. Otherwise a stored credential, no member. | Never named |
-| Platform data | Only what a space manager attached and the member reaches | Gets no token to call the space | Gets no token to call the space; receives the call's arguments |
-| Model calls | A [model slot](../vector-apps/glossary.md#model-slot) a space manager sets | The remote agent's own model | None; the calling agent's model call goes through the [AI gateway](./glossary.md#ai-gateway) |
-| Acts | Yes, from the app's server | No | No |
-
-Only a Vector App records [acts](../vector-apps/glossary.md#acts), also from an A2A agent that it offers.
+| Caller | The app sees the member by name, with the capabilities they hold. | Only an agent that an app offers sees the member. Others get a stored credential. | The server never sees the member. |
+| Platform data | The app reaches what a space manager attached and the member can reach. | The agent gets no token, so it cannot call the space. | The server gets no token. It sees only the arguments of each call. |
+| Model | A space manager sets the [model slot](../vector-apps/glossary.md#model-slot) the app uses. | The remote agent runs on its own model. | None. The model call of the calling agent goes through the [AI gateway](./glossary.md#ai-gateway). |
+| [Acts](../vector-apps/glossary.md#acts) | Yes, from the server of the app. | No. An app that offers it can record acts for it. | No. |
 
 ## What the space does for every call
 
