@@ -27,7 +27,8 @@ const proseLines = (markdown) => {
 
 /**
  * Old vocabulary in prose: capital-S "Space" outside "Vector Space", the bare noun
- * "grant" (the term is "capability grant"; the verb is fine) and "RedemptAI".
+ * "grant" (the term is "capability grant"; the verb is fine), "RedemptAI" and "space page"
+ * (the term is "page").
  * @returns {{ rule: string, line: number, text: string }[]}
  */
 export function termViolations(markdown) {
@@ -39,6 +40,7 @@ export function termViolations(markdown) {
     hit('space', /(?<!Vector )\bSpaces?\b/g);
     hit('grant', NOUN_GRANT);
     hit('redemptai', /RedemptAI/g);
+    hit('space page', /\bspace pages?\b/gi);
   });
   return found;
 }
@@ -84,6 +86,19 @@ test('grant: the bare noun is flagged, the verb and "capability grant" are not',
 test('RedemptAI is flagged', () => {
   assert.deepEqual(rules('RedemptAI staff add apps.'), ['redemptai']);
   assert.deepEqual(rules('Vector Space staff add apps.'), []);
+});
+
+test('space page: singular, plural and capitalised forms are flagged', () => {
+  assert.deepEqual(rules('A space page holds widgets.'), ['space page']);
+  assert.deepEqual(rules('Two space pages exist.'), ['space page']);
+  assert.deepEqual(rules('Space pages hold widgets.'), ['space', 'space page']);
+  assert.deepEqual(rules('A page holds widgets in a space.'), []);
+});
+
+test('space page: code spans, fences and link targets are excluded', () => {
+  assert.deepEqual(rules('Use `space page` here.'), []);
+  assert.deepEqual(rules('```\nspace page\n```'), []);
+  assert.deepEqual(rules('See [the entry](./glossary.md#space-page).'), []);
 });
 
 test('a violation reports its line', () => {

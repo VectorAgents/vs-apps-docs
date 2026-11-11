@@ -16,7 +16,7 @@ The Vector platform. It holds organizations and their spaces. It shows each app 
 
 ### space
 
-A shared place in Vector Space for one team. A space manager adds apps, shares capabilities and sets slots in it. It also holds space pages, a [Context Hub](#context-hub) and members.
+A shared place in Vector Space for one team. A space manager adds apps, shares capabilities and sets slots in it. It also holds [pages](#page), a [Context Hub](#context-hub) and members.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
@@ -35,9 +35,9 @@ The one member who manages the organization in Vector Space and sees **Organizat
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
 
-### space page
+### page
 
-A grid of widgets in a space, with page filters. It is not an [app page](../vector-apps/glossary.md#app-page), and the SDK has no part in it.
+A grid of widgets in a space, with page filters.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
@@ -233,7 +233,7 @@ Named instructions with their tools, which an [agent](#agent) gets as a resource
 
 ### widget
 
-One cell of a [space page](#space-page): a database query with its chart, or a document.
+One cell of a [page](#page): a database query with its chart, or a document.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.

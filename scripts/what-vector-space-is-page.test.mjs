@@ -27,7 +27,7 @@ test('the lead says what Vector Space is, then what a run does: access rules, ow
 test('the lead lists the three levels: organization, space, pages and widgets', () => {
   const items = lead.split('\n').filter((l) => l.startsWith('- '));
   assert.deepEqual(items.map((l) => l.match(/^- \*\*(?:An organization|A \[space\]\([^)]*\)|Pages and widgets)\*\*/)?.[0] !== undefined), [true, true, true]);
-  assert.ok(linksOf(lead).includes('./glossary.md#space-page') && linksOf(lead).includes('./glossary.md#widget'));
+  assert.ok(linksOf(lead).includes('./glossary.md#page') && linksOf(lead).includes('./glossary.md#widget'));
 });
 
 test('the page has at most one table', () => {

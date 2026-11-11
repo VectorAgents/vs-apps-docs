@@ -1,12 +1,12 @@
 ---
 title: What a space holds
-description: The Context Hub, space pages and widgets, Vector Apps and Vector Modules.
+description: The Context Hub, pages and widgets, Vector Apps and Vector Modules.
 ---
 
 A [space](./glossary.md#space) holds what its team works with, in four parts:
 
 - **[Context Hub](./glossary.md#context-hub)**: the area where the space lists what it can reach.
-- **[space pages](./glossary.md#space-page)**: grids of widgets that show data.
+- **[Pages](./glossary.md#page)**: grids of widgets that show data.
 - **[Vector Apps](../vector-apps/glossary.md#app)**: web apps that the space shows.
 - **[Vector Modules](./glossary.md#vector-module)**: first-party products of Vector Space, built over connector data or over rows that the space keeps.
 
@@ -14,7 +14,7 @@ Members and agents use these parts to read data, show it and act on it.
 
 ## A lead search in a team's space
 
-Acme's sales team has a space, and a [member](./glossary.md#member) of it asks the [orchestrator agent](./glossary.md#orchestrator-agent) to find leads and send an outreach email. The orchestrator agent uses the connectors in the space's Context Hub, which link messaging channels and a CRM. The team follows the outreach on a space page, where data widgets show lead status in tables and conversion in charts. The logic that finds leads runs in a Vector App that the space shows.
+Acme's sales team has a space, and a [member](./glossary.md#member) of it asks the [orchestrator agent](./glossary.md#orchestrator-agent) to find leads and send an outreach email. The orchestrator agent uses the connectors in the space's Context Hub, which link messaging channels and a CRM. The team follows the outreach on a page, where data widgets show lead status in tables and conversion in charts. The logic that finds leads runs in a Vector App that the space shows.
 
 ## The Context Hub
 
@@ -29,9 +29,9 @@ The Context Hub holds six kinds of resource, and a resource is a thing that a sp
 
 Files and documents are not a kind of resource. They are the content of a knowledge source that a connector syncs.
 
-## Pages and widgets in a space
+## Pages and widgets
 
-A [space page](./glossary.md#space-page) is a grid of widgets, with filters that apply to the whole page, and any member can create one. In Acme's space, the sales team builds a page whose widgets query a datasource of leads. A space page is not one of the six kinds of resource, so the Context Hub does not list it, and it sits beside the Context Hub in the space. It is also not an [app page](../vector-apps/glossary.md#app-page), which is one screen of a Vector App.
+A [page](./glossary.md#page) is a grid of widgets, with filters that apply to the whole page, and any member can create one. In Acme's space, the sales team builds a page whose widgets query a datasource of leads.
 
 A [widget](./glossary.md#widget) is one cell of the grid, and it is one of two things:
 

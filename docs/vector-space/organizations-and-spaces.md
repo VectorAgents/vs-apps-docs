@@ -29,7 +29,7 @@ A space is where one team works, and each space has four parts of its own:
 - **Members**: the users of the space, which include [service accounts](./glossary.md#service-account), users that are not people, such as the identity behind an API key or a schedule. Only users of the organization can join its spaces. Membership alone reaches what each resource's [General access](./glossary.md#general-access) gives every member, and a [share](./glossary.md#share) gives a user, a [group](./glossary.md#group) or an app more.
 - **Orchestrator agent**: the one agent that each space starts with, which takes a request and delegates parts of it to other agents.
 - **[Context Hub](./glossary.md#context-hub)**: the area where the space lists what it can reach.
-- **Pages, apps and modules**: the [space pages](./glossary.md#space-page) of the space, and its [Vector Apps](../vector-apps/glossary.md#app) and [Vector Modules](./glossary.md#vector-module).
+- **Pages, apps and modules**: the [pages](./glossary.md#page) of the space, and its [Vector Apps](../vector-apps/glossary.md#app) and [Vector Modules](./glossary.md#vector-module).
 
 A [space manager](./glossary.md#space-manager) runs the space: its members, groups, shares, resources, agent and apps. The Organization admin is a space manager of every space of the organization, and access is worked out inside a space, for each member and each operation.
 

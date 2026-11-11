@@ -16,7 +16,7 @@ test('the page runs lead, the scene, three detail sections, Where to go next', (
   assert.deepEqual([...text.matchAll(/^## (.+)$/gm)].map((m) => m[1]), [
     'A lead search in a team\'s space',
     'The Context Hub',
-    'Pages and widgets in a space',
+    'Pages and widgets',
     'Vector Apps and Vector Modules',
     'Where to go next',
   ]);
@@ -39,21 +39,19 @@ test('the page has no figure slot and no figure component', () => {
   assert.doesNotMatch(text, /<(FigurePlaceholder|StructureFigure|FlowFigure)\b/);
 });
 
-test('the Context Hub section lists the six kinds of resource and says pages are not one of them', () => {
+test('the Context Hub section lists the six kinds of resource', () => {
   const hub = section(text, 'The Context Hub');
   for (const anchor of ['connector', 'knowledge-source', 'datasource', 'skill', 'vector-module']) {
     assert.match(hub, new RegExp(`\\]\\(\\./glossary\\.md#${anchor}\\)`), anchor);
   }
   assert.match(hub, /Vector Apps/);
   assert.match(hub, /six kinds of resource/);
-  assert.doesNotMatch(hub, /space page/i);
 });
 
-test('space pages and widgets sit apart from the Context Hub and say pages are not one of its kinds', () => {
-  const pages = section(text, 'Pages and widgets in a space');
-  assert.match(pages, /\]\(\.\/glossary\.md#space-page\)/);
+test('pages and widgets get their own section', () => {
+  const pages = section(text, 'Pages and widgets');
+  assert.match(pages, /\]\(\.\/glossary\.md#page\)/);
   assert.match(pages, /\]\(\.\/glossary\.md#widget\)/);
-  assert.match(pages, /not one of the six kinds/);
 });
 
 test('Vector Apps and Vector Modules share one section: an app is a web app that a space shows in an iframe, and the modules are omnibox, contacts and Calendar', () => {

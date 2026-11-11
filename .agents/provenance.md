@@ -22,7 +22,6 @@ The glossary uses the published word where the product glossary uses an internal
 | the member's access | Floor | The overlap rule: an action runs only on resources that are allowed for the app and open to the member. |
 | Context Hub | Pool | Vector Space lists what the space can reach as **Resources**, under the Context Hub. |
 | knowledge source | Source | Vector Space shows knowledge sources in the settings of an app. |
-| space page | Page (`pages.pages`) | A grid of widgets. `app page` names the SDK `pages[]` entry. |
 | capability grant | Share on named capabilities | A share at Can use on named capabilities of an app. The product grant is a standing approval, a different thing. |
 | Vector Space, space | Space | The platform is Vector Space. The workspace is a space. |
 | app token | service token | The SDK README calls it a service token. |
@@ -281,7 +280,7 @@ Source paths are in the sibling `vector-spaces` repo, under `docs/`. The page is
 | Vector Space is where an organization's people and AI agents work on the organization's own data. Each run follows the organization's access rules, is paid on its own AI provider accounts and records who ran it. The page says "records who ran it", never "eliminates black-box execution". | `product/OVERVIEW.md` ("What it is", "What holds it together"). |
 | The lead says Vector Space is one platform "rather than a set of separate AI tools". This contrast is editorial wording and rests on no master doc. | Decision of the page owner. |
 | An organization is the company account that holds its users, API keys, resources and spaces. A space is where one team works. | `product/OVERVIEW.md` ("How it fits"), `product/GLOSSARY.md` (Spaces and content: Space). |
-| A space page is a grid of widgets. A widget shows a query result as a chart, a table or a key figure, or holds text. | `product/GLOSSARY.md` (Spaces and content: Space page, Widget). |
+| A page is a grid of widgets. A widget shows a query result as a chart, a table or a key figure, or holds text. | `product/GLOSSARY.md` (Spaces and content: Page, Widget). |
 | A member can talk to the data in plain language. The widget builder or an agent queries a datasource and returns a chart, a table or a key figure. The widget builder's text-to-SQL assist and the agents' datasource queries are in the master docs. That an agent returns a chart or a widget is unverified in the master docs. | `systems/PAGES.md` (Widgets), `product/GLOSSARY.md` (Context Hub: Datasource). Agent-made charts: decision of the page owner. |
 | A space starts with one orchestrator agent, which takes a member's request and hands parts of it to other agents. Members chat with agents and answer what agents ask them. | `product/OVERVIEW.md` ("Who uses it"), `systems/SPACES.md` (Provisioning and deletion), `systems/access/README.md` (Spaces), `product/GLOSSARY.md` (Agents and runs). |
 | The Context Hub lists what the space can reach: connectors, knowledge sources, datasources, skills and apps. Vector Modules sit in it too. Pages are not one of its kinds. | `product/OVERVIEW.md` ("The product's layers"), `product/GLOSSARY.md` (Context Hub). |
@@ -343,17 +342,17 @@ Source paths are in the sibling `vector-spaces` repo, under `docs/`. The spec ov
 
 ## What a space holds
 
-Source paths are in the sibling `vector-spaces` repo, under `docs/`. The page is `docs/vector-space/what-a-space-holds.md`. The spec overrides drop "Parts a space has built in", vendor examples, any Command Center description and any "restricted by default" statement. The H2 "Pages and widgets in a space" stands for the spec's "Space pages and widgets", because `scripts/terms.test.mjs` flags a capital-S "Space" in a heading.
+Source paths are in the sibling `vector-spaces` repo, under `docs/`. The page is `docs/vector-space/what-a-space-holds.md`. The spec overrides drop "Parts a space has built in", vendor examples, any Command Center description and any "restricted by default" statement.
 
 | Claim | Rests on |
 | --- | --- |
 | The Context Hub is the area of a space where its resources are listed and set up. The product shows the list as Resources. | `product/OVERVIEW.md` (The product's layers), `product/GLOSSARY.md` (Spaces and content; Access: Pool). |
-| The Context Hub holds six kinds of resource: connectors, knowledge sources, datasources, skills, apps and Vector Modules. Pages are not one of them (the master pool lists pages, the Context Hub does not). | `product/OVERVIEW.md` (The product's layers), `product/GLOSSARY.md` (Access: Resource). |
+| The Context Hub holds six kinds of resource: connectors, knowledge sources, datasources, skills, apps and Vector Modules. | `product/OVERVIEW.md` (The product's layers), `product/GLOSSARY.md` (Access: Resource). |
 | A connector links the space to one outside account or endpoint, such as a mailbox or a REST API. The page says "connector" and never "provider", which collides with "AI provider". | `product/GLOSSARY.md` (Context Hub: Connector, Provider). |
 | A knowledge source is content that a connector syncs and indexes for search, narrowed to folders or documents. Files and documents are the content of a source, not a kind of resource. | `product/GLOSSARY.md` (Context Hub: Source), `systems/context-hub/RESOURCE.md` (Sources on connectors). |
 | A datasource is a database that agents and widgets query. Each statement it runs only reads. The page gives no dialect and no query detail. | `product/GLOSSARY.md` (Context Hub: Datasource), `systems/access/RUNTIME.md` (Datasource enforcement). |
 | A skill is a set of named instructions with tools, given to an agent as a resource. | `product/GLOSSARY.md` (Agents and runs: Skill). |
-| A space page is a grid of widgets with page filters, and any member creates one. It is not an app page. | `product/GLOSSARY.md` (Spaces and content: Page, Filter), `systems/PAGES.md` (Sharing: "Any member creates a page"). |
+| A page is a grid of widgets with page filters, and any member creates one. | `product/GLOSSARY.md` (Spaces and content: Page, Filter), `systems/PAGES.md` (Sharing: "Any member creates a page"). |
 | A widget is one cell: a data widget (chart, table or key figure) runs a query against one datasource, or a document widget holds text. A collaborative document is edited live, and a managed one is written only by a schedule's runs. | `product/GLOSSARY.md` (Spaces and content: Widget), `systems/PAGES.md` (Widgets and `WidgetConfig`; Documents). |
 | A Vector App is a web app that a space shows in an iframe. A space manager turns it on for a space. The page leaves the concept to the Apps glossary. | `product/GLOSSARY.md` (Apps: App), `systems/apps/README.md`, `systems/apps/BINDINGS.md` (Binding lifecycle). |
 | A Vector Module is a first-party product over connector data or the space's own rows, a peer of apps. It draws on connectors attached to it. A module appears in a space when the organization's license lists it. The modules are Omnibox (conversations from a connected mailbox, read and reply) and Contacts (the space's own rows). | `systems/context-hub/MODULES.md` (Vector Modules; Concept and residency; Instance lifecycle is licensing; The omnibox module; The contacts module). |

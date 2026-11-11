@@ -30,7 +30,7 @@ The JSON the server builds from the app definitions and serves at `GET /api/mani
 
 ### app page
 
-One screen of the app. It becomes a navigation entry in Vector Space, shown only to users who hold the page's capability. It is not a [space page](../vector-space/glossary.md#space-page).
+One screen of the app. It becomes a navigation entry in Vector Space, shown only to users who hold the page's capability.
 
 - Maps to: `pages[]` in the definition (`key`, `label`, `path`, optional `capability`). `appPages(...)` lists them on the client.
 - Owner: SDK declares it. Vector Space renders the navigation entry.
