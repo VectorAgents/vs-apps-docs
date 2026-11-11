@@ -252,6 +252,13 @@ A first-party product that works over connector data and sits in the [Context Hu
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
 
+### extension
+
+A Vector App, an [A2A](#a2a) agent or an [MCP](#mcp) connector that adds logic of a team's own to a space. [Extending a space](./extending-a-space.md) compares the three.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
 ### Command Center
 
 The part of a space where an [ask](#ask) waits for a person. It is a plain part of a space, not a Vector Module.

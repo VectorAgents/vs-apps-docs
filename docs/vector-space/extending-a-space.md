@@ -6,7 +6,7 @@ description: A Vector App, an A2A agent and an MCP server compared.
 import FlowFigure from '@site/src/components/FlowFigure';
 import { extendingFlow } from '@site/src/diagrams/figures/extending-flow.ts';
 
-Outside code reaches a [space](./glossary.md#space) in three ways. A [Vector App](../vector-apps/glossary.md#app) is a web app that a space shows in an iframe. An [A2A](./glossary.md#a2a) agent is a remote agent that an agent of the space hands work to. An [MCP](./glossary.md#mcp) server is a remote set of tools that agents call. All three run outside the space, on their own origins.
+A [space](./glossary.md#space) has three kinds of [extension](./glossary.md#extension). A [Vector App](../vector-apps/glossary.md#app) is a web app that a space shows in an iframe. An [A2A](./glossary.md#a2a) agent is a remote agent that an agent of the space hands work to. An [MCP](./glossary.md#mcp) server is a remote set of tools that agents call. All three run outside the space, on their own origins.
 
 ## A question about open tickets
 

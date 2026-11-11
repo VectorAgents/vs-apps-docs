@@ -53,5 +53,5 @@ A module draws on connectors attached to it, so the Omnibox module reads the mai
 ## Where to go next
 
 - [Agents in a space](./agents-in-a-space.md): how the orchestrator agent, the agents below it, their threads and their runs work together.
-- [Extending a space](./extending-a-space.md): how a Vector App, an A2A agent and an MCP server compare as ways to add outside code.
+- [Extending a space](./extending-a-space.md): how a Vector App, an A2A agent and an MCP server compare as ways to extend a space.
 - [Glossary](./glossary.md): every term of Vector Space, each defined in a sentence.

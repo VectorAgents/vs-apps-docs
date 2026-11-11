@@ -16,7 +16,7 @@ const figures = (s) => [...s.matchAll(/<(?:FigurePlaceholder|StructureFigure)\b[
 const noLinks = body.replace(/\]\([^)]*\)/g, ']');
 
 test('the page runs lead, the request in a space, three detail H2s, Where to read next', () => {
-  assert.deepEqual([...text.matchAll(/^## (.+)$/gm)].map((m) => m[1]), ['A request in a space', 'The three platform rules', 'The parts of a space', 'Where outside code plugs in', 'Where to read next']);
+  assert.deepEqual([...text.matchAll(/^## (.+)$/gm)].map((m) => m[1]), ['A request in a space', 'The three platform rules', 'The parts of a space', 'Ways to extend a space', 'Where to read next']);
 });
 
 test('the lead says what Vector Space is, then what a run does: access rules, own AI provider accounts, a record of who ran it', () => {
@@ -81,8 +81,8 @@ test('the Governance slab is named as Governance only', () => {
   assert.doesNotMatch(parts, /Intelligence/);
 });
 
-test('outside code is a Vector App, an A2A agent and an MCP connector, one line each, with a link to extending-a-space', () => {
-  const outside = section(text, 'Where outside code plugs in');
+test('the extensions are a Vector App, an A2A agent and an MCP connector, one line each, with a link to extending-a-space', () => {
+  const outside = section(text, 'Ways to extend a space');
   const items = outside.split('\n').filter((l) => l.startsWith('- '));
   assert.equal(items.length, 3);
   assert.match(items[0], /^- \*\*\[Vector App\]\(\.\.\/vector-apps\/glossary\.md#app\)\*\*: a web app that a space shows in an iframe/);

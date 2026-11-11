@@ -45,7 +45,7 @@ const scenes: SceneData[] = [
 /** Slot `extending-flow` of `extending-a-space`: a space calls a Vector App, an A2A agent and an MCP connector in the same way. */
 export const extendingFlow: FlowData = {
   id: 'extending-flow',
-  title: 'How a space calls outside code',
+  title: 'How a space calls its extensions',
   desc: 'Two slabs: Organization and Workspace. The Workspace slab holds three parts: Member, Orchestrator agent and Context Hub. The Organization slab holds three parts outside the space: a Vector App, an A2A agent and an MCP connector. The Orchestrator agent is joined to the Vector App and to the A2A agent by dashed links, and the Context Hub is joined to the MCP connector by a dashed link. A request starts in a run and then calls each of the three in turn.',
   caption: slotOf('extending-flow').caption,
   intro: 'A member asks about open tickets. A team can offer its tracker to the space as a Vector App, an A2A agent or an MCP server. Follow one call to each.',

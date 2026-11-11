@@ -1,6 +1,6 @@
 ---
 title: What Vector Space is
-description: What Vector Space is, how its work is organized, the three rules every part follows and where outside code plugs in.
+description: What Vector Space is, how its work is organized, the three rules every part follows and the ways to extend a space.
 ---
 
 import StructureFigure from '@site/src/components/StructureFigure';
@@ -30,7 +30,7 @@ Agents that act on an organization's data need limits on data access, AI spend a
 
 <StructureFigure data={spaceStructure} />
 
-The figure shows the five parts of a space and the three things that plug in from outside it. [Organizations and spaces](./organizations-and-spaces.md) explains how a space and its organization fit.
+The figure shows the five parts of a space and the three kinds of [extension](./glossary.md#extension) that reach it from outside. [Organizations and spaces](./organizations-and-spaces.md) explains how a space and its organization fit.
 
 - **Members**: the people of the space. [Who can do what](./who-can-do-what.md) names the kinds of people and callers.
 - **Orchestrator agent**: the one agent that each space starts with, which takes a request and delegates parts of it to specialized agents. [Agents in a space](./agents-in-a-space.md) shows how they fit together.
@@ -43,9 +43,9 @@ The figure shows the five parts of a space and the three things that plug in fro
 
 [Governance](./glossary.md#governance) sits under the organization and reads across all of it, to show what ran and as whom. [The record of work](./the-record-of-work.md) covers it.
 
-## Where outside code plugs in
+## Ways to extend a space
 
-When a team needs logic of its own, three kinds of outside code can plug into a space. [Extending a space](./extending-a-space.md) compares them.
+When a team needs logic of its own, it adds an extension to its space. An extension is one of three kinds. [Extending a space](./extending-a-space.md) compares them.
 
 - **[Vector App](../vector-apps/glossary.md#app)**: a web app that a space shows in an iframe.
 - **[A2A](./glossary.md#a2a) agent**: a remote agent that agents of the space hand work to.
@@ -72,7 +72,7 @@ To explore the platform, choose the section that matches your goal: understandin
 
 - [How work moves through a space](./how-work-moves-through-a-space.md): one request followed from a member's question to a sent email in six steps.
 - [Approvals and the Command Center](./approvals-and-the-command-center.md): the part of a space where asks wait for a person, with the standing approvals and the schedules that a person runs.
-- [Extending a space](./extending-a-space.md): the three ways that outside code reaches a space, a Vector App, an A2A agent and an MCP connector, compared from the side of the space.
+- [Extending a space](./extending-a-space.md): the three kinds of extension, a Vector App, an A2A agent and an MCP connector, compared from the side of the space.
 
 Look up any term in the [Vector Space glossary](./glossary.md).
 <!-- hmr-probe -->

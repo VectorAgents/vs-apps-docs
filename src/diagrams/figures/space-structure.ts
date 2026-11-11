@@ -1,7 +1,7 @@
 import type { StructureData } from '../figure/types.ts';
 import { slotOf } from './slots.ts';
 
-/** Slot `space-structure` of `what-vector-space-is`: what is inside a space and what plugs in from outside. */
+/** Slot `space-structure` of `what-vector-space-is`: what is inside a space and the three extensions outside it. */
 export const spaceStructure: StructureData = {
   id: 'space-structure',
   title: 'The parts of a space',

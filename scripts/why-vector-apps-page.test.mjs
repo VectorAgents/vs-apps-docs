@@ -39,7 +39,7 @@ test('every link resolves, and the page links How a Vector App works, the quicks
 test('Where an app fits is one sentence that links Extending a space, then the app-offered agents, with no list', () => {
   const fits = section(text, 'Where an app fits');
   assert.doesNotMatch(fits, /^- /m);
-  assert.match(fits, /\[Extending a space\]\(\.\.\/vector-space\/extending-a-space\.md\) compares the three ways to plug in your code/);
+  assert.match(fits, /\[Extending a space\]\(\.\.\/vector-space\/extending-a-space\.md\) compares the three ways to extend a space with your code/);
   assert.match(fits, /\[A2A\]\(\.\.\/vector-space\/glossary\.md#a2a\)/);
   assert.match(fits, /\[MCP\]\(\.\.\/vector-space\/glossary\.md#mcp\)/);
   assert.match(fits, /An app can also offer an A2A agent and an MCP server of its own/);

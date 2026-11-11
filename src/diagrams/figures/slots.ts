@@ -16,7 +16,7 @@ export const slots: readonly FigureSlot[] = [
     id: 'space-structure',
     page: 'what-vector-space-is',
     kind: 'structure',
-    caption: 'What is inside a space and what plugs in from outside',
+    caption: 'What is inside a space and the three extensions outside it',
   },
   {
     id: 'organization-structure',

@@ -13,7 +13,7 @@ The `hello-app` of the [quickstart](./quickstart.md) is a small app with one [ap
 
 ## Where an app fits
 
-[Extending a space](../vector-space/extending-a-space.md) compares the three ways to plug in your code: a Vector App, an [A2A](../vector-space/glossary.md#a2a) agent and an [MCP](../vector-space/glossary.md#mcp) server.
+[Extending a space](../vector-space/extending-a-space.md) compares the three ways to extend a space with your code: a Vector App, an [A2A](../vector-space/glossary.md#a2a) agent and an [MCP](../vector-space/glossary.md#mcp) server.
 
 An app can also offer an A2A agent and an MCP server of its own. You declare them in the [app definition](../sdk/glossary.md#app-definition), and Vector Space adds them to the space when a space manager adds the app.
 

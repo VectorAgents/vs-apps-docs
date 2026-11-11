@@ -6,9 +6,9 @@ import { test } from 'node:test';
 const sections = {
   'vector-space': [
     'Vector Space', 'space', 'space manager', 'Organization admin', 'page', 'staff',
-    'knowledge source', 'Context Hub', 'ask', 'channel', 'MCP', 'A2A', 'AI',
+    'knowledge source', 'Context Hub', 'ask', 'human in the loop', 'channel', 'MCP', 'A2A', 'AI',
     'organization', 'member', 'role', 'share', 'block', 'condition', 'service account', 'agent', 'orchestrator agent',
-    'thread', 'run', 'schedule', 'connector', 'Vector Module', 'Command Center', 'Agent Studio', 'governance',
+    'thread', 'run', 'schedule', 'connector', 'Vector Module', 'extension', 'Command Center', 'Agent Studio', 'governance',
     'Activity', 'Audit', 'Intelligence', 'actor', 'standing approval', 'Human Time Return',
     'widget', 'datasource', 'skill', 'group', 'Can use', 'Can edit', 'General access', 'AI gateway', 'AI provider account', 'execution',
     'Overview', 'Health', 'spend cap', 'rate card', 'agent card',

@@ -87,7 +87,7 @@ test('search indexes the part names and the steps of the text version', () => {
 
 const flows = [
   { data: approvalsFlow, page: 'approvals-and-the-command-center', title: 'Three ways a write is cleared', legend: 2, pills: 3 },
-  { data: extendingFlow, page: 'extending-a-space', title: 'How a space calls outside code', legend: 4, pills: 4 },
+  { data: extendingFlow, page: 'extending-a-space', title: 'How a space calls its extensions', legend: 4, pills: 4 },
 ];
 
 for (const { data, page: slug, title, legend, pills } of flows) {
