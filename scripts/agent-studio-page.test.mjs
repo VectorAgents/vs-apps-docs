@@ -89,8 +89,8 @@ test('each term is linked at its first use', () => {
   }
 });
 
-test('draft, version and publish are defined in one clause where they first appear', () => {
-  assert.match(lead, /publish(?:ed)?, which makes a change live/);
+test('version is defined in the lead and draft in What Agent Studio is for, where each first appears', () => {
+  assert.match(lead, /set up, tested and published\./);
   assert.match(lead, /a version, a fixed copy of the settings of an agent/);
   assert.match(section(text, 'What Agent Studio is for'), /a draft, the working copy of the agents/);
 });

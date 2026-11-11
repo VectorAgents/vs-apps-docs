@@ -9,7 +9,7 @@ import { agentStudioTree } from '@site/src/diagrams/figures/agent-studio-tree.ts
 import { agentStudioAccess } from '@site/src/diagrams/figures/agent-studio-access.ts';
 import { agentStudioLifecycle } from '@site/src/diagrams/figures/agent-studio-lifecycle.ts';
 
-[Agent Studio](./glossary.md#agent-studio) is the part of Vector Space where the [agents](./glossary.md#agent) of a [space](./glossary.md#space) are set up, tested and published, which makes a change live for everyone who uses the space. It gives a team one place to change how its agents work, and each change is saved as a version, a fixed copy of the settings of an agent that can be tested and restored.
+[Agent Studio](./glossary.md#agent-studio) is the part of Vector Space where the [agents](./glossary.md#agent) of a [space](./glossary.md#space) are set up, tested and published. It gives a team one place to change how its agents work, and each change is saved as a version, a fixed copy of the settings of an agent that can be tested and restored.
 
 ## A support message in a space
 
