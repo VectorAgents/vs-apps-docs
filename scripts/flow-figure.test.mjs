@@ -329,8 +329,8 @@ test('worked example: auto-play halts at the ask and an approval plays the rest 
   assert.match(captionAt(example, 5), /waits/);
 });
 
-test('worked example: every step names the heading that explains it, in order', () => {
-  assert.deepEqual(example.steps.map((s) => s.href), ['#the-request', '#leads-found-qualified-and-saved', '#leads-found-qualified-and-saved', '#the-draft', '#the-pause-for-approval', '#the-send']);
+test('worked example: every step names the heading that holds the list of steps', () => {
+  assert.deepEqual(example.steps.map((s) => s.href), Array(6).fill('#the-six-steps'));
 });
 
 test('worked example: every waypoint resolves, every window is ordered and inside the scene, and every lit part exists', () => {

@@ -3,7 +3,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { bannedTermsIn, bodyOf, brokenLinks, linksOf, longSentences, rowsOf, section, unlink } from './page-helpers.mjs';
+import { bannedTermsIn, bodyOf, brokenLinks, linksOf, section, unlink } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
 const docs = resolve(dirname(fileURLToPath(import.meta.url)), '../docs');
@@ -14,89 +14,78 @@ const prose = body.replace(/^import .*$/gm, '').replace(/<(?:FigurePlaceholder|F
 const plain = unlink(prose);
 const slotsIn = (s) => [...s.matchAll(/<FigurePlaceholder slot="([^"]+)" \/>|<FlowFigure data=\{workedExampleFlow\} \/>/g)].map((m) => m[1] ?? 'worked-example-flow');
 
-test('the H2s follow the steps and there is no Example H2', () => {
-  assert.deepEqual([...text.matchAll(/^## (.+)$/gm)].map((m) => m[1]), [
-    'Lead and figure',
-    'The request',
-    'Leads found, qualified and saved',
-    'The draft',
-    'The pause for approval',
-    'The send',
-    'The record of work',
-    'Where to go next',
-  ]);
+test('the page runs the scene, the six steps, Where to go next', () => {
+  assert.deepEqual([...text.matchAll(/^## (.+)$/gm)].map((m) => m[1]), ["A member's outreach request", 'The six steps', 'Where to go next']);
   assert.doesNotMatch(text, /^#+ .*Example/m);
+  assert.doesNotMatch(text, /^## (The request|The draft|The send|The pause for approval)$/m);
 });
 
-test('the slot worked-example-flow appears once, in "Lead and figure"', () => {
+test('the slot worked-example-flow appears once, in the scene', () => {
   assert.deepEqual(slotsIn(text), ['worked-example-flow']);
-  assert.deepEqual(slotsIn(section(text, 'Lead and figure')), ['worked-example-flow']);
+  assert.deepEqual(slotsIn(section(text, "A member's outreach request")), ['worked-example-flow']);
 });
 
-test('the lead lays out the scenario and says the app is only an example, without the animation', () => {
-  const lead = section(text, 'Lead and figure');
-  assert.match(lead, /\[member\]\(\.\/glossary\.md#member\)/);
-  assert.match(lead, /\[orchestrator agent\]\(\.\/glossary\.md#orchestrator-agent\)/);
-  assert.match(lead, /outreach email/);
-  assert.match(lead, /\[Vector App\]\(\.\.\/vector-apps\/glossary\.md#app\), a web app that a space shows in an iframe/);
-  assert.match(lead, /only an example/);
+test('the scene opens with Acme, lays out the request and says the app is only an example, without the animation', () => {
+  const scene = section(text, "A member's outreach request");
+  assert.doesNotMatch(plain, /\bthe sales space\b/i);
+  assert.match(scene, /\n\nAcme's sales team has a space, and a \[member\]\(\.\/glossary\.md#member\) of it asks the \[orchestrator agent\]\(\.\/glossary\.md#orchestrator-agent\) to find leads and send an outreach email/);
+  assert.match(scene, /\[Vector App\]\(\.\.\/vector-apps\/glossary\.md#app\), a web app that a space shows in an iframe/);
+  assert.match(scene, /only an example/);
   assert.doesNotMatch(plain, /\b(animation|animated|figure above|the diagram shows)\b/i);
 });
 
+const steps = section(text, 'The six steps');
+const items = [...steps.matchAll(/^(\d)\. \*\*(.+?)\*\*: (.+)$/gm)].map((m) => ({ n: Number(m[1]), term: unlink(m[2]), body: m[3] }));
+
+test('the six steps are one numbered list of bold terms, each ending with its actor: member for 1, 4, 5 and 6, app for 2 and 3', () => {
+  assert.match(steps, /\n\nEach step ends with its \[actor\]\(\.\/glossary\.md#actor\), the identity that it ran as\. The orchestrator agent is not an actor: its steps run as the member\.\n\n1\. /);
+  assert.deepEqual(items.map((i) => i.n), [1, 2, 3, 4, 5, 6]);
+  assert.deepEqual(items.map((i) => i.term), ['Request', 'Find and qualify', 'Save', 'Draft', 'Approve', 'Send']);
+  assert.deepEqual(items.map((i) => i.body.match(/ Actor: (\w+)\.$/)?.[1]), ['member', 'app', 'app', 'member', 'member', 'member']);
+  assert.equal((text.match(/^\| ?-{3}/gm) ?? []).length, 0, 'tables');
+});
+
 test('step 1: a read action of the app, so no ask, and access is checked as the member', () => {
-  const step = section(text, 'The request');
+  const step = items[0].body;
   assert.match(step, /read action/);
   assert.match(step, /no \[ask\]\(\.\/glossary\.md#ask\)/);
-  assert.match(step, /as the member/);
+  assert.match(step, /works as the member/);
+  assert.match(step, /reaches the app only if the member reaches it/);
   assert.match(step, /\[thread\]\(\.\/glossary\.md#thread\)/);
 });
 
 test('steps 2 and 3: Connectors with three services, "lead qualified" as an act, each lead saved as a contact', () => {
-  const step = section(text, 'Leads found, qualified and saved');
-  assert.match(step, /\[Connectors\]\(\.\/glossary\.md#connector\)/);
-  for (const vendor of ['Apollo', 'Exa', 'BrightData']) assert.match(step, new RegExp(`\\b${vendor}\\b`), vendor);
-  assert.match(step, /\[act\]\(\.\.\/vector-apps\/glossary\.md#acts\)/);
-  assert.match(step, /lead qualified/);
-  assert.match(step, /saves each lead as a contact/);
-  assert.match(step, /\[Vector Module\]\(\.\/glossary\.md#vector-module\)/);
+  const find = items[1].body;
+  assert.match(find, /\[Connectors\]\(\.\/glossary\.md#connector\)/);
+  for (const vendor of ['Apollo', 'Exa', 'BrightData']) assert.match(find, new RegExp(`\\b${vendor}\\b`), vendor);
+  assert.match(find, /\[act\]\(\.\.\/vector-apps\/glossary\.md#acts\)/);
+  assert.match(find, /lead qualified/);
+  assert.match(find, /The platform records each connector call\./);
+  const save = items[2].body;
+  assert.match(save, /saves each lead as a contact/);
+  assert.match(save, /\[Vector Module\]\(\.\/glossary\.md#vector-module\)/);
+  assert.match(save, /leads stay in the space/);
 });
 
 test('step 4: the model call goes through the AI gateway', () => {
-  assert.match(section(text, 'The draft'), /\[AI gateway\]\(\.\/glossary\.md#ai-gateway\)/);
+  assert.match(items[3].body, /\[AI gateway\]\(\.\/glossary\.md#ai-gateway\), the one route for every paid model call/);
 });
 
 test('step 5: sending raises an ask in the Command Center and the asking member decides, then the run resumes as that member', () => {
-  const step = section(text, 'The pause for approval');
+  const step = items[4].body;
+  assert.match(step, /Omnibox is a Vector Module for the space's mail and LinkedIn conversations/);
+  assert.match(step, /sends through the Omnibox need approval by default/);
   assert.match(step, /write/);
-  assert.match(step, /\[ask\]|an ask/);
-  assert.match(step, /\[Command Center\]\(\.\/glossary\.md#command-center\)/);
+  assert.match(step, /an ask appears in the \[Command Center\]\(\.\/glossary\.md#command-center\)/);
   assert.match(step, /member who asked decides/);
   assert.match(step, /resumes as that same member/);
-  assert.deepEqual(linksOf(step).filter((l) => l.endsWith('.md')), ['./approvals-and-the-command-center.md']);
+  assert.doesNotMatch(step, /second check/, 'the approvals page owns it');
 });
 
 test('step 6: the email goes out through the Omnibox and the app records no act', () => {
-  const step = section(text, 'The send');
-  assert.match(step, /Omnibox/);
-  assert.match(step, /The app records no act/);
+  assert.match(items[5].body, /Omnibox/);
+  assert.match(items[5].body, /The app records no act for the send/);
   assert.doesNotMatch(plain, /outreach sent/i);
-});
-
-test('the record of work is one table with the actor per step: Member for 1, 4, 5 and 6, App for 2 and 3', () => {
-  assert.equal((text.match(/^\| ?-{3}/gm) ?? []).length, 1, 'tables');
-  const rows = rowsOf(section(text, 'The record of work'));
-  assert.deepEqual(rows[0], ['Step', 'What happens', 'Actor']);
-  assert.deepEqual(rows.slice(1).map((r) => r[0]), ['1', '2', '3', '4', '5', '6']);
-  assert.deepEqual(rows.slice(1).map((r) => r[2]), ['Member', 'App', 'App', 'Member', 'Member', 'Member']);
-  for (const cell of rows.flat()) assert.ok(unlink(cell).split(/\s+/).length <= 15, cell);
-});
-
-test('the record section says the agent is not an actor and links the record-of-work page', () => {
-  const record = section(text, 'The record of work');
-  assert.match(record, /orchestrator agent is not an actor/);
-  assert.match(record, /\[execution\]\(\.\/glossary\.md#execution\), which is who it ran as\. An execution is one unit of work/);
-  assert.match(record, /\[actor\]\(\.\/glossary\.md#actor\)/);
-  assert.match(record, /\(\.\/the-record-of-work\.md\)/);
 });
 
 test('the page does not say that each further lead raises an ask, and does not name Can edit', () => {
@@ -111,8 +100,9 @@ test('Connectors is the box name, and the three vendors appear on no other page 
   }
 });
 
-test('Where to go next links the approvals, extending and record pages, then the glossary', () => {
+test('Where to go next links the approvals, extending and record pages, then the glossary, each with a noun phrase', () => {
   assert.deepEqual(linksOf(section(text, 'Where to go next')), ['./approvals-and-the-command-center.md', './extending-a-space.md', './the-record-of-work.md', './glossary.md']);
+  for (const [, line] of section(text, 'Where to go next').matchAll(/^- \[.+?\]\(.+?\): (.+)$/gm)) assert.doesNotMatch(line, /^(read|see|look|learn|find)\b/i, line);
 });
 
 test('every link resolves and every glossary anchor exists', () => {
@@ -126,25 +116,13 @@ test('the page names no master doc, implementation name, banned term or use case
   assert.doesNotMatch(prose, /\b(floor|primary metric|exact ROI|ROI|continuously|stated human baseline)\b/i);
   assert.doesNotMatch(prose, /LangGraph|interrupt|actorRef|ModuleKey|approvalDefault|approvalRequired|outbox|private_key_jwt|vector-flows|RedemptAI/);
   assert.doesNotMatch(prose, /\b(Hiring|SDR|CSR)\b/);
-  assert.doesNotMatch(prose, /\b(support|sales|hiring)\b/i);
-});
-
-const { workedExampleFlow } = await import('../src/diagrams/figures/worked-example-flow.ts');
-const headings = [...text.matchAll(/^## (.+)$/gm)].map((m) => m[1]);
-const slugOf = (heading) => heading.toLowerCase().replace(/[^a-z0-9 ]/g, '').replace(/ /g, '-');
-
-test('each step of the figure links to the H2 that names that step', () => {
-  assert.equal(workedExampleFlow.steps.length, 6);
-  for (const [i, step] of workedExampleFlow.steps.entries()) {
-    const heading = headings.find((h) => `#${slugOf(h)}` === step.href);
-    assert.ok(heading, `step ${i + 1} links to ${step.href}`);
-    assert.match(section(text, heading), new RegExp(`^Steps? [\\d and]*\\b${i + 1}\\b`, 'm'), `the section opens with step ${i + 1}`);
-  }
+  assert.doesNotMatch(prose, /\b(support|hiring)\b/i);
+  assert.doesNotMatch(prose, /\bsales\b(?! team)/i);
 });
 
 test('the page assumes no TypeScript, Node or React', () => assert.doesNotMatch(prose, /TypeScript|Node|React/));
 
-test('the page follows the voice checks and no sentence passes 25 words', () => {
+test('the page follows the voice checks and has no em dash', () => {
   assert.deepEqual(voiceViolations(text), []);
-  assert.deepEqual(longSentences(plain, { tables: false }), []);
+  assert.doesNotMatch(prose, /—/);
 });

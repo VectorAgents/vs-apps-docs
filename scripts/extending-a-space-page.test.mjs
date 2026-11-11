@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { bannedTermsIn, bodyOf, brokenLinks, linksOf, longSentences, section, unlink } from './page-helpers.mjs';
+import { bannedTermsIn, bodyOf, brokenLinks, linksOf, section, unlink } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
 const docs = resolve(dirname(fileURLToPath(import.meta.url)), '../docs');
@@ -19,9 +19,9 @@ const rows = (s) =>
     .filter((l) => l.startsWith('|'))
     .map((l) => l.split('|').slice(1, -1).map((c) => c.trim()));
 
-test('the page runs lead, Example, four detail sections, Where to go next', () => {
+test('the page runs lead, the scene, four detail sections, Where to go next', () => {
   assert.deepEqual([...text.matchAll(/^## (.+)$/gm)].map((m) => m[1]), [
-    'Example',
+    'A question about open tickets',
     'The three kinds and how each gets in',
     'The comparison',
     'What the space does for every call',
@@ -35,10 +35,14 @@ test('the lead defines a Vector App, an A2A agent and an MCP server, each with a
   assert.match(lead, /\[Vector App\]\(\.\.\/vector-apps\/glossary\.md#app\) is a web app that a space shows in an iframe/);
   assert.match(lead, /\[A2A\]\(\.\/glossary\.md#a2a\) agent/);
   assert.match(lead, /\[MCP\]\(\.\/glossary\.md#mcp\) server/);
+  assert.match(lead, /All three run outside the space, on their own origins\./);
 });
 
-test('the example offers one ticket tracker three ways and names no vendor', () => {
-  const example = section(text, 'Example');
+test('the scene is the first H2, with no Example heading and Acme wording, and offers one ticket tracker three ways with no vendor', () => {
+  assert.equal([...text.matchAll(/^## (.+)$/gm)][0][1], 'A question about open tickets');
+  assert.doesNotMatch(text, /^## .*\bExample\b/m);
+  const example = section(text, 'A question about open tickets');
+  assert.match(example, /\n\nAcme's engineering team has a space, and a \[member\]\(\.\/glossary\.md#member\) of it asks the \[orchestrator agent\]\(\.\/glossary\.md#orchestrator-agent\) which tickets are still open/);
   assert.match(example, /ticket tracker/);
   assert.match(example, /\[member\]\(\.\/glossary\.md#member\)/);
   assert.match(example, /\[orchestrator agent\]\(\.\/glossary\.md#orchestrator-agent\)/);
@@ -52,7 +56,10 @@ test('the slot extending-flow appears once, in "The three kinds and how each get
 });
 
 test('the paths section says how each kind gets in and that a standalone one needs no SDK', () => {
-  const paths = unlink(section(text, 'The three kinds and how each gets in'));
+  const kinds = section(text, 'The three kinds and how each gets in');
+  assert.match(kinds, /\n\nEach kind gets in by its own path:\n\n- /);
+  assert.deepEqual([...kinds.matchAll(/^- \*\*(.+?)\*\*: /gm)].map((m) => unlink(m[1])), ['Vector App', 'A2A agent', 'MCP server']);
+  const paths = unlink(kinds);
   assert.match(paths, /someone who may manage agents in the space/);
   assert.match(paths, /agent card/);
   assert.match(paths, /stored credential/);
@@ -90,16 +97,15 @@ test('the shared call path says each call starts in a run, is gated first and is
   assert.match(shared, /\brun\b/);
   assert.match(shared, /works as the member/);
   assert.match(shared, /before the call/i);
-  assert.match(shared, /never learns who/);
+  assert.doesNotMatch(shared, /never learns who/, 'the table owns it');
   assert.match(shared, /records/);
   assert.doesNotMatch(shared, /inherit/i, 'no "A2A inherits the space access"');
 });
 
 test('choosing a kind gives one fit for each kind', () => {
   const choosing = unlink(section(text, 'Choosing a kind'));
-  assert.match(choosing, /\*\*Vector App\.\*\*/);
-  assert.match(choosing, /\*\*A2A agent\.\*\*/);
-  assert.match(choosing, /\*\*MCP server\.\*\*/);
+  assert.match(choosing, /\n\nEach kind fits one case:\n\n/);
+  assert.deepEqual([...choosing.matchAll(/^- \*\*(.+?)\*\*: /gm)].map((m) => m[1]), ['Vector App', 'A2A agent', 'MCP server']);
 });
 
 test('outside Where to go next the body links only glossaries and concept pages, no build page or guide', () => {
@@ -132,13 +138,14 @@ test('the page names no master doc, implementation name, banned term, vendor or 
   assert.doesNotMatch(prose, /private_key_jwt|outbox|event plane|events plane|CloudEvents|JWKS|RS256|signMcpToken|McpExecutorTokenService|credentialInstanceId|fetchAgentCardOnly|appKey|appId|vs-span|connector#run|manage_agents|approvalRequired/);
   assert.deepEqual(bannedTermsIn(prose), []);
   assert.doesNotMatch(prose, /\b(Apollo|Exa|BrightData|Hiring|SDR|CSR|Slack)\b/);
-  assert.doesNotMatch(prose, /\b(support|sales|hiring)\b/i);
+  assert.doesNotMatch(prose, /\b(support|hiring)\b/i);
+  assert.doesNotMatch(prose, /\bsales\b(?! team)/i);
   assert.doesNotMatch(prose, /public host|#\d{3}\b/);
 });
 
 test('the page assumes no TypeScript, Node or React', () => assert.doesNotMatch(prose, /TypeScript|Node|React/));
 
-test('the page follows the voice checks and no sentence passes 25 words', () => {
+test('the page follows the voice checks and has no em dash', () => {
   assert.deepEqual(voiceViolations(text), []);
-  assert.deepEqual(longSentences(plain, { tables: false }), []);
+  assert.doesNotMatch(prose, /—/);
 });

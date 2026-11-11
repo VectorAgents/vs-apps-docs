@@ -212,7 +212,7 @@ Source paths are in the sibling `vector-spaces` repo, under `docs/`. The product
 
 ## Extending a space
 
-Source paths are in the sibling `vector-spaces` repo, under `docs/`. The page is `docs/vector-space/extending-a-space.md`. Checked at `vector-spaces` commit `cb4c39e10`. The page has 4 table rows, no "when a write asks" row, no "A2A inherits the space's access", no public-host rule and no #248 detail.
+Source paths are in the sibling `vector-spaces` repo, under `docs/`. The page is `docs/vector-space/extending-a-space.md`. Checked at `vector-spaces` commit `cb4c39e10`. The page has 4 table rows, the three paths as one bold-term list, the scene as the first H2 with no Example H2, no "when a write asks" row, no "A2A inherits the space's access", no public-host rule and no #248 detail.
 
 Gate row 8 of the Vector Space concepts spec: a cell marked CODE rests on code and not on a master doc, and a cell marked INFERRED joins two statements that no master doc makes in one place. The section does not publish until the vector-spaces team confirms each marked cell, or the cell's row is cut.
 
@@ -236,7 +236,7 @@ Gate row 8 of the Vector Space concepts spec: a cell marked CODE rests on code a
 | Shared path: a call starts in an agent run that works as the member. Before the call the space decides what the run may reach. For an MCP tool the connector and the operation must pass though the server never learns who. The page makes no claim that an A2A agent inherits the space's access. | `systems/access/RUNTIME.md` (Run identity; Runtime gating), `systems/apps/BINDINGS.md` (Capabilities and access). |
 | Shared path: the space records each call. An MCP call is a record with its actor and fails open. An A2A call is a run. The remote runs outside the space, on its own origin. | `systems/context-hub/CALLS.md` (The call record), `systems/runs/README.md` (One record, every agent kind). |
 | Choosing a kind: a Vector App for screens and data of your own, an A2A agent for an agent that reasons, an MCP server for tools or an API with no screens or reasoning. | Backed by the rows above. |
-| The example is a placeholder ticket tracker offered three ways, so it names no vendor and no example app. | Spec section 3.4. |
+| The scene is a placeholder ticket tracker offered three ways, so it names no vendor and no example app. Acme's engineering team is the setting. | Spec section 3.4. |
 | The `extending-flow` figure has four frames: the shared start, then a call to each kind. Its captions repeat the claims above and add none. The record rows name the member as actor because each call starts in the member's run. The actor kind of an app call is not stated in the master docs. | Spec section 6. |
 
 ## Agents in a space
@@ -308,7 +308,7 @@ Source paths are in the sibling `vector-spaces` repo, under `docs/`. The product
 
 ## How work moves through a space
 
-Source paths are in the sibling `vector-spaces` repo, under `docs/`. The spec overrides: one H2 per step with no Example H2, the box is named "Connectors", the page does not name Can edit on contacts, it does not say that each further lead raises an ask, and the actors are Member for steps 1, 4, 5 and 6 and App for steps 2 and 3. The agent is not an actor.
+Source paths are in the sibling `vector-spaces` repo, under `docs/`. The spec overrides: the scene is the first H2 and the six steps are one numbered list with the actor at the end of each item (no table, no H2 per step), Acme's sales team is the setting, the box is named "Connectors", the page does not name Can edit on contacts, it does not say that each further lead raises an ask, and the actors are Member for steps 1, 4, 5 and 6 and App for steps 2 and 3. The agent is not an actor.
 
 | Claim | Rests on |
 | --- | --- |
@@ -322,7 +322,7 @@ Source paths are in the sibling `vector-spaces` repo, under `docs/`. The spec ov
 | Sending is a write, and sends through the Omnibox need approval by default. The run stops and an ask appears in the Command Center. | `systems/context-hub/MODULES.md` (The omnibox module), `systems/COMMAND-CENTER.md` (The ask; Grants: The default, and what loosens it; Raised and resolved). |
 | The member who asked decides, because a person answers for their own run. After approval the run resumes as the same actor, and an approval is a second check and never gives access. | `systems/COMMAND-CENTER.md` (The audience; Deciding). |
 | The email goes out through the Omnibox as the member. The app records no act for the send (product decision). | `systems/context-hub/MODULES.md` (Access & visibility; The omnibox module), `systems/COMMAND-CENTER.md` (Deciding), `systems/access/RUNTIME.md` (Run identity). |
-| The record names an actor per step: Member for 1, 4, 5 and 6, App for 2 and 3. The actor kind of an app's connector call is not stated in the docs. The agent is not an actor: the master has six actor arms. | `systems/governance/README.md` (The attribution envelope; `actorRef`: one grammar over six arms), `systems/governance/EXECUTION.md` (The record), `systems/INTELLIGENCE.md` (Admission). |
+| Each step ends with its actor: member for 1, 4, 5 and 6, app for 2 and 3. The actor kind of an app's connector call is not stated in the docs. The agent is not an actor: the master has six actor arms. | `systems/governance/README.md` (The attribution envelope; `actorRef`: one grammar over six arms), `systems/governance/EXECUTION.md` (The record), `systems/INTELLIGENCE.md` (Admission). |
 
 ## Who can do what
 

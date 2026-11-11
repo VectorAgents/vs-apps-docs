@@ -178,32 +178,32 @@ export const workedExampleFlow: FlowData = {
     {
       text: 'A member asks the orchestrator agent to find leads. The agent calls an action of the example Vector App, and Vector Space checks access as the member.',
       record: { text: 'Member asks the agent.', actor: 'Member' },
-      href: '#the-request',
+      href: '#the-six-steps',
     },
     {
       text: 'The app uses the space\'s Connectors for Apollo, Exa and BrightData, then qualifies the leads. It records "lead qualified" for each one.',
       record: { text: 'The platform records each connector call. The app records "lead qualified" for each lead.', actor: 'App' },
-      href: '#leads-found-qualified-and-saved',
+      href: '#the-six-steps',
     },
     {
       text: 'The app saves each qualified lead as a contact.',
       record: { text: 'The app saves the leads as contacts.', actor: 'App' },
-      href: '#leads-found-qualified-and-saved',
+      href: '#the-six-steps',
     },
     {
       text: 'The agent drafts one outreach email for a qualified lead. The model call goes through the AI gateway.',
       record: { text: 'The agent drafts the email through the AI gateway.', actor: 'Member' },
-      href: '#the-draft',
+      href: '#the-six-steps',
     },
     {
       text: 'Sending is a write, so it raises an ask in the Command Center. The member who asked approves it, and the run resumes as that member.',
       record: { text: 'The member approves the ask.', actor: 'Member' },
-      href: '#the-pause-for-approval',
+      href: '#the-six-steps',
     },
     {
       text: 'The email goes out through the Omnibox. The app records no act for this step.',
       record: { text: 'The email goes out through the Omnibox.', actor: 'Member' },
-      href: '#the-send',
+      href: '#the-six-steps',
     },
   ],
   scenes,

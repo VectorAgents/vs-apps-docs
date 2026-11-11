@@ -31,7 +31,7 @@ const headings = {
   'agent-tree': 'The agent tree',
   'access-check': 'How the inputs combine',
   'record-of-work': 'The four governance views',
-  'worked-example-flow': 'Lead and figure',
+  'worked-example-flow': "A member's outreach request",
   'approvals-flow': 'The ask and who decides it',
   'extending-flow': 'The three kinds and how each gets in',
 };
