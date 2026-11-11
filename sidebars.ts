@@ -25,6 +25,7 @@ const sidebars: SidebarsConfig = {
       label: 'Workflows and extensions',
       collapsed: false,
       items: [
+        'vector-space/agent-studio',
         'vector-space/how-work-moves-through-a-space',
         'vector-space/approvals-and-the-command-center',
         'vector-space/extending-a-space',

@@ -273,6 +273,20 @@ The part of Vector Space where a space manager sets up the [orchestrator agent](
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
 
+### evaluation
+
+A test of an agent in [Agent Studio](#agent-studio). Each saved question runs as a [run](#run), and a judge model scores the answer against the expected answer. It can run on the draft or on the published version.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### linked chat
+
+A chat on a [channel](#channel) that the owner of the channel has linked to the space, by posting a one-time code in it. A channel accepts a message only from a linked chat.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
 ### standing approval
 
 Permission for an agent to run one operation, or for an app's approval to pass, without asking each time. Vector Space shows it as "always allow".
