@@ -75,27 +75,45 @@ test('the paths section says how each extension gets in and that a standalone on
   assert.match(paths, /app definition/);
 });
 
-test('the comparison is one table of the 4 rows of the spec, with cells of 15 words or fewer', () => {
+test('the comparison opens with its lead, then one table of the 4 rows, with cells of 15 words or fewer', () => {
   assert.equal((text.match(/^\| ?-{3}/gm) ?? []).length, 1, 'tables');
-  const [header, , ...data] = rows(section(text, 'The comparison'));
+  const comparison = section(text, 'The comparison');
+  assert.match(comparison, /^The comparison\n\nHere is what each extension learns from the space and what it can do there\.\n\n\|/);
+  const [header, , ...data] = rows(comparison);
   assert.deepEqual(header.slice(1), ['Vector App', 'A2A agent', 'MCP server']);
-  assert.deepEqual(data.map((r) => r[0]), ['Calling member', 'Platform data', 'Model calls', 'Acts']);
+  assert.deepEqual(data.map((r) => unlink(r[0])), ['Caller', 'Platform data', 'Model', 'Acts']);
+  assert.equal(data[3][0], '[Acts](../vector-apps/glossary.md#acts)');
   for (const row of data) {
     assert.equal(row.length, 4);
-    for (const cell of row) assert.ok(unlink(cell).split(/\s+/).length <= 15, cell);
+    for (const cell of row.slice(1)) {
+      assert.ok(unlink(cell).split(/\s+/).length <= 15, cell);
+      assert.doesNotMatch(cell, /^It\b/, cell);
+    }
   }
   const cells = data.map((r) => r.slice(1).map(unlink));
-  assert.match(cells[0][0], /^Named, with the capabilities they hold/);
-  assert.match(cells[0][1], /Named only if an app offers it/);
-  assert.match(cells[0][1], /stored credential/);
-  assert.match(cells[0][2], /^Never named/);
-  assert.match(cells[1][0], /Only what a space manager attached and the member reaches/);
-  assert.match(cells[1][1], /no token to call the space/);
-  assert.match(cells[1][2], /no token to call the space; receives the call's arguments/);
-  assert.match(cells[2][0], /model slot a space manager sets/);
-  assert.match(cells[2][1], /remote agent's own model/);
-  assert.match(cells[2][2], /AI gateway/);
-  assert.deepEqual(cells[3], ['Yes, from the app\'s server', 'No', 'No']);
+  assert.deepEqual(cells[0], [
+    'The app sees the member by name, with the capabilities they hold.',
+    'Only an agent that an app offers sees the member. Others get a stored credential.',
+    'The server never sees the member.',
+  ]);
+  assert.deepEqual(cells[1], [
+    'The app reaches what a space manager attached and the member can reach.',
+    'The agent gets no token, so it cannot call the space.',
+    'The server gets no token. It sees only the arguments of each call.',
+  ]);
+  assert.deepEqual(cells[2], [
+    'A space manager sets the model slot the app uses.',
+    'The remote agent runs on its own model.',
+    'None. The model call of the calling agent goes through the AI gateway.',
+  ]);
+  assert.deepEqual(cells[3], ['Yes, from the server of the app.', 'No. An app that offers it can record acts for it.', 'No.']);
+  assert.match(data[2][1], /\[model slot\]\(\.\.\/vector-apps\/glossary\.md#model-slot\)/);
+  assert.match(data[2][3], /\[AI gateway\]\(\.\/glossary\.md#ai-gateway\)/);
+});
+
+test('no line follows the comparison table', () => {
+  assert.ok(section(text, 'The comparison').trimEnd().endsWith('|'));
+  assert.doesNotMatch(plain, /Only a Vector App records/);
 });
 
 test('the shared call path says each call starts in a run, is gated first and is recorded', () => {
