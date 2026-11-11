@@ -79,7 +79,7 @@ Also written HITL. A run that pauses until a person decides. The agent or app ra
 
 ### channel
 
-An agent that a person reaches from outside the web app, with its own prompt. The channel is the agent, not the service it is reached through: WhatsApp, Messenger and Instagram are Meta messaging services.
+An agent that a person reaches through a messaging service, with its own prompt. The channel is the agent, not the service it is reached through: WhatsApp, Messenger and Instagram are Meta messaging services.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
@@ -115,6 +115,13 @@ The customer account in Vector Space. Every user, API key, resource and space be
 ### member
 
 A person in an organization who is in a space. Membership alone reaches what [General access](#general-access) gives. A [share](#share) gives more.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### web interface
+
+The interface in a browser that the internal team of an organization uses to work in a space. Customers of the organization do not use it. They reach an agent through a [channel](#channel). A [Vector App](../vector-apps/glossary.md#app) is a web app that this interface shows in an iframe.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.

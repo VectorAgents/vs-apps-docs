@@ -13,7 +13,7 @@ import { agentStudioLifecycle } from '@site/src/diagrams/figures/agent-studio-li
 
 ## A support message in a space
 
-A support team has a space with a [channel](./glossary.md#channel), which lets people reach an agent from outside the web app. A customer writes in a [linked chat](./glossary.md#linked-chat), a chat on the channel that its owner has linked to the space. The message reaches the [orchestrator agent](./glossary.md#orchestrator-agent), which hands it to a ticket-classifier agent that sorts it by topic and urgency.
+A support team has a space with a [channel](./glossary.md#channel), an agent that people reach through a messaging service. A customer writes in a [linked chat](./glossary.md#linked-chat), a chat on the channel that its owner has linked to the space. The message reaches the [orchestrator agent](./glossary.md#orchestrator-agent), which hands it to a ticket-classifier agent that sorts it by topic and urgency.
 
 The orchestrator agent then hands the case to a remote [A2A](./glossary.md#a2a) agent of the team's customer relationship management (CRM) system, which looks up the customer. The orchestrator agent sends one reply back to the chat. The team set up all of these agents in Agent Studio, tested them on a draft and published them as one version.
 

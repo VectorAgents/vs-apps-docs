@@ -15,7 +15,7 @@ Acme's sales team has a space, and a [member](./glossary.md#member) of it asks t
 
 Three rules hold for every part of Vector Space, whichever part you use:
 
-- **One access model**: Vector Space works out access for each operation from [General access](./glossary.md#general-access), [shares](./glossary.md#share), [blocks](./glossary.md#block) and [Conditions](./glossary.md#condition), and the same check covers the web app, the API, agents and apps. [One access model](./one-access-model.md) gives the detail.
+- **One access model**: Vector Space works out access for each operation from [General access](./glossary.md#general-access), [shares](./glossary.md#share), [blocks](./glossary.md#block) and [Conditions](./glossary.md#condition), and the same check covers the [web interface](./glossary.md#web-interface), the API, agents and apps. [One access model](./one-access-model.md) gives the detail.
 - **One AI gateway**: every paid model call goes through the AI gateway, so the organization pays through its own accounts. The next section gives the detail.
 - **One record of work**: each run, call and [act](../vector-apps/glossary.md#acts) records who it ran as and what started it, and [the record of work](./the-record-of-work.md) shows how [governance](./glossary.md#governance) reads these records.
 

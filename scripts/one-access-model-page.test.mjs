@@ -91,10 +91,10 @@ test('one sentence says an approval is a second check', () => {
   assert.ok(linksOf(every).includes('./approvals-and-the-command-center.md'));
 });
 
-test('the page covers the web app, the API, agents and apps', () => {
+test('the page covers the web interface, the API, agents and apps', () => {
   const every = section(text, 'One check for every way in');
   for (const word of ['app', 'API', 'agent', 'Vector App']) assert.ok(every.includes(word), word);
-  assert.ok(lead.includes('the web app, the API, agents and apps'));
+  assert.ok(lead.includes('the [web interface](./glossary.md#web-interface), the API, agents and apps'));
 });
 
 test('every link resolves, and Where to go next has 2 to 4 links ordered who-can-do-what, how-work-moves, glossary', () => {

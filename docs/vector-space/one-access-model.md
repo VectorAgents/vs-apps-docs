@@ -1,12 +1,12 @@
 ---
 title: One access model
-description: How a request is decided, the same for the web app, the API, agents and apps.
+description: How a request is decided, the same for the web interface, the API, agents and apps.
 ---
 
 import StructureFigure from '@site/src/components/StructureFigure';
 import { accessCheck } from '@site/src/diagrams/figures/access-check.ts';
 
-Access defines the set of operations a user, agent or app is permitted to perform on a resource within a space. Vector Space works it out for each operation with one check, the same for the web app, the API, agents and apps, and the check reads four inputs, with clear rules that say which input wins.
+Access defines the set of operations a user, agent or app is permitted to perform on a resource within a space. Vector Space works it out for each operation with one check, the same for the [web interface](./glossary.md#web-interface), the API, agents and apps, and the check reads four inputs, with clear rules that say which input wins.
 
 ## A lead search limited by region
 
@@ -42,7 +42,7 @@ These rules say what wins, and they are not a numbered order:
 
 The rules are the same for every way in, and what differs is who the work runs as:
 
-- **Web app**: the work runs as the member.
+- **Web interface**: the work runs as the member.
 - **API key**: runs as the identity it stands for, so a personal token acts as its owner and a key of a [service account](./glossary.md#service-account) acts as that account.
 - **Agent**: reaches what the member it works for reaches, and the settings of an agent can narrow this and never widen it.
 - **Vector App**: reaches only the overlap of its own shares and the access of the member. A [capability grant](../vector-apps/glossary.md#capability-grant) is a share on named capabilities of a Vector App at Can use, so the app reaches exactly those capabilities.

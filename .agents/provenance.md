@@ -28,7 +28,7 @@ The glossary uses the published word where the product glossary uses an internal
 | staff | Staff (`UserType.Staff`) | A platform operator, reaching organizations through the tenancy tree. |
 | binding | Binding (`access.app_bindings`) | An app activated on a space. |
 | ask | Ask (`runs.asks`) | An approval is one kind of ask. |
-| channel | Channel (`studio.channels`) | An agent reached from outside the web app. WhatsApp, Messenger and Instagram are Meta messaging services. |
+| channel | Channel (`studio.channels`) | An agent reached through a messaging service. WhatsApp, Messenger and Instagram are Meta messaging services. |
 
 ## SDK gaps
 
