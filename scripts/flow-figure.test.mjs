@@ -514,7 +514,7 @@ test('approvals-flow: the legend has the cube and the hop, and the text names no
   assert.doesNotMatch(JSON.stringify(approvals), /poll|skipped|\b\d+ (fires|runs)\b/i);
 });
 
-test('extending-flow: Member, Orchestrator agent and Context Hub in the space, and the three kinds outside on dashed links', () => {
+test('extending-flow: Member, Orchestrator agent and Context Hub in the space, and the three extensions outside on dashed links', () => {
   const on = (id) => extending.parts.filter((p) => p.on === id).map((p) => p.label).sort();
   assert.deepEqual(extending.slabs.map((s) => s.label).sort(), ['Organization', 'Workspace']);
   assert.deepEqual(on('space'), ['Context Hub', 'Member', 'Orchestrator agent']);
@@ -523,12 +523,13 @@ test('extending-flow: Member, Orchestrator agent and Context Hub in the space, a
   assert.deepEqual(extending.links.map((l) => [l.from, l.to]).sort(), [['contextHub', 'mcp'], ['orchestrator', 'a2a'], ['orchestrator', 'app']]);
 });
 
-test('extending-flow: four steps with one scene each, the shared start and then one call per kind, with no pause', () => {
+test('extending-flow: four steps with one scene each, the shared start and then one call per extension, with no pause', () => {
   assert.equal(extending.steps.length, 4);
   assert.deepEqual(extending.scenes.map((s) => s.step), [1, 2, 3, 4]);
   assert.ok(extending.scenes.every((s) => !s.pause));
   assert.equal(advance(extending, 0, 600_000), 4);
-  assert.deepEqual(extending.steps.map((s) => s.href), ['#what-the-space-does-for-every-call', '#the-three-kinds-and-how-each-gets-in', '#the-three-kinds-and-how-each-gets-in', '#the-three-kinds-and-how-each-gets-in']);
+  assert.deepEqual(extending.steps.map((s) => s.href), ['#what-the-space-does-for-every-call', '#adding-an-extension', '#adding-an-extension', '#adding-an-extension']);
+  assert.match(extending.steps[0].text, /All three extensions start here\./);
   assert.match(extending.steps[1].text, /token/);
   assert.match(extending.steps[2].text, /stored credential/);
   assert.match(extending.steps[3].text, /never learns who asked/);

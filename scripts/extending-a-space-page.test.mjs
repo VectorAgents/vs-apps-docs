@@ -22,10 +22,10 @@ const rows = (s) =>
 test('the page runs lead, the scene, four detail sections, Where to go next', () => {
   assert.deepEqual([...text.matchAll(/^## (.+)$/gm)].map((m) => m[1]), [
     'A question about open tickets',
-    'The three kinds and how each gets in',
+    'Adding an extension',
     'The comparison',
     'What the space does for every call',
-    'Choosing a kind',
+    'Extension use cases',
     'Where to go next',
   ]);
 });
@@ -36,6 +36,12 @@ test('the lead defines a Vector App, an A2A agent and an MCP server, each with a
   assert.match(lead, /\[A2A\]\(\.\/glossary\.md#a2a\) agent/);
   assert.match(lead, /\[MCP\]\(\.\/glossary\.md#mcp\) server/);
   assert.match(lead, /All three run outside the space, on their own origins\./);
+});
+
+test('the lead opens with the definition of an extension and no text on this page says kind for one', () => {
+  const lead = unlink(body.split(/^## /m)[0]);
+  assert.match(lead, /\n\nAn extension adds logic of a team's own to a space\. It is a Vector App, an A2A agent or an MCP server\. /);
+  assert.doesNotMatch(plain, /\bkinds?\b/i);
 });
 
 test('the scene is the first H2, with no Example heading and Acme wording, and offers one ticket tracker three ways with no vendor', () => {
@@ -50,16 +56,16 @@ test('the scene is the first H2, with no Example heading and Acme wording, and o
   assert.doesNotMatch(example, /Jira|Linear|GitHub|Zendesk|ClickUp/);
 });
 
-test('the slot extending-flow appears once, in "The three kinds and how each gets in"', () => {
+test('the slot extending-flow appears once, in "Adding an extension"', () => {
   assert.deepEqual(slotsIn(text), ['extending-flow']);
-  assert.deepEqual(slotsIn(section(text, 'The three kinds and how each gets in')), ['extending-flow']);
+  assert.deepEqual(slotsIn(section(text, 'Adding an extension')), ['extending-flow']);
 });
 
-test('the paths section says how each kind gets in and that a standalone one needs no SDK', () => {
-  const kinds = section(text, 'The three kinds and how each gets in');
-  assert.match(kinds, /\n\nEach kind gets in by its own path:\n\n- /);
-  assert.deepEqual([...kinds.matchAll(/^- \*\*(.+?)\*\*: /gm)].map((m) => unlink(m[1])), ['Vector App', 'A2A agent', 'MCP server']);
-  const paths = unlink(kinds);
+test('the paths section says how each extension gets in and that a standalone one needs no SDK', () => {
+  const adding = section(text, 'Adding an extension');
+  assert.match(adding, /\n\nEach extension gets in by its own path:\n\n- /);
+  assert.deepEqual([...adding.matchAll(/^- \*\*(.+?)\*\*: /gm)].map((m) => unlink(m[1])), ['Vector App', 'A2A agent', 'MCP server']);
+  const paths = unlink(adding);
   assert.match(paths, /someone who may manage agents in the space/);
   assert.match(paths, /agent card/);
   assert.match(paths, /stored credential/);
@@ -94,6 +100,7 @@ test('the comparison is one table of the 4 rows of the spec, with cells of 15 wo
 
 test('the shared call path says each call starts in a run, is gated first and is recorded', () => {
   const shared = unlink(section(text, 'What the space does for every call'));
+  assert.match(shared, /\n\nThe three extensions share one path\./);
   assert.match(shared, /\brun\b/);
   assert.match(shared, /works as the member/);
   assert.match(shared, /before the call/i);
@@ -102,10 +109,10 @@ test('the shared call path says each call starts in a run, is gated first and is
   assert.doesNotMatch(shared, /inherit/i, 'no "A2A inherits the space access"');
 });
 
-test('choosing a kind gives one fit for each kind', () => {
-  const choosing = unlink(section(text, 'Choosing a kind'));
-  assert.match(choosing, /\n\nEach kind fits one case:\n\n/);
-  assert.deepEqual([...choosing.matchAll(/^- \*\*(.+?)\*\*: /gm)].map((m) => m[1]), ['Vector App', 'A2A agent', 'MCP server']);
+test('the use cases give one fit for each extension', () => {
+  const cases = unlink(section(text, 'Extension use cases'));
+  assert.match(cases, /\n\nEach extension fits one case:\n\n/);
+  assert.deepEqual([...cases.matchAll(/^- \*\*(.+?)\*\*: /gm)].map((m) => m[1]), ['Vector App', 'A2A agent', 'MCP server']);
 });
 
 test('outside Where to go next the body links only glossaries and concept pages, no build page or guide', () => {

@@ -33,7 +33,7 @@ const headings = {
   'record-of-work': 'The four governance views',
   'worked-example-flow': "A member's outreach request",
   'approvals-flow': 'The ask and who decides it',
-  'extending-flow': 'The three kinds and how each gets in',
+  'extending-flow': 'Adding an extension',
 };
 
 test('figuresOf reads a placeholder by slot and a real figure by the id of its data file', () => {

@@ -74,24 +74,24 @@ export const extendingFlow: FlowData = {
   ],
   steps: [
     {
-      text: 'A member asks the orchestrator agent which tickets are still open. The agent starts a run that works as the member. All three kinds start here.',
+      text: 'A member asks the orchestrator agent which tickets are still open. The agent starts a run that works as the member. All three extensions start here.',
       record: { text: 'The member asks, and the run starts as the member.', actor: 'Member' },
       href: '#what-the-space-does-for-every-call',
     },
     {
       text: 'The agent calls the Vector App. The space sends a token that it makes for the member.',
       record: { text: 'The space records the call to the app.', actor: 'Member' },
-      href: '#the-three-kinds-and-how-each-gets-in',
+      href: '#adding-an-extension',
     },
     {
       text: 'The agent hands the question to the A2A agent. The space sends the stored credential for it, if the organization saved one.',
       record: { text: 'The call to the A2A agent is recorded as a run.', actor: 'Member' },
-      href: '#the-three-kinds-and-how-each-gets-in',
+      href: '#adding-an-extension',
     },
     {
       text: 'The agent calls a tool of the MCP server through its connector in the Context Hub. The stored credential of the connector goes with the call, and the server never learns who asked.',
       record: { text: 'The call to the MCP server is recorded with its actor.', actor: 'Member' },
-      href: '#the-three-kinds-and-how-each-gets-in',
+      href: '#adding-an-extension',
     },
   ],
   scenes,
