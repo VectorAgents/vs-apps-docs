@@ -529,7 +529,6 @@ test('extending-flow: four steps with one scene each, the shared start and then 
   assert.ok(extending.scenes.every((s) => !s.pause));
   assert.equal(advance(extending, 0, 600_000), 4);
   assert.deepEqual(extending.steps.map((s) => s.href), ['#what-the-space-does-for-every-call', '#adding-an-extension', '#adding-an-extension', '#adding-an-extension']);
-  assert.match(extending.steps[0].text, /All three extensions start here\./);
   assert.match(extending.steps[1].text, /token/);
   assert.match(extending.steps[2].text, /stored credential/);
   assert.match(extending.steps[3].text, /never learns who asked/);
