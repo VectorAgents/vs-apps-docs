@@ -64,9 +64,9 @@ test('the page has no figure slot', () => {
   assert.doesNotMatch(readFileSync(resolve(root, 'src/diagrams/figures/slots.ts'), 'utf8'), /why-vector-space/);
 });
 
-test('the problem section asks who may reach what, whose keys and credits, and who did what', () => {
+test('the problem section names three problems: reaching data or tools, keys and credits, and who did what', () => {
   const problem = section(text, 'The problem Vector Space solves');
-  for (const question of [/who may reach what/i, /whose keys and credits/i, /who did what/i]) assert.match(problem, question);
+  for (const phrase of [/reach data or tools/i, /keys and credits/i, /who did what/i]) assert.match(problem, phrase);
 });
 
 test('the scene sits in the problem section: a member asks for leads, the call goes through the gateway, the run is recorded under the member', () => {

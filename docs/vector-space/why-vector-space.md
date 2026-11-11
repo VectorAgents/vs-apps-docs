@@ -7,7 +7,7 @@ Once [AI](./glossary.md#ai) agents work on an [organization](./glossary.md#organ
 
 ## The problem Vector Space solves
 
-An organization that lets agents act on its own data must answer three questions: who may reach what, whose keys and credits a model call uses and who did what. Each question has one rule in Vector Space.
+When agents act on an organization's own data, three problems follow. A person or agent may reach data or tools that they should not, a model call may use keys and credits that the organization does not control, and no one can tell who did what. Vector Space solves each with one rule.
 
 Acme's sales team has a space, and a [member](./glossary.md#member) of it asks the [orchestrator agent](./glossary.md#orchestrator-agent) to find leads and send an outreach email. The agent reaches only what that member may reach. The model call goes through the [AI gateway](./glossary.md#ai-gateway), on Acme's own AI provider account, and Vector Space records the run under the member's name.
 

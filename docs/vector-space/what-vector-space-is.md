@@ -20,7 +20,7 @@ A member of a space asks the orchestrator agent to find leads. The orchestrator 
 
 ## The three platform rules
 
-An organization that lets agents act on its data must answer three questions: which data and tools a person or agent may use, whose AI provider account and budget a model call uses, and who started each run. Each question has one rule, and each rule holds for every part of Vector Space.
+Agents that act on an organization's data need limits on data access, AI spend and accountability. Vector Space sets those limits with three rules, and every part of the platform follows all three.
 
 - **One access model**: one check decides each request, and a person and an agent face that same check, whether the request comes from the web app, the API, an agent or an app, as [One access model](./one-access-model.md) shows.
 - **One AI gateway**: every paid model call goes through the gateway, so no agent or app holds an AI provider key and the organization controls its spend.
