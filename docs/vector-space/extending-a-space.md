@@ -1,6 +1,6 @@
 ---
 title: Extending a space
-description: A Vector App, an A2A agent and an MCP server compared.
+description: A Vector App, an A2A agent and an MCP server compared, and when to choose each.
 ---
 
 import FlowFigure from '@site/src/components/FlowFigure';
@@ -47,13 +47,15 @@ Before the call, the space decides what the run may reach. A Vector App is reach
 
 The space records each call. A call to an MCP server is a record with its actor. A call to an A2A agent is a run. [The record of work](./the-record-of-work.md) says what each record holds.
 
-## Extension use cases
+## Choosing an extension
 
-Each extension fits one case:
+Pick by what your logic does:
 
-- **Vector App**: you want members to use your own screens, data and workflow inside the space.
-- **A2A agent**: you have an agent that does its own reasoning, and the space hands tasks to it.
-- **MCP server**: you have tools or an API that agents call, and you need no screens and no reasoning.
+- **Vector App**: build one when your workflow needs screens, pages or data tables for members.
+- **A2A agent**: build one when a task needs autonomous reasoning on its own model and the space hands it the task.
+- **MCP server**: build one when agents need to look up data in an external API or take an action in a tool, with no screens and no reasoning. To call an existing REST API, add a REST [connector](./glossary.md#connector) in the Context Hub, with no MCP server.
+
+If a workflow needs screens and also reasoning or tools, build a Vector App that offers an A2A agent or an MCP server.
 
 ## Where to go next
 

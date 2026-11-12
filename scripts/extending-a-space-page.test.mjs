@@ -25,7 +25,7 @@ test('the page runs lead, the scene, four detail sections, Where to go next', ()
     'Adding an extension',
     'The comparison',
     'What the space does for every call',
-    'Extension use cases',
+    'Choosing an extension',
     'Where to go next',
   ]);
 });
@@ -126,10 +126,17 @@ test('the shared call path says each call starts in a run, is gated first and is
   assert.doesNotMatch(shared, /inherit/i, 'no "A2A inherits the space access"');
 });
 
-test('the use cases give one fit for each extension', () => {
-  const cases = unlink(section(text, 'Extension use cases'));
-  assert.match(cases, /\n\nEach extension fits one case:\n\n/);
-  assert.deepEqual([...cases.matchAll(/^- \*\*(.+?)\*\*: /gm)].map((m) => m[1]), ['Vector App', 'A2A agent', 'MCP server']);
+test('the choice section gives one "build one when" trigger per extension, a mixed-need rule and the REST connector route', () => {
+  const choice = unlink(section(text, 'Choosing an extension'));
+  assert.match(choice, /\n\nPick by what your logic does:\n\n/);
+  const bullets = [...choice.matchAll(/^- \*\*(.+?)\*\*: (.+)$/gm)];
+  assert.deepEqual(bullets.map((m) => m[1]), ['Vector App', 'A2A agent', 'MCP server']);
+  for (const [, , trigger] of bullets) assert.match(trigger, /^build one when /);
+  assert.match(bullets[0][2], /screens, pages or data tables/);
+  assert.match(bullets[1][2], /autonomous reasoning/);
+  assert.match(bullets[2][2], /external API/);
+  assert.match(bullets[2][2], /REST connector in the Context Hub, with no MCP server\./);
+  assert.match(choice, /needs screens and also reasoning or tools, build a Vector App that offers an A2A agent or an MCP server\./);
 });
 
 test('outside Where to go next the body links only glossaries and concept pages, no build page or guide', () => {
