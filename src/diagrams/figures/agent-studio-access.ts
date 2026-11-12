@@ -80,7 +80,7 @@ const scenes: SceneData[] = [
 export const agentStudioAccess: FlowData = {
   id: 'agent-studio-access',
   title: 'What a run may use',
-  desc: 'One Workspace slab holds seven parts. At the back are the Command Center, the Analyst agent, the Access check and a Datasource. At the front are a Skill, the Member and a Connector. A request moves through them in five steps, and the Access check stands between the agent and what it reaches.',
+  desc: 'One Workspace slab holds seven parts. At the back are the Command Center, the Analyst agent, the Access check and a Datasource. At the front are a Skill, the Member and a Context. A request moves through them in five steps, and the Access check stands between the agent and what it reaches.',
   caption: slotOf('agent-studio-access').caption,
   intro: 'A member asks an agent a question about revenue. Follow the request and see what the agent may use at each step.',
   slabs: [{ id: 'space', label: 'Workspace', text: 'The place where a team works. Access is worked out for each member and each action.', level: 0, c: 0, r: 0, w: 16.2, d: 9.8 }],
@@ -91,7 +91,7 @@ export const agentStudioAccess: FlowData = {
     { id: 'datasource', label: 'Datasource', text: 'A database that the space is joined to. A condition filters its rows, so the agent never sees rows the member may not see.', icon: 'contextHub', tone: 'core', on: 'space', c: 11.8, r: 1.0, w: 3.2, d: 2.8 },
     { id: 'skill', label: 'Skill', text: 'Instructions for a kind of work. A skill can also name the tools that the work needs.', icon: 'modules', tone: 'core', on: 'space', c: 1.0, r: 5.4, w: 3.2, d: 2.8 },
     { id: 'member', label: 'Member', text: 'A person in the space. Every step here runs with the access of this member.', icon: 'member', tone: 'core', on: 'space', c: 4.6, r: 5.4, w: 3.2, d: 2.8 },
-    { id: 'connector', label: 'Connector', text: 'An outside service that the space is joined to. The check guards the call, not the answer.', icon: 'connector', tone: 'core', on: 'space', c: 8.2, r: 5.4, w: 3.2, d: 2.8 },
+    { id: 'connector', label: 'Context', text: 'An outside service that the space is joined to. The check guards the call, not the answer.', icon: 'connector', tone: 'core', on: 'space', c: 8.2, r: 5.4, w: 3.2, d: 2.8 },
   ],
   links: [
     { id: 'analyst-check', from: 'analyst', to: 'accessCheck' },

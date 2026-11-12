@@ -70,9 +70,9 @@ test('the Vector Modules item lists omnibox, contacts and Calendar as sub-items 
   assert.equal(text.match(/Calendar/g)?.length, 1);
 });
 
-test('the Context Hub line lists connectors, knowledge sources, datasources, skills and apps', () => {
+test('the Context Hub line lists contexts, knowledge sources, datasources, skills and apps', () => {
   const item = section(text, 'The parts of a space').split('\n').find((l) => l.startsWith('- ') && l.includes('Context Hub'));
-  for (const kind of ['connectors', 'knowledge sources', 'datasources', 'skills', 'apps']) assert.ok(item.includes(kind), kind);
+  for (const kind of ['contexts', 'knowledge sources', 'datasources', 'skills', 'apps']) assert.ok(item.includes(kind), kind);
 });
 
 test('the Governance slab is named as Governance only', () => {

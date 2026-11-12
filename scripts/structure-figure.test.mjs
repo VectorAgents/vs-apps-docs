@@ -211,7 +211,7 @@ test('space-structure: the legend has 3 items, inside, outside and dashed link',
 });
 
 test('space-structure: the Context Hub card lists five kinds and the Vector Modules card lists the modules', () => {
-  assert.deepEqual(byId('contextHub').items, ['Connectors', 'Knowledge sources', 'Datasources', 'Skills', 'Apps']);
+  assert.deepEqual(byId('contextHub').items, ['Contexts', 'Knowledge sources', 'Datasources', 'Skills', 'Apps']);
   assert.deepEqual(byId('modules').items, ['Omnibox', 'Contacts', 'Calendar']);
 });
 

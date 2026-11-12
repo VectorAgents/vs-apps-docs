@@ -41,7 +41,7 @@ A run that raises an ask stops where it is and waits. A decision is a second che
 
 ## Standing approvals
 
-A standing approval lets one agent run one operation without asking, or lets one app's approval pass. Vector Space shows it as "always allow". It names the connector, so an approval for one connector's post never covers another connector.
+A standing approval lets one agent run one operation without asking, or lets one app's approval pass. Vector Space shows it as "always allow". It names the context, so an approval for one context's post never covers another context.
 
 There are two kinds. A personal approval covers the runs of the person who made it. A member makes one by ticking "always allow" on an ask that they answer. A space-wide approval covers everyone in the space, and a space manager can set one.
 

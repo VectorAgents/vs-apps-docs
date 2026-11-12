@@ -93,9 +93,9 @@ test('the page does not say that each further lead raises an ask, and does not n
   assert.doesNotMatch(plain, /Can edit|Can use/);
 });
 
-test('Connectors is the box name, and the three vendors appear on no other page of the section', () => {
+test('Connectors is the box name, and the three vendors appear on no other page of the section but the glossary', () => {
   assert.doesNotMatch(plain, /Lead services/i);
-  for (const name of readdirSync(resolve(docs, 'vector-space')).filter((n) => n.endsWith('.md') && n !== 'how-work-moves-through-a-space.md')) {
+  for (const name of readdirSync(resolve(docs, 'vector-space')).filter((n) => n.endsWith('.md') && !['how-work-moves-through-a-space.md', 'glossary.md'].includes(n))) {
     assert.doesNotMatch(readFileSync(resolve(docs, 'vector-space', name), 'utf8'), /\b(Apollo|Exa|BrightData)\b/, name);
   }
 });

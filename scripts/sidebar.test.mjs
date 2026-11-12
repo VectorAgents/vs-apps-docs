@@ -62,6 +62,7 @@ test('the Vector Space sidebar runs the Core concepts, Architecture and governan
     'what-vector-space-is',
     'organizations-and-spaces',
     'what-a-space-holds',
+    'context-hub',
     'agents-in-a-space',
     'who-can-do-what',
   ]);

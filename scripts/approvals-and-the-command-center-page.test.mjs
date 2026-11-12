@@ -72,10 +72,10 @@ test('after a decision the run resumes as its own actor and the decision is a se
   assert.match(after, /pauses no run/);
 });
 
-test('a standing approval names its connector, comes in two kinds and stays until someone revokes it', () => {
+test('a standing approval names its context, comes in two kinds and stays until someone revokes it', () => {
   const standing = section(text, 'Standing approvals');
   assert.match(standing, /always allow/);
-  assert.match(standing, /connector/);
+  assert.match(standing, /context/);
   assert.match(standing, /personal/i);
   assert.match(standing, /space-wide/);
   assert.match(standing, /space manager can set one/);

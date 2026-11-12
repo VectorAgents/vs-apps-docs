@@ -38,7 +38,7 @@ The agents of a space form a tree with three kinds of position:
   - **[A2A](./glossary.md#a2a) agent**: a remote agent that its owner runs outside the space. The owner controls its prompt and model, and the orchestrator agent reaches it with an [agent card](./glossary.md#agent-card). A [Vector App](../vector-apps/glossary.md#app), a web app that a space shows in an iframe, can offer an agent of this kind. [Extending a space](./extending-a-space.md) says how.
   - **Short-lived helper**: started by an agent for one task, and retired when the task ends.
 
-An agent moves only within its own space. A [connector](./glossary.md#connector) is something an agent uses, and work is not handed to it.
+An agent moves only within its own space. A [context](./glossary.md#context) is something an agent uses, and work is not handed to it.
 
 ## Threads and runs
 

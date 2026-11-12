@@ -36,7 +36,7 @@ These rules say what wins, and they are not a numbered order:
 - General access and shares add up, so a user gets what either one gives, including the shares of the user's groups.
 - A block wins, and it removes access whatever gave it, so no share and no General access brings it back.
 - A condition narrows what is left after the other inputs, and nothing widens past it.
-- Conditions apply to datasources and connectors only. On a datasource a condition limits the rows of every query, and on a [connector](./glossary.md#connector) it limits the arguments of a call, so the response is not filtered afterwards.
+- Conditions apply to datasources and contexts only. On a datasource a condition limits the rows of every query, and on a [context](./glossary.md#context) it limits the arguments of a call, so the response is not filtered afterwards.
 
 ## One check for every way in
 

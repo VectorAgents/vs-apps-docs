@@ -35,7 +35,7 @@ Precedence: rules here win over any reference. A page-type section wins over the
 ### Abbreviations
 
 - **A1 Define at first use.** Write the full form, then the abbreviation in brackets, or link to a glossary entry. Bad: "the SDK refuses". Good: "the software development kit (SDK) refuses".
-- **A2 Exempt list.** HTTP, JSON, API and URL need no definition. Add to this list only with maintainer approval.
+- **A2 Exempt list.** HTTP, JSON, API, URL, REST API, GraphQL API, OAuth, SQL and MCP need no definition. Add to this list only with maintainer approval.
 - **A3 Shortened words count.** "nav", "env", "config" are abbreviations. Write the full word, or define it.
 - **A4 Glossary entry.** An abbreviation defined in a page has a glossary entry that the page links to.
 - **A5 Code values.** Names in code font (`REST`, `ANTHROPIC`) are identifiers and are not abbreviations.

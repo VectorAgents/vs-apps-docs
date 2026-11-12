@@ -10,6 +10,7 @@ const sidebars: SidebarsConfig = {
         'vector-space/what-vector-space-is',
         'vector-space/organizations-and-spaces',
         'vector-space/what-a-space-holds',
+        'vector-space/context-hub',
         'vector-space/agents-in-a-space',
         'vector-space/who-can-do-what',
       ],

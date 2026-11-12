@@ -14,7 +14,7 @@ Acme has one organization, and its sales team has a space of its own. A [member]
 
 ## The organization as the tenant
 
-Every user, API key, resource and space belongs to one organization. A resource is a thing that a space holds and that access rules cover, such as a [connector](./glossary.md#connector) or a [datasource](./glossary.md#datasource).
+Every user, API key, resource and space belongs to one organization. A resource is a thing that a space holds and that access rules cover, such as a [context](./glossary.md#context) or a [datasource](./glossary.md#datasource).
 
 Each organization has one [Organization admin](./glossary.md#organization-admin), who manages the organization's users and spaces, and a transfer passes that place to another member of the organization.
 
@@ -37,9 +37,9 @@ A [space manager](./glossary.md#space-manager) runs the space: its members, grou
 
 Each space keeps its resources, shares and agents apart from every other space:
 
-- **Resources**: each resource belongs to one space, so a connector that someone adds in the sales team's space is a resource of that space and of no other.
+- **Resources**: each resource belongs to one space, so a context that someone adds in the sales team's space is a resource of that space and of no other.
 - **Shares**: a share names one resource and lives inside its space, so no share reaches a resource of another space.
-- **Agents**: an agent works only inside its own space, so the orchestrator agent of the marketing team cannot call a connector of the sales team's space.
+- **Agents**: an agent works only inside its own space, so the orchestrator agent of the marketing team cannot call a context of the sales team's space.
 
 That is why the leads stay with the sales team.
 

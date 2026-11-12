@@ -12,10 +12,9 @@ const mcpLink: Waypoint[] = [[11.2, 11.2, 9.25], [14.4, 11.2, 5.25]];
 const request: Waypoint[] = ['member', 'orchestrator'];
 const toTheApp: Waypoint[] = ['orchestrator', ...appLink, 'app'];
 const toTheA2aAgent: Waypoint[] = ['orchestrator', ...a2aLink, 'a2a'];
-/** The agent reaches an MCP server through its connector, which lives in the Context Hub. */
+/** The agent reaches an MCP server through its context, which lives in the Context Hub. */
 const toTheMcpConnector: Waypoint[] = ['orchestrator', 'contextHub', ...mcpLink, 'mcp'];
 
-/** One call: the line grows, a cube rides it and a ring holds where the call lands. */
 const call = (path: Waypoint[], part: string, lit: SceneData['lit']): Pick<SceneData, 'lit' | 'effects'> => ({
   lit,
   effects: [
@@ -56,7 +55,7 @@ export const extendingFlow: FlowData = {
   parts: [
     { id: 'member', label: 'Member', text: 'A person in the space. Every call starts in a run that works as this member.', icon: 'member', tone: 'core', on: 'space', c: 3.2, r: 3.65, w: 3.2, d: 2.8 },
     { id: 'orchestrator', label: 'Orchestrator agent', text: 'The agent that takes a request and calls the tools of the space.', icon: 'orchestrator', tone: 'core', on: 'space', c: 8.0, r: 3.65, w: 3.2, d: 2.8 },
-    { id: 'contextHub', label: 'Context Hub', text: 'Everything the space can reach. A connector to an MCP server is added here.', icon: 'contextHub', tone: 'core', on: 'space', c: 6.0, r: 8.6, w: 5.2, d: 3.2, items: ['Connectors', 'Knowledge sources', 'Datasources', 'Skills', 'Apps'] },
+    { id: 'contextHub', label: 'Context Hub', text: 'Everything the space can reach. A context for an MCP server is added here.', icon: 'contextHub', tone: 'core', on: 'space', c: 6.0, r: 8.6, w: 5.2, d: 3.2, items: ['Contexts', 'Knowledge sources', 'Datasources', 'Skills', 'Apps'] },
     { id: 'a2a', label: 'A2A agent', text: 'A remote agent that speaks the Agent2Agent (A2A) protocol. The orchestrator agent can hand work to it.', icon: 'a2a', tone: 'plug', on: 'organization', c: 14.4, r: 1.6, w: 3.2, d: 2.8 },
     { id: 'app', label: 'Vector App', text: 'A web app that runs on its own origin and opens as a page of the space.', icon: 'app', tone: 'plug', on: 'organization', c: 14.4, r: 5.7, w: 3.2, d: 2.8 },
     { id: 'mcp', label: 'MCP server', text: 'A remote server of tools, reached with the Model Context Protocol (MCP). Agents in the space can call it.', icon: 'mcp', tone: 'plug', on: 'organization', c: 14.4, r: 9.8, w: 3.2, d: 2.8 },
@@ -89,7 +88,7 @@ export const extendingFlow: FlowData = {
       href: '#adding-an-extension',
     },
     {
-      text: 'The agent calls a tool of the MCP server through its connector in the Context Hub. The stored credential of the connector goes with the call, and the server never learns who asked.',
+      text: 'The agent calls a tool of the MCP server through its context in the Context Hub. The stored credential of the context goes with the call, and the server never learns who asked.',
       record: { text: 'The call to the MCP server is recorded with its actor.', actor: 'Member' },
       href: '#adding-an-extension',
     },

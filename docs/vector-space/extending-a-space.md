@@ -22,7 +22,7 @@ Each extension gets in by its own path:
 
 - **Vector App**: added in two steps. [Staff](./glossary.md#staff) register it, and a [space manager](./glossary.md#space-manager) adds it to the space. The space then shows its pages. An agent calls its endpoints with a token that the space makes for the member.
 - **A2A agent**: added by someone who may manage agents in the space. The space reads its [agent card](./glossary.md#agent-card) from a URL. The agent joins the agent tree as a leaf, an agent that hands work to no one. If the organization saved a stored credential for it, the space sends that credential with each call. A stored credential is a secret that the organization keeps for one outside service.
-- **MCP server**: added by a member as a connector in the [Context Hub](./glossary.md#context-hub). The connector starts as Restricted, so only that member reaches it until they share it. The space finds the tools of the server, and agents call them with the stored credential of the connector. [General access](./glossary.md#general-access) explains Restricted.
+- **MCP server**: added by a member as a context in the [Context Hub](./glossary.md#context-hub). The context starts as Restricted, so only that member reaches it until they share it. The space finds the tools of the server, and agents call them with the stored credential of the context. [General access](./glossary.md#general-access) explains Restricted.
 
 A standalone A2A agent or MCP server needs no vs-apps [SDK](../sdk/glossary.md#sdk). A Vector App can offer an A2A agent and an MCP server of its own. You declare them in the [app definition](../sdk/glossary.md#app-definition).
 
@@ -43,7 +43,7 @@ Here is what each extension learns from the space and what it can do there.
 
 The three extensions share one path. A call starts in an agent [run](./glossary.md#run), and the run works as the member.
 
-Before the call, the space decides what the run may reach. A Vector App is reached only if the member reaches it. An MCP tool is reached only if the member passes the connector and the operation.
+Before the call, the space decides what the run may reach. A Vector App is reached only if the member reaches it. An MCP tool is reached only if the member passes the context and the operation.
 
 The space records each call. A call to an MCP server is a record with its actor. A call to an A2A agent is a run. [The record of work](./the-record-of-work.md) says what each record holds.
 
@@ -53,7 +53,7 @@ Pick by what your logic does:
 
 - **Vector App**: build one when your workflow needs screens, pages or data tables for members.
 - **A2A agent**: build one when a task needs autonomous reasoning on its own model and the space hands it the task.
-- **MCP server**: build one when agents need to look up data in an external API or take an action in a tool, with no screens and no reasoning. To call an existing REST API, add a REST [connector](./glossary.md#connector) in the Context Hub, with no MCP server.
+- **MCP server**: build one when agents need to look up data in an external API or take an action in a tool, with no screens and no reasoning. To call an existing REST API, add a REST [context](./glossary.md#context) in the [Context Hub](./context-hub.md#apis-and-mcp-servers), with no MCP server.
 
 If a workflow needs screens and also reasoning or tools, build a Vector App that offers an A2A agent or an MCP server.
 

@@ -8,7 +8,7 @@ const sections = {
     'Vector Space', 'space', 'space manager', 'Organization admin', 'page', 'staff',
     'knowledge source', 'Context Hub', 'ask', 'human in the loop', 'channel', 'MCP', 'A2A', 'AI',
     'organization', 'member', 'role', 'share', 'block', 'condition', 'service account', 'agent', 'orchestrator agent',
-    'thread', 'run', 'schedule', 'connector', 'Vector Module', 'extension', 'Command Center', 'Agent Studio', 'governance',
+    'thread', 'run', 'schedule', 'context', 'connector', 'Vector Module', 'extension', 'Command Center', 'Agent Studio', 'governance',
     'Activity', 'Audit', 'Intelligence', 'actor', 'standing approval', 'Human Time Return',
     'widget', 'datasource', 'skill', 'group', 'Can use', 'Can edit', 'General access', 'AI gateway', 'AI provider account', 'execution',
     'Overview', 'Health', 'spend cap', 'rate card', 'agent card', 'evaluation', 'linked chat', 'web interface',
@@ -94,7 +94,7 @@ test('Vector Space, space and space manager entries open with the platform text'
   const first = (name) => entries.find((e) => e.name === name).body.trim().split('\n')[0];
   assert.match(first('Vector Space'), /^The Vector platform\./);
   assert.match(first('space'), /^A shared place in Vector Space\b/);
-  assert.equal(first('space manager'), 'A user who can edit on the space, or the Organization admin. They add apps, share capabilities and choose the models and connectors for the slots.');
+  assert.equal(first('space manager'), 'A user who can edit on the space, or the Organization admin. They add apps, share capabilities and choose the models and contexts for the slots.');
 });
 
 test('allowed resources entry states the overlap rule in the member\'s access', () => {
@@ -111,7 +111,7 @@ test('Context Hub and knowledge source entries name the Vector Space screens', (
 
 test('Context Hub holds six kinds of resource and pages are not one of them', () => {
   const body = entries.find((e) => e.name === 'Context Hub').body;
-  for (const kind of ['connectors', 'knowledge sources', 'datasources', 'skills', 'apps', 'Vector Modules']) assert.match(body, new RegExp(kind), kind);
+  for (const kind of ['contexts', 'knowledge sources', 'datasources', 'skills', 'apps', 'Vector Modules']) assert.match(body, new RegExp(kind), kind);
   assert.match(body, /Pages are not one of them/);
   assert.doesNotMatch(body, /resource pool/i);
 });
@@ -128,7 +128,7 @@ test('the access rows define role, group, share, block, condition and member', (
   assert.match(first('group'), /set of users and groups/);
   assert.match(first('share'), /one subject's role on one object/i);
   assert.match(first('block'), /Everything or Editing/);
-  assert.match(first('condition'), /Datasources and connectors only|datasources and connectors only/);
+  assert.match(first('condition'), /Datasources and contexts only|datasources and contexts only/);
   assert.match(first('member'), /General access/);
 });
 
