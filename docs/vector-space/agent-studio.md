@@ -23,11 +23,11 @@ Agent Studio holds the settings of each agent: what it is told to do, which tool
 
 So Agent Studio keeps work in progress apart from what runs. Edits go to a draft, the working copy of the agents. An [evaluation](./glossary.md#evaluation) tests an agent before a change goes live, and an earlier version can be restored if a change goes wrong.
 
-An [Organization admin](./glossary.md#organization-admin) can configure, delete or reset an agent in a space. The [audit trail](./glossary.md#audit) records every change to the configuration of an agent.
+An [organization admin](./glossary.md#organization-admin) can configure, delete or reset an agent in a space. The [audit trail](./glossary.md#audit) records every change to the configuration of an agent.
 
 ## How agents are arranged
 
-Each space has one orchestrator agent, and an agent belongs to the space of its root. Each agent is either built into the space or a remote A2A agent, and this is fixed when the agent is created. Only agents built into the space can have child agents. A remote A2A agent is always a leaf, and it cannot become the orchestrator agent.
+Each space has one orchestrator agent. It is the root of the agent tree, and every other agent of the space is below it. Each agent is either built into the space or a remote A2A agent. A remote A2A agent belongs to the organization, which plugs it in to extend its space.
 
 <StructureFigure data={agentStudioTree} />
 
@@ -35,7 +35,7 @@ The orchestrator agent hands work to agents for a job, and those agents can hand
 
 These facts matter when many agents work together:
 
-- **Separate state**: the platform saves a checkpoint for each child agent, so siblings never share state. A remote A2A agent has none of its own, and the remote side carries its conversation.
+- **Separate state**: the platform saves a checkpoint for each child agent, so siblings never share state. A remote A2A agent has no checkpoint, and the remote side carries its conversation.
 - **Caps**: each parent agent has a fixed cap on helpers, and each organization has a fixed cap on running work.
 - **Pauses**: a pause in a child agent holds its parent. The parent resumes once, when no child agent is still waiting.
 - **Records**: every [run](./glossary.md#run), child agent, helper and A2A call opens a record of its own. The tool calls that a remote A2A agent makes on its own side are not recorded. A [thread](./glossary.md#thread) belongs to its owner alone.

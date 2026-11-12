@@ -52,7 +52,7 @@ test('the scene is the support case: a linked chat, the orchestrator agent, a ti
 
 test('the tree names no level number and says short-lived helper and child agent', () => {
   const tree = section(text, 'How agents are arranged');
-  for (const part of ['orchestrator agent', 'child agents', 'A2A', 'short-lived helper', 'leaf']) assert.ok(tree.includes(part), part);
+  for (const part of ['orchestrator agent', 'child agents', 'A2A', 'short-lived helper']) assert.ok(tree.includes(part), part);
   assert.doesNotMatch(text, /\b(level|depth|tier)s?\b|\bLevel \d\b/i);
   assert.doesNotMatch(text, /\bsub-?agents?\b/i);
   assert.doesNotMatch(prose, /\bturns?\b/i);
@@ -129,8 +129,8 @@ test('a channel runs as its owner or a service account, and group input is untru
   assert.match(features, /Group input is untrusted/);
 });
 
-test('Who may change an agent names the Organization admin and no space manager', () => {
-  assert.match(section(text, 'What Agent Studio is for'), /An \[Organization admin\]\(\.\/glossary\.md#organization-admin\) can configure, delete or reset an agent/);
+test('Who may change an agent names the organization admin and no space manager', () => {
+  assert.match(section(text, 'What Agent Studio is for'), /An \[organization admin\]\(\.\/glossary\.md#organization-admin\) can configure, delete or reset an agent/);
   assert.doesNotMatch(prose, /space managers?/i);
 });
 
