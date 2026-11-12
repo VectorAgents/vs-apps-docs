@@ -432,7 +432,17 @@ html:not(:has(.flavour-block)) .flavour-picker {
   text-transform: uppercase;
 }
 
-/* Docusaurus default blue is 3.6-4.2:1 on the dark surfaces; this set is 6:1 or better. */
+/* Docusaurus default blue is under 4.5:1 on both themes; these sets are 6:1 or better. */
+:root {
+  --ifm-color-primary: #1a56b8;
+  --ifm-color-primary-dark: #174ca5;
+  --ifm-color-primary-darker: #154699;
+  --ifm-color-primary-darkest: #113a7e;
+  --ifm-color-primary-light: #1d60cb;
+  --ifm-color-primary-lighter: #1f66d6;
+  --ifm-color-primary-lightest: #3a7ae8;
+}
+
 [data-theme='dark'] {
   --ifm-color-primary: #7fb0ff;
   --ifm-color-primary-dark: #6ba2ff;
