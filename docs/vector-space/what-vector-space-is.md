@@ -59,7 +59,9 @@ To explore the platform, choose the section that matches your goal: understandin
 
 - [Organizations and spaces](./organizations-and-spaces.md): how an organization holds many spaces, and how a space is one team's place for its members, its agents and its data.
 - [What a space holds](./what-a-space-holds.md): what the team of a space works with, which is where its data connects, how the data is shown, and which apps and tools run inside the space.
+- [The Context Hub](./context-hub.md): what the Context Hub holds, how a space connects databases, APIs and mailboxes, and whose credential each one runs on.
 - [Agents in a space](./agents-in-a-space.md): how the orchestrator agent hands a request to other agents, and how the conversations of those agents are kept apart.
+- [Agent Studio](./agent-studio.md): where the agents of a space are set up and tested, and how a change moves from a draft to a published version.
 - [Who can do what](./who-can-do-what.md): the kinds of people and callers in Vector Space, and how each stands in an organization and its spaces.
 
 **Architecture and governance**

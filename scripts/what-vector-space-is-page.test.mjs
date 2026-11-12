@@ -112,7 +112,7 @@ test('every link resolves and every glossary anchor exists', () => {
   assert.deepEqual(brokenLinks(text, file), []);
 });
 
-test('Where to read next groups all ten other pages in three groups, then the glossary, with no "Where to go next"', () => {
+test('Where to read next groups all twelve other pages in three groups, then the glossary, with no "Where to go next"', () => {
   assert.doesNotMatch(text, /Where to go next|stands alone/);
   const next = section(text, 'Where to read next');
   assert.deepEqual(
@@ -122,7 +122,9 @@ test('Where to read next groups all ten other pages in three groups, then the gl
   assert.deepEqual(linksOf(next), [
     './organizations-and-spaces.md',
     './what-a-space-holds.md',
+    './context-hub.md',
     './agents-in-a-space.md',
+    './agent-studio.md',
     './who-can-do-what.md',
     './why-vector-space.md',
     './one-access-model.md',

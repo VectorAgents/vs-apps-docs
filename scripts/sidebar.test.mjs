@@ -64,11 +64,11 @@ test('the Vector Space sidebar runs the Core concepts, Architecture and governan
     'what-a-space-holds',
     'context-hub',
     'agents-in-a-space',
+    'agent-studio',
     'who-can-do-what',
   ]);
   assert.deepEqual(docIds(categoryOf('vectorSpace', 'Architecture and governance').items).map((id) => id.replace('vector-space/', '')), ['why-vector-space', 'one-access-model', 'the-record-of-work']);
   assert.deepEqual(docIds(categoryOf('vectorSpace', 'Workflows and extensions').items).map((id) => id.replace('vector-space/', '')), [
-    'agent-studio',
     'how-work-moves-through-a-space',
     'approvals-and-the-command-center',
     'extending-a-space',

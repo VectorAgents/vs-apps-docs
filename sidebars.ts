@@ -12,6 +12,7 @@ const sidebars: SidebarsConfig = {
         'vector-space/what-a-space-holds',
         'vector-space/context-hub',
         'vector-space/agents-in-a-space',
+        'vector-space/agent-studio',
         'vector-space/who-can-do-what',
       ],
     },
@@ -26,7 +27,6 @@ const sidebars: SidebarsConfig = {
       label: 'Workflows and extensions',
       collapsed: false,
       items: [
-        'vector-space/agent-studio',
         'vector-space/how-work-moves-through-a-space',
         'vector-space/approvals-and-the-command-center',
         'vector-space/extending-a-space',
