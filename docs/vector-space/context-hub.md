@@ -69,7 +69,7 @@ When a context or datasource is shared, the people it is shared with run on the 
 A space manager can now connect a database, an API and a mailbox, and knows whose credential each one runs on. The next page to read is the one on access:
 
 - [One access model](./one-access-model.md): the check that decides what a user, an agent or an app may do on a resource, including who each run is made as.
-- [Who can do what](./who-can-do-what.md): the five kinds of people and callers in Vector Space, and what Can use and Can edit mean for each.
+- [Roles and permissions](./who-can-do-what.md): the five kinds of people and callers in Vector Space, and what Can use and Can edit mean for each.
 - [Extending a space](./extending-a-space.md): how a Vector App, an A2A agent and an MCP server compare as ways to extend a space.
 - [Agents in a space](./agents-in-a-space.md): how the orchestrator agent and the agents below it use what the Context Hub lists.
 - [Glossary](./glossary.md): every term of Vector Space, each defined in a sentence.

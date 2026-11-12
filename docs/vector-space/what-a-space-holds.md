@@ -1,5 +1,5 @@
 ---
-title: What a space holds
+title: Inside a space
 description: The Context Hub, pages and widgets, Vector Apps and Vector Modules.
 ---
 
