@@ -40,7 +40,7 @@ test('the scene is the first H2, with no Example heading and Acme wording, a pos
   assert.match(plain, /Acme's sales team has a space, and a member of it asks the orchestrator agent to post a status note to the team chat/);
   const scene = section(text, 'A status note that waits for approval');
   assert.match(scene, /team chat/);
-  assert.match(scene, /\[context\]\(\.\/glossary\.md#context\)/);
+  assert.match(scene, /\[connector\]\(\.\/glossary\.md#connector\)/);
   assert.match(scene, /\[orchestrator agent\]\(\.\/glossary\.md#orchestrator-agent\)/);
   assert.match(scene, /an ask appears in the Command Center/);
   assert.match(scene, /always allow/);

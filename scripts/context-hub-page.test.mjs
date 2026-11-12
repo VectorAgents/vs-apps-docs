@@ -98,8 +98,9 @@ test('credentials belong to their creator, a shared resource runs on the owner\'
   assert.match(cred, /not even an \[Organization admin\]\(\.\/glossary\.md#organization-admin\) can use it/);
   assert.match(cred, /run on the credential of its owner/);
   assert.match(cred, /never get the credential or its target/);
-  assert.match(cred, /A share names who gets access, and the role, Can use or Can edit, is what it gives/);
+  assert.match(cred, /A share names a user or a group, never a role, and the role, Can use or Can edit, is what it gives/);
   assert.doesNotMatch(cred, /roles?\b[^.]*\b(people|subjects?)\b/i);
+  assert.match(cred, /\]\(\.\/one-access-model\.md\)/);
 });
 
 test('each term is linked at its first use', () => {
@@ -131,10 +132,10 @@ test('the page names no master doc, implementation name, vendor or banned term',
 
 test('the page assumes no TypeScript, Node or React', () => assert.doesNotMatch(plain, /TypeScript|Node|React/));
 
-test('every link resolves, and Where to go next has 3 links and the glossary in order', () => {
+test('every link resolves, and Where to go next has 4 links and the glossary in order', () => {
   assert.deepEqual(brokenLinks(text, file), []);
   assert.deepEqual(linksOf(section(text, 'Where to go next')), [
-    './one-access-model.md', './extending-a-space.md', './agents-in-a-space.md', './glossary.md',
+    './one-access-model.md', './who-can-do-what.md', './extending-a-space.md', './agents-in-a-space.md', './glossary.md',
   ]);
   assert.match(section(text, 'Where to go next'), /^Where to go next\n\nA space manager can now connect a database, an API and a mailbox, and knows whose credential each one runs on\./);
 });

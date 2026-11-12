@@ -58,17 +58,18 @@ A member sends from a mailbox when the member holds [Can use](./glossary.md#can-
 
 ## Credentials and sharing
 
-Every resource has [General access](./glossary.md#general-access), the [role](./glossary.md#role) that it gives every member of the space: Restricted, Can use or Can edit. A [share](./glossary.md#share) adds a role on top of that, and a share with a [group](./glossary.md#group) reaches every user that the group holds. An agent reaches what the member it works for reaches.
+Every resource has [General access](./glossary.md#general-access), the [role](./glossary.md#role) that it gives every member of the space: Restricted, Can use or Can edit. A [share](./glossary.md#share) adds a role on top of that, and a share with a [group](./glossary.md#group) reaches every user that the group holds. An agent reaches what the member it works for reaches. [One access model](./one-access-model.md) holds the full check.
 
 A credential is the login that a context or datasource uses to reach its outside system. It belongs to the person who created it and is never shared, and not even an [Organization admin](./glossary.md#organization-admin) can use it.
 
-When a context or datasource is shared, the people it is shared with run on the credential of its owner. They never get the credential or its target, the database or endpoint behind it. A share names who gets access, and the role, Can use or Can edit, is what it gives.
+When a context or datasource is shared, the people it is shared with run on the credential of its owner. They never get the credential or its target, the database or endpoint behind it. A share names a user or a group, never a role, and the role, Can use or Can edit, is what it gives.
 
 ## Where to go next
 
 A space manager can now connect a database, an API and a mailbox, and knows whose credential each one runs on. The next page to read is the one on access:
 
 - [One access model](./one-access-model.md): the check that decides what a user, an agent or an app may do on a resource, including who each run is made as.
+- [Who can do what](./who-can-do-what.md): the five kinds of people and callers in Vector Space, and what Can use and Can edit mean for each.
 - [Extending a space](./extending-a-space.md): how a Vector App, an A2A agent and an MCP server compare as ways to extend a space.
 - [Agents in a space](./agents-in-a-space.md): how the orchestrator agent and the agents below it use what the Context Hub lists.
 - [Glossary](./glossary.md): every term of Vector Space, each defined in a sentence.

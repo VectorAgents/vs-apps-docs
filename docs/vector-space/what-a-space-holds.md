@@ -18,7 +18,7 @@ Acme's sales team has a space, and a [member](./glossary.md#member) of it asks t
 
 ## The Context Hub
 
-The Context Hub holds six kinds of resource, and a resource is a thing that a space holds and that access rules cover: contexts, knowledge sources, datasources, skills, Vector Apps and Vector Modules. Vector Space shows the list of them as **Resources**. In Acme's space, a context links the customer system and a datasource holds the leads, and [the Context Hub page](./context-hub.md) describes each kind.
+The Context Hub holds six kinds of resource, and a resource is a thing that a space holds and that access rules cover: [contexts](./glossary.md#context), [knowledge sources](./glossary.md#knowledge-source), [datasources](./glossary.md#datasource), [skills](./glossary.md#skill), [Vector Apps](../vector-apps/glossary.md#app) and [Vector Modules](./glossary.md#vector-module). Vector Space shows the list of them as **Resources**. In Acme's space, a context links the customer system and a datasource holds the leads, and [the Context Hub page](./context-hub.md) describes each kind.
 
 ## Pages and widgets
 

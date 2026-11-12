@@ -226,7 +226,7 @@ A background task that an agent or a person sets to run on a timer.
 
 ### context
 
-A link from a space to one outside account or endpoint, such as a mailbox, a REST API or an MCP server. It is one of the six kinds of resource in the [Context Hub](#context-hub). A [connector](#connector) is a context made from a pre-built provider. The create sheet of Vector Space still reads "New Connector".
+A link from a space to one outside account or endpoint, such as a mailbox, a REST API or an MCP server. It is one of the six kinds of resource in the [Context Hub](#context-hub). A [connector](#connector) is a context made from a pre-built provider. The create sheet of Vector Space reads "New Connector".
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.

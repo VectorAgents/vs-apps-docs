@@ -15,7 +15,6 @@ const toTheA2aAgent: Waypoint[] = ['orchestrator', ...a2aLink, 'a2a'];
 /** The agent reaches an MCP server through its context, which lives in the Context Hub. */
 const toTheMcpConnector: Waypoint[] = ['orchestrator', 'contextHub', ...mcpLink, 'mcp'];
 
-/** One call: the line grows, a cube rides it and a ring holds where the call lands. */
 const call = (path: Waypoint[], part: string, lit: SceneData['lit']): Pick<SceneData, 'lit' | 'effects'> => ({
   lit,
   effects: [

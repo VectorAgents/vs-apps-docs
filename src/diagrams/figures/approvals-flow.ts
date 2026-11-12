@@ -3,12 +3,10 @@ import { slotOf } from './slots.ts';
 
 /** Where the post leaves the space: past the right edge of the space slab, level with the Context and at the height of the part tops. */
 const outOfTheSpace: Waypoint = [13.2, 2.4, 6.6];
-/** The centre of the ask tile, above the Command Center. */
 const askTile: Waypoint = [2.6, 2.6, 14.5];
 
 const request: Waypoint[] = ['member', 'orchestrator'];
 const toTheAsk: Waypoint[] = ['orchestrator', 'commandCenter'];
-/** The decision goes back to the run, and the run makes the post. */
 const throughThePost: Waypoint[] = ['commandCenter', 'orchestrator', 'connector', outOfTheSpace];
 const withNoAsk: Waypoint[] = ['orchestrator', 'connector', outOfTheSpace];
 

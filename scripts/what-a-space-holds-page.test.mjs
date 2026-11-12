@@ -41,7 +41,10 @@ test('the page has no figure slot and no figure component', () => {
 
 test('the Context Hub section names the six kinds of resource and links the Context Hub page', () => {
   const hub = section(text, 'The Context Hub');
-  for (const kind of ['contexts', 'knowledge sources', 'datasources', 'skills', 'Vector Apps', 'Vector Modules']) assert.match(hub, new RegExp(kind), kind);
+  for (const [kind, link] of [
+    ['contexts', './glossary.md#context'], ['knowledge sources', './glossary.md#knowledge-source'], ['datasources', './glossary.md#datasource'],
+    ['skills', './glossary.md#skill'], ['Vector Apps', '../vector-apps/glossary.md#app'], ['Vector Modules', './glossary.md#vector-module'],
+  ]) assert.ok(hub.includes(`[${kind}](${link})`), kind);
   assert.match(hub, /six kinds of resource/);
   assert.match(hub, /\]\(\.\/context-hub\.md\)/);
   assert.doesNotMatch(hub, /connector/i);
