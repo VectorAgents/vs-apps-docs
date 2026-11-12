@@ -60,7 +60,7 @@ A member sends from a mailbox when the member holds [Can use](./glossary.md#can-
 
 Every resource has [General access](./glossary.md#general-access), the [role](./glossary.md#role) that it gives every member of the space: Restricted, Can use or Can edit. A [share](./glossary.md#share) adds a role on top of that, and a share with a [group](./glossary.md#group) reaches every user that the group holds. An agent reaches what the member it works for reaches. [One access model](./one-access-model.md) holds the full check.
 
-A credential is the login that a context or datasource uses to reach its outside system. It belongs to the person who created it and is never shared, and not even an [Organization admin](./glossary.md#organization-admin) can use it.
+A credential is the login that a context or datasource uses to reach its outside system. It belongs to the person who created it and is never shared, and not even an [organization admin](./glossary.md#organization-admin) can use it.
 
 When a context or datasource is shared, the people it is shared with run on the credential of its owner. They never get the credential or its target, the database or endpoint behind it. A share names a user or a group, never a role, and the role, Can use or Can edit, is what it gives.
 

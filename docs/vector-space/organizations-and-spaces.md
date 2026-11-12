@@ -16,7 +16,7 @@ Acme has one organization, and its sales team has a space of its own. A [member]
 
 Every user, API key, resource and space belongs to one organization. A resource is a thing that a space holds and that access rules cover, such as a [context](./glossary.md#context) or a [datasource](./glossary.md#datasource).
 
-Each organization has one [Organization admin](./glossary.md#organization-admin), who manages the organization's users and spaces, and a transfer passes that place to another member of the organization.
+Each organization has one [organization admin](./glossary.md#organization-admin), who manages the organization's users and spaces, and a transfer passes that place to another member of the organization.
 
 [AI provider accounts](./glossary.md#ai-provider-account) belong to the organization, not to one space, and they pay for the organization's model calls. Each account reaches every space by default, and someone can limit an account to chosen spaces.
 
@@ -31,7 +31,7 @@ A space is where one team works, and each space has four parts of its own:
 - **[Context Hub](./glossary.md#context-hub)**: the area where the space lists what it can reach.
 - **Pages, apps and modules**: the [pages](./glossary.md#page) of the space, and its [Vector Apps](../vector-apps/glossary.md#app) and [Vector Modules](./glossary.md#vector-module).
 
-A [space manager](./glossary.md#space-manager) runs the space: its members, groups, shares, resources, agent and apps. The Organization admin is a space manager of every space of the organization, and access is worked out inside a space, for each member and each operation.
+A [space manager](./glossary.md#space-manager) runs the space: its members, groups, shares, resources, agent and apps. The organization admin is a space manager of every space of the organization, and access is worked out inside a space, for each member and each operation.
 
 ## Resources that belong to one space
 

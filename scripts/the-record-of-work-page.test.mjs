@@ -33,7 +33,7 @@ test('the lead says what the record is and links governance before the first H2'
   assert.match(lead, /\[Governance\]\(\.\/glossary\.md#governance\)/);
 });
 
-test('the scene is the first H2, with no Example heading and Acme wording, and an Organization admin reads Activity', () => {
+test('the scene is the first H2, with no Example heading and Acme wording, and an organization admin reads Activity', () => {
   assert.equal([...text.matchAll(/^## (.+)$/gm)][0][1], "A member's outreach run");
   assert.doesNotMatch(text, /^## .*\bExample\b/m);
   assert.doesNotMatch(plain, /\bthe sales space\b/i);
@@ -41,7 +41,7 @@ test('the scene is the first H2, with no Example heading and Acme wording, and a
   const example = section(text, "A member's outreach run");
   assert.match(example, /\[orchestrator agent\]\(\.\/glossary\.md#orchestrator-agent\)/);
   assert.match(example, /outreach email/);
-  assert.match(example, /\[Organization admin\]\(\.\/glossary\.md#organization-admin\)/);
+  assert.match(example, /\[organization admin\]\(\.\/glossary\.md#organization-admin\)/);
   assert.match(example, /Activity/);
   assert.match(example, /who it ran as/);
 });
@@ -60,7 +60,7 @@ test('the four governance views are each named and linked, with who reads them',
   for (const view of ['Overview', 'Health', 'Activity', 'Audit']) {
     assert.match(views, new RegExp(`\\[${view}\\]\\(\\./glossary\\.md#${view.toLowerCase()}\\)`), view);
   }
-  assert.match(views, /Organization admin/);
+  assert.match(views, /organization admin/);
   assert.match(views, /space manager/);
   assert.match(views, /never as zero/);
   assert.doesNotMatch(views, /Intelligence/, 'Intelligence is not a fifth view');

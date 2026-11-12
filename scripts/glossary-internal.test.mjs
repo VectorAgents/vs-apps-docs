@@ -32,7 +32,7 @@ test('internal glossary is outside docs/', () => {
 test('role line entry defines the quickstart role line', () => {
   const block = internal.split(/^### /m).slice(1).find((b) => b.startsWith('role line\n'));
   assert.ok(block, 'role line entry missing');
-  assert.match(block, /`\*\*Role\*\*: Organization admin\.`/);
+  assert.match(block, /`\*\*Role\*\*: organization admin\.`/);
   assert.match(block, /`\*\*Role\*\*: space manager\.`/);
 });
 

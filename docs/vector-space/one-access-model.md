@@ -25,7 +25,7 @@ The check reads four inputs for each operation on a resource:
 - **[Block](./glossary.md#block)**: denies one user or group on one resource, whatever their shares give, as Everything, which denies every action, or Editing, which denies the change actions and leaves use.
 - **Condition**: limits which rows an allowed operation may touch, such as the EU rows of a datasource.
 
-One rule is easy to miss. A Restricted resource reaches only its owner and the users and groups that a share names, so an [Organization admin](./glossary.md#organization-admin) is shut out of it unless a share names them.
+One rule is easy to miss. A Restricted resource reaches only its owner and the users and groups that a share names, so an [organization admin](./glossary.md#organization-admin) is shut out of it unless a share names them.
 
 ## How the inputs combine
 

@@ -14,7 +14,7 @@ function spaceParts(id: string, name: string, [c, r]: [number, number]): PartDat
 export const organizationStructure: StructureData = {
   id: 'organization-structure',
   title: 'One organization and its spaces',
-  desc: 'Two slabs stand side by side on one Organization slab: the sales team’s space and the marketing team’s space. Each space slab holds its own Members, Orchestrator agent and Context Hub. The Organization admin stands on the Organization slab, outside both spaces.',
+  desc: 'Two slabs stand side by side on one Organization slab: the sales team’s space and the marketing team’s space. Each space slab holds its own Members, Orchestrator agent and Context Hub. The organization admin stands on the Organization slab, outside both spaces.',
   caption: slotOf('organization-structure').caption,
   slabs: [
     { id: 'organization', label: 'Organization', text: 'The company account. Every user, API key, resource and space belongs to one organization.', level: 0, c: 0, r: 0, w: 23.8, d: 16 },

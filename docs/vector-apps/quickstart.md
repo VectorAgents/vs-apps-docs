@@ -520,7 +520,7 @@ A real space needs these things in place. Check them before step 1.
 
 - [ ] A Vector representative, the person at Vector who registers apps, to send the registration request to.
 - [ ] A space to add the app to.
-- [ ] An Organization admin, a member who sees **Organization** under **Settings**, to do [step 3](#3-publish-the-space-agent). A space manager to do steps 4 and 5. Anyone with Edit level on the space, the access level that lets a member edit it, and any Organization admin, is a space manager.
+- [ ] An organization admin, a member who sees **Organization** under **Settings**, to do [step 3](#3-publish-the-space-agent). A space manager to do steps 4 and 5. Anyone with Edit level on the space, the access level that lets a member edit it, and any organization admin, is a space manager.
 - [ ] The Vector Space server can reach your server. It needs a public URL that forwards to port `3101` (`SERVER_PORT`). Keep the URL the same until Vector confirms the registration.
 
 ### 1. Point the app at Vector Space
@@ -575,9 +575,9 @@ Contact your Vector representative. Vector creates the [app registration](./glos
 
 ### 3. Publish the space agent
 
-**Role**: Organization admin.
+**Role**: organization admin.
 
-The space switcher, the menu in which a member picks a space, lists a space only when its agent has a published version. Until then Vector Space shows "No spaces yet" and you cannot reach your app. A new space holds a draft agent that you publish as it is. An Organization admin opens an unpublished space from the list of spaces in the organization settings.
+The space switcher, the menu in which a member picks a space, lists a space only when its agent has a published version. Until then Vector Space shows "No spaces yet" and you cannot reach your app. A new space holds a draft agent that you publish as it is. An organization admin opens an unpublished space from the list of spaces in the organization settings.
 
 1. Choose **Settings**, **Organization**, then **Spaces**. Choose your space.
 2. Choose **Agent Studio**, then **Canvas**. If the canvas already shows **Published** and has no **Publish All** button, skip item 3.

@@ -23,14 +23,14 @@ A shared place in Vector Space for one team. A space manager adds apps, shares c
 
 ### space manager
 
-A user who can edit on the space, or the Organization admin. They add apps, share capabilities and choose the models and contexts for the slots.
+A user who can edit on the space, or the organization admin. They add apps, share capabilities and choose the models and contexts for the slots.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
 
-### Organization admin
+### organization admin
 
-The one member who manages the organization in Vector Space and sees **Organization** under **Settings**. An organization has one Organization admin. The Organization admin is a space manager of every space.
+The one member who manages the organization in Vector Space and sees **Organization** under **Settings**. An organization has one organization admin. The organization admin is a space manager of every space.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
@@ -107,7 +107,7 @@ Artificial intelligence. In these docs it means a model that reads and writes la
 
 ### organization
 
-The customer account in Vector Space. Every user, API key, resource and space belongs to one organization. It has one [Organization admin](#organization-admin).
+The customer account in Vector Space. Every user, API key, resource and space belongs to one organization. It has one [organization admin](#organization-admin).
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.

@@ -52,19 +52,19 @@ test('every link resolves, every glossary anchor exists, and Where to go next li
   assert.deepEqual(linksOf(section(text, 'Where to go next')), ['./one-access-model.md', './organizations-and-spaces.md', './glossary.md']);
 });
 
-test('the page says one Organization admin, and the glossary row agrees', () => {
+test('the page says one organization admin, and the glossary row agrees', () => {
   assert.match(plain, /an organization has one, and a transfer passes the position/);
-  assert.doesNotMatch(text, /every Organization admin|Organization admins/i);
-  const row = readFileSync(glossaryFile, 'utf8').split(/^### /m).find((s) => s.startsWith('Organization admin'));
+  assert.doesNotMatch(text, /every organization admin|organization admins/i);
+  const row = readFileSync(glossaryFile, 'utf8').split(/^### /m).find((s) => s.startsWith('organization admin'));
   assert.ok(row, 'glossary row');
-  assert.doesNotMatch(row, /every Organization admin|Organization admins/i);
+  assert.doesNotMatch(row, /every organization admin|organization admins/i);
   assert.match(row, /\bone\b/i);
 });
 
-test('the page says a Restricted resource is closed to the Organization admin unless a share names them, and points to one-access-model', () => {
+test('the page says a Restricted resource is closed to the organization admin unless a share names them, and points to one-access-model', () => {
   const sentence = body.split(/(?<=[.!?])\s+/).find((s) => /Restricted/.test(s));
   assert.ok(sentence, 'a sentence on Restricted');
-  assert.match(unlink(sentence), /Organization admin/);
+  assert.match(unlink(sentence), /organization admin/);
   assert.match(unlink(sentence), /share/);
   assert.match(sentence, /\(\.\/one-access-model\.md\)/);
 });

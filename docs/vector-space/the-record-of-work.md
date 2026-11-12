@@ -12,7 +12,7 @@ The record of work is what Vector Space writes down about each piece of work: wh
 
 Acme's sales team has a space, and a [member](./glossary.md#member) of it asks the [orchestrator agent](./glossary.md#orchestrator-agent) to find leads and send an outreach email. Vector Space records the work as that member and notes what started it, here a chat in the [web interface](./glossary.md#web-interface). It also records each model call with its estimated cost.
 
-Later an [Organization admin](./glossary.md#organization-admin) opens [Activity](./glossary.md#activity), finds the work and reads who it ran as and what it cost.
+Later an [organization admin](./glossary.md#organization-admin) opens [Activity](./glossary.md#activity), finds the work and reads who it ran as and what it cost.
 
 ## The actor behind every record
 
@@ -30,7 +30,7 @@ Four views read the records. Each answers one question.
 - **[Activity](./glossary.md#activity)**: what happened, in time order. A decided [ask](./glossary.md#ask) shows here.
 - **[Audit](./glossary.md#audit)**: who changed what. It covers changes to access, to what the organization may use and to credentials and keys. Audit reads the change records.
 
-The Organization admin reads the whole organization. A [space manager](./glossary.md#space-manager) reads the same views for their own space. Another user's [thread](./glossary.md#thread) is never readable here. A figure that cannot be read shows as missing, never as zero.
+The organization admin reads the whole organization. A [space manager](./glossary.md#space-manager) reads the same views for their own space. Another user's [thread](./glossary.md#thread) is never readable here. A figure that cannot be read shows as missing, never as zero.
 
 <StructureFigure data={recordOfWork} />
 

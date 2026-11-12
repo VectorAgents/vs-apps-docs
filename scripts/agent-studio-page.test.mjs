@@ -76,7 +76,7 @@ test('each term is linked at its first use', () => {
   const noDescription = body.replace(/^description:.*$/m, '').replace(/^#+ .*$/gm, '').replace(/Vector Space/g, 'VS');
   for (const [term, anchor] of [
     ['Agent Studio', 'agent-studio'], ['agents', 'agent'], ['space', 'space'], ['channel', 'channel'], ['linked chat', 'linked-chat'],
-    ['orchestrator agent', 'orchestrator-agent'], ['A2A', 'a2a'], ['evaluation', 'evaluation'], ['Organization admin', 'organization-admin'],
+    ['orchestrator agent', 'orchestrator-agent'], ['A2A', 'a2a'], ['evaluation', 'evaluation'], ['organization admin', 'organization-admin'],
     ['thread', 'thread'], ['agent card', 'agent-card'], ['member', 'member'], ['Datasource', 'datasource'], ['condition', 'condition'],
     ['Context', 'context'], ['run', 'run'], ['AI gateway', 'ai-gateway'], ['AI provider accounts', 'ai-provider-account'],
     ['Skills', 'skill'], ['Can use', 'can-use'], ['Can edit', 'can-edit'], ['service account', 'service-account'], ['ask', 'ask'],
