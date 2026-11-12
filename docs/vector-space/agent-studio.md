@@ -43,7 +43,7 @@ These facts matter when many agents work together:
 
 ## What a run may use
 
-An agent can use only what the member who asks may use. The scope of an agent can narrow that set and never widen it. A new agent starts with no tools and no knowledge, and an empty scope reaches nothing. A remote A2A agent takes none of the tools of the space. The check runs at run time, with the authority of the member who asks.
+An agent acts for the member who asks, so it can reach nothing that the member cannot, and its scope can narrow that further. A run that a channel, an app or an API key starts acts as the identity of that channel, app or key instead. A new agent starts with no tools and no knowledge, and an empty scope reaches nothing. A remote A2A agent takes none of the tools of the space. The check runs each time a run starts or resumes, so a change to what the member may use applies from then.
 
 <FlowFigure data={agentStudioAccess} />
 

@@ -113,8 +113,10 @@ test('the life of a change gives the edit, publish, reset and restore rules in p
 
 test('the access check says a scope only narrows, a new agent has no tools and the check uses the asking member', () => {
   const access = section(text, 'What a run may use');
-  assert.match(access, /only what the member who asks may use/);
-  assert.match(access, /narrow that set and never widen it/);
+  assert.match(access, /acts for the member who asks, so it can reach nothing that the member cannot/);
+  assert.match(access, /its scope can narrow that further/);
+  assert.match(access, /A run that a channel, an app or an API key starts acts as the identity of that channel, app or key instead/);
+  assert.match(access, /runs each time a run starts or resumes/);
   assert.match(access, /starts with no tools and no knowledge/);
   assert.match(access, /does not filter the response/);
   assert.match(access, /fails closed/);
