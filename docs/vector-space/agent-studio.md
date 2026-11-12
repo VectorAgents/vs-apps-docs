@@ -15,7 +15,7 @@ import { agentStudioLifecycle } from '@site/src/diagrams/figures/agent-studio-li
 
 A support team has a space with a [channel](./glossary.md#channel), an agent that people reach through a messaging service. A customer writes in a [linked chat](./glossary.md#linked-chat), a chat on the channel that its owner has linked to the space. The message reaches the [orchestrator agent](./glossary.md#orchestrator-agent), which hands it to a ticket-classifier agent that sorts it by topic and urgency.
 
-The orchestrator agent then hands the case to a remote [A2A](./glossary.md#a2a) agent of the team's customer system, which looks up the customer. The orchestrator agent sends one reply back to the chat. The team set up all of these agents in Agent Studio, tested them on a draft and published them in one step.
+The orchestrator agent then hands the case to a remote [A2A](./glossary.md#a2a) agent of the team's customer system, which looks up the customer. The orchestrator agent sends one reply back to the chat. The team set up all of these agents in Agent Studio, tested them on a draft and published them in one step, which made the new settings live for everyone who reaches the space.
 
 ## What Agent Studio is for
 
@@ -27,7 +27,7 @@ An [organization admin](./glossary.md#organization-admin) can configure, delete 
 
 ## How agents are arranged
 
-Each space has one orchestrator agent. It is the root of the agent tree, and every other agent of the space is below it. Each agent is either built into the space or a remote A2A agent. A remote A2A agent belongs to the organization, which plugs it in to extend its space.
+Each space has one orchestrator agent. It is the root of the agent tree, and every other agent of the space is below it. Each agent is either built into the space or a remote A2A agent. A remote A2A agent runs outside the space, and someone who may manage agents in the space adds it to the agent tree.
 
 <StructureFigure data={agentStudioTree} />
 
@@ -66,7 +66,7 @@ Every edit writes to the draft. An edit that changes a versioned setting saves a
 
 Whether the orchestrator agent accepts A2A calls, and the judge of an evaluation, take effect without a publish.
 
-A run keeps the version it started on. An edit applies from the next run, even if the current run is paused for days. Web chat, channels and calls from other agents run the published version. A test in Agent Studio, or an evaluation that is set to the draft, runs the draft.
+A run keeps the version it started on. An edit applies from the next run, even if the current run is paused for days. A chat in the web interface, channels and calls from other agents run the published version. A test in Agent Studio, or an evaluation that is set to the draft, runs the draft.
 
 An evaluation is a set of saved questions, each with the expected answer that its author wrote. Each question runs as a real run, against the draft or the published version as chosen. A judge model compares each answer with the expected answer, scores it as correct, partly correct or wrong, and gives a short reason. The judge is set to score consistently, so a change in score comes from the agent and not from the judge. The judge model is set for each agent and is not part of a version. The saved questions live in an outside tracing service.
 

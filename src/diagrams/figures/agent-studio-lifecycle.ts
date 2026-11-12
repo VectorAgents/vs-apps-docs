@@ -56,7 +56,7 @@ const scenes: SceneData[] = [
     step: 5,
     durationMs: 4400,
     fresh: true,
-    lit: [{ part: 'member', from: 0 }, { part: 'versions', from: 0.1 }, { part: 'draft', from: 0.5 }],
+    lit: [{ part: 'member', from: 0 }, { part: 'published', from: 0 }, { part: 'versions', from: 0.1 }, { part: 'draft', from: 0.5 }],
     effects: [
       { kind: 'hop', path: ['versions', 'draft'], draw: [0.1, 0.6] },
       { kind: 'item', path: ['versions', 'draft'], move: [0.1, 0.6], show: [0, 1] },

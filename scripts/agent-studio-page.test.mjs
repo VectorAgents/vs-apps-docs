@@ -106,7 +106,7 @@ test('the life of a change gives the edit, publish, reset and restore rules in p
   assert.match(life, /\*\*Reset\*\*.*brings back a published agent.*never published/);
   assert.match(life, /\*\*Restore\*\*.*saves no version itself, and the next edit does/);
   assert.match(life, /keeps the version it started on/);
-  assert.match(life, /Web chat, channels and calls from other agents run the published version/);
+  assert.match(life, /A chat in the web interface, channels and calls from other agents run the published version/);
   assert.match(life, /correct, partly correct or wrong/);
   assert.match(life, /not part of a version/);
 });

@@ -412,7 +412,7 @@ const { slotOf } = await import('../src/diagrams/figures/slots.ts');
 const approvalsLayout = layoutFlow(approvals);
 const extendingLayout = layoutFlow(extending);
 
-for (const [name, data, laid] of [['approvals-flow', approvals, approvalsLayout], ['extending-flow', extending, extendingLayout]]) {
+function sharedFlowTests(name, data, laid) {
   test(`${name}: the data carries the slot id and the registry caption, and every step has a scene in order`, () => {
     assert.equal(data.id, name);
     assert.equal(data.caption, slotOf(name).caption);
@@ -420,6 +420,7 @@ for (const [name, data, laid] of [['approvals-flow', approvals, approvalsLayout]
     const order = data.scenes.map((s) => s.step);
     assert.deepEqual(order, [...order].sort((a, b) => a - b));
   });
+
 
   test(`${name}: every waypoint resolves inside the view box, every window is ordered and every lit part exists`, () => {
     const [x0, y0, w, h] = laid.structure.viewBox.split(' ').map(Number);
@@ -439,6 +440,23 @@ for (const [name, data, laid] of [['approvals-flow', approvals, approvalsLayout]
     }
   });
 
+
+  test(`${name}: the view box leaves room above every ask tile for its tooltip`, () => {
+    const y0 = Number(laid.structure.viewBox.split(' ')[1]);
+    for (const scene of data.scenes) for (const effect of scene.effects) if (effect.kind === 'ask') assert.ok(laid.resolve(effect.at)[1] - ASK_TIP_REACH >= y0 - 1e-6, `${effect.at}`);
+  });
+
+
+  test(`${name}: nothing is drawn at rest and no ask is left in the last pose`, () => {
+    const rest = frameAt(laid, 0);
+    assert.deepEqual([rest.scene, rest.hops, rest.items, rest.ask], [0, [], [], null]);
+    assert.equal(frameAt(laid, data.scenes.length).ask, null);
+  });
+}
+
+for (const [name, data, laid] of [['approvals-flow', approvals, approvalsLayout], ['extending-flow', extending, extendingLayout]]) {
+  sharedFlowTests(name, data, laid);
+
   test(`${name}: names only on parts and slabs, no dashes, no first person plural, no vendor, short cells, every actor the member`, () => {
     for (const item of [...data.parts, ...data.slabs]) assert.match(item.label, /^[A-Za-z][A-Za-z0-9 ]*$/, item.label);
     const text = JSON.stringify(data);
@@ -448,17 +466,6 @@ for (const [name, data, laid] of [['approvals-flow', approvals, approvalsLayout]
     for (const step of data.steps) assert.ok(words(step.record.text) <= 15 && words(step.text) <= 40, step.text);
     assert.deepEqual([...new Set(data.steps.map((s) => s.record.actor))], ['Member']);
     for (const scene of data.scenes) if (scene.caption) assert.ok(words(scene.caption) <= 40, scene.caption);
-  });
-
-  test(`${name}: the view box leaves room above every ask tile for its tooltip`, () => {
-    const y0 = Number(laid.structure.viewBox.split(' ')[1]);
-    for (const scene of data.scenes) for (const effect of scene.effects) if (effect.kind === 'ask') assert.ok(laid.resolve(effect.at)[1] - ASK_TIP_REACH >= y0 - 1e-6, `${effect.at}`);
-  });
-
-  test(`${name}: nothing is drawn at rest and no ask is left in the last pose`, () => {
-    const rest = frameAt(laid, 0);
-    assert.deepEqual([rest.scene, rest.hops, rest.items, rest.ask], [0, [], [], null]);
-    assert.equal(frameAt(laid, data.scenes.length).ask, null);
   });
 }
 
@@ -550,33 +557,12 @@ const { agentStudioLifecycle: studioLifecycle } = await import('../src/diagrams/
 for (const [name, data] of [['agent-studio-access', studioAccess], ['agent-studio-lifecycle', studioLifecycle]]) {
   const laid = layoutFlow(data);
 
-  test(`${name}: the data carries the slot id and the registry caption, and every step has a scene in order`, () => {
-    assert.equal(data.id, name);
-    assert.equal(data.caption, slotOf(name).caption);
-    for (const [i] of data.steps.entries()) assert.ok(data.scenes.some((s) => s.step === i + 1), `step ${i + 1}`);
-    const order = data.scenes.map((s) => s.step);
-    assert.deepEqual(order, [...order].sort((a, b) => a - b));
-  });
+  sharedFlowTests(name, data, laid);
 
-  test(`${name}: 7 parts on one slab, a legend of 4, and every waypoint, window and lit part is valid`, () => {
+  test(`${name}: 7 parts on one slab and a legend of 4`, () => {
     assert.equal(data.parts.length, 7);
     assert.equal(data.slabs.length, 1);
     assert.equal(data.legend.length, 4);
-    const [x0, y0, w, h] = laid.structure.viewBox.split(' ').map(Number);
-    const windows = (effect) => [effect.draw, effect.move, effect.show, effect.window, effect.pop, effect.gather, effect.type].filter(Boolean);
-    for (const scene of data.scenes) {
-      for (const { part: id, from } of scene.lit) {
-        assert.ok(data.parts.some((p) => p.id === id), id);
-        assert.ok(from >= 0 && from < 1);
-      }
-      for (const effect of scene.effects) {
-        for (const at of (effect.path ?? [effect.at]).filter(Boolean)) {
-          const [x, y] = laid.resolve(at);
-          assert.ok(x >= x0 && x <= x0 + w && y >= y0 && y <= y0 + h, `${at} is inside the view box`);
-        }
-        for (const [from, to] of windows(effect)) assert.ok(from >= 0 && from < to && to <= 1, `${effect.kind} window ${from}, ${to}`);
-      }
-    }
   });
 
   test(`${name}: names only on parts and slabs, no dashes, no first person plural, no code name, no vendor, short cells, only the actors Member and Platform`, () => {
@@ -588,11 +574,6 @@ for (const [name, data] of [['agent-studio-access', studioAccess], ['agent-studi
     for (const step of data.steps) assert.ok(words(step.record.text) <= 15 && words(step.text) <= 40, step.text);
     assert.ok(data.steps.every((s) => ['Member', 'Platform'].includes(s.record.actor)));
     for (const scene of data.scenes) if (scene.caption) assert.ok(words(scene.caption) <= 40, scene.caption);
-  });
-
-  test(`${name}: nothing is drawn at rest`, () => {
-    const rest = frameAt(laid, 0);
-    assert.deepEqual([rest.scene, rest.hops, rest.items], [0, [], []]);
   });
 }
 
