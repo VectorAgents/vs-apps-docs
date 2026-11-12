@@ -43,10 +43,10 @@ test('the figures sit one each in "How agents are arranged", "What a run may use
   assert.doesNotMatch(lead, /Figure/);
 });
 
-test('the scene is the support case: a linked chat, the orchestrator agent, a ticket classifier and a remote CRM agent', () => {
+test('the scene is the support case: a linked chat, the orchestrator agent, a ticket classifier and a remote customer agent', () => {
   const scene = section(text, 'A support message in a space');
-  for (const word of ['linked chat', 'orchestrator agent', 'ticket-classifier agent', 'remote', 'A2A', 'CRM']) assert.ok(scene.includes(word), word);
-  assert.match(scene, /customer relationship management \(CRM\)/);
+  for (const word of ['linked chat', 'orchestrator agent', 'ticket-classifier agent', 'remote', 'A2A', 'customer system']) assert.ok(scene.includes(word), word);
+  assert.match(scene, /customer system/);
   assert.doesNotMatch(prose, /WhatsApp|Messenger|Instagram|Telegram|Slack|Discord/);
 });
 
@@ -139,7 +139,7 @@ test('the use cases are financial analysis and employee onboarding', () => {
   assert.match(cases, /\*\*Financial analysis\.\*\*/);
   assert.match(cases, /\*\*Employee onboarding\.\*\*/);
   assert.match(cases, /service account/);
-  assert.match(cases, /Google Drive folder/);
+  assert.match(cases, /shared folder of welcome documents/);
   assert.doesNotMatch(cases, /Vector App/);
 });
 

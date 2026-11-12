@@ -15,7 +15,7 @@ import { agentStudioLifecycle } from '@site/src/diagrams/figures/agent-studio-li
 
 A support team has a space with a [channel](./glossary.md#channel), an agent that people reach through a messaging service. A customer writes in a [linked chat](./glossary.md#linked-chat), a chat on the channel that its owner has linked to the space. The message reaches the [orchestrator agent](./glossary.md#orchestrator-agent), which hands it to a ticket-classifier agent that sorts it by topic and urgency.
 
-The orchestrator agent then hands the case to a remote [A2A](./glossary.md#a2a) agent of the team's customer relationship management (CRM) system, which looks up the customer. The orchestrator agent sends one reply back to the chat. The team set up all of these agents in Agent Studio, tested them on a draft and published them as one version.
+The orchestrator agent then hands the case to a remote [A2A](./glossary.md#a2a) agent of the team's customer system, which looks up the customer. The orchestrator agent sends one reply back to the chat. The team set up all of these agents in Agent Studio, tested them on a draft and published them in one step.
 
 ## What Agent Studio is for
 
@@ -52,7 +52,7 @@ Two kinds of resource show the check at work:
 - **[Datasource](./glossary.md#datasource)**: a [condition](./glossary.md#condition) filters the rows of every query, and the platform checks it before the query runs. An agent does not see a datasource that its member may not query.
 - **[Connector](./glossary.md#connector)**: a condition guards the arguments of a call and does not filter the response. The agent is told when a call is refused.
 
-A condition does not bind an owner or an Organization admin, and a missing attribute value fails closed: the member reaches nothing.
+A condition does not bind an owner or an organization admin, and a missing attribute value fails closed: the member reaches nothing.
 
 ## The life of a change
 
@@ -84,7 +84,7 @@ Every paid model call of an evaluation goes through the [AI gateway](./glossary.
 
 **Financial analysis.** A finance team's space has an analyst agent. A member asks for revenue by region, and the agent queries a datasource. The condition of the member decides which rows come back, so two members who ask the same question can get different totals. Sharing the result is a write, and it waits for approval.
 
-**Employee onboarding.** An HR team's space has an orchestrator agent that runs onboarding for new hires as a service account. It reaches only what is shared with that account, such as a Google Drive folder of welcome documents. When a step needs approval, such as sending a welcome email, the run waits in the Command Center. A service account cannot decide, so the owner of its API key answers. A standing approval of the space can pre-approve the run, because "always allow" belongs to one person and not to an account.
+**Employee onboarding.** An HR team's space has an orchestrator agent that runs onboarding for new hires as a service account. It reaches only what is shared with that account, such as a shared folder of welcome documents. When a step needs approval, such as sending a welcome email, the run waits in the Command Center. A service account cannot decide, so the owner of its API key answers. A standing approval of the space can pre-approve the run, because "always allow" belongs to one person and not to an account.
 
 ## Where to go next
 

@@ -47,8 +47,8 @@ const scenes: SceneData[] = [
     lit: [{ part: 'linkedChat', from: 0 }, { part: 'published', from: 0.5 }, { part: 'run', from: 0.8 }],
     effects: [
       { kind: 'chat', at: [18.4, 9.4, 7.5], placeholder: 'Message the space', text: 'Where is my order?', type: [0.05, 0.35], sendAt: 0.45 },
-      { kind: 'hop', path: ['linkedChat', 'run', 'published'], draw: [0.5, 0.85] },
-      { kind: 'item', path: ['linkedChat', 'run', 'published'], move: [0.5, 0.85], show: [0.5, 1] },
+      { kind: 'hop', path: ['linkedChat', 'published', 'run'], draw: [0.5, 0.85] },
+      { kind: 'item', path: ['linkedChat', 'published', 'run'], move: [0.5, 0.85], show: [0.5, 1] },
       { kind: 'ring', at: 'run', window: [0.8, 1], hold: true },
     ],
   },

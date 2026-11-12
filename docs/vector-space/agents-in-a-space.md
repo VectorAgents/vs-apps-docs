@@ -20,7 +20,7 @@ An agent has three parts:
 - **Tools**: let the agent act.
 - **Resources**: what the agent may read, such as a mailbox or a database.
 
-A space manager sets up agents in [Agent Studio](./glossary.md#agent-studio), which holds the instructions and the evaluations of each agent.
+Agents are set up in [Agent Studio](./agent-studio.md), which holds the instructions and the evaluations of each agent.
 
 Each space starts with one orchestrator agent, created with the space. An organization has none of its own. The request of a member goes to the orchestrator agent first.
 

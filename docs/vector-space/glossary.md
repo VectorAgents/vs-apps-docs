@@ -275,7 +275,7 @@ The part of a space where an [ask](#ask) waits for a person. It is a plain part 
 
 ### Agent Studio
 
-The part of Vector Space where a space manager sets up the [orchestrator agent](#orchestrator-agent): its canvas, its channels and its evaluations.
+The part of Vector Space where the [orchestrator agent](#orchestrator-agent) is set up: its canvas, its channels and its evaluations.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.

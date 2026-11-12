@@ -64,7 +64,7 @@ export const slots: readonly FigureSlot[] = [
     id: 'agent-studio-tree',
     page: 'agent-studio',
     kind: 'structure',
-    caption: 'The agents of a support space, and the remote CRM agent that stands outside it',
+    caption: 'The agents of a support space, and the remote customer agent that stands outside it',
   },
   {
     id: 'agent-studio-access',

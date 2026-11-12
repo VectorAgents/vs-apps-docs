@@ -44,11 +44,11 @@ test('the page says child agent, never sub-agent, subagent or turn', () => {
   assert.doesNotMatch(prose, /\bturns?\b/i);
 });
 
-test('Agent Studio gets one sentence, in "Agents and the orchestrator agent", linked to the glossary, and one link in Where to go next', () => {
+test('Agent Studio gets one sentence, in "Agents and the orchestrator agent", linked to its page, and one link in Where to go next', () => {
   assert.equal(text.match(/Agent Studio/g)?.length, 2);
   assert.equal(section(text, 'Agents and the orchestrator agent').match(/Agent Studio/g)?.length, 1);
   const studio = section(text, 'Agents and the orchestrator agent');
-  assert.match(studio, /\[Agent Studio\]\(\.\/glossary\.md#agent-studio\)/);
+  assert.match(studio, /\[Agent Studio\]\(\.\/agent-studio\.md\)/);
 });
 
 test('the threads section says a thread is one conversation that only its owner reads, and a run is one execution in a thread', () => {
@@ -62,7 +62,7 @@ test('each term is linked at its first use: agent, orchestrator agent, A2A, thre
   for (const [term, anchor] of [['agent', 'agent'], ['orchestrator agent', 'orchestrator-agent'], ['A2A', 'a2a'], ['thread', 'thread'], ['run', 'run'], ['Agent Studio', 'agent-studio']]) {
     const first = new RegExp(`\\b${term}\\b`, 'i').exec(body.replace(/^description:.*$/m, ''));
     assert.ok(first, term);
-    const link = `[${term}](./glossary.md#${anchor})`;
+    const link = term === 'Agent Studio' ? `[${term}](./agent-studio.md)` : `[${term}](./glossary.md#${anchor})`;
     assert.ok(body.slice(first.index - 1, first.index - 1 + link.length).toLowerCase() === link.toLowerCase(), `${term} first use is linked`);
   }
 });
@@ -89,8 +89,8 @@ test('the page names no banned name or term', () => {
   assert.deepEqual(bannedTermsIn(noLinks), []);
 });
 
-test('a space manager sets up agents in Agent Studio', () => {
-  assert.match(section(text, 'Agents and the orchestrator agent'), /A space manager sets up agents in \[Agent Studio\]/);
+test('agents are set up in Agent Studio, and no role is named', () => {
+  assert.match(section(text, 'Agents and the orchestrator agent'), /Agents are set up in \[Agent Studio\]/);
 });
 
 test('the page follows the voice checks and has no em dash', () => {
