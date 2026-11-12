@@ -58,7 +58,7 @@ A named [AI](../vector-space/glossary.md#ai) model requirement. The app declares
 
 ### connector slot
 
-A named requirement for one external connector, such as ClickUp or a REST API. A slot takes one connector. It can declare event handlers for incoming webhooks.
+A named requirement for one external connector, such as ClickUp or a REST API. A slot takes one context, which may be a connector. It can declare event handlers for incoming webhooks.
 
 - Maps to: `resources.connectors[]` in the definition, with optional `eventHandlers`.
 - Owner: SDK declares it. Vector Space attaches the connector.

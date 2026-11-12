@@ -33,7 +33,7 @@ The space manager imports the schema, which lists the tables and columns of the 
 The Knowledge tab of a datasource holds what else an agent needs to know:
 
 - **Instructions**: rules in plain words that apply to the questions they match.
-- **SQL pairs**: a question with the SQL that answers it, where SQL is the query language of databases. They show an agent how the team asks.
+- **SQL pairs**: a question with the SQL that answers it. They show an agent how the team asks.
 - **Saved answers**: queries kept for reuse.
 
 A member asks in plain language and never writes SQL. The agent writes the query in the SQL of that database, and the query runs read-only on one datasource, so one question reaches one database.

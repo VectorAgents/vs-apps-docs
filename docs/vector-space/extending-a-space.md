@@ -53,7 +53,7 @@ Pick by what your logic does:
 
 - **Vector App**: build one when your workflow needs screens, pages or data tables for members.
 - **A2A agent**: build one when a task needs autonomous reasoning on its own model and the space hands it the task.
-- **MCP server**: build one when agents need to look up data in an external API or take an action in a tool, with no screens and no reasoning. To call an existing REST API, add a REST [context](./glossary.md#context) in the Context Hub, with no MCP server.
+- **MCP server**: build one when agents need to look up data in an external API or take an action in a tool, with no screens and no reasoning. To call an existing REST API, add a REST [context](./glossary.md#context) in the [Context Hub](./context-hub.md#apis-and-mcp-servers), with no MCP server.
 
 If a workflow needs screens and also reasoning or tools, build a Vector App that offers an A2A agent or an MCP server.
 

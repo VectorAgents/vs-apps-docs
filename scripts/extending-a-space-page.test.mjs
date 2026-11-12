@@ -136,6 +136,7 @@ test('the choice section gives one "build one when" trigger per extension, a mix
   assert.match(bullets[1][2], /autonomous reasoning/);
   assert.match(bullets[2][2], /external API/);
   assert.match(bullets[2][2], /REST context in the Context Hub, with no MCP server\./);
+  assert.match(section(text, 'Choosing an extension'), /\[Context Hub\]\(\.\/context-hub\.md#apis-and-mcp-servers\)/);
   assert.match(choice, /needs screens and also reasoning or tools, build a Vector App that offers an A2A agent or an MCP server\./);
 });
 
