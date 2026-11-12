@@ -38,6 +38,7 @@ const config: Config = {
     ['@easyops-cn/docusaurus-search-local', { docsDir, docsRouteBasePath: '/', indexBlog: false, hashed: true }],
   ],
   themeConfig: {
+    docs: { sidebar: { hideable: true } },
     navbar: {
       title: 'Vector Space docs',
       items: [
