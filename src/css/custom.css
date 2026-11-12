@@ -431,3 +431,18 @@ html:not(:has(.flavour-block)) .flavour-picker {
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
+
+/* Docusaurus default blue is 3.6-4.2:1 on the dark surfaces; this set is 6:1 or better. */
+[data-theme='dark'] {
+  --ifm-color-primary: #7fb0ff;
+  --ifm-color-primary-dark: #6ba2ff;
+  --ifm-color-primary-darker: #5f9aff;
+  --ifm-color-primary-darkest: #3f82ff;
+  --ifm-color-primary-light: #93bdff;
+  --ifm-color-primary-lighter: #a0c5ff;
+  --ifm-color-primary-lightest: #bdd6ff;
+}
+
+[data-theme='dark'] .flavour-picker__seg button[aria-pressed='true'] {
+  color: #0b1220;
+}
