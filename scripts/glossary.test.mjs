@@ -11,7 +11,7 @@ const sections = {
     'thread', 'run', 'schedule', 'connector', 'Vector Module', 'extension', 'Command Center', 'Agent Studio', 'governance',
     'Activity', 'Audit', 'Intelligence', 'actor', 'standing approval', 'Human Time Return',
     'widget', 'datasource', 'skill', 'group', 'Can use', 'Can edit', 'General access', 'AI gateway', 'AI provider account', 'execution',
-    'Overview', 'Health', 'spend cap', 'rate card', 'agent card',
+    'Overview', 'Health', 'spend cap', 'rate card', 'agent card', 'evaluation', 'linked chat', 'web interface',
   ],
   'vector-apps': [
     'app', 'app registration', 'manifest', 'app page', 'capability', 'capability grant', 'model slot', 'connector slot',

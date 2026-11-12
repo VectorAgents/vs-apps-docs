@@ -34,6 +34,9 @@ const headings = {
   'worked-example-flow': "A member's outreach request",
   'approvals-flow': 'The ask and who decides it',
   'extending-flow': 'Adding an extension',
+  'agent-studio-tree': 'How agents are arranged',
+  'agent-studio-access': 'What a run may use',
+  'agent-studio-lifecycle': 'The life of a change',
 };
 
 test('figuresOf reads a placeholder by slot and a real figure by the id of its data file', () => {
@@ -43,9 +46,9 @@ test('figuresOf reads a placeholder by slot and a real figure by the id of its d
   assert.deepEqual(figuresOf('no figure'), []);
 });
 
-test('the registry holds the 8 slots, each with a unique id, its own page of the section, a kind and a caption', () => {
+test('the registry holds the 11 slots, each with a unique id, a page of the section, a kind and a caption', () => {
   assert.deepEqual(slots.map((s) => s.id), Object.keys(headings));
-  assert.equal(new Set(slots.map((s) => s.page)).size, 8);
+  assert.equal(new Set(slots.map((s) => s.page)).size, 9);
   for (const slot of slots) {
     assert.ok(existsSync(join(docs, pageOf(slot))), `${slot.id}: ${pageOf(slot)}`);
     assert.ok(['structure', 'flow'].includes(slot.kind), slot.id);
@@ -53,12 +56,14 @@ test('the registry holds the 8 slots, each with a unique id, its own page of the
   }
 });
 
-test('each slot appears exactly once on its page, as a placeholder or as the real figure of its kind with the same id', () => {
-  for (const slot of slots) {
-    const figures = figuresOf(read(pageOf(slot)));
-    assert.equal(figures.length, 1, `${slot.page}: one figure`);
-    assert.equal(figures[0].id, slot.id, slot.page);
-    if (figures[0].tag !== 'FigurePlaceholder') assert.equal(figures[0].tag, slot.kind === 'flow' ? 'FlowFigure' : 'StructureFigure', slot.id);
+test('each page holds exactly the figures of its slots, each as a placeholder or as the real figure of its kind with the same id', () => {
+  for (const page of new Set(slots.map((s) => s.page))) {
+    const pageSlots = slots.filter((s) => s.page === page);
+    const figures = figuresOf(read(`vector-space/${page}.md`));
+    assert.deepEqual(figures.map((f) => f.id), pageSlots.map((s) => s.id), `${page}: figures in slot order`);
+    figures.forEach((figure, i) => {
+      if (figure.tag !== 'FigurePlaceholder') assert.equal(figure.tag, pageSlots[i].kind === 'flow' ? 'FlowFigure' : 'StructureFigure', figure.id);
+    });
   }
 });
 
@@ -69,7 +74,7 @@ test('each figure sits inside the H2 that the spec names for its slot', () => {
   }
 });
 
-test('no other page of the section holds a figure, so no page has a second slot', () => {
+test('no other page of the section holds a figure', () => {
   const owned = new Set(slots.map(pageOf));
   for (const file of sourceFiles.filter((f) => f.startsWith('vector-space/') && !owned.has(f))) assert.deepEqual(figuresOf(read(file)), [], file);
 });

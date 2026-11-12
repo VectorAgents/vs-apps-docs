@@ -412,7 +412,7 @@ const { slotOf } = await import('../src/diagrams/figures/slots.ts');
 const approvalsLayout = layoutFlow(approvals);
 const extendingLayout = layoutFlow(extending);
 
-for (const [name, data, laid] of [['approvals-flow', approvals, approvalsLayout], ['extending-flow', extending, extendingLayout]]) {
+function sharedFlowTests(name, data, laid) {
   test(`${name}: the data carries the slot id and the registry caption, and every step has a scene in order`, () => {
     assert.equal(data.id, name);
     assert.equal(data.caption, slotOf(name).caption);
@@ -420,6 +420,7 @@ for (const [name, data, laid] of [['approvals-flow', approvals, approvalsLayout]
     const order = data.scenes.map((s) => s.step);
     assert.deepEqual(order, [...order].sort((a, b) => a - b));
   });
+
 
   test(`${name}: every waypoint resolves inside the view box, every window is ordered and every lit part exists`, () => {
     const [x0, y0, w, h] = laid.structure.viewBox.split(' ').map(Number);
@@ -439,6 +440,23 @@ for (const [name, data, laid] of [['approvals-flow', approvals, approvalsLayout]
     }
   });
 
+
+  test(`${name}: the view box leaves room above every ask tile for its tooltip`, () => {
+    const y0 = Number(laid.structure.viewBox.split(' ')[1]);
+    for (const scene of data.scenes) for (const effect of scene.effects) if (effect.kind === 'ask') assert.ok(laid.resolve(effect.at)[1] - ASK_TIP_REACH >= y0 - 1e-6, `${effect.at}`);
+  });
+
+
+  test(`${name}: nothing is drawn at rest and no ask is left in the last pose`, () => {
+    const rest = frameAt(laid, 0);
+    assert.deepEqual([rest.scene, rest.hops, rest.items, rest.ask], [0, [], [], null]);
+    assert.equal(frameAt(laid, data.scenes.length).ask, null);
+  });
+}
+
+for (const [name, data, laid] of [['approvals-flow', approvals, approvalsLayout], ['extending-flow', extending, extendingLayout]]) {
+  sharedFlowTests(name, data, laid);
+
   test(`${name}: names only on parts and slabs, no dashes, no first person plural, no vendor, short cells, every actor the member`, () => {
     for (const item of [...data.parts, ...data.slabs]) assert.match(item.label, /^[A-Za-z][A-Za-z0-9 ]*$/, item.label);
     const text = JSON.stringify(data);
@@ -448,17 +466,6 @@ for (const [name, data, laid] of [['approvals-flow', approvals, approvalsLayout]
     for (const step of data.steps) assert.ok(words(step.record.text) <= 15 && words(step.text) <= 40, step.text);
     assert.deepEqual([...new Set(data.steps.map((s) => s.record.actor))], ['Member']);
     for (const scene of data.scenes) if (scene.caption) assert.ok(words(scene.caption) <= 40, scene.caption);
-  });
-
-  test(`${name}: the view box leaves room above every ask tile for its tooltip`, () => {
-    const y0 = Number(laid.structure.viewBox.split(' ')[1]);
-    for (const scene of data.scenes) for (const effect of scene.effects) if (effect.kind === 'ask') assert.ok(laid.resolve(effect.at)[1] - ASK_TIP_REACH >= y0 - 1e-6, `${effect.at}`);
-  });
-
-  test(`${name}: nothing is drawn at rest and no ask is left in the last pose`, () => {
-    const rest = frameAt(laid, 0);
-    assert.deepEqual([rest.scene, rest.hops, rest.items, rest.ask], [0, [], [], null]);
-    assert.equal(frameAt(laid, data.scenes.length).ask, null);
   });
 }
 
@@ -542,4 +549,56 @@ test('extending-flow: each call rides its dashed link to its part, and the last 
 
 test('extending-flow: the legend has 4 items that explain encodings', () => {
   assert.deepEqual(extending.legend.map((i) => i.swatch), ['plug', 'remote', 'cube', 'hop']);
+});
+
+const { agentStudioAccess: studioAccess } = await import('../src/diagrams/figures/agent-studio-access.ts');
+const { agentStudioLifecycle: studioLifecycle } = await import('../src/diagrams/figures/agent-studio-lifecycle.ts');
+
+for (const [name, data] of [['agent-studio-access', studioAccess], ['agent-studio-lifecycle', studioLifecycle]]) {
+  const laid = layoutFlow(data);
+
+  sharedFlowTests(name, data, laid);
+
+  test(`${name}: 7 parts on one slab and a legend of 4`, () => {
+    assert.equal(data.parts.length, 7);
+    assert.equal(data.slabs.length, 1);
+    assert.equal(data.legend.length, 4);
+  });
+
+  test(`${name}: names only on parts and slabs, no dashes, no first person plural, no code name, no vendor, short cells, only the actors Member and Platform`, () => {
+    for (const item of [...data.parts, ...data.slabs]) assert.match(item.label, /^[A-Za-z][A-Za-z0-9 ]*$/, item.label);
+    const text = JSON.stringify(data);
+    assert.doesNotMatch(text, /[–—]/);
+    assert.doesNotMatch(text, /\b(we|our|ours|us)\b/i);
+    assert.doesNotMatch(text, /GenSQL|Level [123]|spaceId|agentVersionId|Apollo|Exa\b|BrightData|Slack|RedemptAI|\bgrant\b/);
+    for (const step of data.steps) assert.ok(words(step.record.text) <= 15 && words(step.text) <= 40, step.text);
+    assert.ok(data.steps.every((s) => ['Member', 'Platform'].includes(s.record.actor)));
+    for (const scene of data.scenes) if (scene.caption) assert.ok(words(scene.caption) <= 40, scene.caption);
+  });
+}
+
+test('agent-studio-access: the access check stands between the agent and what it reaches, and only the ask scene pauses', () => {
+  const ends = studioAccess.links.map((l) => [l.from, l.to]);
+  assert.deepEqual(ends, [['analyst', 'accessCheck'], ['accessCheck', 'datasource'], ['accessCheck', 'connector']]);
+  assert.deepEqual(studioAccess.scenes.filter((s) => s.pause).map((s) => s.step), [5]);
+  assert.equal(studioAccess.scenes.length, 6);
+});
+
+test('agent-studio-access: the ask waits in the pause pose, the approval clears it and the last pose has no ask', () => {
+  const laid = layoutFlow(studioAccess);
+  assert.equal(frameAt(laid, 5).ask?.state, 'waiting');
+  assert.equal(frameAt(laid, 5.2).ask?.state, 'approved');
+  assert.equal(frameAt(laid, 6).ask, null);
+});
+
+test('agent-studio-lifecycle: draft, versions and published agents are joined in a row, and Evaluation has no link', () => {
+  assert.deepEqual(studioLifecycle.links.map((l) => [l.from, l.to]), [['draft', 'versions'], ['versions', 'published'], ['published', 'run']]);
+  assert.ok(!studioLifecycle.links.some((l) => l.from === 'evaluation' || l.to === 'evaluation'));
+});
+
+test('agent-studio-lifecycle: six steps play six scenes, none pauses, and the restore starts a clean picture', () => {
+  assert.equal(studioLifecycle.steps.length, 6);
+  assert.equal(studioLifecycle.scenes.length, 6);
+  assert.ok(!studioLifecycle.scenes.some((s) => s.pause));
+  assert.equal(studioLifecycle.scenes[4].fresh, true);
 });

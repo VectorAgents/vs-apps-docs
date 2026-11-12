@@ -79,7 +79,7 @@ Also written HITL. A run that pauses until a person decides. The agent or app ra
 
 ### channel
 
-An agent that a person reaches from outside the web app, with its own prompt. The channel is the agent, not the service it is reached through: WhatsApp, Messenger and Instagram are Meta messaging services.
+An agent that a person reaches through a messaging service, with its own prompt. The channel is the agent, not the service it is reached through: WhatsApp, Messenger and Instagram are Meta messaging services.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
@@ -115,6 +115,13 @@ The customer account in Vector Space. Every user, API key, resource and space be
 ### member
 
 A person in an organization who is in a space. Membership alone reaches what [General access](#general-access) gives. A [share](#share) gives more.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### web interface
+
+The interface in a browser that the internal team of an organization uses to work in a space. Customers of the organization do not use it. They reach an agent through a [channel](#channel). A [Vector App](../vector-apps/glossary.md#app) is a web app that this interface shows in an iframe.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
@@ -268,7 +275,21 @@ The part of a space where an [ask](#ask) waits for a person. It is a plain part 
 
 ### Agent Studio
 
-The part of Vector Space where a space manager sets up the [orchestrator agent](#orchestrator-agent): its canvas, its channels and its evaluations.
+The part of Vector Space where the [orchestrator agent](#orchestrator-agent) is set up: its canvas, its channels and its evaluations.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### evaluation
+
+A test of an agent in [Agent Studio](#agent-studio). Each saved question runs as a [run](#run), and a judge model scores the answer against the expected answer. It can run on the draft or on the published version.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### linked chat
+
+A chat on a [channel](#channel) that the owner of the channel has linked to the space, by posting a one-time code in it. A channel accepts a message only from a linked chat.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.

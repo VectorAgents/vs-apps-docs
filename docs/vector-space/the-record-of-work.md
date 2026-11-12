@@ -10,7 +10,7 @@ The record of work is what Vector Space writes down about each piece of work: wh
 
 ## A member's outreach run
 
-Acme's sales team has a space, and a [member](./glossary.md#member) of it asks the [orchestrator agent](./glossary.md#orchestrator-agent) to find leads and send an outreach email. Vector Space records the work as that member and notes what started it, here a chat in the web app. It also records each model call with its estimated cost.
+Acme's sales team has a space, and a [member](./glossary.md#member) of it asks the [orchestrator agent](./glossary.md#orchestrator-agent) to find leads and send an outreach email. Vector Space records the work as that member and notes what started it, here a chat in the [web interface](./glossary.md#web-interface). It also records each model call with its estimated cost.
 
 Later an [Organization admin](./glossary.md#organization-admin) opens [Activity](./glossary.md#activity), finds the work and reads who it ran as and what it cost.
 
@@ -19,7 +19,7 @@ Later an [Organization admin](./glossary.md#organization-admin) opens [Activity]
 An [execution](./glossary.md#execution) is one unit of work, such as an agent run or a connector call. Every execution records two things:
 
 - **[Actor](./glossary.md#actor)**: who performed the action, either a user, a [service account](./glossary.md#service-account), [staff](./glossary.md#staff), an app or the platform. Each execution has one actor.
-- **What started it**: recorded apart from the actor, such as a chat in the web app. A [schedule](./glossary.md#schedule) is not an actor. It runs as a person or a service account chosen for it.
+- **What started it**: recorded apart from the actor, such as a chat in the web interface. A [schedule](./glossary.md#schedule) is not an actor. It runs as a person or a service account chosen for it.
 
 ## The four governance views
 
