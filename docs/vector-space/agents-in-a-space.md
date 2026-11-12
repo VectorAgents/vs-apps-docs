@@ -42,7 +42,7 @@ An agent moves only within its own space. A [context](./glossary.md#context) is 
 
 ## Threads and runs
 
-- **[Thread](./glossary.md#thread)**: one conversation with one agent. Only its owner reads it, and anyone else who asks for it gets "not found", an Organization admin included.
+- **[Thread](./glossary.md#thread)**: one conversation with one agent. Only its owner reads it, and anyone else who asks for it gets "not found", an organization admin included.
 - **[Run](./glossary.md#run)**: one execution of one agent in a thread. It closes when it ends, and when the orchestrator agent hands work to another agent, that agent has a run of its own.
 
 ## Where to go next

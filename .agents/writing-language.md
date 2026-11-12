@@ -15,7 +15,7 @@ Precedence: rules here win over any reference. A page-type section wins over the
 - **L5 Table cell and reference description.** 15 words or fewer. A cell over 15 words is a note, not an error. References: 9-11.
 - **L6 Active voice.** Name the actor. Bad: "A slot nobody set runs nothing". Good: "If no one sets a slot, the app cannot use that model."
 - **L7 No noun stacks.** Three nouns in a row need a verb. Bad: "Connector-event handler wiring". Good: "Register connector event handlers".
-- **L8 One name per thing.** Use the glossary name every time, with the same capitals. Bad: "registry entry" for "app registration".
+- **L8 One name per thing.** Use the glossary name every time. A term keeps the capitals the glossary gives it ("Can use", "Context Hub"); a common-noun term is lowercase mid-sentence ("space manager", "organization admin"). Bad: "registry entry" for "app registration".
 - **L9 Spell out the figure.** Give exact numbers and limits, not "a few" or "many".
 
 ### Voice

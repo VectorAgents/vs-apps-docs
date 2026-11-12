@@ -95,7 +95,7 @@ test('credentials belong to their creator, a shared resource runs on the owner\'
   assert.match(cred, /\[General access\]\(\.\/glossary\.md#general-access\).*Restricted, Can use or Can edit/);
   assert.match(cred, /A \[share\]\(\.\/glossary\.md#share\) adds a role on top of that/);
   assert.match(cred, /belongs to the person who created it and is never shared/);
-  assert.match(cred, /not even an \[Organization admin\]\(\.\/glossary\.md#organization-admin\) can use it/);
+  assert.match(cred, /not even an \[organization admin\]\(\.\/glossary\.md#organization-admin\) can use it/);
   assert.match(cred, /run on the credential of its owner/);
   assert.match(cred, /never get the credential or its target/);
   assert.match(cred, /A share names a user or a group, never a role, and the role, Can use or Can edit, is what it gives/);
@@ -110,7 +110,7 @@ test('each term is linked at its first use', () => {
     ['orchestrator agent', 'orchestrator-agent'], ['Context', 'context'], ['Knowledge source', 'knowledge-source'], ['Datasource', 'datasource'],
     ['widgets', 'widget'], ['Skill', 'skill'], ['Vector Module', 'vector-module'], ['connector', 'connector'], ['Can edit', 'can-edit'],
     ['MCP', 'mcp'], ['Can use', 'can-use'], ['General access', 'general-access'], ['role', 'role'], ['share', 'share'], ['group', 'group'],
-    ['Organization admin', 'organization-admin'],
+    ['organization admin', 'organization-admin'],
   ]) {
     const link = new RegExp(`\\[${term}\\]\\(\\./glossary\\.md#${anchor}\\)`, 'i').exec(noDescription);
     assert.ok(link, `${term} is linked`);

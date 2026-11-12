@@ -147,11 +147,11 @@ for (const { tree, text } of trees) {
       '6. Open the app page',
     ]);
     assert.match(intro, /\]\(#3-publish-the-space-agent\)/);
-    assert.ok(rest[2].includes('**Role**: Organization admin.'));
+    assert.ok(rest[2].includes('**Role**: organization admin.'));
     const roled = rest.filter((step) => step.includes('**Role**: space manager.'));
     assert.deepEqual(roled.map(title), rest.slice(3, 5).map(title));
     assert.equal([...part2.matchAll(/\*\*Role\*\*: space manager\./g)].length, 2);
-    assert.match(text, /An Organization admin, [^.]*, to do \[step 3\]\(#3-publish-the-space-agent\)\. A space manager to do steps 4 and 5\./);
+    assert.match(text, /An organization admin, [^.]*, to do \[step 3\]\(#3-publish-the-space-agent\)\. A space manager to do steps 4 and 5\./);
     assert.match(text, /then continue at step 4\. \*\*Hello app\*\* appears/);
     assert.doesNotMatch(text, /Each step names the role/);
   });

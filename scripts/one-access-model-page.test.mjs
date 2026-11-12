@@ -60,10 +60,10 @@ test('a block names its two presets and a group share reaches nested groups', ()
 
 test('the page uses user, not caller', () => assert.doesNotMatch(prose, /\bcaller\b/));
 
-test('a Restricted resource is closed even to an Organization admin unless a share names it', () => {
+test('a Restricted resource is closed even to an organization admin unless a share names it', () => {
   const reads = section(text, 'What the check reads');
   assert.match(reads, /Restricted/);
-  assert.match(reads, /Organization admin/);
+  assert.match(reads, /organization admin/);
   assert.match(reads, /unless a share names them/);
 });
 

@@ -5,7 +5,7 @@ import { test } from 'node:test';
 
 const sections = {
   'vector-space': [
-    'Vector Space', 'space', 'space manager', 'Organization admin', 'page', 'staff',
+    'Vector Space', 'space', 'space manager', 'organization admin', 'page', 'staff',
     'knowledge source', 'Context Hub', 'ask', 'human in the loop', 'channel', 'MCP', 'A2A', 'AI',
     'organization', 'member', 'role', 'share', 'block', 'condition', 'service account', 'agent', 'orchestrator agent',
     'thread', 'run', 'schedule', 'context', 'connector', 'Vector Module', 'extension', 'Command Center', 'Agent Studio', 'governance',
@@ -94,7 +94,7 @@ test('Vector Space, space and space manager entries open with the platform text'
   const first = (name) => entries.find((e) => e.name === name).body.trim().split('\n')[0];
   assert.match(first('Vector Space'), /^The Vector platform\./);
   assert.match(first('space'), /^A shared place in Vector Space\b/);
-  assert.equal(first('space manager'), 'A user who can edit on the space, or the Organization admin. They add apps, share capabilities and choose the models and contexts for the slots.');
+  assert.equal(first('space manager'), 'A user who can edit on the space, or the organization admin. They add apps, share capabilities and choose the models and contexts for the slots.');
 });
 
 test('allowed resources entry states the overlap rule in the member\'s access', () => {
