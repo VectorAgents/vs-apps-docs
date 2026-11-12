@@ -75,8 +75,8 @@ test('the combination says what wins, never a numbered order', () => {
   assert.doesNotMatch(noLinks, /\bsteps?\b|\bfirst,|\bsecond,|\bthird,|\bthen\b/i);
 });
 
-test('conditions apply to datasources and connectors only', () => {
-  assert.match(section(text, 'How the inputs combine'), /[Cc]onditions apply to datasources and connectors only/);
+test('conditions apply to datasources and contexts only', () => {
+  assert.match(section(text, 'How the inputs combine'), /[Cc]onditions apply to datasources and contexts only/);
 });
 
 test('a capability grant is a share on named capabilities of a Vector App at Can use, linked to the Apps glossary', () => {

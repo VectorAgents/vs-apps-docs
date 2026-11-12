@@ -10,7 +10,7 @@ An [ask](./glossary.md#ask) is anything that an agent or an app waits on a perso
 
 ## A status note that waits for approval
 
-Acme's sales team has a space, and a [member](./glossary.md#member) of it asks the [orchestrator agent](./glossary.md#orchestrator-agent) to post a status note to the team chat. The post goes out through a [connector](./glossary.md#connector), and it changes something outside the space. So the [run](./glossary.md#run) stops, and an ask appears in the Command Center.
+Acme's sales team has a space, and a [member](./glossary.md#member) of it asks the [orchestrator agent](./glossary.md#orchestrator-agent) to post a status note to the team chat. The post goes out through a [context](./glossary.md#context), and it changes something outside the space. So the [run](./glossary.md#run) stops, and an ask appears in the Command Center.
 
 The member reads the ask and approves it. The run continues and the note is posted. The member also ticks "always allow", so the same post runs later with no ask.
 
@@ -41,7 +41,7 @@ A run that raises an ask stops where it is and waits. A decision is a second che
 
 ## Standing approvals
 
-A standing approval lets one agent run one operation without asking, or lets one app's approval pass. Vector Space shows it as "always allow". It names the connector, so an approval for one connector's post never covers another connector.
+A standing approval lets one agent run one operation without asking, or lets one app's approval pass. Vector Space shows it as "always allow". It names the context, so an approval for one context's post never covers another context.
 
 There are two kinds. A personal approval covers the runs of the person who made it. A member makes one by ticking "always allow" on an ask that they answer. A space-wide approval covers everyone in the space, and a space manager can set one.
 

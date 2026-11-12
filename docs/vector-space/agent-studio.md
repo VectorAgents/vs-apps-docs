@@ -50,7 +50,7 @@ An agent acts for the member who asks, so it can reach nothing that the member c
 Two kinds of resource show the check at work:
 
 - **[Datasource](./glossary.md#datasource)**: a [condition](./glossary.md#condition) filters the rows of every query, and the platform checks it before the query runs. An agent does not see a datasource that its member may not query.
-- **[Connector](./glossary.md#connector)**: a condition guards the arguments of a call and does not filter the response. The agent is told when a call is refused.
+- **[Context](./glossary.md#context)**: a condition guards the arguments of a call and does not filter the response. The agent is told when a call is refused.
 
 A condition does not bind an owner or an organization admin, and a missing attribute value fails closed: the member reaches nothing.
 

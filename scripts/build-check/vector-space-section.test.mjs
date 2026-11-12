@@ -11,6 +11,7 @@ const pages = [
   'what-vector-space-is',
   'organizations-and-spaces',
   'what-a-space-holds',
+  'context-hub',
   'agents-in-a-space',
   'who-can-do-what',
   'why-vector-space',
@@ -27,7 +28,7 @@ test('the Vector Space navbar tab opens What Vector Space is', () => {
   assert.match(nav, /href="[^"]*\/vector-space\/what-vector-space-is"/);
 });
 
-test('the sidebar lists Core concepts, Architecture and governance and Workflows and extensions with the 12 pages in order, then the glossary', () => {
+test('the sidebar lists Core concepts, Architecture and governance and Workflows and extensions with the 13 pages in order, then the glossary', () => {
   const sidebar = built('vector-space/what-vector-space-is').match(/<nav[^>]*menu[^>]*>[\s\S]*?<\/nav>/)?.[0] ?? '';
   const hrefs = [...sidebar.matchAll(/<a class="menu__link(?: menu__link--active)?"[^>]*href="[^"]*\/vector-space\/([\w-]+)"/g)].map((m) => m[1]);
   assert.deepEqual(hrefs, [...pages, 'glossary']);

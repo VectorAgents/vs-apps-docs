@@ -23,7 +23,7 @@ A shared place in Vector Space for one team. A space manager adds apps, shares c
 
 ### space manager
 
-A user who can edit on the space, or the Organization admin. They add apps, share capabilities and choose the models and connectors for the slots.
+A user who can edit on the space, or the Organization admin. They add apps, share capabilities and choose the models and contexts for the slots.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
@@ -58,7 +58,7 @@ A body of documents that Vector Space indexes for search. A space manager can at
 
 ### Context Hub
 
-The area of a space for what it can reach. It holds six kinds of resource: [connectors](#connector), [knowledge sources](#knowledge-source), [datasources](#datasource), [skills](#skill), apps and [Vector Modules](#vector-module). Pages are not one of them. A member or app reaches only what the Context Hub lists. Vector Space shows the list as **Resources**.
+The area of a space for what it can reach. It holds six kinds of resource: [contexts](#context), [knowledge sources](#knowledge-source), [datasources](#datasource), [skills](#skill), apps and [Vector Modules](#vector-module). Pages are not one of them. A member or app reaches only what the Context Hub lists. Vector Space shows the list as **Resources**.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
@@ -89,7 +89,7 @@ An agent that a person reaches through a messaging service, with its own prompt.
 Model Context Protocol. An open protocol that connects a model to tools and data. A [connector slot](../vector-apps/glossary.md#connector-slot) with the provider `MCP` uses it.
 
 - Maps to: `provider: 'MCP'` in `resources.connectors[]`.
-- Owner: SDK declares it. Vector Space attaches the connector.
+- Owner: SDK declares it. Vector Space attaches the context.
 
 ### A2A
 
@@ -163,7 +163,7 @@ A preset, Everything or Editing, that denies one user or group on one resource, 
 
 ### condition
 
-A limit on the rows that one user or group sees in one resource. A group's condition binds every user the group holds. Datasources and connectors only.
+A limit on the rows that one user or group sees in one resource. A group's condition binds every user the group holds. Datasources and contexts only.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
@@ -224,9 +224,16 @@ A background task that an agent or a person sets to run on a timer.
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
 
+### context
+
+A link from a space to one outside account or endpoint, such as a mailbox, a REST API or an MCP server. It is one of the six kinds of resource in the [Context Hub](#context-hub). A [connector](#connector) is a context made from a pre-built provider. The create sheet of Vector Space still reads "New Connector".
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
 ### connector
 
-A link from a space to one outside account or endpoint, such as a mailbox or a REST API.
+A [context](#context) made from a pre-built provider, such as Apollo, Exa, BrightData or Meta. The operations are already defined, and the space manager gives an account or a key.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
@@ -254,14 +261,14 @@ One cell of a [page](#page): a database query with its chart, or a document.
 
 ### Vector Module
 
-A first-party product that works over connector data and sits in the [Context Hub](#context-hub). The modules are Omnibox, Contacts and Calendar.
+A first-party product that works over context data and sits in the [Context Hub](#context-hub). The modules are Omnibox, Contacts and Calendar.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
 
 ### extension
 
-A Vector App, an [A2A](#a2a) agent or an [MCP](#mcp) connector that adds logic of a team's own to a space. [Extending a space](./extending-a-space.md) compares the three.
+A Vector App, an [A2A](#a2a) agent or an [MCP](#mcp) server that adds logic of a team's own to a space. [Extending a space](./extending-a-space.md) compares the three.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
@@ -331,7 +338,7 @@ A [governance](#governance) view of what was spent, run or broken, by source. A 
 
 ### Health
 
-A [governance](#governance) view of what is wrong now, such as a connector whose calls fail.
+A [governance](#governance) view of what is wrong now, such as a context whose calls fail.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.

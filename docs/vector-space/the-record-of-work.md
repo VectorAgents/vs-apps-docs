@@ -16,7 +16,7 @@ Later an [Organization admin](./glossary.md#organization-admin) opens [Activity]
 
 ## The actor behind every record
 
-An [execution](./glossary.md#execution) is one unit of work, such as an agent run or a connector call. Every execution records two things:
+An [execution](./glossary.md#execution) is one unit of work, such as an agent run or a call to a context. Every execution records two things:
 
 - **[Actor](./glossary.md#actor)**: who performed the action, either a user, a [service account](./glossary.md#service-account), [staff](./glossary.md#staff), an app or the platform. Each execution has one actor.
 - **What started it**: recorded apart from the actor, such as a chat in the web interface. A [schedule](./glossary.md#schedule) is not an actor. It runs as a person or a service account chosen for it.
@@ -26,7 +26,7 @@ An [execution](./glossary.md#execution) is one unit of work, such as an agent ru
 Four views read the records. Each answers one question.
 
 - **[Overview](./glossary.md#overview)**: what was spent, run or broken, by source. A figure opens the records behind it.
-- **[Health](./glossary.md#health)**: what is wrong now, such as a connector whose calls fail.
+- **[Health](./glossary.md#health)**: what is wrong now, such as a context whose calls fail.
 - **[Activity](./glossary.md#activity)**: what happened, in time order. A decided [ask](./glossary.md#ask) shows here.
 - **[Audit](./glossary.md#audit)**: who changed what. It covers changes to access, to what the organization may use and to credentials and keys. Audit reads the change records.
 

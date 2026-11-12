@@ -69,7 +69,7 @@ test('the paths section says how each extension gets in and that a standalone on
   assert.match(paths, /someone who may manage agents in the space/);
   assert.match(paths, /agent card/);
   assert.match(paths, /stored credential/);
-  assert.match(paths, /added by a member as a connector in the Context Hub/);
+  assert.match(paths, /added by a member as a context in the Context Hub/);
   assert.match(paths, /standalone A2A agent or MCP server needs no vs-apps SDK/);
   assert.match(paths, /Vector App can offer an A2A agent and an MCP server of its own/);
   assert.match(paths, /app definition/);
@@ -126,7 +126,7 @@ test('the shared call path says each call starts in a run, is gated first and is
   assert.doesNotMatch(shared, /inherit/i, 'no "A2A inherits the space access"');
 });
 
-test('the choice section gives one "build one when" trigger per extension, a mixed-need rule and the REST connector route', () => {
+test('the choice section gives one "build one when" trigger per extension, a mixed-need rule and the REST context route', () => {
   const choice = unlink(section(text, 'Choosing an extension'));
   assert.match(choice, /\n\nPick by what your logic does:\n\n/);
   const bullets = [...choice.matchAll(/^- \*\*(.+?)\*\*: (.+)$/gm)];
@@ -135,7 +135,7 @@ test('the choice section gives one "build one when" trigger per extension, a mix
   assert.match(bullets[0][2], /screens, pages or data tables/);
   assert.match(bullets[1][2], /autonomous reasoning/);
   assert.match(bullets[2][2], /external API/);
-  assert.match(bullets[2][2], /REST connector in the Context Hub, with no MCP server\./);
+  assert.match(bullets[2][2], /REST context in the Context Hub, with no MCP server\./);
   assert.match(choice, /needs screens and also reasoning or tools, build a Vector App that offers an A2A agent or an MCP server\./);
 });
 

@@ -15,7 +15,7 @@ export const recordOfWork: StructureData = {
     { id: 'app', label: 'App', text: 'A Vector App. When an app records an act, the actor is the app.', icon: 'app', tone: 'plug', on: 'governance', c: 1.4, r: 9.4, w: 3.2, d: 2.8 },
     { id: 'execution', label: 'Execution', text: 'One unit of work, such as an agent run. It has one actor. Vector Space also records what started it, such as a chat in the web app.', icon: 'execution', tone: 'core', on: 'governance', c: 8, r: 7.5, w: 3.2, d: 2.8 },
     { id: 'overview', label: 'Overview', text: 'What was spent, run or broken, by source. A figure opens the records behind it.', icon: 'overview', tone: 'core', on: 'governance', c: 14.6, r: 1.2, w: 3.2, d: 2.8 },
-    { id: 'health', label: 'Health', text: 'What is wrong now, such as a connector whose calls fail.', icon: 'health', tone: 'core', on: 'governance', c: 14.6, r: 5.4, w: 3.2, d: 2.8 },
+    { id: 'health', label: 'Health', text: 'What is wrong now, such as a context whose calls fail.', icon: 'health', tone: 'core', on: 'governance', c: 14.6, r: 5.4, w: 3.2, d: 2.8 },
     { id: 'activity', label: 'Activity', text: 'What happened, in time order. A decided ask shows here.', icon: 'activity', tone: 'core', on: 'governance', c: 14.6, r: 9.6, w: 3.2, d: 2.8 },
     { id: 'audit', label: 'Audit', text: 'Who changed what: changes to access, to what the organization may use and to keys.', icon: 'audit', tone: 'core', on: 'governance', c: 14.6, r: 13.8, w: 3.2, d: 2.8 },
   ],

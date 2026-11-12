@@ -40,7 +40,7 @@ test('the scene is the first H2, with no Example heading and Acme wording, a pos
   assert.match(plain, /Acme's sales team has a space, and a member of it asks the orchestrator agent to post a status note to the team chat/);
   const scene = section(text, 'A status note that waits for approval');
   assert.match(scene, /team chat/);
-  assert.match(scene, /\[connector\]\(\.\/glossary\.md#connector\)/);
+  assert.match(scene, /\[context\]\(\.\/glossary\.md#context\)/);
   assert.match(scene, /\[orchestrator agent\]\(\.\/glossary\.md#orchestrator-agent\)/);
   assert.match(scene, /an ask appears in the Command Center/);
   assert.match(scene, /always allow/);
@@ -72,10 +72,10 @@ test('after a decision the run resumes as its own actor and the decision is a se
   assert.match(after, /pauses no run/);
 });
 
-test('a standing approval names its connector, comes in two kinds and stays until someone revokes it', () => {
+test('a standing approval names its context, comes in two kinds and stays until someone revokes it', () => {
   const standing = section(text, 'Standing approvals');
   assert.match(standing, /always allow/);
-  assert.match(standing, /connector/);
+  assert.match(standing, /context/);
   assert.match(standing, /personal/i);
   assert.match(standing, /space-wide/);
   assert.match(standing, /space manager can set one/);

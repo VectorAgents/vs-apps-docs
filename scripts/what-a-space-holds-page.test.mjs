@@ -39,13 +39,12 @@ test('the page has no figure slot and no figure component', () => {
   assert.doesNotMatch(text, /<(FigurePlaceholder|StructureFigure|FlowFigure)\b/);
 });
 
-test('the Context Hub section lists the six kinds of resource', () => {
+test('the Context Hub section names the six kinds of resource and links the Context Hub page', () => {
   const hub = section(text, 'The Context Hub');
-  for (const anchor of ['connector', 'knowledge-source', 'datasource', 'skill', 'vector-module']) {
-    assert.match(hub, new RegExp(`\\]\\(\\./glossary\\.md#${anchor}\\)`), anchor);
-  }
-  assert.match(hub, /Vector Apps/);
+  for (const kind of ['contexts', 'knowledge sources', 'datasources', 'skills', 'Vector Apps', 'Vector Modules']) assert.match(hub, new RegExp(kind), kind);
   assert.match(hub, /six kinds of resource/);
+  assert.match(hub, /\]\(\.\/context-hub\.md\)/);
+  assert.doesNotMatch(hub, /connector/i);
 });
 
 test('pages and widgets get their own section', () => {
@@ -59,6 +58,7 @@ test('Vector Apps and Vector Modules share one section: an app is a web app that
   assert.match(apps, /a web app that a space shows in an iframe/);
   assert.match(apps, /\]\(\.\.\/vector-apps\/glossary\.md#app\)/);
   for (const module of ['Omnibox', 'Contacts', 'Calendar']) assert.match(apps, new RegExp(module));
+  assert.match(apps, /\]\(\.\/context-hub\.md#mailboxes-and-the-omnibox\)/);
   assert.doesNotMatch(apps, /Command Center/);
   assert.match(apps, /organization's license lists it/);
   assert.doesNotMatch(apps, /is different|alike|differ|not an app/);

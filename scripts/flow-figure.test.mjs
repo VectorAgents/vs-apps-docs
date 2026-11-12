@@ -469,8 +469,8 @@ for (const [name, data, laid] of [['approvals-flow', approvals, approvalsLayout]
   });
 }
 
-test('approvals-flow: Member, Orchestrator agent, Command Center and a Connector on one space slab, and no Omnibox', () => {
-  assert.deepEqual(approvals.parts.map((p) => p.label).sort(), ['Command Center', 'Connector', 'Member', 'Orchestrator agent']);
+test('approvals-flow: Member, Orchestrator agent, Command Center and a Context on one space slab, and no Omnibox', () => {
+  assert.deepEqual(approvals.parts.map((p) => p.label).sort(), ['Command Center', 'Context', 'Member', 'Orchestrator agent']);
   assert.deepEqual(approvals.slabs.map((s) => s.label), ['Workspace']);
   assert.doesNotMatch(JSON.stringify(approvals), /Omnibox/);
 });
@@ -507,7 +507,7 @@ test('approvals-flow: a new loop starts on a clean picture, and the record gains
   assert.deepEqual([3.9, 4, 7, 11].map((p) => recordAt(approvals, p).length), [0, 1, 2, 3]);
 });
 
-test('approvals-flow: the ask stands above the Command Center, and the approved call reaches the Connector', () => {
+test('approvals-flow: the ask stands above the Command Center, and the approved call reaches the Context', () => {
   const [x, y] = approvalsLayout.resolve('commandCenter');
   const tile = frameAt(approvalsLayout, 2).ask;
   assert.ok(Math.abs(tile.x - x) < 40 && tile.y < y, 'the tile is above the Command Center');
