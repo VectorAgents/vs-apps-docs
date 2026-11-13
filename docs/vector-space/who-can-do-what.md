@@ -3,6 +3,9 @@ title: Identity and roles
 description: Four kinds of people and callers, and the roles that say what each may do.
 ---
 
+import LadderFigure from '@site/src/components/LadderFigure';
+import { roleLadder } from '@site/src/diagrams/figures/role-ladder.ts';
+
 Vector Space has four kinds of people and callers, and each kind is an identity. Three of them belong to an [organization](./glossary.md#organization), the company account in Vector Space, and Staff reach organizations from outside:
 
 - **[Organization admin](./glossary.md#organization-admin)**: the one person who runs the organization. The admin creates spaces, users and service accounts, and manages AI provider accounts.
@@ -34,6 +37,8 @@ A role is a set of permissions that a user or group holds in one place. Vector S
 - **Space member**: reaches what each resource's General access gives every member of the space.
 - **[Space editor](./glossary.md#space-editor)**: builds and publishes agents, and edits the settings and event routes of an app.
 - **[Space admin](./glossary.md#space-admin)**: holds everything a space editor holds, and also adds members and apps, sets policies and model slots, shares an app, and sets standing approvals for the whole space.
+
+<LadderFigure data={roleLadder} />
 
 - **[Can use](./glossary.md#can-use)**: lets a user use a resource without changing it.
 - **[Can edit](./glossary.md#can-edit)**: lets a user configure a resource and use it.

@@ -293,7 +293,8 @@
 
 .figure-placeholder figcaption,
 .structure-figure figcaption,
-.flow-figure figcaption {
+.flow-figure figcaption,
+.ladder-figure figcaption {
   border-top: 1px solid var(--ifm-color-emphasis-300);
   color: var(--ifm-color-emphasis-700);
   font-family: var(--ifm-font-family-monospace);
