@@ -10,7 +10,7 @@ Not published. Staff register an external developer's app and allow it in the cu
 
 ## 1. Register and enable the app
 
-Registration is staff-only: the controller is the cross-organization staff app registry, so no developer or space manager can do this.
+Registration is staff-only: the controller is the cross-organization staff app registry, so no developer or space admin can do this.
 
 1. Choose **Settings**, **Admin**, **Platform**, then **Apps**. Choose **Add app**.
 2. Enter the manifest URL in **Manifest URL**. Choose **Continue**.
