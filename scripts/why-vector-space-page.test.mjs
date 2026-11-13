@@ -35,7 +35,9 @@ test('the page runs the problem, the three platform rules, the AI gateway, Human
 test('the lead opens with the problem and names the three rules', () => {
   assert.match(lead, /^\s*Once \[AI\]\(\.\/glossary\.md#ai\) agents work on an /);
   assert.match(lead, /\]\(\.\/glossary\.md#vector-space\)/);
-  assert.match(lead, /one for access, one for model keys and one for records/);
+  assert.match(lead, /one for access, one for AI provider keys and one for records/);
+  assert.doesNotMatch(lead, /model keys/);
+  assert.match(lead, /is the platform that does this\. People and agents work/);
 });
 
 test('the scene is the first H2, with no Example heading and Acme wording', () => {
@@ -52,8 +54,10 @@ test('Human Time Return is its own section: seconds, acts, staff-approved baseli
   assert.match(htr, /\[staff\]\(\.\/glossary\.md#staff\) approve the seconds per unit of an act, and that approved figure is the baseline/);
   assert.match(htr, /only successful acts with an approved baseline/i);
   assert.match(htr, /how many are not/);
-  assert.match(htr, /\]\(\.\/glossary\.md#intelligence\)[^.]*apart from spend/);
-  assert.deepEqual([...htr.matchAll(/^- \*\*(.+?)\*\*: /gm)].map((m) => unlink(m[1])), ['Act', 'Baseline', 'Valuation', 'Intelligence']);
+  assert.match(htr, /\]\(\.\/glossary\.md#intelligence\)[^.]*in addition to spend/);
+  assert.doesNotMatch(htr, /apart from spend|four things|four terms/);
+  assert.match(htr, /Three things make up the figure:/);
+  assert.deepEqual([...htr.matchAll(/^- \*\*(.+?)\*\*: /gm)].map((m) => unlink(m[1])), ['Act', 'Baseline', 'Valuation']);
   assert.match(htr, /\bestimate\b/);
   assert.match(htr, /return figure/);
   assert.match(htr, /\]\(\.\/the-record-of-work\.md#acts-and-human-time-return\)/);
@@ -84,10 +88,10 @@ test('the three platform rules are one access model, one AI gateway and one reco
   assert.deepEqual([...rules.matchAll(/^- \*\*(.+?)\*\*: /gm)].map((m) => m[1]), ['One access model', 'One AI gateway', 'One record of work']);
 });
 
-test('rule 1 names General access, shares, blocks and Conditions, and rule 3 says who it ran as and what started it', () => {
+test('rule 1 names General access, shares, blocks and conditions, and rule 3 says who it ran as and what started it', () => {
   const rules = section(text, 'The three platform rules');
   assert.doesNotMatch(rules, /Each rule is a promise/);
-  assert.match(rules, /General access\]\(\.\/glossary\.md#general-access\), \[shares\]\(\.\/glossary\.md#share\), \[blocks\]\(\.\/glossary\.md#block\) and \[Conditions\]\(\.\/glossary\.md#condition\)/);
+  assert.match(rules, /General access\]\(\.\/glossary\.md#general-access\), \[shares\]\(\.\/glossary\.md#share\), \[blocks\]\(\.\/glossary\.md#block\) and \[conditions\]\(\.\/glossary\.md#condition\)/);
   assert.match(rules, /records who it ran as and what started it/);
   assert.doesNotMatch(rules, /roles, shares, blocks and conditions/i);
   assert.doesNotMatch(rules, /traced/);
@@ -157,5 +161,5 @@ test('the page follows the voice checks and uses no em dash', () => {
 test('provenance names the master docs behind the page and says the gateway is unverified for production', () => {
   const provenance = readFileSync(resolve(root, '.agents/provenance.md'), 'utf8');
   const part = provenance.split(/^## /m).find((p) => p.startsWith('Why Vector Space\n')) ?? '';
-  for (const source of ['product/OVERVIEW.md', 'systems/AI.md', 'systems/INTELLIGENCE.md', 'Unverified: whether production runs the gateway']) assert.ok(part.includes(source), source);
+  for (const source of ['product/OVERVIEW.md', 'domains/ai/README.md', 'domains/intelligence/README.md', 'Unverified: whether production runs the gateway']) assert.ok(part.includes(source), source);
 });
