@@ -12,9 +12,9 @@ All three run outside the space, on their own origins.
 
 ## A question about open tickets
 
-Acme's engineering team has a space, and a [member](./glossary.md#member) of it asks the [orchestrator agent](./glossary.md#orchestrator-agent) which tickets are still open. The team runs a ticket tracker, and it can offer the tracker in three ways. As a Vector App, it shows its screens in the space and the agent calls its server. As an A2A agent, it reasons over tickets and the orchestrator agent hands the question to it. As an MCP server, it offers tools such as "list open tickets" that agents call.
+Erik, a [member](./glossary.md#member) of Acme's engineering team, asks the [orchestrator agent](./glossary.md#orchestrator-agent) which tickets are still open in the team's space. The team runs a ticket tracker, and it can offer the tracker in three ways. As a Vector App, it shows its screens in the space and the agent calls its server. As an A2A agent, it reasons over tickets and the orchestrator agent hands the question to it. As an MCP server, it offers tools such as "list open tickets" that agents call.
 
-Each call starts in the member's run. What the space sends with the call differs.
+Each call starts in Erik's run. What the space sends with the call differs.
 
 ## Adding an extension
 

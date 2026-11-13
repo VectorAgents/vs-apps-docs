@@ -48,12 +48,29 @@ test('the scene is the first H2, with no Example heading and Acme wording, and o
   assert.equal([...text.matchAll(/^## (.+)$/gm)][0][1], 'A question about open tickets');
   assert.doesNotMatch(text, /^## .*\bExample\b/m);
   const example = section(text, 'A question about open tickets');
-  assert.match(example, /\n\nAcme's engineering team has a space, and a \[member\]\(\.\/glossary\.md#member\) of it asks the \[orchestrator agent\]\(\.\/glossary\.md#orchestrator-agent\) which tickets are still open/);
+  assert.match(example, /\n\nErik, a \[member\]\(\.\/glossary\.md#member\) of Acme's engineering team, asks the \[orchestrator agent\]\(\.\/glossary\.md#orchestrator-agent\) which tickets are still open in the team's space\./);
   assert.match(example, /ticket tracker/);
-  assert.match(example, /\[member\]\(\.\/glossary\.md#member\)/);
   assert.match(example, /\[orchestrator agent\]\(\.\/glossary\.md#orchestrator-agent\)/);
   for (const kind of ['Vector App', 'A2A agent', 'MCP server']) assert.ok(unlink(example).includes(kind), kind);
   assert.doesNotMatch(example, /Jira|Linear|GitHub|Zendesk|ClickUp/);
+});
+
+test('the scene names Erik in place of "a member", with no he or she', () => {
+  const scene = section(text, 'A question about open tickets');
+  assert.match(scene, /Each call starts in Erik's run\./);
+  assert.doesNotMatch(scene, /a member of it|this member|that member|the member's/);
+  assert.doesNotMatch(scene, /\b(?:he|she|his|her|him)\b/i);
+  for (const paragraph of scene.split('\n\n')) assert.ok((unlink(paragraph).match(/[.?!](?:\s|$)/g) ?? []).length <= 5, paragraph);
+});
+
+test('Erik is introduced once and the first "member" on the page is the glossary link on that introduction', () => {
+  assert.equal(body.match(/Erik, a /g)?.length, 1);
+  assert.match(body.slice(body.search(/(?<![-#\w])member\b/) - 1), /^\[member\]\(\.\/glossary\.md#member\) of Acme's engineering team/);
+  assert.ok(body.indexOf('Erik') < body.indexOf('[member]'));
+});
+
+test('no persona name appears outside the scene section', () => {
+  assert.doesNotMatch(text.replace(section(text, 'A question about open tickets'), ''), /Erik/);
 });
 
 test('the slot extending-flow appears once, in "Adding an extension"', () => {
