@@ -51,6 +51,6 @@ An [approval](./approvals-and-the-command-center.md) is a second check on top of
 
 ## Where to go next
 
-- [Identity and roles](./who-can-do-what.md): the five kinds of people and callers in Vector Space, and what Can use and Can edit mean for each.
+- [Identity and roles](./who-can-do-what.md): the four kinds of people and callers in Vector Space, and the space roles and share levels that say what each may do.
 - [How work moves through a space](./how-work-moves-through-a-space.md): one request followed from the member to the sent email, with the access check at each point.
 - [Glossary](./glossary.md): every term of Vector Space, each defined in a sentence.

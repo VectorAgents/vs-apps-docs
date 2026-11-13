@@ -20,7 +20,7 @@ Each call starts in the member's run. What the space sends with the call differs
 
 Each extension gets in by its own path:
 
-- **Vector App**: added in two steps. [Staff](./glossary.md#staff) register it, and a [space manager](./glossary.md#space-manager) adds it to the space. The space then shows its pages. An agent calls its endpoints with a token that the space makes for the member.
+- **Vector App**: added in two steps. [Staff](./glossary.md#staff) register it, and a [space admin](./glossary.md#space-admin) adds it to the space. The space then shows its pages. An agent calls its endpoints with a token that the space makes for the member.
 - **A2A agent**: added by someone who may manage agents in the space. The space reads its [agent card](./glossary.md#agent-card) from a URL. The agent joins the agent tree as a leaf, an agent that hands work to no one. If the organization saved a stored credential for it, the space sends that credential with each call. A stored credential is a secret that the organization keeps for one outside service.
 - **MCP server**: added by a member as a context in the [Context Hub](./glossary.md#context-hub). The context starts as Restricted, so only that member reaches it until they share it. The space finds the tools of the server, and agents call them with the stored credential of the context. [General access](./glossary.md#general-access) explains Restricted.
 
@@ -35,8 +35,8 @@ Here is what each extension learns from the space and what it can do there.
 | | Vector App | A2A agent | MCP server |
 | --- | --- | --- | --- |
 | Caller | The app sees the member by name, with the capabilities they hold. | Only an agent that an app offers sees the member. Others get a stored credential. | The server never sees the member. |
-| Platform data | The app reaches what a space manager attached and the member can reach. | The agent gets no token, so it cannot call the space. | The server gets no token. It sees only the arguments of each call. |
-| Model | A space manager sets the [model slot](../vector-apps/glossary.md#model-slot) the app uses. | The remote agent runs on its own model. | None. The model call of the calling agent goes through the [AI gateway](./glossary.md#ai-gateway). |
+| Platform data | The app reaches what is attached to it and the member can reach. | The agent gets no token, so it cannot call the space. | The server gets no token. It sees only the arguments of each call. |
+| Model | A space admin sets the [model slot](../vector-apps/glossary.md#model-slot) the app uses. | The remote agent runs on its own model. | None. The model call of the calling agent goes through the [AI gateway](./glossary.md#ai-gateway). |
 | [Acts](../vector-apps/glossary.md#acts) | Yes, from the server of the app. | No. An app that offers it can record acts for it. | No. |
 
 ## What the space does for every call
