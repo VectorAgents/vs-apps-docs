@@ -9,7 +9,7 @@ Once [AI](./glossary.md#ai) agents work on an [organization](./glossary.md#organ
 
 When agents act on an organization's own data, three problems follow. A person or agent may reach data or tools that they should not, a model call may use keys and credits that the organization does not control, and no one can tell who did what. Vector Space solves each with one rule.
 
-Acme's sales team has a space, and a [member](./glossary.md#member) of it asks the [orchestrator agent](./glossary.md#orchestrator-agent) to find leads and send an outreach email. The agent reaches only what that member may reach. The model call goes through the [AI gateway](./glossary.md#ai-gateway), on Acme's own AI provider account, and Vector Space records the run under the member's name.
+Maya, a [member](./glossary.md#member) of Acme's sales team, asks the [orchestrator agent](./glossary.md#orchestrator-agent) in the team's space to find leads and send an outreach email. The agent reaches only what Maya may reach. The model call goes through the [AI gateway](./glossary.md#ai-gateway), on Acme's own AI provider account, and Vector Space records the run under Maya's name.
 
 ## The three platform rules
 
