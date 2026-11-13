@@ -33,7 +33,7 @@ test('role line entry defines the quickstart role line', () => {
   const block = internal.split(/^### /m).slice(1).find((b) => b.startsWith('role line\n'));
   assert.ok(block, 'role line entry missing');
   assert.match(block, /`\*\*Role\*\*: organization admin\.`/);
-  assert.match(block, /`\*\*Role\*\*: space manager\.`/);
+  assert.match(block, /`\*\*Role\*\*: space admin\.`/);
 });
 
 test('staff and binding are published terms, not internal ones', () => {

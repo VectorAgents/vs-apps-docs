@@ -16,7 +16,7 @@ The Vector platform. It holds organizations and their spaces. It shows each app 
 
 ### space
 
-A shared place in Vector Space for one team. A space manager adds apps, shares capabilities and sets slots in it. It also holds [pages](#page), a [Context Hub](#context-hub) and members.
+A shared place in Vector Space for one team. A space admin adds members and apps to it. It also holds [pages](#page), a [Context Hub](#context-hub) and members.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
@@ -28,9 +28,23 @@ A user who can edit on the space, or the organization admin. They add apps, shar
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
 
+### space editor
+
+The space role that adds editing to a member. A space editor builds and publishes agents, and edits the settings and event routes of an app.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### space admin
+
+The space role above [space editor](#space-editor). A space admin holds everything a space editor holds. A space admin also adds members and apps, sets policies and model slots, shares an app, and sets standing approvals for the whole space.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
 ### organization admin
 
-The one member who manages the organization in Vector Space and sees **Organization** under **Settings**. An organization has one organization admin. The organization admin is a space manager of every space.
+The one member who manages the organization in Vector Space and sees **Organization** under **Settings**. An organization has one organization admin. The organization admin is a space admin of every space.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
@@ -44,14 +58,14 @@ A grid of widgets in a space, with page filters.
 
 ### staff
 
-Vector employees who administer Vector Space itself. Only staff register apps, apply manifest changes and edit an organization license. External developers are not staff. A space manager works inside one space instead.
+Vector employees who administer Vector Space itself. Only staff register apps, apply manifest changes and edit an organization license. External developers are not staff. A space admin works inside one space instead.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
 
 ### knowledge source
 
-A body of documents that Vector Space indexes for search. A space manager can attach one to an app, with an optional scope of folders or documents. Vector Space shows knowledge sources in the settings of an app.
+A body of documents that Vector Space indexes for search. A member who can edit the app and share the source can attach one to an app, with an optional scope of folders or documents. Vector Space shows knowledge sources in the settings of an app.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
@@ -114,7 +128,7 @@ The customer account in Vector Space. Every user, API key, resource and space be
 
 ### member
 
-A person in an organization who is in a space. Membership alone reaches what [General access](#general-access) gives. A [share](#share) gives more.
+A person in an organization who is in a space. Membership alone reaches what [General access](#general-access) gives. A space role or a [share](#share) gives more.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
@@ -128,7 +142,14 @@ The interface in a browser that the internal team of an organization uses to wor
 
 ### role
 
-Can use or Can edit: the permission set that a [share](#share) holds. A role is never a set of people. That is a [group](#group). A kind of person, such as the organization admin or a member, is not a role.
+A set of permissions that a user or group holds in one place. In a space the roles are space member, [space editor](#space-editor), [space admin](#space-admin) and [custom role](#custom-role). On one resource the roles are the share levels [Can use](#can-use), [Can edit](#can-edit) and [Can manage](#can-manage). A space editor holds Can edit, and a space admin holds Can manage, on every resource of the space except another member's Restricted resource. A role is never a set of people, such as a [group](#group), or a kind of person, such as the organization admin.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### custom role
+
+A [role](#role) that the organization admin defines as a named set of permissions. A space admin gives it to a user or group in a space, on top of their space role. It never lets its holder add members, add apps, delete the space or make a change that only the organization admin makes, such as creating a space.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
@@ -142,7 +163,14 @@ The [role](#role) that lets a user use a resource without changing it.
 
 ### Can edit
 
-The [role](#role) that lets a user configure a resource and use it. On the space itself, it makes a user a [space manager](#space-manager).
+The [role](#role) that lets a user configure a resource and use it.
+
+- Maps to: no SDK symbol.
+- Owner: Vector Space.
+
+### Can manage
+
+The [role](#role) that lets a user share a resource and manage who reaches it, as well as configure and use it.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
@@ -233,7 +261,7 @@ A link from a space to one outside account or endpoint, such as a mailbox, a RES
 
 ### connector
 
-A [context](#context) made from a pre-built provider, such as Apollo, Exa, BrightData or Meta. The operations are already defined, and the space manager gives an account or a key.
+A [context](#context) made from a pre-built provider, such as Apollo, Exa, BrightData or Meta. The operations are already defined, and the member who creates one connects its account or key.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.

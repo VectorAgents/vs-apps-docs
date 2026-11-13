@@ -162,10 +162,10 @@ test('no page links to who-can-do-what with the text Roles and permissions, and 
   assert.ok(texts.every((t) => t === 'Identity and roles'), texts.join(', '));
 });
 
-test('the glossary role entry says a kind of person is not a role and names no Organization role', () => {
+test('the glossary role entry says a role is never a kind of person and names no Organization role', () => {
   const row = readFileSync(glossaryFile, 'utf8').split(/^### /m).find((s) => s.startsWith('role\n'));
   assert.ok(row, 'glossary row');
-  assert.match(row, /A kind of person, such as the organization admin or a member, is not a role\./);
+  assert.match(row, /A role is never a set of people, such as a \[group\]\(#group\), or a kind of person, such as the organization admin\./);
   assert.doesNotMatch(row, /Organization role/);
   assert.doesNotMatch(readFileSync(glossaryFile, 'utf8'), /^### identity$/m);
 });

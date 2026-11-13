@@ -3,7 +3,7 @@ title: Vector Apps glossary
 sidebar_label: Glossary
 ---
 
-Each term has one name in these docs. Pages link a term at first use. Each entry gives the definition, the code symbol or field it maps to, and who owns it. The terms of Vector Space itself, such as [space](../vector-space/glossary.md#space) and [space manager](../vector-space/glossary.md#space-manager), are in the [Vector Space glossary](../vector-space/glossary.md). The terms of the SDK are in the [SDK glossary](../sdk/glossary.md).
+Each term has one name in these docs. Pages link a term at first use. Each entry gives the definition, the code symbol or field it maps to, and who owns it. The terms of Vector Space itself, such as [space](../vector-space/glossary.md#space) and [space admin](../vector-space/glossary.md#space-admin), are in the [Vector Space glossary](../vector-space/glossary.md). The terms of the SDK are in the [SDK glossary](../sdk/glossary.md).
 
 ## Terms
 
@@ -44,14 +44,14 @@ A named permission of the form `<group>:<action>` with an `effect` of `read` or 
 
 ### capability grant
 
-A [share](../vector-space/glossary.md#share) on named capabilities, at Can use, for users or groups. A space manager makes it. Only declared capabilities can be shared.
+A [share](../vector-space/glossary.md#share) on named capabilities, at Can use, for users or groups. A space admin makes it. Only declared capabilities can be shared.
 
 - Maps to: no SDK symbol. `useApp().capabilities` holds the capabilities granted to the current user.
 - Owner: Vector Space.
 
 ### model slot
 
-A named [AI](../vector-space/glossary.md#ai) model requirement. The app declares the slot and the space manager picks the model. No slot is inherited, and an unset slot runs nothing.
+A named [AI](../vector-space/glossary.md#ai) model requirement. The app declares the slot and the space admin picks the model. No slot is inherited, and an unset slot runs nothing.
 
 - Maps to: `resources.models[]` in the definition.
 - Owner: SDK declares it. Vector Space stores the choice.
@@ -100,7 +100,7 @@ An app attached to one space. The binding keeps a copy of the capabilities, acts
 
 ### allowed resources
 
-The resources a space manager attaches to an app, such as connectors and knowledge sources. They come from the [Context Hub](../vector-space/glossary.md#context-hub). An action runs only on resources that are allowed for the app and open to the member. The member's access never grows through the app.
+The resources attached to an app, such as connectors and knowledge sources. They come from the [Context Hub](../vector-space/glossary.md#context-hub). An action runs only on resources that are allowed for the app and open to the member. The member's access never grows through the app.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
