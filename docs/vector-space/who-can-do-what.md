@@ -9,7 +9,7 @@ import { roleLadder } from '@site/src/diagrams/figures/role-ladder.ts';
 Vector Space has four kinds of people and callers, and each kind is an identity. Three of them belong to an [organization](./glossary.md#organization), the company account in Vector Space, and Staff reach organizations from outside:
 
 - **[Organization admin](./glossary.md#organization-admin)**: the one person who runs the organization. The admin creates spaces, users and service accounts, and manages AI provider accounts.
-- **[Members](./glossary.md#member)**: people in an organization who work in a space. They chat with agents, build pages and answer what agents ask. A [space role or a share](#space-roles-and-share-levels) gives a member more.
+- **Members**: people in an organization who work in a space. They chat with agents, build pages and answer what agents ask. A [space role or a share](#space-roles-and-share-levels) gives a member more.
 - **[Staff](./glossary.md#staff)**: Vector employees who run the platform across organizations. They run the app registry and set the [spend cap](./glossary.md#spend-cap) of an organization.
 - **[Service accounts](./glossary.md#service-account)**: users of an organization that are not people, such as the identity behind an API key or a schedule. They reach what a member reaches and what a role in a space gives them. They own no resources.
 
@@ -17,9 +17,9 @@ A kind says who a user is in an organization, or for Staff, how they reach one. 
 
 ## A new member in a team's space
 
-Acme's sales team has a space, and a new member joins it and asks the [orchestrator agent](./glossary.md#orchestrator-agent) to find leads and send an outreach email. The agent works for that member, so it reaches what the member reaches.
+Acme's sales team has a space, and Omar, another [member](./glossary.md#member) of the team, joins it and asks the [orchestrator agent](./glossary.md#orchestrator-agent) to find leads and send an outreach email. The agent works for Omar, so it reaches what Omar reaches.
 
-Adding another member to the space takes a space admin of that space. The organization admin is a space admin of every space, and can also create a new space.
+Lena, Acme's organization admin, adds Omar to the space. Adding a member to a space takes a space admin of that space. The organization admin is a space admin of every space, and can also create a new space.
 
 ## How each kind reaches a space
 
