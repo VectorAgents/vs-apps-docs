@@ -22,7 +22,7 @@ test('the page runs the scene, the six steps, Where to go next', () => {
 
 test('the lead defines the six steps and what each records, and does not announce the page', () => {
   const lead = body.split(/^## /m)[0].replace(/^import .*$/gm, '').trim();
-  assert.equal(lead, "A request in a space moves in six steps that the platform checks and records, from a member's question to a sent email. Each step runs as one actor, so the record shows who did what.");
+  assert.equal(lead, "A request in a space moves in six steps that the platform checks and records, from a question to a sent email. Each step runs as one actor, so the record shows who did what.");
 });
 
 test('the slot worked-example-flow appears once, in the scene', () => {
@@ -30,13 +30,22 @@ test('the slot worked-example-flow appears once, in the scene', () => {
   assert.deepEqual(slotsIn(section(text, "A member's outreach request")), ['worked-example-flow']);
 });
 
-test('the scene opens with Acme, lays out the request and says the app is only an example, without the animation', () => {
+test('the scene names Maya, lays out the request and says the app is only an example, without the animation', () => {
   const scene = section(text, "A member's outreach request");
   assert.doesNotMatch(plain, /\bthe sales space\b/i);
-  assert.match(scene, /\n\nAcme's sales team has a space, and a \[member\]\(\.\/glossary\.md#member\) of it asks the \[orchestrator agent\]\(\.\/glossary\.md#orchestrator-agent\) to find leads and send an outreach email/);
+  assert.match(scene, /\n\nMaya, a \[member\]\(\.\/glossary\.md#member\) of Acme's sales team, asks the \[orchestrator agent\]\(\.\/glossary\.md#orchestrator-agent\) in the team's space to find leads and send an outreach email\. One email goes to one qualified lead, and only after a person approves it\./);
+  assert.doesNotMatch(scene, /a member of it|this member|that member/);
+  assert.doesNotMatch(scene, /\b(?:he|she|his|her|him)\b/i);
   assert.match(scene, /\[Vector App\]\(\.\.\/vector-apps\/glossary\.md#app\), a web app that a space shows in an iframe/);
   assert.match(scene, /only an example/);
   assert.doesNotMatch(plain, /\b(animation|animated|figure above|the diagram shows)\b/i);
+});
+
+test('Maya is introduced once, the first "member" in the prose is the glossary link on that introduction, and no persona is named outside the scene', () => {
+  assert.equal(body.match(/Maya, a /g)?.length, 1);
+  const prosePlain = body.replace(/^#+ .*$/gm, '');
+  assert.match(prosePlain.slice(prosePlain.search(/(?<![-#\w])member\b/) - 1), /^\[member\]\(\.\/glossary\.md#member\) of Acme's sales team/);
+  assert.doesNotMatch(text.replace(section(text, "A member's outreach request"), ''), /Maya/);
 });
 
 const steps = section(text, 'The six steps');
