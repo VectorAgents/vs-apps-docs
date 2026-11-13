@@ -9,7 +9,7 @@ Vector Space has five kinds of people and callers, and each kind is an identity.
 - **[Space managers](./glossary.md#space-manager)**: users who hold [Can edit](./glossary.md#can-edit) on a [space](./glossary.md#space), or the organization admin. They manage the members, [groups](./glossary.md#group), [shares](./glossary.md#share), resources, agent and apps of the space.
 - **[Members](./glossary.md#member)**: people in an organization who work in a space. They chat with agents, build pages and answer what agents ask.
 - **[Staff](./glossary.md#staff)**: Vector employees who run the platform across organizations. They run the app registry and set the [spend cap](./glossary.md#spend-cap) of an organization.
-- **[Service accounts](./glossary.md#service-account)**: users of an organization that are not people, such as the identity behind an API key or a schedule. They reach what a member reaches, own no resources and are never space managers.
+- **[Service accounts](./glossary.md#service-account)**: users of an organization that are not people, such as the identity behind an API key or a schedule. They reach what a member reaches and what a role in a space gives them. They own no resources.
 
 A kind says who a user is in an organization, or for Staff, how they reach one. A [role](./glossary.md#role) says what the user may do on one resource, and a share gives the role Can use or Can edit.
 
@@ -25,7 +25,7 @@ Four rules say how the kinds reach a space:
 
 - **Organization admin**: an organization has one, and a transfer passes the position to another member. The admin is a space manager of every space, with no share needed.
 - **Members**: a member reaches what each resource's [General access](./glossary.md#general-access) gives every member of the space, and a share gives more. A member can also create resources, and each one starts private to its creator.
-- **Can edit on a space**: only a space manager gives it to another user. A group can hold it, and then every user of the group is a space manager. A service account never holds it, not even through a group.
+- **Can edit on a space**: only a space manager gives it to another user. A group can hold it, and then every user of the group is a space manager. A service account can hold it too, directly or through a group, but only the organization admin can add a service account to a space.
 - **Restricted resources**: closed even to the organization admin unless a share names them, and [One access model](./one-access-model.md) gives the rule.
 
 ## What Can use and Can edit mean

@@ -112,6 +112,12 @@ test('service accounts are the identity behind an API key or a schedule, and a g
   assert.match(plain, /gives it to every user the group holds/);
 });
 
+test('a service account can hold Can edit, and only the organization admin adds one to a space', () => {
+  assert.match(plain, /They reach what a member reaches and what a role in a space gives them\. They own no resources\./);
+  assert.match(plain, /A service account can hold it too, directly or through a group, but only the organization admin can add a service account to a space\./);
+  assert.doesNotMatch(plain, /never holds it|never space managers/);
+});
+
 test('the rules of a space are a bold-term list and Can edit on the space and on a resource are two items', () => {
   const rules = section(text, 'How each kind reaches a space');
   assert.deepEqual([...rules.matchAll(/^- \*\*([^*]+)\*\*/gm)].map((m) => m[1]), ['Organization admin', 'Members', 'Can edit on a space', 'Restricted resources']);
