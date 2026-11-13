@@ -13,27 +13,33 @@ const text = readFileSync(file, 'utf8');
 const body = bodyOf(text);
 const plain = unlink(body);
 
-test('the page runs lead, the scene, two detail sections, Where to go next', () => {
+test('the page runs lead, the scene, the rules, the ladders, custom roles, Where to go next', () => {
   assert.deepEqual([...text.matchAll(/^## (.+)$/gm)].map((m) => m[1]), [
     'A new member in a team\'s space',
     'How each kind reaches a space',
-    'What Can use and Can edit mean',
+    'Space roles and share levels',
+    'Custom roles',
     'Where to go next',
   ]);
 });
 
-test('the lead names the five kinds, each with a glossary link', () => {
+test('the lead names the four kinds, each with a glossary link', () => {
   const lead = body.split(/^## /m)[0];
-  for (const term of ['organization-admin', 'space-manager', 'member', 'staff', 'service-account']) {
+  for (const term of ['organization-admin', 'member', 'staff', 'service-account']) {
     assert.match(lead, new RegExp(`\\]\\(\\./glossary\\.md#${term}\\)`), term);
   }
 });
 
-test('the lead is a bold-term list of the five kinds in order, with no table', () => {
+test('the lead is a bold-term list of the four kinds in order, with no table', () => {
   assert.doesNotMatch(body, /^\s*\|/m);
   const lead = body.split(/^## /m)[0];
   const terms = [...lead.matchAll(/^- \*\*\[([^\]]+)\]/gm)].map((m) => m[1]);
-  assert.deepEqual(terms, ['Organization admin', 'Space managers', 'Members', 'Staff', 'Service accounts']);
+  assert.deepEqual(terms, ['Organization admin', 'Members', 'Staff', 'Service accounts']);
+});
+
+test('the Members bullet says a space role or a share gives a member more', () => {
+  const members = body.split('\n').find((l) => /^- \*\*\[Members\]/.test(l));
+  assert.match(members, /A \[space role or a share\]\(#space-roles-and-share-levels\) gives a member more\./);
 });
 
 test('the scene is the first H2, names no Example and says Acme\'s sales team', () => {
@@ -43,8 +49,9 @@ test('the scene is the first H2, names no Example and says Acme\'s sales team', 
   assert.match(section(text, 'A new member in a team\'s space'), /\nAcme's sales team has a space/);
 });
 
-test('the page has no figure slot', () => {
-  assert.doesNotMatch(text, /FigurePlaceholder|StructureFigure|FlowFigure/);
+test('the ladder H2 lists the three space roles, then the three share levels', () => {
+  const ladder = section(text, 'Space roles and share levels');
+  assert.deepEqual([...ladder.matchAll(/^- \*\*(?:\[)?([^\]*]+)/gm)].map((m) => m[1]), ['Space member', 'Space editor', 'Space admin', 'Can use', 'Can edit', 'Can manage']);
 });
 
 test('every link resolves, every glossary anchor exists, and Where to go next links its two pages and the glossary', () => {
@@ -77,17 +84,31 @@ test('staff get two sentences and no claim of global reach', () => {
   assert.doesNotMatch(staff, /global/i);
 });
 
-test('Can use and Can edit are the two roles of a share, and a group share reaches its users', () => {
-  const part = section(text, 'What Can use and Can edit mean');
-  for (const anchor of ['can-use', 'can-edit']) assert.match(part, new RegExp(`\\]\\(\\./glossary\\.md#${anchor}\\)`), anchor);
+test('the ladder H2 links the space roles and the three share levels, and a group share reaches its users', () => {
+  const part = section(text, 'Space roles and share levels');
+  for (const anchor of ['space-editor', 'space-admin', 'can-use', 'can-edit', 'can-manage']) assert.match(part, new RegExp(`\\]\\(\\./glossary\\.md#${anchor}\\)`), anchor);
   for (const anchor of ['share', 'group']) assert.match(body, new RegExp(`\\]\\(\\./glossary\\.md#${anchor}\\)`), anchor);
-  assert.doesNotMatch(plain, /A role is not a set of people/);
-  assert.match(part, /A group is a set of users and groups/);
+  assert.doesNotMatch(plain, /A role is not a set of people|only two roles/);
+  assert.match(part, /A role is a set of permissions that a user or group holds in one place\. Vector Space has two ladders: space roles cover a whole space, and share levels cover one resource\./);
+  assert.match(part, /A space editor holds Can edit, and a space admin holds Can manage, on every resource of the space except another member's Restricted resource\./);
+  assert.match(unlink(part), /A group is a set of users and groups/);
   assert.match(part, /\]\(\.\/one-access-model\.md\)/);
+  assert.doesNotMatch(part, /^- \*\*On (the space|a resource)\*\*/m);
 });
 
-test('the page has no View level, Edit level or custom roles', () => {
-  assert.doesNotMatch(text, /View level|Edit level|custom role|role as a set/i);
+test('the Custom roles H2 defines a custom role, says who defines and gives it, states its limit and gives one example', () => {
+  const part = section(text, 'Custom roles');
+  assert.match(part, /\]\(\.\/glossary\.md#custom-role\)/);
+  assert.match(part, /\]\(\.\/glossary\.md#governance\)/);
+  const p = unlink(part);
+  assert.match(p, /named set of permissions that the organization admin defines/);
+  assert.match(p, /A space admin gives it to a user or group in a space, on top of their space role/);
+  assert.match(p, /never lets its holder add members or apps, delete the space, or make a change that only the organization admin makes/);
+  assert.match(p, /For example, an organization defines a role that lets its holder read the space's governance views\./);
+});
+
+test('the page has no View level, Edit level, space manager or only-two-roles claim', () => {
+  assert.doesNotMatch(text, /View level|Edit level|space manager|role as a set|only two roles/i);
 });
 
 test('the page names no master doc, implementation name, banned term, vendor or use case', () => {
@@ -112,18 +133,21 @@ test('service accounts are the identity behind an API key or a schedule, and a g
   assert.match(plain, /gives it to every user the group holds/);
 });
 
-test('a service account can hold Can edit, and only the organization admin adds one to a space', () => {
+test('a service account can hold a space role, and only the organization admin adds one to a space', () => {
   assert.match(plain, /They reach what a member reaches and what a role in a space gives them\. They own no resources\./);
-  assert.match(plain, /A service account can hold it too, directly or through a group, but only the organization admin can add a service account to a space\./);
+  assert.match(plain, /A service account can hold one too, directly or through a group, but only the organization admin can add a service account to a space\./);
   assert.doesNotMatch(plain, /never holds it|never space managers/);
 });
 
-test('the rules of a space are a bold-term list and Can edit on the space and on a resource are two items', () => {
+test('the rules of a space are a bold-term list: the admin is a space admin of every space, and Space roles is an item', () => {
   const rules = section(text, 'How each kind reaches a space');
-  assert.deepEqual([...rules.matchAll(/^- \*\*([^*]+)\*\*/gm)].map((m) => m[1]), ['Organization admin', 'Members', 'Can edit on a space', 'Restricted resources']);
-  const roles = section(text, 'What Can use and Can edit mean');
-  assert.match(roles, /^- \*\*On the space\*\*/m);
-  assert.match(roles, /^- \*\*On a resource\*\*/m);
+  assert.deepEqual([...rules.matchAll(/^- \*\*([^*]+)\*\*/gm)].map((m) => m[1]), ['Organization admin', 'Members', 'Space roles', 'Restricted resources']);
+  assert.match(unlink(rules), /The admin is a space admin of every space, with no share needed\./);
+  assert.match(unlink(rules), /\*\*Space roles\*\*: a space admin gives a space role to another user\. A group can hold one, and then every user of the group holds it\./);
+});
+
+test('the scene says adding a member takes a space admin', () => {
+  assert.match(unlink(section(text, 'A new member in a team\'s space')), /Adding another member to the space takes a space admin of that space\. The organization admin is a space admin of every space, and can also create a new space\./);
 });
 
 test('service accounts are the identity behind an API key or a schedule, and a group share reaches every user the group holds', () => {
@@ -132,17 +156,17 @@ test('service accounts are the identity behind an API key or a schedule, and a g
 });
 
 test('a kind says who a user is and a role says what the user may do', () => {
-  assert.match(plain, /A kind says who a user is in an organization, or for Staff, how they reach one\. A role says what the user may do on one resource, and a share gives the role Can use or Can edit\./);
+  assert.match(plain, /A kind says who a user is in an organization, or for Staff, how they reach one\. A role says what the user may do, in a space or on one resource\./);
 });
 
 test('the title and description say Identity and roles', () => {
   assert.match(text, /^title: Identity and roles$/m);
-  assert.match(text, /^description: Five kinds of people and callers, and the roles Can use and Can edit\.$/m);
+  assert.match(text, /^description: Four kinds of people and callers, and the roles that say what each may do\.$/m);
 });
 
 test('the lead says each kind is an identity and Staff reach organizations from outside', () => {
   const lead = unlink(body.split(/\n- /)[0]).trim();
-  assert.equal(lead, 'Vector Space has five kinds of people and callers, and each kind is an identity. Four of them belong to an organization, the company account in Vector Space, and Staff reach organizations from outside:');
+  assert.equal(lead, 'Vector Space has four kinds of people and callers, and each kind is an identity. Three of them belong to an organization, the company account in Vector Space, and Staff reach organizations from outside:');
   assert.doesNotMatch(plain, /has a place in an organization/);
 });
 
@@ -168,12 +192,4 @@ test('the glossary role entry says a role is never a kind of person and names no
   assert.match(row, /A role is never a set of people, such as a \[group\]\(#group\), or a kind of person, such as the organization admin\./);
   assert.doesNotMatch(row, /Organization role/);
   assert.doesNotMatch(readFileSync(glossaryFile, 'utf8'), /^### identity$/m);
-});
-
-test('the rules of a space are a bold-term list and Can edit on the space and on a resource are two items', () => {
-  const rules = section(text, 'How each kind reaches a space');
-  assert.deepEqual([...rules.matchAll(/^- \*\*([^*]+)\*\*/gm)].map((m) => m[1]), ['Organization admin', 'Members', 'Can edit on a space', 'Restricted resources']);
-  const roles = section(text, 'What Can use and Can edit mean');
-  assert.match(roles, /^- \*\*On the space\*\*/m);
-  assert.match(roles, /^- \*\*On a resource\*\*/m);
 });

@@ -520,7 +520,7 @@ A real space needs these things in place. Check them before step 1.
 
 - [ ] A Vector representative, the person at Vector who registers apps, to send the registration request to.
 - [ ] A space to add the app to.
-- [ ] An organization admin, a member who sees **Organization** under **Settings**, to do [step 3](#3-publish-the-space-agent). A space manager to do steps 4 and 5. Anyone with Edit level on the space, the access level that lets a member edit it, and any organization admin, is a space manager.
+- [ ] An organization admin, a member who sees **Organization** under **Settings**, to do [step 3](#3-publish-the-space-agent). A space admin to do steps 4 and 5. The organization admin is a space admin of every space.
 - [ ] The Vector Space server can reach your server. It needs a public URL that forwards to port `3101` (`SERVER_PORT`). Keep the URL the same until Vector confirms the registration.
 
 ### 1. Point the app at Vector Space
@@ -587,7 +587,7 @@ The space switcher, the menu in which a member picks a space, lists a space only
 
 ### 4. Add the app to a space
 
-**Role**: space manager.
+**Role**: space admin.
 
 Adding the app makes Vector Space call your server. Your server must accept that call.
 
@@ -602,9 +602,9 @@ If the toast starts with `App secret provisioning failed`, the add failed. A num
 
 ### 5. Share the app with a user
 
-**Role**: space manager.
+**Role**: space admin.
 
-A user sees the app page only after the space manager shares the app with that user. **Direct access** lists only members of the space. Add the user to the space first. Skip this step if you are the space manager who added the app. You already have access.
+A user sees the app page only after the space admin shares the app with that user. **Direct access** lists only members of the space. Add the user to the space first. Skip this step if you are the space admin who added the app. You already have access.
 
 1. Choose **Settings**, **Space**, then **Access**. Under **Members**, choose **Add** and pick the user.
 2. Choose **Context Hub**, then **Resources**. On the **Hello app** row, open the row menu and choose **Access**.
