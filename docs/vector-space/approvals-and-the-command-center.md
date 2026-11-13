@@ -24,9 +24,9 @@ Each ask goes to its answerer, the person who answers for the run:
 
 - **Member**: answers for their own run.
 - **[Service account](./glossary.md#service-account)**: cannot decide. The owner of its API key answers. If there is none, the owner of the [thread](./glossary.md#thread) or [schedule](./glossary.md#schedule) that it ran for answers.
-- **App**: an ask that an app raises from its own server goes to the [space managers](./glossary.md#space-manager).
+- **App**: an ask that an app raises from its own server goes to the [space admins](./glossary.md#space-admin).
 
-A space manager also sees an ask whose answerer can no longer view the space. Anyone who leaves a space stops seeing and deciding its asks.
+A space admin also sees an ask whose answerer can no longer view the space. Anyone who leaves a space stops seeing and deciding its asks.
 
 <FlowFigure data={approvalsFlow} />
 
@@ -45,9 +45,9 @@ An app's ask pauses no run, because no run waits. A decision or an expiry is sen
 
 A standing approval lets one agent run one operation without asking, or lets one app's approval pass. Vector Space shows it as "always allow". It names the [context](./glossary.md#context) the call goes through, so an approval for a post through one context never covers another context.
 
-There are two kinds. A personal approval covers the runs of the person who made it. A member makes one by ticking "always allow" on an ask that they answer. A space-wide approval covers everyone in the space, and a space manager can set one.
+There are two kinds. A personal approval covers the runs of the person who made it. A member makes one by ticking "always allow" on an ask that they answer. A space-wide approval covers everyone in the space, and a space admin can set one.
 
-A standing approval covers only calls that were approved. It applies from the next run, not to the run that is already going. It stays until someone revokes it. The maker revokes their own, and a space manager revokes any in the space. [Activity](./glossary.md#activity) names the approval on a call that it let through.
+A standing approval covers only calls that were approved. It applies from the next run, not to the run that is already going. It stays until someone revokes it. The maker revokes their own, and a space admin revokes any in the space. [Activity](./glossary.md#activity) names the approval on a call that it let through.
 
 ## Schedules
 

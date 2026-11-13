@@ -59,7 +59,7 @@ test('the ask section says what raises an ask, who decides, and that the Command
   assert.match(ask, /\n\nEach ask goes to its answerer, the person who answers for the run:/);
   assert.deepEqual([...ask.matchAll(/^- \*\*(.+?)\*\*: /gm)].map((m) => unlink(m[1])), ['Member', 'Service account', 'App']);
   assert.match(ask, /\*\*\[Service account\]\(\.\/glossary\.md#service-account\)\*\*: cannot decide\. The owner of its API key answers\. If there is none, the owner of the \[thread\]\(\.\/glossary\.md#thread\) or \[schedule\]\(\.\/glossary\.md#schedule\) that it ran for answers/);
-  assert.match(ask, /\[space managers?\]\(\.\/glossary\.md#space-manager\)/);
+  assert.match(ask, /\[space admins?\]\(\.\/glossary\.md#space-admin\)/);
   assert.match(ask, /leaves a space stops seeing and deciding its asks/);
 });
 
@@ -93,9 +93,9 @@ test('a standing approval names its context, comes in two kinds and stays until 
   assert.match(standing, /It names the \[context\]\(\.\/glossary\.md#context\) the call goes through, so an approval for a post through one context never covers another context\./);
   assert.match(standing, /personal/i);
   assert.match(standing, /space-wide/);
-  assert.match(standing, /space manager can set one/);
+  assert.match(standing, /space admin can set one/);
   assert.match(standing, /stays until someone revokes it/);
-  assert.match(standing, /space manager revokes any in the space/);
+  assert.match(standing, /space admin revokes any in the space/);
   assert.doesNotMatch(standing, /expir|time limit|lifetime/i);
 });
 
