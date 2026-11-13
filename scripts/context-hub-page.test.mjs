@@ -100,7 +100,7 @@ test('mailboxes: several in one stream, a shared mailbox is a shared context, se
   assert.doesNotMatch(plain, /Outlook|Gmail|LinkedIn|Instantly|Unipile/);
 });
 
-test('credentials belong to their creator, a shared resource runs on the owner\'s credential, a share names no role', () => {
+test('credentials belong to their creator, a shared resource runs on the owner\'s credential, a share names a user, a group or an app', () => {
   const cred = section(text, 'Credentials and sharing');
   assert.match(cred, /\[General access\]\(\.\/glossary\.md#general-access\).*Restricted, Can use or Can edit/);
   assert.match(cred, /A \[share\]\(\.\/glossary\.md#share\) adds a role on top of that/);
@@ -108,7 +108,7 @@ test('credentials belong to their creator, a shared resource runs on the owner\'
   assert.match(cred, /not even an \[organization admin\]\(\.\/glossary\.md#organization-admin\) can use it/);
   assert.match(cred, /run on the credential of its owner/);
   assert.match(cred, /never get the credential or its target/);
-  assert.match(cred, /A share names a user or a group, never a role, and the role, Can use or Can edit, is what it gives/);
+  assert.match(cred, /A share gives a role, Can use or Can edit, to a user or a group, and attaching a context or datasource to a Vector App shares it with that app/);
   assert.doesNotMatch(cred, /roles?\b[^.]*\b(people|subjects?)\b/i);
   assert.match(cred, /\]\(\.\/one-access-model\.md\)/);
 });
