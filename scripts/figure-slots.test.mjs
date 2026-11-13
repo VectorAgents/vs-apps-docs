@@ -12,7 +12,7 @@ const docs = join(root, 'docs');
 /** Slot id and tag of every figure in an MDX page: a placeholder names its slot, a real figure takes its id from the data file it imports. */
 export function figuresOf(text) {
   const dataIds = Object.fromEntries([...text.matchAll(/import \{ (\w+) \} from '@site\/src\/diagrams\/figures\/([\w-]+)\.ts'/g)].map(([, name, id]) => [name, id]));
-  return [...text.matchAll(/<(FigurePlaceholder|StructureFigure|FlowFigure)\b([^>]*)\/>/g)].map(([, tag, props]) => {
+  return [...text.matchAll(/<(FigurePlaceholder|StructureFigure|FlowFigure|LadderFigure)\b([^>]*)\/>/g)].map(([, tag, props]) => {
     if (tag === 'FigurePlaceholder') return { tag, id: props.match(/slot="([^"]+)"/)?.[1] };
     return { tag, id: dataIds[props.match(/data=\{(\w+)\}/)?.[1]] };
   });
@@ -37,7 +37,13 @@ const headings = {
   'agent-studio-tree': 'How agents are arranged',
   'agent-studio-access': 'What a run may use',
   'agent-studio-lifecycle': 'The life of a change',
+  'role-ladder': 'Space roles and share levels',
 };
+
+test('figuresOf reads a ladder figure by the id of its data file', () => {
+  const real = "import LadderFigure from '@site/src/components/LadderFigure';\nimport { roleLadder } from '@site/src/diagrams/figures/role-ladder.ts';\n\n<LadderFigure data={roleLadder} />\n";
+  assert.deepEqual(figuresOf(real), [{ tag: 'LadderFigure', id: 'role-ladder' }]);
+});
 
 test('figuresOf reads a placeholder by slot and a real figure by the id of its data file', () => {
   const real = "import StructureFigure from '@site/src/components/StructureFigure';\nimport { agentTree } from '@site/src/diagrams/figures/agent-tree.ts';\n\n<StructureFigure data={agentTree} />\n";
@@ -46,12 +52,12 @@ test('figuresOf reads a placeholder by slot and a real figure by the id of its d
   assert.deepEqual(figuresOf('no figure'), []);
 });
 
-test('the registry holds the 11 slots, each with a unique id, a page of the section, a kind and a caption', () => {
+test('the registry holds the 12 slots, each with a unique id, a page of the section, a kind and a caption', () => {
   assert.deepEqual(slots.map((s) => s.id), Object.keys(headings));
-  assert.equal(new Set(slots.map((s) => s.page)).size, 9);
+  assert.equal(new Set(slots.map((s) => s.page)).size, 10);
   for (const slot of slots) {
     assert.ok(existsSync(join(docs, pageOf(slot))), `${slot.id}: ${pageOf(slot)}`);
-    assert.ok(['structure', 'flow'].includes(slot.kind), slot.id);
+    assert.ok(['structure', 'flow', 'ladder'].includes(slot.kind), slot.id);
     assert.ok(slot.caption.length > 0 && !/[–—]/.test(slot.caption), slot.id);
   }
 });
@@ -62,7 +68,7 @@ test('each page holds exactly the figures of its slots, each as a placeholder or
     const figures = figuresOf(read(`vector-space/${page}.md`));
     assert.deepEqual(figures.map((f) => f.id), pageSlots.map((s) => s.id), `${page}: figures in slot order`);
     figures.forEach((figure, i) => {
-      if (figure.tag !== 'FigurePlaceholder') assert.equal(figure.tag, pageSlots[i].kind === 'flow' ? 'FlowFigure' : 'StructureFigure', figure.id);
+      if (figure.tag !== 'FigurePlaceholder') assert.equal(figure.tag, { structure: 'StructureFigure', flow: 'FlowFigure', ladder: 'LadderFigure' }[pageSlots[i].kind], figure.id);
     });
   }
 });

@@ -10,7 +10,7 @@ const docs = resolve(dirname(fileURLToPath(import.meta.url)), '../docs');
 const file = resolve(docs, 'vector-space/who-can-do-what.md');
 const glossaryFile = resolve(docs, 'vector-space/glossary.md');
 const text = readFileSync(file, 'utf8');
-const body = bodyOf(text);
+const body = bodyOf(text).replace(/^import .*$/gm, '').trim();
 const plain = unlink(body);
 
 test('the page runs lead, the scene, the rules, the ladders, custom roles, Where to go next', () => {
@@ -192,4 +192,16 @@ test('the glossary role entry says a role is never a kind of person and names no
   assert.match(row, /A role is never a set of people, such as a \[group\]\(#group\), or a kind of person, such as the organization admin\./);
   assert.doesNotMatch(row, /Organization role/);
   assert.doesNotMatch(readFileSync(glossaryFile, 'utf8'), /^### identity$/m);
+});
+
+const figureTags = (s) => [...s.matchAll(/<(FigurePlaceholder|StructureFigure|FlowFigure|LadderFigure)\b[^>]*\/>/g)].map((m) => m[1]);
+
+test('the role-ladder slot sits in the ladder H2, between the space-roles list and the share-levels list', () => {
+  const ladder = section(text, 'Space roles and share levels');
+  assert.deepEqual(figureTags(ladder), ['LadderFigure']);
+  assert.deepEqual(figureTags(text), ['LadderFigure']);
+  assert.match(ladder, /<LadderFigure data=\{roleLadder\} \/>/);
+  const at = (re) => ladder.search(re);
+  assert.ok(at(/^- \*\*\[?Space admin/m) < at(/<LadderFigure/), 'after the space-roles list');
+  assert.ok(at(/<LadderFigure/) < at(/^- \*\*\[Can use/m), 'before the share-levels list');
 });
