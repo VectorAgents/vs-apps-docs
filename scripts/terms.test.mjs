@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { test } from 'node:test';
+import { ROLE_TERMS } from './page-helpers.mjs';
 
 const NOUN_GRANT = /\b(?:an?|the|each|every|one|no|any|all|your|their|its|this|that|these|those|which|of|for|per|with|new|existing|revoked|standing)\s+grants?\b/gi;
 
-/** Fence and code-span text, link targets, the bold Vector Space menu labels `**Space**` and `**Spaces**` and the list term `**[Space managers]**` at the start of a list item are not prose. */
+/** Fence and code-span text, link targets, the bold Vector Space menu labels `**Space**` and `**Spaces**`, and the role terms `Space member`, `Space editor`, `Space admin` and `Space roles` at the start of a heading or list item are not prose. */
 const proseLines = (markdown) => {
   let fence = null;
   return markdown.split('\n').map((line) => {
@@ -21,14 +22,14 @@ const proseLines = (markdown) => {
       .replace(/`[^`]*`/g, '')
       .replace(/\]\([^)]*\)/g, ']')
       .replace(/\*\*Spaces?\*\*/g, '')
-      .replace(/^(\s*[-*] \*\*\[?)Space managers\b/, '$1');
+      .replace(new RegExp(`^(#{2,6} |\\s*[-*] \\*\\*\\[?)Space (${ROLE_TERMS}|roles)\\b`), '$1$2');
   });
 };
 
 /**
  * Old vocabulary in prose: capital-S "Space" outside "Vector Space", the bare noun
- * "grant" (the term is "capability grant"; the verb is fine), "RedemptAI" and "space page"
- * (the term is "page").
+ * "grant" (the term is "capability grant"; the verb is fine), "RedemptAI", "space page"
+ * (the term is "page") and "space manager" (the roles are space editor and space admin).
  * @returns {{ rule: string, line: number, text: string }[]}
  */
 export function termViolations(markdown) {
@@ -41,6 +42,7 @@ export function termViolations(markdown) {
     hit('grant', NOUN_GRANT);
     hit('redemptai', /RedemptAI/g);
     hit('space page', /\bspace pages?\b/gi);
+    hit('space manager', /\bspace managers?\b/gi);
   });
   return found;
 }
@@ -55,9 +57,13 @@ test('Space: flagged on its own, allowed inside Vector Space', () => {
   assert.deepEqual(rules('Many Spaces exist.'), ['space']);
 });
 
-test('Space: the list term Space managers is allowed at the start of a list item only', () => {
-  assert.deepEqual(rules('- **[Space managers](./glossary.md#space-manager)**: users who hold Can edit.'), []);
-  assert.deepEqual(rules('Space managers hold Can edit.'), ['space']);
+test('Space: the role terms Space member, Space editor, Space admin and Space roles are allowed at the start of a heading or a list item only', () => {
+  assert.deepEqual(rules('## Space roles and share levels'), []);
+  assert.deepEqual(rules('- **Space member**: reaches General access.'), []);
+  assert.deepEqual(rules('- **[Space editor](./glossary.md#space-editor)**: builds agents.'), []);
+  assert.deepEqual(rules('- **Space roles**: a space admin gives one.'), []);
+  assert.deepEqual(rules('A Space admin adds members.'), ['space']);
+  assert.deepEqual(rules('## Space settings'), ['space']);
 });
 
 test('Space: code spans, fences, link targets and menu labels are excluded', () => {
@@ -71,8 +77,8 @@ test('Space: code spans, fences, link targets and menu labels are excluded', () 
 });
 
 test('grant: the bare noun is flagged, the verb and "capability grant" are not', () => {
-  assert.deepEqual(rules('A space manager can grant a capability.'), []);
-  assert.deepEqual(rules('A space manager grants the capability.'), []);
+  assert.deepEqual(rules('A space admin can grant a capability.'), []);
+  assert.deepEqual(rules('A space admin grants the capability.'), []);
   assert.deepEqual(rules('Grant the capabilities.'), []);
   assert.deepEqual(rules('The capability grant is stored.'), []);
   assert.deepEqual(rules('Two capability grants exist.'), []);
@@ -101,6 +107,17 @@ test('space page: code spans, fences and link targets are excluded', () => {
   assert.deepEqual(rules('See [the entry](./glossary.md#space-page).'), []);
 });
 
+test('space manager: every form is flagged in prose, none in code spans, fences or link targets', () => {
+  assert.deepEqual(rules('A space manager adds apps.'), ['space manager']);
+  assert.deepEqual(rules('Space managers add apps.'), ['space', 'space manager']);
+  assert.deepEqual(rules('- **[Space managers](./glossary.md#space-manager)**: users who hold Can edit.'), ['space', 'space manager']);
+  assert.deepEqual(rules('A SPACE MANAGER adds apps.'), ['space manager']);
+  assert.deepEqual(rules('Use `space manager` here.'), []);
+  assert.deepEqual(rules('```\nspace manager\n```'), []);
+  assert.deepEqual(rules('See [the entry](./glossary.md#space-manager).'), []);
+  assert.deepEqual(rules('A space admin adds apps.'), []);
+});
+
 test('a violation reports its line', () => {
   assert.deepEqual(termViolations('Fine.\n\nSpace is here.'), [{ rule: 'space', line: 3, text: 'Space' }]);
 });
@@ -119,7 +136,8 @@ test('diagram labels and text use the current terms', async () => {
   const dir = new URL('../src/diagrams/figures/', import.meta.url);
   for (const file of readdirSync(dir).filter((f) => f.endsWith('.ts'))) {
     const data = await import(new URL(file, dir));
-    const text = JSON.stringify(data).replace(/","|":"|[{}[\]]/g, '\n');
+    // A ladder step label, such as "Space editor", is a role term that stands alone on its line, like a list term.
+    const text = JSON.stringify(data).replace(/","|":"|[{}[\]]/g, '\n').replace(new RegExp(`^Space (${ROLE_TERMS})$`, 'gm'), '$1');
     const violations = termViolations(text);
     assert.deepEqual(violations, [], `${file}: ${violations.map((v) => `${v.rule} "${v.text}"`).join(', ')}`);
   }

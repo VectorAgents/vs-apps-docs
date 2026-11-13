@@ -31,7 +31,7 @@ A space is where one team works. It has these things of its own:
 - **[Context Hub](./glossary.md#context-hub)**: the area where the space lists what it can reach, including its [Vector Apps](../vector-apps/glossary.md#app) and [Vector Modules](./glossary.md#vector-module).
 - **Pages**: the [pages](./glossary.md#page) of the space.
 
-A [space manager](./glossary.md#space-manager) runs the space: its members, groups, shares, resources, agent and apps. The organization admin is a space manager of every space of the organization, and access is worked out inside a space, for each member and each operation.
+A [space admin](./glossary.md#space-admin) runs the space: its members, groups, shares, resources, agent and apps. The organization admin is a space admin of every space of the organization, and access is worked out inside a space, for each member and each operation.
 
 ## Resources that belong to one space
 
@@ -46,6 +46,6 @@ That is why the leads stay with the sales team.
 ## Where to go next
 
 - [Inside a space](./what-a-space-holds.md): what the team of a space works with, which is where its data connects, how the data is shown, and which apps and tools run inside the space.
-- [Identity and roles](./who-can-do-what.md): the five kinds of people and callers in Vector Space, and how each stands in an organization and its spaces.
+- [Identity and roles](./who-can-do-what.md): the four kinds of people and callers in Vector Space, and how each stands in an organization and its spaces.
 - [One access model](./one-access-model.md): the one check that decides each request, and the rules that say which of its inputs wins.
 - [Glossary](./glossary.md): every term of Vector Space, each defined in a sentence.

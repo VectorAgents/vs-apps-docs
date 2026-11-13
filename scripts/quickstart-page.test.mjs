@@ -118,7 +118,7 @@ for (const { tree, text } of trees) {
     assert.match(prerequisites, /\(classic\)/);
     assert.equal(count(/Node\.js LTS/g), 1);
     assert.doesNotMatch(prerequisites, /\bGit\b/);
-    assert.doesNotMatch(prerequisites, /space manager|published agent|Space server/i);
+    assert.doesNotMatch(prerequisites, /space admin|published agent|Space server/i);
   });
 
   t('Part 1 has steps 0 to 5, with the registry access first and the run third', () => {
@@ -148,10 +148,10 @@ for (const { tree, text } of trees) {
     ]);
     assert.match(intro, /\]\(#3-publish-the-space-agent\)/);
     assert.ok(rest[2].includes('**Role**: organization admin.'));
-    const roled = rest.filter((step) => step.includes('**Role**: space manager.'));
+    const roled = rest.filter((step) => step.includes('**Role**: space admin.'));
     assert.deepEqual(roled.map(title), rest.slice(3, 5).map(title));
-    assert.equal([...part2.matchAll(/\*\*Role\*\*: space manager\./g)].length, 2);
-    assert.match(text, /An organization admin, [^.]*, to do \[step 3\]\(#3-publish-the-space-agent\)\. A space manager to do steps 4 and 5\./);
+    assert.equal([...part2.matchAll(/\*\*Role\*\*: space admin\./g)].length, 2);
+    assert.match(text, /An organization admin, [^.]*, to do \[step 3\]\(#3-publish-the-space-agent\)\. A space admin to do steps 4 and 5\./);
     assert.match(text, /then continue at step 4\. \*\*Hello app\*\* appears/);
     assert.doesNotMatch(text, /Each step names the role/);
   });
@@ -393,12 +393,18 @@ for (const { tree, text } of trees) {
     assert.ok(linksOf(section(text, 'Next steps')).map(bare).some((link) => link.endsWith('reference/harness.md')));
   });
 
-  t('defines capability, space manager and manifest in one clause at first use', () => {
-    for (const term of ['capability', 'space manager', 'manifest']) {
+  t('defines capability, space admin and manifest in one clause at first use', () => {
+    for (const term of ['capability', 'space admin', 'manifest']) {
       const at = prose.indexOf(term);
       assert.ok(at >= 0, term);
       assert.match(prose.slice(at + term.length), /^,\s(a|the)\s[^.]*?[,.]/, term);
     }
+  });
+
+  t('provision and deprovision calls come when a space admin adds or removes the app', () => {
+    const lines = prose.split('\n').filter((l) => l.includes('DELETE /api/deprovision') && l.includes('when a '));
+    assert.ok(lines.length >= 1);
+    for (const line of lines) assert.match(line, /when a space admin, the person who adds apps to a space, adds or removes the app/);
   });
 
   t('follows the writing standard', () => {

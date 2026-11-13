@@ -329,7 +329,7 @@ export async function requireCapability(req: IncomingMessage, capability: string
 
 A check that fails throws an `AppAuthError`. The server replies with status 401 when the token is missing or invalid, and 403 when the token lacks the capability. `GET /api/hello` returns the claims of a verified user token.
 
-`GET /api/client-config` tells the client which parent origin and which key set to trust. Vector Space calls `POST /api/provision` and `DELETE /api/deprovision` when a space manager, the person who adds apps to a space, adds or removes the app. The harness run does not call them.
+`GET /api/client-config` tells the client which parent origin and which key set to trust. Vector Space calls `POST /api/provision` and `DELETE /api/deprovision` when a space admin, the person who adds apps to a space, adds or removes the app. The harness run does not call them.
 
 The client configuration also returns `SPACE_API_URL` as `spaceApiUrl`, the Vector Space API address that your app page can use. When the server starts, it also tells Vector Space which manifests it holds. `platform.pingManifests` sends the hash of each manifest to Vector Space, and Vector Space reads again a manifest that changed, so a restart refreshes the manifest in Vector Space. The platform skips the ping while it holds a dev issuer, so the harness run sends no ping.
 
@@ -387,7 +387,7 @@ import { manifests } from './manifests';
 export class AppModule {}
 ```
 
-Vector Space calls `POST /api/provision` and `DELETE /api/deprovision` when a space manager, the person who adds apps to a space, adds or removes the app. The module stores the secret that Vector Space sends in the credential store you pass to `forRoot`. The store below keeps the secrets in memory and loses them on restart, so implement `AppCredentialStore` over your own storage before production. The harness run does not call these routes.
+Vector Space calls `POST /api/provision` and `DELETE /api/deprovision` when a space admin, the person who adds apps to a space, adds or removes the app. The module stores the secret that Vector Space sends in the credential store you pass to `forRoot`. The store below keeps the secrets in memory and loses them on restart, so implement `AppCredentialStore` over your own storage before production. The harness run does not call these routes.
 
 ```ts title="server/src/credential-store.ts" starter
 import { Injectable } from '@nestjs/common';
@@ -520,7 +520,7 @@ A real space needs these things in place. Check them before step 1.
 
 - [ ] A Vector representative, the person at Vector who registers apps, to send the registration request to.
 - [ ] A space to add the app to.
-- [ ] An organization admin, a member who sees **Organization** under **Settings**, to do [step 3](#3-publish-the-space-agent). A space manager to do steps 4 and 5. Anyone with Edit level on the space, the access level that lets a member edit it, and any organization admin, is a space manager.
+- [ ] An organization admin, a member who sees **Organization** under **Settings**, to do [step 3](#3-publish-the-space-agent). A space admin to do steps 4 and 5. The organization admin is a space admin of every space.
 - [ ] The Vector Space server can reach your server. It needs a public URL that forwards to port `3101` (`SERVER_PORT`). Keep the URL the same until Vector confirms the registration.
 
 ### 1. Point the app at Vector Space
@@ -587,7 +587,7 @@ The space switcher, the menu in which a member picks a space, lists a space only
 
 ### 4. Add the app to a space
 
-**Role**: space manager.
+**Role**: space admin.
 
 Adding the app makes Vector Space call your server. Your server must accept that call.
 
@@ -602,9 +602,9 @@ If the toast starts with `App secret provisioning failed`, the add failed. A num
 
 ### 5. Share the app with a user
 
-**Role**: space manager.
+**Role**: space admin.
 
-A user sees the app page only after the space manager shares the app with that user. **Direct access** lists only members of the space. Add the user to the space first. Skip this step if you are the space manager who added the app. You already have access.
+A user sees the app page only after the space admin shares the app with that user. **Direct access** lists only members of the space. Add the user to the space first. Skip this step if you are the space admin who added the app. You already have access.
 
 1. Choose **Settings**, **Space**, then **Access**. Under **Members**, choose **Add** and pick the user.
 2. Choose **Context Hub**, then **Resources**. On the **Hello app** row, open the row menu and choose **Access**.

@@ -5,12 +5,12 @@ import { test } from 'node:test';
 
 const sections = {
   'vector-space': [
-    'Vector Space', 'space', 'space manager', 'organization admin', 'page', 'staff',
+    'Vector Space', 'space', 'space editor', 'space admin', 'organization admin', 'page', 'staff',
     'knowledge source', 'Context Hub', 'ask', 'human in the loop', 'channel', 'MCP', 'A2A', 'AI',
     'organization', 'member', 'role', 'share', 'block', 'condition', 'service account', 'agent', 'orchestrator agent',
     'thread', 'run', 'schedule', 'context', 'connector', 'Vector Module', 'extension', 'Command Center', 'Agent Studio', 'governance',
     'Activity', 'Audit', 'Intelligence', 'actor', 'standing approval', 'Human Time Return',
-    'widget', 'datasource', 'skill', 'group', 'Can use', 'Can edit', 'General access', 'AI gateway', 'AI provider account', 'execution',
+    'widget', 'datasource', 'skill', 'group', 'Can use', 'Can edit', 'Can manage', 'custom role', 'General access', 'AI gateway', 'AI provider account', 'execution',
     'Overview', 'Health', 'spend cap', 'rate card', 'agent card', 'evaluation', 'linked chat', 'web interface',
   ],
   'vector-apps': [
@@ -46,6 +46,10 @@ for (const [section, terms] of Object.entries(sections)) {
 test('a term is defined once across the three glossaries', () => {
   const names = all.map((e) => e.name.toLowerCase());
   assert.deepEqual(names.filter((n, i) => names.indexOf(n) !== i), []);
+});
+
+test('no glossary has a space manager entry, mention or link', () => {
+  for (const [section, body] of Object.entries(texts)) assert.doesNotMatch(body, /space[ -]managers?/i, section);
 });
 
 test('each entry has definition, mapping and owner', () => {
@@ -90,11 +94,28 @@ test('glossary defines no workspace term', () => {
   assert.ok(!entries.some((e) => /workspace/i.test(e.name)));
 });
 
-test('Vector Space, space and space manager entries open with the platform text', () => {
+test('Vector Space and space entries open with the platform text', () => {
   const first = (name) => entries.find((e) => e.name === name).body.trim().split('\n')[0];
   assert.match(first('Vector Space'), /^The Vector platform\./);
   assert.match(first('space'), /^A shared place in Vector Space\b/);
-  assert.equal(first('space manager'), 'A user who can edit on the space, or the organization admin. They add apps, share capabilities and choose the models and contexts for the slots.');
+});
+
+test('space editor adds editing and space admin holds everything a space editor holds', () => {
+  const first = (name) => entries.find((e) => e.name === name).body.trim().split('\n')[0];
+  assert.match(first('space editor'), /editing/);
+  assert.match(first('space admin'), /everything a space editor holds/);
+});
+
+test('the Can edit, Can manage and custom role entries state the share levels and the limits of a custom role', () => {
+  const body = (name) => entries.find((e) => e.name === name).body;
+  assert.match(body('Can manage'), /share a resource and manage who reaches it/);
+  assert.match(body('custom role'), /organization admin defines/);
+  assert.match(body('custom role'), /never lets its holder add members, add apps, delete the space/);
+});
+
+test('connector entry says the member who creates one connects its account or key', () => {
+  const body = entries.find((e) => e.name === 'connector').body;
+  assert.match(body, /the member who creates one connects its account or key/);
 });
 
 test('allowed resources entry states the overlap rule in the member\'s access', () => {
@@ -123,7 +144,7 @@ test('no entry or link uses Edit level, View level or resource pool', () => {
 
 test('the access rows define role, group, share, block, condition and member', () => {
   const first = (name) => entries.find((e) => e.name === name).body.trim().split('\n')[0];
-  assert.match(first('role'), /Can use or Can edit/);
+  assert.match(first('role').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1'), /Can use, Can edit and Can manage/);
   assert.match(first('role'), /never a set of people/i);
   assert.match(first('group'), /set of users and groups/);
   assert.match(first('share'), /one subject's role on one object/i);

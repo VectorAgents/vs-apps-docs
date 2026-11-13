@@ -130,3 +130,9 @@ test('the page names no banned name or term', () => {
 });
 
 test('the page follows the voice checks', () => assert.deepEqual(voiceViolations(text), []));
+
+test('the Identity and roles link names four kinds and the space roles and share levels', () => {
+  const next = section(text, 'Where to go next');
+  assert.match(next, /the four kinds of people and callers in Vector Space, and the space roles and share levels that say what each may do/);
+  assert.doesNotMatch(next, /five kinds/);
+});

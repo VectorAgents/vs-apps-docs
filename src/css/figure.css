@@ -768,3 +768,98 @@
     stroke: CanvasText;
   }
 }
+
+/* Steps are in the DOM low to high; column-reverse shows the highest on top. */
+.ladder-figure {
+  color: var(--iso-ink);
+  font-family: var(--iso-font);
+  margin: 1.5rem 0;
+}
+
+.ladder-figure__desc {
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  position: absolute;
+  width: 1px;
+}
+
+.ladder-figure__steps {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 0.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ladder-figure__step {
+  background: var(--iso-slab-top);
+  border: 1px solid var(--iso-edge);
+  border-left: 6px solid var(--iso-accent);
+  border-radius: 6px;
+  margin-left: calc(var(--i) * 6%);
+  padding: 0.75rem 1rem;
+}
+
+.ladder-figure__head {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+}
+
+.ladder-figure__name {
+  font-size: 1.0625rem;
+  font-weight: 600;
+}
+
+.ladder-figure__tag {
+  background: var(--iso-core-top);
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  padding: 0.0625rem 0.625rem;
+}
+
+.ladder-figure__plus {
+  font-size: 0.875rem;
+  margin: 0.25rem 0;
+}
+
+.ladder-figure__adds {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.ladder-figure__asides {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0;
+}
+
+.ladder-figure__aside {
+  background: var(--iso-slab-top);
+  border: 2px dashed var(--iso-link);
+  border-radius: 6px;
+  font-size: 0.9375rem;
+  padding: 0.5rem 0.875rem;
+}
+
+.ladder-figure__aside strong {
+  display: block;
+}
+
+@media (max-width: 700px) {
+  .ladder-figure__steps {
+    flex-direction: column;
+  }
+
+  .ladder-figure__step {
+    margin-left: 0;
+  }
+}

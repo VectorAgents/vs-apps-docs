@@ -59,6 +59,9 @@ test('datasources list exactly four databases and no other database or engine', 
   const data = section(text, 'Datasources');
   assert.match(data, /one of four types of database: PostgreSQL, MySQL, SQL Server or Snowflake\./);
   assert.doesNotMatch(plain, /BigQuery|Oracle|MongoDB|SQLite|Trino|polyglot|federat|dialect|transpil/i);
+  assert.match(data, /A member connects one of four types of database/);
+  assert.match(data, /The member who connects it imports the schema/);
+  assert.match(data, /that member can edit them/);
   assert.match(data, /imports the schema/);
   assert.match(data, /Comments that a PostgreSQL database already holds/);
   for (const tab of ['Instructions', 'SQL pairs', 'Saved answers']) assert.ok(data.includes(`**${tab}**`), tab);
@@ -70,6 +73,8 @@ test('datasources list exactly four databases and no other database or engine', 
 
 test('APIs and MCP servers give the three routes and the five types of authentication', () => {
   const api = section(text, 'APIs and MCP servers');
+  assert.match(api, /^APIs and MCP servers\n\nA member who creates a context connects an outside service/);
+  assert.match(api, /REST API\*\*: the member who connects it imports an OpenAPI description/);
   assert.match(api, /OpenAPI description/);
   assert.match(api, /base URL/);
   assert.match(api, /request and response parameters/);
@@ -77,10 +82,11 @@ test('APIs and MCP servers give the three routes and the five types of authentic
   assert.match(api, /GraphQL API\*\*: the operations come from introspection/);
   assert.match(api, /MCP server\*\*: the tools come from discovery/);
   assert.match(api, /five types of authentication: a bearer token, an API key, OAuth, basic authentication or a custom header/);
-  assert.match(api, /An API key travels in a header by default, or in the query or in the body\. The space manager sets the header name\./);
+  assert.match(api, /An API key travels in a header by default, or in the query or in the body\. The member who connects it sets the header name\./);
   assert.doesNotMatch(api, /header name, /);
   assert.match(api, /Only OAuth tokens refresh on their own/);
   assert.doesNotMatch(api, /bearer[^.]*refresh/i);
+  assert.match(api, /The member who connects it gives an API key or consents with an account/);
   assert.match(api, /A connector skips the import, because its operations are already defined/);
 });
 
@@ -102,13 +108,13 @@ test('mailboxes: several in one stream, a shared mailbox is a shared context, se
 
 test('credentials belong to their creator, a shared resource runs on the owner\'s credential, a share names a user, a group or an app', () => {
   const cred = section(text, 'Credentials and sharing');
-  assert.match(cred, /\[General access\]\(\.\/glossary\.md#general-access\).*Restricted, Can use or Can edit/);
+  assert.match(cred, /\[General access\]\(\.\/glossary\.md#general-access\).*Restricted, Can use or \[Can edit\]\(\.\/glossary\.md#can-edit\)/);
   assert.match(cred, /A \[share\]\(\.\/glossary\.md#share\) adds a role on top of that/);
   assert.match(cred, /belongs to the person who created it and is never given to anyone, and not even/);
   assert.match(cred, /not even an \[organization admin\]\(\.\/glossary\.md#organization-admin\) can use it/);
   assert.match(cred, /run on the credential of its owner/);
   assert.match(cred, /never get the credential or its target/);
-  assert.match(cred, /A share gives a role, Can use or Can edit, to a user or a group, and attaching a context or datasource to a Vector App shares it with that app/);
+  assert.match(cred, /A share gives a role, Can use, Can edit or Can manage, to a user or a group, and attaching a context or datasource to a Vector App shares it with that app/);
   assert.doesNotMatch(cred, /roles?\b[^.]*\b(people|subjects?)\b/i);
   assert.match(cred, /\]\(\.\/one-access-model\.md\)/);
 });
@@ -116,7 +122,7 @@ test('credentials belong to their creator, a shared resource runs on the owner\'
 test('each term is linked at its first use', () => {
   const noDescription = body.replace(/^#+ .*$/gm, '').replace(/Vector Space/g, 'VS');
   for (const [term, anchor] of [
-    ['Context Hub', 'context-hub'], ['space', 'space'], ['members', 'member'], ['agents', 'agent'], ['space manager', 'space-manager'],
+    ['Context Hub', 'context-hub'], ['space', 'space'], ['members', 'member'], ['agents', 'agent'],
     ['orchestrator agent', 'orchestrator-agent'], ['Context', 'context'], ['Knowledge source', 'knowledge-source'], ['Datasource', 'datasource'],
     ['widgets', 'widget'], ['Skill', 'skill'], ['Vector Module', 'vector-module'], ['connector', 'connector'], ['Can edit', 'can-edit'],
     ['MCP', 'mcp'], ['Can use', 'can-use'], ['General access', 'general-access'], ['role', 'role'], ['share', 'share'], ['group', 'group'],
@@ -128,6 +134,11 @@ test('each term is linked at its first use', () => {
     const bare = new RegExp(`(?<![\\w\\[-])${term}(?![\\w\\]])${term === 'Context' ? '(?! Hub)' : ''}`, /^[A-Z][a-z]+ [a-z]+$|^Can|^Context$/.test(term) ? '' : 'i').exec(before);
     assert.equal(bare, null, `${term} has no bare use before its link`);
   }
+});
+
+test('the page names no space role: a member connects, and Can edit alone does not', () => {
+  assert.doesNotMatch(plain, /space (editor|admin)/i);
+  assert.doesNotMatch(text, /#space-(editor|admin)\b/);
 });
 
 test('the page names no master doc, implementation name, vendor or banned term', () => {
@@ -147,7 +158,10 @@ test('every link resolves, and Where to go next has 4 links and the glossary in 
   assert.deepEqual(linksOf(section(text, 'Where to go next')), [
     './one-access-model.md', './who-can-do-what.md', './extending-a-space.md', './agents-in-a-space.md', './glossary.md',
   ]);
-  assert.match(section(text, 'Where to go next'), /^Where to go next\n\nA space manager can now connect a database, an API and a mailbox, and knows whose credential each one runs on\./);
+  const next = section(text, 'Where to go next');
+  assert.match(next, /the four kinds of people and callers in Vector Space, and the space roles and share levels that say what each may do/);
+  assert.doesNotMatch(next, /five kinds/);
+  assert.match(next, /^Where to go next\n\nA member can now connect a database, an API and a mailbox, and knows whose credential each one runs on\./);
 });
 
 test('the page follows the voice checks and has no em dash', () => {

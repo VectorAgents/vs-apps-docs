@@ -39,6 +39,19 @@ test('sdr shows several pages and csr shows connector eventHandlers', async () =
   assert.ok(csr.resources.connectors.every((c) => c.eventHandlers.length > 0));
 });
 
+test('example definitions and the SDK pages name the rung that holds each act', () => {
+  const sdr = readFileSync(join(root, examples[0].file), 'utf8');
+  const csr = readFileSync(join(root, examples[1].file), 'utf8');
+  assert.match(sdr, /Model slots the space admin points at a model/);
+  assert.match(csr, /Model slots the space admin points at a model/);
+  assert.match(csr, /Handlers a space editor routes a messaging connector's event types to/);
+  const react = readFileSync(join(root, 'docs/sdk/reference/react.md'), 'utf8');
+  assert.match(react, /Ask a space admin to grant \{capability\}\./);
+  const page = readFileSync(join(root, 'docs/sdk/examples.md'), 'utf8');
+  assert.match(page, /\[model slot\]\([^)]*\) the \[space admin\]\([^)]*\) points at a model/);
+  assert.match(page, /handlers a \[space editor\]\([^)]*\) routes its event types to/);
+});
+
 test('a file-embedded code block is typechecked as pasted', () => {
   const root2 = mkdtempSync(join(tmpdir(), 'emb-'));
   mkdirSync(join(root2, 'docs'));

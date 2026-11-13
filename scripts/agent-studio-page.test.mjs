@@ -79,7 +79,7 @@ test('each term is linked at its first use', () => {
     ['orchestrator agent', 'orchestrator-agent'], ['A2A', 'a2a'], ['evaluation', 'evaluation'], ['organization admin', 'organization-admin'],
     ['thread', 'thread'], ['agent card', 'agent-card'], ['member', 'member'], ['Datasource', 'datasource'], ['condition', 'condition'],
     ['Context', 'context'], ['run', 'run'], ['AI gateway', 'ai-gateway'], ['AI provider accounts', 'ai-provider-account'],
-    ['Skills', 'skill'], ['Can use', 'can-use'], ['Can edit', 'can-edit'], ['service account', 'service-account'], ['ask', 'ask'],
+    ['Skills', 'skill'], ['Can use', 'can-use'], ['Can edit', 'can-edit'], ['space editor', 'space-editor'], ['service account', 'service-account'], ['ask', 'ask'],
     ['Command Center', 'command-center'], ['standing approvals', 'standing-approval'],
   ]) {
     const first = new RegExp(`(?<![\\w-])${term}\\b`, 'i').exec(noDescription.replace(/\[([^\]]*)\]\([^)]*\)/g, (_, t) => `\u0000${t}`));
@@ -136,10 +136,9 @@ test('a channel runs as its owner or a service account, and group input is untru
   assert.match(features, /Group input is untrusted/);
 });
 
-test('Who may change an agent names Can edit on the space and the page makes no audit claim', () => {
-  assert.match(section(text, 'What Agent Studio is for'), /A user with \[Can edit\]\(\.\/glossary\.md#can-edit\) on the space can configure, delete or reset an agent\./);
+test('Who may change an agent names the space editor and the page makes no audit claim', () => {
+  assert.match(section(text, 'What Agent Studio is for'), /A \[space editor\]\(\.\/glossary\.md#space-editor\) can configure, delete or reset an agent\./);
   assert.doesNotMatch(text, /audit/i);
-  assert.doesNotMatch(prose, /space managers?/i);
 });
 
 test('"resources" names what an agent may use, and "knowledge" appears only in "knowledge source"', () => {

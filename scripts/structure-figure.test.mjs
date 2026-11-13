@@ -103,8 +103,8 @@ test('layout: an unknown slab or link end is an error', () => {
   assert.throws(() => layoutStructure({ ...small, links: [{ id: 'x', from: 'back', to: 'nowhere' }] }), /nowhere/);
 });
 
-/** The Apps overview is a structure figure that is not a slot of the Vector Space section, so it has no registry row. */
-const real = [...slots.filter((s) => existsSync(join(figures, `${s.id}.ts`))), { id: 'apps-overview' }];
+/** The Apps overview is a structure figure that is not a slot of the Vector Space section, so it has no registry row. A ladder has no slabs or parts. */
+const real = [...slots.filter((s) => s.kind !== 'ladder' && existsSync(join(figures, `${s.id}.ts`))), { id: 'apps-overview' }];
 
 test('at least the overview figure has data', () => {
   assert.ok(real.some((s) => s.id === 'space-structure'));

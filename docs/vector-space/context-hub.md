@@ -7,7 +7,7 @@ The [Context Hub](./glossary.md#context-hub) is the area of a [space](./glossary
 
 ## A sales team connects its data
 
-Acme's sales team has a space, and a [space manager](./glossary.md#space-manager) connects the team's data in the Context Hub. They connect the database of leads and describe its tables, add the REST API of the team's customer system, and connect the team's shared sales mailbox. A member then asks the [orchestrator agent](./glossary.md#orchestrator-agent) to find leads and send an outreach email.
+Acme's sales team has a space, and a member connects the team's data in the Context Hub. They connect the database of leads and describe its tables, add the REST API of the team's customer system, and connect the team's shared sales mailbox. A member then asks the [orchestrator agent](./glossary.md#orchestrator-agent) to find leads and send an outreach email.
 
 The agent reads the lead database, calls the customer system through its API and sends the email from the shared mailbox. The thread appears in the Omnibox, a [Vector Module](./glossary.md#vector-module) that shows the mail threads of a space. The member never held a password for any of the three, because each one runs on the credential of the person who connected it.
 
@@ -26,9 +26,9 @@ A context is the general kind, and a [connector](./glossary.md#connector) is a c
 
 ## Datasources
 
-A datasource lets members and agents ask a database questions in plain language. A space manager connects one of four types of database: PostgreSQL, MySQL, SQL Server or Snowflake.
+A datasource lets members and agents ask a database questions in plain language. A member connects one of four types of database: PostgreSQL, MySQL, SQL Server or Snowflake.
 
-The space manager imports the schema, which lists the tables and columns of the database, and writes a description for each one, so that an agent knows what the data means. Comments that a PostgreSQL database already holds on its tables and columns become the first descriptions, and the space manager can edit them.
+The member who connects it imports the schema, which lists the tables and columns of the database, and writes a description for each one, so that an agent knows what the data means. Comments that a PostgreSQL database already holds on its tables and columns become the first descriptions, and that member can edit them.
 
 The Knowledge tab of a datasource holds what else an agent needs to know:
 
@@ -40,15 +40,15 @@ A member asks in plain language and never writes SQL. The agent writes the query
 
 ## APIs and MCP servers
 
-A space manager who holds [Can edit](./glossary.md#can-edit) on a context connects an outside service in the way that the service offers:
+A member who creates a context connects an outside service in the way that the service offers:
 
-- **REST API**: the space manager imports an OpenAPI description, a file that lists the calls of the API, and sets the base URL. Each call becomes an operation with request and response parameters, and the path of an operation stays on the origin of the base URL.
+- **REST API**: the member who connects it imports an OpenAPI description, a file that lists the calls of the API, and sets the base URL. Each call becomes an operation with request and response parameters, and the path of an operation stays on the origin of the base URL.
 - **GraphQL API**: the operations come from introspection, where the API answers with its own list of operations.
 - **MCP server**: the tools come from discovery, where the server answers with its own list of tools.
 
-A context uses one of five types of authentication: a bearer token, an API key, OAuth, basic authentication or a custom header. An API key travels in a header by default, or in the query or in the body. The space manager sets the header name. Only OAuth tokens refresh on their own.
+A context uses one of five types of authentication: a bearer token, an API key, OAuth, basic authentication or a custom header. An API key travels in a header by default, or in the query or in the body. The member who connects it sets the header name. Only OAuth tokens refresh on their own.
 
-A connector skips the import, because its operations are already defined. The space manager gives an API key or consents with an account, and nothing else is needed. [Extending a space](./extending-a-space.md) compares an MCP server with the other ways to add logic to a space.
+A connector skips the import, because its operations are already defined. The member who connects it gives an API key or consents with an account, and nothing else is needed. [Extending a space](./extending-a-space.md) compares an MCP server with the other ways to add logic to a space.
 
 ## Mailboxes and the Omnibox
 
@@ -58,18 +58,18 @@ A member sends from a mailbox when the member holds [Can use](./glossary.md#can-
 
 ## Credentials and sharing
 
-Every resource has [General access](./glossary.md#general-access), the [role](./glossary.md#role) that it gives every member of the space: Restricted, Can use or Can edit. A [share](./glossary.md#share) adds a role on top of that, and a share with a [group](./glossary.md#group) reaches every user that the group holds. An agent reaches what the member it works for reaches. [One access model](./one-access-model.md) holds the full check.
+Every resource has [General access](./glossary.md#general-access), the [role](./glossary.md#role) that it gives every member of the space: Restricted, Can use or [Can edit](./glossary.md#can-edit). A [share](./glossary.md#share) adds a role on top of that, and a share with a [group](./glossary.md#group) reaches every user that the group holds. An agent reaches what the member it works for reaches. [One access model](./one-access-model.md) holds the full check.
 
 A credential is the login that a context or datasource uses to reach its outside system. It belongs to the person who created it and is never given to anyone, and not even an [organization admin](./glossary.md#organization-admin) can use it.
 
-When a context or datasource is shared, the people it is shared with run on the credential of its owner. They never get the credential or its target, the database or endpoint behind it. A share gives a role, Can use or Can edit, to a user or a group, and attaching a context or datasource to a Vector App shares it with that app.
+When a context or datasource is shared, the people it is shared with run on the credential of its owner. They never get the credential or its target, the database or endpoint behind it. A share gives a role, Can use, Can edit or Can manage, to a user or a group, and attaching a context or datasource to a Vector App shares it with that app.
 
 ## Where to go next
 
-A space manager can now connect a database, an API and a mailbox, and knows whose credential each one runs on. The next page to read is the one on access:
+A member can now connect a database, an API and a mailbox, and knows whose credential each one runs on. The next page to read is the one on access:
 
 - [One access model](./one-access-model.md): the check that decides what a user, an agent or an app may do on a resource, including who each run is made as.
-- [Identity and roles](./who-can-do-what.md): the five kinds of people and callers in Vector Space, and what Can use and Can edit mean for each.
+- [Identity and roles](./who-can-do-what.md): the four kinds of people and callers in Vector Space, and the space roles and share levels that say what each may do.
 - [Extending a space](./extending-a-space.md): how a Vector App, an A2A agent and an MCP server compare as ways to extend a space.
 - [Agents in a space](./agents-in-a-space.md): how the orchestrator agent and the agents below it use what the Context Hub lists.
 - [Glossary](./glossary.md): every term of Vector Space, each defined in a sentence.

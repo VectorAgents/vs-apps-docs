@@ -3,7 +3,7 @@ export interface FigureSlot {
   id: string;
   /** Slug of the page under `docs/vector-space/` that holds the figure. */
   page: string;
-  kind: 'structure' | 'flow';
+  kind: 'structure' | 'flow' | 'ladder';
   /** Shown after "Fig. 1 · " by the placeholder and by the real figure. */
   caption: string;
 }
@@ -77,6 +77,12 @@ export const slots: readonly FigureSlot[] = [
     page: 'agent-studio',
     kind: 'flow',
     caption: 'One change to an agent, from a draft edit to a published version and back',
+  },
+  {
+    id: 'role-ladder',
+    page: 'who-can-do-what',
+    kind: 'ladder',
+    caption: 'A space editor holds what a member holds and more, and a space admin holds everything an editor holds',
   },
 ];
 
