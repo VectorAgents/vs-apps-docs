@@ -10,9 +10,9 @@ The record of work is what Vector Space writes down about each piece of work: wh
 
 ## A member's outreach run
 
-Acme's sales team has a space, and a [member](./glossary.md#member) of it asks the [orchestrator agent](./glossary.md#orchestrator-agent) to find leads and send an outreach email. Vector Space records the work as that member and notes what started it, here a chat in the [web interface](./glossary.md#web-interface). It also records each model call with its estimated cost.
+Maya, a [member](./glossary.md#member) of Acme's sales team, asks the [orchestrator agent](./glossary.md#orchestrator-agent) to find leads and send an outreach email in the team's space. Vector Space records the work as Maya and notes what started it, here a chat in the [web interface](./glossary.md#web-interface). It also records each model call with its estimated cost.
 
-Later an [organization admin](./glossary.md#organization-admin) opens [Activity](./glossary.md#activity), finds the work and reads who it ran as and what it cost.
+Later Lena, Acme's [organization admin](./glossary.md#organization-admin), opens [Activity](./glossary.md#activity), finds the work and reads who it ran as and what it cost.
 
 ## The actor behind every record
 

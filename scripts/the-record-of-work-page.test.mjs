@@ -37,13 +37,35 @@ test('the scene is the first H2, with no Example heading and Acme wording, and a
   assert.equal([...text.matchAll(/^## (.+)$/gm)][0][1], "A member's outreach run");
   assert.doesNotMatch(text, /^## .*\bExample\b/m);
   assert.doesNotMatch(plain, /\bthe sales space\b/i);
-  assert.match(plain, /Acme's sales team has a space, and a member of it asks the orchestrator agent to find leads and send an outreach email/);
+  assert.match(plain, /Maya, a member of Acme's sales team, asks the orchestrator agent to find leads and send an outreach email/);
   const example = section(text, "A member's outreach run");
   assert.match(example, /\[orchestrator agent\]\(\.\/glossary\.md#orchestrator-agent\)/);
   assert.match(example, /outreach email/);
   assert.match(example, /\[organization admin\]\(\.\/glossary\.md#organization-admin\)/);
   assert.match(example, /Activity/);
   assert.match(example, /who it ran as/);
+});
+
+test('the scene names Maya and Lena in place of "a member", with no he or she', () => {
+  const scene = section(text, "A member's outreach run");
+  assert.match(scene, /^Maya, a \[member\]\(\.\/glossary\.md#member\) of Acme's sales team, asks the \[orchestrator agent\]/m);
+  assert.match(scene, /records the work as Maya and notes what started it/);
+  assert.match(scene, /Lena, Acme's \[organization admin\]\(\.\/glossary\.md#organization-admin\), opens \[Activity\]/);
+  assert.match(scene, /who it ran as/);
+  assert.doesNotMatch(scene, /a member of it|that member|this member/);
+  assert.doesNotMatch(scene, /\b(?:he|she|his|her|him)\b/i);
+});
+
+test('each persona is introduced once and the first "member" on the page is the glossary link on the Maya introduction', () => {
+  assert.equal(body.match(/Maya, a /g)?.length, 1);
+  assert.equal(body.match(/Lena, Acme's /g)?.length, 1);
+  const noHeadings = body.replace(/^#{1,6} .*$/gm, '');
+  assert.match(noHeadings.slice(noHeadings.search(/(?<![-#\w])member\b/) - 1), /^\[member\]\(\.\/glossary\.md#member\) of Acme's sales team/);
+  assert.ok(body.indexOf('Maya') < body.indexOf('Lena'));
+});
+
+test('no persona name appears outside the scene section', () => {
+  assert.doesNotMatch(text.replace(section(text, "A member's outreach run"), ''), /Maya|Lena/);
 });
 
 test('the actor section defines an execution, then lists its actor and what started it', () => {
