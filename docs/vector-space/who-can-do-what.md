@@ -1,9 +1,9 @@
 ---
-title: Roles and permissions
-description: Five kinds of people and callers, Can use and Can edit.
+title: Identity and roles
+description: Five kinds of people and callers, and the roles Can use and Can edit.
 ---
 
-Vector Space has five kinds of people and callers, and each kind has a place in an [organization](./glossary.md#organization), the company account in Vector Space:
+Vector Space has five kinds of people and callers, and each kind is an identity. Four of them belong to an [organization](./glossary.md#organization), the company account in Vector Space, and Staff reach organizations from outside:
 
 - **[Organization admin](./glossary.md#organization-admin)**: the one person who runs the organization. The admin creates spaces, users and service accounts, and manages AI provider accounts.
 - **[Space managers](./glossary.md#space-manager)**: users who hold [Can edit](./glossary.md#can-edit) on a [space](./glossary.md#space), or the organization admin. They manage the members, [groups](./glossary.md#group), [shares](./glossary.md#share), resources, agent and apps of the space.
@@ -11,7 +11,7 @@ Vector Space has five kinds of people and callers, and each kind has a place in 
 - **[Staff](./glossary.md#staff)**: Vector employees who run the platform across organizations. They run the app registry and set the [spend cap](./glossary.md#spend-cap) of an organization.
 - **[Service accounts](./glossary.md#service-account)**: users of an organization that are not people, such as the identity behind an API key or a schedule. They reach what a member reaches, own no resources and are never space managers.
 
-A kind says who a user is in an organization. A [role](./glossary.md#role) says what the user may do on one resource, and a share gives the role Can use or Can edit.
+A kind says who a user is in an organization, or for Staff, how they reach one. A [role](./glossary.md#role) says what the user may do on one resource, and a share gives the role Can use or Can edit.
 
 ## A new member in a team's space
 
@@ -35,7 +35,7 @@ A share gives one user, group or app one role on one thing, such as the space or
 - **[Can use](./glossary.md#can-use)**: lets a user use a thing without changing it.
 - **[Can edit](./glossary.md#can-edit)**: lets a user configure a thing and use it.
 
-A role is not a set of people. A group is a set of users and groups, and a share that gives a role to a group gives it to every user the group holds. The effect of Can edit depends on where it is given:
+A group is a set of users and groups, and a share that gives a role to a group gives it to every user the group holds. The effect of Can edit depends on where it is given:
 
 - **On the space**: makes a user a space manager.
 - **On a resource**: lets the user configure that resource only.

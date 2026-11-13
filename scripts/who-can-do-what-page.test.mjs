@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
@@ -77,11 +77,12 @@ test('staff get two sentences and no claim of global reach', () => {
   assert.doesNotMatch(staff, /global/i);
 });
 
-test('Can use and Can edit are the two roles of a share, and a role is not a set of people', () => {
+test('Can use and Can edit are the two roles of a share, and a group share reaches its users', () => {
   const part = section(text, 'What Can use and Can edit mean');
   for (const anchor of ['can-use', 'can-edit']) assert.match(part, new RegExp(`\\]\\(\\./glossary\\.md#${anchor}\\)`), anchor);
   for (const anchor of ['share', 'group']) assert.match(body, new RegExp(`\\]\\(\\./glossary\\.md#${anchor}\\)`), anchor);
-  assert.match(part, /not a set of people/);
+  assert.doesNotMatch(plain, /A role is not a set of people/);
+  assert.match(part, /A group is a set of users and groups/);
   assert.match(part, /\]\(\.\/one-access-model\.md\)/);
 });
 
@@ -125,7 +126,42 @@ test('service accounts are the identity behind an API key or a schedule, and a g
 });
 
 test('a kind says who a user is and a role says what the user may do', () => {
-  assert.match(plain, /A kind says who a user is in an organization\. A role says what the user may do on one resource/);
+  assert.match(plain, /A kind says who a user is in an organization, or for Staff, how they reach one\. A role says what the user may do on one resource, and a share gives the role Can use or Can edit\./);
+});
+
+test('the title and description say Identity and roles', () => {
+  assert.match(text, /^title: Identity and roles$/m);
+  assert.match(text, /^description: Five kinds of people and callers, and the roles Can use and Can edit\.$/m);
+});
+
+test('the lead says each kind is an identity and Staff reach organizations from outside', () => {
+  const lead = unlink(body.split(/\n- /)[0]).trim();
+  assert.equal(lead, 'Vector Space has five kinds of people and callers, and each kind is an identity. Four of them belong to an organization, the company account in Vector Space, and Staff reach organizations from outside:');
+  assert.doesNotMatch(plain, /has a place in an organization/);
+});
+
+test('the page says Staff reach organizations, never own or every organization', () => {
+  assert.doesNotMatch(plain, /Staff.{0,80}(own|every organization)/);
+});
+
+test('no page links to who-can-do-what with the text Roles and permissions, and every such link reads Identity and roles', () => {
+  const pages = readdirSync(resolve(docs, 'vector-space')).filter((f) => f.endsWith('.md') || f.endsWith('.mdx'));
+  const texts = [];
+  for (const f of pages) {
+    const src = readFileSync(resolve(docs, 'vector-space', f), 'utf8');
+    for (const m of src.matchAll(/\[([^\]]+)\]\(\.\/who-can-do-what\.md[^)]*\)/g)) texts.push(m[1]);
+    assert.doesNotMatch(src, /Roles and permissions/, f);
+  }
+  assert.equal(texts.length, 5);
+  assert.ok(texts.every((t) => t === 'Identity and roles'), texts.join(', '));
+});
+
+test('the glossary role entry says a kind of person is not a role and names no Organization role', () => {
+  const row = readFileSync(glossaryFile, 'utf8').split(/^### /m).find((s) => s.startsWith('role\n'));
+  assert.ok(row, 'glossary row');
+  assert.match(row, /A kind of person, such as the organization admin or a member, is not a role\./);
+  assert.doesNotMatch(row, /Organization role/);
+  assert.doesNotMatch(readFileSync(glossaryFile, 'utf8'), /^### identity$/m);
 });
 
 test('the rules of a space are a bold-term list and Can edit on the space and on a resource are two items', () => {

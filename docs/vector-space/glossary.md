@@ -128,7 +128,7 @@ The interface in a browser that the internal team of an organization uses to wor
 
 ### role
 
-Can use or Can edit: the permission set that a [share](#share) holds. A role is never a set of people. That is a [group](#group). An Organization role (Admin or Member) is a different thing, so say which.
+Can use or Can edit: the permission set that a [share](#share) holds. A role is never a set of people. That is a [group](#group). A kind of person, such as the organization admin or a member, is not a role.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
