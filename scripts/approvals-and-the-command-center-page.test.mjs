@@ -37,7 +37,7 @@ test('the scene is the first H2, with no Example heading and Acme wording, a pos
   assert.equal([...text.matchAll(/^## (.+)$/gm)][0][1], 'A status note that waits for approval');
   assert.doesNotMatch(text, /^## .*\bExample\b/m);
   assert.doesNotMatch(plain, /\bthe sales space\b/i);
-  assert.match(plain, /Acme's sales team has a space, and a member of it asks the orchestrator agent to post a status note to the team chat/);
+  assert.match(plain, /Maya, a member of Acme's sales team, asks the orchestrator agent to post a status note to the team chat in the team's space/);
   const scene = section(text, 'A status note that waits for approval');
   assert.match(scene, /team chat/);
   assert.match(scene, /\[connector\]\(\.\/glossary\.md#connector\)/);
@@ -45,6 +45,24 @@ test('the scene is the first H2, with no Example heading and Acme wording, a pos
   assert.match(scene, /an ask appears in the Command Center/);
   assert.match(scene, /always allow/);
   assert.doesNotMatch(scene, /email|outreach|lead/i, 'the worked example owns the email');
+});
+
+test('the scene names Maya in place of "a member", with no he or she', () => {
+  const scene = section(text, 'A status note that waits for approval');
+  assert.match(scene, /^Maya, a \[member\]\(\.\/glossary\.md#member\) of Acme's sales team, asks the \[orchestrator agent\]/m);
+  assert.match(scene, /\nMaya reads the ask and approves it\./);
+  assert.match(scene, /Maya also ticks "always allow", so the same post runs later with no ask\./);
+  assert.doesNotMatch(scene, /\b(?:a|this|that) member\b|The member/);
+  assert.doesNotMatch(scene, /\b(?:he|she|his|her|him)\b/i);
+});
+
+test('Maya is introduced once and the first "member" on the page is the glossary link on that introduction', () => {
+  assert.equal(body.match(/Maya, a /g)?.length, 1);
+  assert.match(body.slice(body.search(/(?<![-#\w])member\b/) - 1), /^\[member\]\(\.\/glossary\.md#member\) of Acme's sales team, asks/);
+});
+
+test('no persona name appears outside the scene section', () => {
+  assert.doesNotMatch(text.replace(section(text, 'A status note that waits for approval'), ''), /Maya|Omar|Lena|Priya|Erik|Sofia/);
 });
 
 test('the slot approvals-flow appears once, in "The ask and who decides it"', () => {
