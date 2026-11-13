@@ -4,7 +4,7 @@ import { test } from 'node:test';
 
 const NOUN_GRANT = /\b(?:an?|the|each|every|one|no|any|all|your|their|its|this|that|these|those|which|of|for|per|with|new|existing|revoked|standing)\s+grants?\b/gi;
 
-/** Fence and code-span text, link targets, the bold Vector Space menu labels `**Space**` and `**Spaces**` and the list term `**[Space managers]**` at the start of a list item are not prose. */
+/** Fence and code-span text, link targets, the bold Vector Space menu labels `**Space**` and `**Spaces**`, the list term `**[Space managers]**` at the start of a list item, and the role terms `Space member`, `Space editor`, `Space admin` and `Space roles` at the start of a heading or list item are not prose. */
 const proseLines = (markdown) => {
   let fence = null;
   return markdown.split('\n').map((line) => {
@@ -21,7 +21,8 @@ const proseLines = (markdown) => {
       .replace(/`[^`]*`/g, '')
       .replace(/\]\([^)]*\)/g, ']')
       .replace(/\*\*Spaces?\*\*/g, '')
-      .replace(/^(\s*[-*] \*\*\[?)Space managers\b/, '$1');
+      .replace(/^(\s*[-*] \*\*\[?)Space managers\b/, '$1')
+      .replace(/^(#{2,6} |\s*[-*] \*\*\[?)Space (member|editor|admin|roles)\b/, '$1$2');
   });
 };
 
@@ -58,6 +59,15 @@ test('Space: flagged on its own, allowed inside Vector Space', () => {
 test('Space: the list term Space managers is allowed at the start of a list item only', () => {
   assert.deepEqual(rules('- **[Space managers](./glossary.md#space-manager)**: users who hold Can edit.'), []);
   assert.deepEqual(rules('Space managers hold Can edit.'), ['space']);
+});
+
+test('Space: the role terms Space member, Space editor, Space admin and Space roles are allowed at the start of a heading or a list item only', () => {
+  assert.deepEqual(rules('## Space roles and share levels'), []);
+  assert.deepEqual(rules('- **Space member**: reaches General access.'), []);
+  assert.deepEqual(rules('- **[Space editor](./glossary.md#space-editor)**: builds agents.'), []);
+  assert.deepEqual(rules('- **Space roles**: a space admin gives one.'), []);
+  assert.deepEqual(rules('A Space admin adds members.'), ['space']);
+  assert.deepEqual(rules('## Space settings'), ['space']);
 });
 
 test('Space: code spans, fences, link targets and menu labels are excluded', () => {
