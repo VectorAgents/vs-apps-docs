@@ -1,16 +1,14 @@
 ---
 title: Inside a space
-description: The Context Hub, pages and widgets, Vector Apps and Vector Modules.
+description: The Context Hub with its Vector Apps and Vector Modules, and pages with widgets.
 ---
 
-A [space](./glossary.md#space) holds what its team works with, in four parts:
+A [space](./glossary.md#space) holds what its team works with:
 
-- **[Context Hub](./glossary.md#context-hub)**: the area where the space lists what it can reach.
+- **[Context Hub](./glossary.md#context-hub)**: the area where the space lists what it can reach, including its Vector Apps and Vector Modules.
 - **[Pages](./glossary.md#page)**: grids of widgets that show data.
-- **[Vector Apps](../vector-apps/glossary.md#app)**: web apps that the space shows.
-- **[Vector Modules](./glossary.md#vector-module)**: first-party products of Vector Space, built over context data or over rows that the space keeps.
 
-Members and agents use these parts to read data, show it and act on it.
+Members and agents use them to read data, show it and act on it.
 
 ## A lead search in a team's space
 

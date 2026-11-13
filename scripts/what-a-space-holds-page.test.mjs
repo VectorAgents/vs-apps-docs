@@ -26,6 +26,18 @@ test('the lead defines the Context Hub with a glossary link before the first H2'
   assert.match(body.split(/^## /m)[0], /\[Context Hub\]\(\.\/glossary\.md#context-hub\)/);
 });
 
+test('the description and lead say what the team works with, in two bullets, with no count', () => {
+  assert.match(text, /^description: The Context Hub with its Vector Apps and Vector Modules, and pages with widgets\.$/m);
+  const lead = body.split(/^## /m)[0];
+  assert.match(lead, /^A \[space\]\(\.\/glossary\.md#space\) holds what its team works with:$/m);
+  assert.deepEqual(lead.match(/^- .+$/gm), [
+    '- **[Context Hub](./glossary.md#context-hub)**: the area where the space lists what it can reach, including its Vector Apps and Vector Modules.',
+    '- **[Pages](./glossary.md#page)**: grids of widgets that show data.',
+  ]);
+  assert.match(lead, /\nMembers and agents use them to read data, show it and act on it\.\n/);
+  assert.doesNotMatch(text, /four parts|these parts/);
+});
+
 test('the scene is the first H2, names no Example and says a team\'s space', () => {
   assert.equal(text.match(/^## (.+)$/m)[1], 'A lead search in a team\'s space');
   assert.doesNotMatch(text, /^#+ .*Example/m);
