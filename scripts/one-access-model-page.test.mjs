@@ -94,6 +94,8 @@ test('one sentence says an approval is a second check', () => {
 test('the page covers the web interface, the API, agents and apps', () => {
   const every = section(text, 'One check for every way in');
   for (const word of ['app', 'API', 'agent', 'Vector App']) assert.ok(every.includes(word), word);
+  assert.ok(lead.includes('and apps. The check reads four inputs, with clear rules that say which input wins.'), 'the lead splits the check from its four inputs');
+  assert.doesNotMatch(lead, /and the check reads four inputs/);
   assert.ok(lead.includes('the [web interface](./glossary.md#web-interface), the API, agents and apps'));
 });
 

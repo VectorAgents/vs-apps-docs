@@ -6,7 +6,7 @@ description: How a request is decided, the same for the web interface, the API, 
 import StructureFigure from '@site/src/components/StructureFigure';
 import { accessCheck } from '@site/src/diagrams/figures/access-check.ts';
 
-Access defines the set of operations a user, agent or app is permitted to perform on a resource within a space. Vector Space works it out for each operation with one check, the same for the [web interface](./glossary.md#web-interface), the API, agents and apps, and the check reads four inputs, with clear rules that say which input wins.
+Access defines the set of operations a user, agent or app is permitted to perform on a resource within a space. Vector Space works it out for each operation with one check, the same for the [web interface](./glossary.md#web-interface), the API, agents and apps. The check reads four inputs, with clear rules that say which input wins.
 
 ## A lead search limited by region
 
