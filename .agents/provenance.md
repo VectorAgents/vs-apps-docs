@@ -19,7 +19,7 @@ The glossary uses the published word where the product glossary uses an internal
 
 | Published term | Product term | Note |
 | --- | --- | --- |
-| allowed resources | Ceiling (`access.app_binding_resources`) | The resources a space manager attaches to an app. `ceiling` does not occur in `docs/`. |
+| allowed resources | Ceiling (`access.app_binding_resources`) | The resources attached to an app. `ceiling` does not occur in `docs/`. |
 | the member's access | Floor | The overlap rule: an action runs only on resources that are allowed for the app and open to the member. |
 | Context Hub | Pool | Vector Space lists what the space can reach as **Resources**, under the Context Hub. |
 | context | Connector | The master docs and the product's create sheet say "connector". The published pages say "context" for the general kind and keep "connector" for a context made from a pre-built provider (Apollo, Exa, BrightData, Meta). SDK pages keep `connector` as the code name. |
@@ -31,6 +31,10 @@ The glossary uses the published word where the product glossary uses an internal
 | binding | Binding (`access.app_bindings`) | An app activated on a space. |
 | ask | Ask (`runs.asks`) | An approval is one kind of ask. |
 | channel | Channel (`studio.channels`) | An agent reached through a messaging service. WhatsApp, Messenger and Instagram are Meta messaging services. |
+| space editor | Space Editor (built-in space role) | Adds Can edit on every resource of the space, and the space permissions marked for it. Source: `domains/access/TREE.md` (Built-in roles), `product/GLOSSARY.md` (Access: Space role). |
+| space admin | Space Admin (built-in space role, `space#admin`) | Adds Can manage on every resource and every space permission. The organization admin is a space admin of every space. Source: `domains/access/TREE.md` (Built-in roles), `product/GLOSSARY.md` (Access: Space Admin). |
+| Can manage | Can manage (`can_manage`) | The share level that adds sharing a resource and managing who reaches it. Source: `domains/access/TREE.md` (Share levels), `product/GLOSSARY.md` (Access: Role). |
+| custom role | Custom role (`access.roles`) | The organization's named permission set, attached at the space on top of a space role. It never gives `space#admin`. Source: `domains/access/TREE.md` (Built-in roles, Places), `product/GLOSSARY.md` (Access: Role, Custom role). |
 
 ## SDK gaps
 
@@ -189,7 +193,7 @@ Source paths are in the sibling `vector-spaces` repo, under `docs/`. The page is
 | Claim | Rests on |
 | --- | --- |
 | An organization is the tenant. Every user, API key, resource and space belongs to one. A space is the unit of work. It has these things of its own: its members, one orchestrator agent, a Context Hub that includes its Vector Apps and Vector Modules, and its Pages. | `product/OVERVIEW.md` ("How it fits"), `product/GLOSSARY.md` (Tenancy and people: Organization; Spaces and content: Space). |
-| Each organization has one organization admin, who a transfer passes to another live member. The admin is a space manager of every space. | `product/GLOSSARY.md` (Tenancy and people: Organization Owner), `domains/access/README.md` (The Organization Owner). |
+| Each organization has one organization admin, who a transfer passes to another live member. The admin is a space admin of every space. | `product/GLOSSARY.md` (Tenancy and people: Organization Owner), `domains/access/TREE.md` (Built-in roles: Organization Owner). |
 | AI provider accounts belong to the organization and pay for its model calls. An account reaches every space by default and can be limited to chosen spaces. The page therefore says each resource belongs to one space and never that spaces share nothing. | `product/OVERVIEW.md` ("What it is"), `domains/ai/README.md` (Data model, invariant 2: an all-spaces account is the default, a scoped account reaches the spaces with a grant row), `domains/credentials/README.md` (Core primitives: one credential can back resources in more than one space). |
 | A resource is owned by one space. No share reaches a resource of another space. An agent moves only within its space. | `domains/access/RESOURCES.md` (Resources), `domains/access/README.md` (The pool and tenancy), `domains/agent-studio/README.md` (The agent tree). |
 | Access is worked out inside a space, for each member and operation. Only users of the organization, service accounts included, join its spaces. Membership alone reaches what General access gives. | `product/OVERVIEW.md` ("How it fits"), `domains/access/README.md` (Spaces), `product/GLOSSARY.md` (Access: Member). |
@@ -334,7 +338,7 @@ Source paths are in the sibling `vector-spaces` repo, under `docs/`. The spec ov
 | Claim | Rests on |
 | --- | --- |
 | The five kinds are the organization admin, space managers, members, staff and service accounts. They are kinds of people and callers, not role types. "Role" means Can use or Can edit. | `product/OVERVIEW.md` (Who uses it), `product/GLOSSARY.md` (Access: Role). |
-| Each organization has one organization admin. The place passes to another member by a transfer. The admin creates spaces, users and service accounts, manages AI provider accounts, and is a space manager of every space with no share needed. | `product/GLOSSARY.md` (Tenancy and people: Organization Owner), `product/OVERVIEW.md` (Who uses it), `domains/access/README.md` (The Organization Owner; Creation gates). |
+| Each organization has one organization admin. The place passes to another member by a transfer. The admin creates spaces, users and service accounts, manages AI provider accounts, and is a space admin of every space with no share needed. | `product/GLOSSARY.md` (Tenancy and people: Organization Owner), `product/OVERVIEW.md` (Who uses it), `domains/access/TREE.md` (Built-in roles), `domains/access/README.md` (The Organization Owner; Creation gates). |
 | A space manager holds Can edit on the space, or is the organization admin. They manage the members, groups, shares, resources, agent and apps of the space. | `product/GLOSSARY.md` (Access: Can edit on the space), `product/OVERVIEW.md` (Who uses it), `domains/access/README.md` (The Organization Owner). |
 | Only someone who already manages the space gives Can edit on the space. A group can hold it and reaches every user of the group. A service account can hold it too, directly or through a group, but only the organization admin can add a service account to a space. | `domains/access/README.md` (The access primitive; A space has: members), `domains/access/AUTHORIZATION.md` (Giving access), `domains/tenancy/README.md` (Service accounts: `user#administer`). |
 | A member works in a space: chats with agents, builds pages and answers what agents ask. Membership alone reaches what General access gives, and a share gives more. A member can create resources, and each starts private to its creator. | `product/OVERVIEW.md` (Who uses it), `product/GLOSSARY.md` (Access: Member), `domains/access/RESOURCES.md` (General access: Create), `domains/pages/README.md` (Sharing). |
