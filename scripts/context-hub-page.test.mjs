@@ -63,7 +63,9 @@ test('datasources list exactly four databases and no other database or engine', 
   assert.match(data, /Comments that a PostgreSQL database already holds/);
   for (const tab of ['Instructions', 'SQL pairs', 'Saved answers']) assert.ok(data.includes(`**${tab}**`), tab);
   assert.match(data, /never writes SQL/);
-  assert.match(data, /read-only on one datasource, so one question reaches one database/);
+  assert.match(data, /the query runs on one datasource, so one question reaches one database/);
+  assert.equal(plain.match(/read-only|only reads/g)?.length, 1, 'a datasource query only reads: stated once');
+  assert.match(plain, /where each query only reads data and never changes it/);
 });
 
 test('APIs and MCP servers give the three routes and the five types of authentication', () => {
@@ -75,10 +77,18 @@ test('APIs and MCP servers give the three routes and the five types of authentic
   assert.match(api, /GraphQL API\*\*: the operations come from introspection/);
   assert.match(api, /MCP server\*\*: the tools come from discovery/);
   assert.match(api, /five types of authentication: a bearer token, an API key, OAuth, basic authentication or a custom header/);
-  assert.match(api, /in a header, which is the default, in the query or in the body/);
+  assert.match(api, /An API key travels in a header by default, or in the query or in the body\. The space manager sets the header name\./);
+  assert.doesNotMatch(api, /header name, /);
   assert.match(api, /Only OAuth tokens refresh on their own/);
   assert.doesNotMatch(api, /bearer[^.]*refresh/i);
   assert.match(api, /A connector skips the import, because its operations are already defined/);
+});
+
+test('the Omnibox is defined in the scene where it first appears, with Vector Module linked there', () => {
+  const scene = section(text, 'A sales team connects its data');
+  assert.match(scene, /The thread appears in the Omnibox, a \[Vector Module\]\(\.\/glossary\.md#vector-module\) that shows the mail threads of a space\./);
+  assert.equal(body.indexOf('Omnibox'), body.indexOf('Omnibox, a [Vector Module]'), 'no Omnibox before its definition');
+  assert.doesNotMatch(section(text, 'Mailboxes and the Omnibox'), /Vector Module/);
 });
 
 test('mailboxes: several in one stream, a shared mailbox is a shared context, send needs Can use on the Omnibox and a share', () => {
@@ -90,15 +100,15 @@ test('mailboxes: several in one stream, a shared mailbox is a shared context, se
   assert.doesNotMatch(plain, /Outlook|Gmail|LinkedIn|Instantly|Unipile/);
 });
 
-test('credentials belong to their creator, a shared resource runs on the owner\'s credential, a share names no role', () => {
+test('credentials belong to their creator, a shared resource runs on the owner\'s credential, a share names a user, a group or an app', () => {
   const cred = section(text, 'Credentials and sharing');
   assert.match(cred, /\[General access\]\(\.\/glossary\.md#general-access\).*Restricted, Can use or Can edit/);
   assert.match(cred, /A \[share\]\(\.\/glossary\.md#share\) adds a role on top of that/);
-  assert.match(cred, /belongs to the person who created it and is never shared/);
+  assert.match(cred, /belongs to the person who created it and is never given to anyone, and not even/);
   assert.match(cred, /not even an \[organization admin\]\(\.\/glossary\.md#organization-admin\) can use it/);
   assert.match(cred, /run on the credential of its owner/);
   assert.match(cred, /never get the credential or its target/);
-  assert.match(cred, /A share names a user or a group, never a role, and the role, Can use or Can edit, is what it gives/);
+  assert.match(cred, /A share gives a role, Can use or Can edit, to a user or a group, and attaching a context or datasource to a Vector App shares it with that app/);
   assert.doesNotMatch(cred, /roles?\b[^.]*\b(people|subjects?)\b/i);
   assert.match(cred, /\]\(\.\/one-access-model\.md\)/);
 });

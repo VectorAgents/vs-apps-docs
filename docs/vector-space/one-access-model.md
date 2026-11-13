@@ -6,7 +6,7 @@ description: How a request is decided, the same for the web interface, the API, 
 import StructureFigure from '@site/src/components/StructureFigure';
 import { accessCheck } from '@site/src/diagrams/figures/access-check.ts';
 
-Access defines the set of operations a user, agent or app is permitted to perform on a resource within a space. Vector Space works it out for each operation with one check, the same for the [web interface](./glossary.md#web-interface), the API, agents and apps, and the check reads four inputs, with clear rules that say which input wins.
+Access defines the set of operations a user, agent or app is permitted to perform on a resource within a space. Vector Space works it out for each operation with one check, the same for the [web interface](./glossary.md#web-interface), the API, agents and apps. The check reads four inputs, with clear rules that say which input wins.
 
 ## A lead search limited by region
 
@@ -51,6 +51,6 @@ An [approval](./approvals-and-the-command-center.md) is a second check on top of
 
 ## Where to go next
 
-- [Roles and permissions](./who-can-do-what.md): the five kinds of people and callers in Vector Space, and what Can use and Can edit mean for each.
+- [Identity and roles](./who-can-do-what.md): the five kinds of people and callers in Vector Space, and what Can use and Can edit mean for each.
 - [How work moves through a space](./how-work-moves-through-a-space.md): one request followed from the member to the sent email, with the access check at each point.
 - [Glossary](./glossary.md): every term of Vector Space, each defined in a sentence.

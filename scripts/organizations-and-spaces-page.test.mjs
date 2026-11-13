@@ -30,6 +30,18 @@ test('the lead defines organization and space before the first H2', () => {
   assert.match(lead, /\[space\]\(\.\/glossary\.md#space\)/);
 });
 
+test('the space section leads with no count and lists Members, Orchestrator agent, Context Hub and Pages', () => {
+  const unit = section(text, 'The space as the unit of work');
+  assert.match(unit, /^A space is where one team works\. It has these things of its own:$/m);
+  assert.doesNotMatch(text, /four parts/);
+  const bullets = unit.match(/^- .+$/gm);
+  assert.equal(bullets.length, 4);
+  assert.match(bullets[0], /^- \*\*Members\*\*: /);
+  assert.match(bullets[1], /^- \*\*Orchestrator agent\*\*: /);
+  assert.equal(bullets[2], '- **[Context Hub](./glossary.md#context-hub)**: the area where the space lists what it can reach, including its [Vector Apps](../vector-apps/glossary.md#app) and [Vector Modules](./glossary.md#vector-module).');
+  assert.equal(bullets[3], '- **Pages**: the [pages](./glossary.md#page) of the space.');
+});
+
 test('the scene is the first H2, names no Example and says a team\'s space', () => {
   assert.equal(text.match(/^## (.+)$/m)[1], 'Two teams in one organization');
   assert.doesNotMatch(text, /^#+ .*Example/m);

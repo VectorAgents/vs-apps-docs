@@ -53,7 +53,7 @@ test('the parts section gives one linked line per part: members, orchestrator ag
   const parts = section(text, 'The parts of a space');
   const items = parts.split('\n').filter((l) => l.startsWith('- '));
   assert.equal(items.length, 5);
-  const owners = ['./who-can-do-what.md', './agents-in-a-space.md', './approvals-and-the-command-center.md', './what-a-space-holds.md', './what-a-space-holds.md'];
+  const owners = ['./who-can-do-what.md', './agents-in-a-space.md', './approvals-and-the-command-center.md', './context-hub.md', './what-a-space-holds.md'];
   items.forEach((item, i) => assert.ok(linksOf(item).includes(owners[i]), item));
 });
 
@@ -70,9 +70,10 @@ test('the Vector Modules item lists omnibox, contacts and Calendar as sub-items 
   assert.equal(text.match(/Calendar/g)?.length, 1);
 });
 
-test('the Context Hub line lists contexts, knowledge sources, datasources, skills and apps', () => {
+test('the Context Hub line lists six kinds including Vector Modules and links the Context Hub page', () => {
   const item = section(text, 'The parts of a space').split('\n').find((l) => l.startsWith('- ') && l.includes('Context Hub'));
-  for (const kind of ['contexts', 'knowledge sources', 'datasources', 'skills', 'apps']) assert.ok(item.includes(kind), kind);
+  for (const kind of ['contexts', 'knowledge sources', 'datasources', 'skills', 'apps', 'Vector Modules']) assert.ok(item.includes(kind), kind);
+  assert.ok(item.includes('(./context-hub.md)'));
 });
 
 test('the Governance slab is named as Governance only', () => {

@@ -210,9 +210,18 @@ test('space-structure: the legend has 3 items, inside, outside and dashed link',
   assert.deepEqual(spaceStructure.legend.map((i) => i.swatch), ['core', 'plug', 'remote']);
 });
 
-test('space-structure: the Context Hub card lists five kinds and the Vector Modules card lists the modules', () => {
-  assert.deepEqual(byId('contextHub').items, ['Contexts', 'Knowledge sources', 'Datasources', 'Skills', 'Apps']);
+test('space-structure: the Context Hub card lists six kinds, ending with Vector Modules, and the Vector Modules card lists the modules', () => {
+  assert.deepEqual(byId('contextHub').items, ['Contexts', 'Knowledge sources', 'Datasources', 'Skills', 'Apps', 'Vector Modules']);
   assert.deepEqual(byId('modules').items, ['Omnibox', 'Contacts', 'Calendar']);
+});
+
+test('space-structure: the Context Hub card text says six kinds and does not draw Vector Modules beside the list', () => {
+  assert.match(byId('contextHub').text, /six kinds/);
+  assert.doesNotMatch(byId('contextHub').text, /draws Vector Modules beside/);
+});
+
+test('space-structure: the figure desc says five parts', () => {
+  assert.match(spaceStructure.desc, /holds five parts/);
 });
 
 test('space-structure: the Command Center is a plain part, not listed under Vector Modules', () => {

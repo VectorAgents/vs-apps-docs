@@ -32,10 +32,10 @@ Agents that act on an organization's data need limits on data access, AI spend a
 
 The figure shows the five parts of a space and the three [extensions](./glossary.md#extension) that reach it from outside. [Organizations and spaces](./organizations-and-spaces.md) explains how a space and its organization fit.
 
-- **Members**: the people of the space. [Roles and permissions](./who-can-do-what.md) names the kinds of people and callers.
+- **Members**: the people of the space. [Identity and roles](./who-can-do-what.md) names the kinds of people and callers.
 - **Orchestrator agent**: the one agent that each space starts with, which takes a request and delegates parts of it to specialized agents. [Agents in a space](./agents-in-a-space.md) shows how they fit together.
 - **[Command Center](./glossary.md#command-center)**: where an [ask](./glossary.md#ask) waits for a person. When an agent needs approval or an answer, the run pauses for a person, which is [human in the loop (HITL)](./glossary.md#human-in-the-loop), and the ask goes here. The Command Center is a plain part of a space, not a Vector Module. [Approvals and the Command Center](./approvals-and-the-command-center.md) covers asks.
-- **[Context Hub](./glossary.md#context-hub)**: the list of what the space can reach, which holds contexts, knowledge sources, datasources, skills and apps. [Inside a space](./what-a-space-holds.md) describes each kind.
+- **[Context Hub](./glossary.md#context-hub)**: the list of what the space can reach, which holds contexts, knowledge sources, datasources, skills, apps and Vector Modules. [The Context Hub](./context-hub.md) describes each kind.
 - **[Vector Modules](./glossary.md#vector-module)**: first-party tools that work over context data and sit in the Context Hub. [Inside a space](./what-a-space-holds.md) says more. The modules are:
   - Omnibox, which shows mail and LinkedIn conversations in one stream to read and reply to.
   - Contacts, which holds the contact rows of the space.
@@ -62,7 +62,7 @@ To explore the platform, choose the section that matches your goal: understandin
 - [The Context Hub](./context-hub.md): what the Context Hub holds, how a space connects databases, APIs and mailboxes, and whose credential each one runs on.
 - [Agents in a space](./agents-in-a-space.md): how the orchestrator agent hands a request to other agents, and how the conversations of those agents are kept apart.
 - [Agent Studio](./agent-studio.md): where the agents of a space are set up and tested, and how a change moves from a draft to a published version.
-- [Roles and permissions](./who-can-do-what.md): the kinds of people and callers in Vector Space, and how each stands in an organization and its spaces.
+- [Identity and roles](./who-can-do-what.md): the kinds of people and callers in Vector Space, and how each stands in an organization and its spaces.
 
 **Architecture and governance**
 
