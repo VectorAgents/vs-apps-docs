@@ -21,11 +21,27 @@ test('the page runs lead, the scene, three detail H2s, Where to go next', () => 
   assert.match(lead, /^Access defines the set of operations a user, agent or app is permitted to perform on a resource within a space\./, 'the lead opens with the definition');
 });
 
-test('the scene is the first H2, names no Example and says Acme\'s sales team', () => {
+test('the scene is the first H2 and names no Example', () => {
   assert.equal(headings[0], 'A lead search limited by region');
   assert.doesNotMatch(text, /^#+ .*Example/m);
   assert.doesNotMatch(prose, /the sales space/i);
-  assert.match(section(text, 'A lead search limited by region'), /\nAcme's sales team has a space/);
+});
+
+test('the scene names Maya and Omar, introduces each in the persona record form and links member on the first introduction', () => {
+  const scene = section(text, 'A lead search limited by region');
+  assert.match(scene, /\nMaya, a \[member\]\(\.\/glossary\.md#member\) of Acme's sales team, asks the \[orchestrator agent\]\(\.\/glossary\.md#orchestrator-agent\) to find leads in the team's space\./);
+  assert.match(scene, /Omar, another member of the team, is in a group whose condition is region equals US, so the same request gives Omar US leads only\./);
+  assert.equal(scene.match(/\bMaya, a /g)?.length, 1, 'Maya is introduced once');
+  assert.equal(scene.match(/\bOmar, another member of the team\b/g)?.length, 1, 'Omar is introduced once');
+  assert.match(scene, /The same holds when Maya opens the lead list/);
+  assert.match(scene, /\nAn API key that acts as Maya gets the same EU leads\./);
+  assert.doesNotMatch(scene, /\b(?:the|this|that) member\b/);
+});
+
+test('personas stay in the scene: the other sections and the figure keep the generic member', () => {
+  const rest = text.replace(section(text, 'A lead search limited by region'), '');
+  assert.doesNotMatch(rest, /\b(?:Maya|Omar)\b/);
+  assert.match(section(text, 'One check for every way in'), /\*\*Web interface\*\*: the work runs as the member\./);
 });
 
 test('the figure slot appears once, inside "How the inputs combine"', () => {
@@ -33,7 +49,7 @@ test('the figure slot appears once, inside "How the inputs combine"', () => {
   assert.match(section(text, 'How the inputs combine'), /<StructureFigure data=\{accessCheck\} \/>/);
 });
 
-test('the example is a member who sees only the EU leads, by a condition on the group, in the app and through the orchestrator agent', () => {
+test('the example is Maya, who sees only the EU leads, by a condition on the group, in the app and through the orchestrator agent', () => {
   const example = section(text, 'A lead search limited by region');
   for (const word of ['orchestrator agent', 'leads', 'EU', 'condition', 'group', 'member']) assert.ok(example.includes(word), word);
   assert.match(example, /\[condition\]\(\.\/glossary\.md#condition\)/);
