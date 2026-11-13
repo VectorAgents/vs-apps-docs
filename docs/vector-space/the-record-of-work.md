@@ -34,18 +34,16 @@ The organization admin reads the whole organization. A [space manager](./glossar
 
 <StructureFigure data={recordOfWork} />
 
-## Failure postures
+## Behaviour when recording fails
 
 Change records hold what Audit shows. Spend records hold each model call with its estimated cost. Each part of the record fails in its own way.
 
 Fail closed means the work stops if it cannot be recorded. Fail open means the work goes on and the record has a gap.
 
 - **Change records**: fail closed. A change that cannot be recorded does not happen.
-- **Spend records**: fail open. The model call still works, and that window of spend goes unrecorded.
+- **Spend records**: fail open. The model call still works, and the spend of calls made during the failure goes unrecorded. The platform counts the records that it drops.
 - **Spend cap**: fails open. If the store that tracks the cap is down, calls go through unchecked.
 - **[Acts](../vector-apps/glossary.md#acts)**: attested. The platform checks that the app and the actor are real, not that the work happened.
-
-The platform counts the spend that it did not record.
 
 ## Spend as an estimate
 
@@ -55,17 +53,17 @@ A call is priced at the version of the rate card in force when it started. A lat
 
 The [spend cap](./glossary.md#spend-cap) limits estimated spend on model calls for one organization in one calendar month. The organization reads the cap, and staff set it.
 
-At the cap, the platform refuses further model calls.
+When a cap is enforced, the platform refuses further model calls at the cap. A cap that is not yet enforced only counts the calls it would refuse.
 
 ## Acts and Human Time Return
 
-An act is one thing that an app did, such as qualifying a lead. Only apps record acts. The platform admits an act only if the app is turned on for the space and the actor is real. It does not check that the work happened.
+An act is one thing that an app did, such as qualifying a lead. Only apps record acts. The platform admits an act only if the app is turned on for the space and the actor is real.
 
 An app declares each act as an activity or an audit entry, and the matching view shows it.
 
-[Human Time Return](./glossary.md#human-time-return) is the time that an app's work gives back to people, counted in seconds. [Why Vector Space](./why-vector-space.md#human-time-return) lists the four things that make up the figure.
+[Human Time Return](./glossary.md#human-time-return) is the time that an app's work gives back to people, counted in seconds. [Why Vector Space](./why-vector-space.md#human-time-return) lists the three things that make up the figure.
 
-An act settles once, when the platform admits it, so a later change to the baseline does not alter it. Human Time Return is read in [Intelligence](./glossary.md#intelligence), apart from spend. Intelligence is not one of the four views. Human Time Return is an estimate, and the platform computes no return figure.
+An act is fixed when the platform accepts it, so a later change to the baseline does not alter it. Human Time Return is read in [Intelligence](./glossary.md#intelligence), in addition to spend. Intelligence is not one of the four views. Human Time Return is an estimate, and the platform computes no return figure.
 
 ## Where to go next
 

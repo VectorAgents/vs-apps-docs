@@ -359,7 +359,7 @@ A [governance](#governance) view of who changed what. It includes the [acts](../
 
 ### Intelligence
 
-The part of Vector Space where you read the [acts](../vector-apps/glossary.md#acts) of apps and their [Human Time Return](#human-time-return), apart from spend.
+The part of Vector Space where you read the [acts](../vector-apps/glossary.md#acts) of apps and their [Human Time Return](#human-time-return), in addition to spend.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
