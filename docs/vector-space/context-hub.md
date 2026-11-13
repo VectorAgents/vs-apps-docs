@@ -3,13 +3,13 @@ title: The Context Hub
 description: What the Context Hub holds, how a space connects databases, APIs and mailboxes, and whose credential each one runs on.
 ---
 
-The [Context Hub](./glossary.md#context-hub) is the area of a [space](./glossary.md#space) that lists what the space can reach. It gives a team one place to connect its data and services, so that [members](./glossary.md#member) and [agents](./glossary.md#agent) read data, call APIs and read mail through the space and nobody hands out a login.
+The [Context Hub](./glossary.md#context-hub) is the area of a [space](./glossary.md#space) that lists what the space can reach. It gives a team one place to connect its data and services, so that people and [agents](./glossary.md#agent) read data, call APIs and read mail through the space and nobody hands out a login.
 
 ## A sales team connects its data
 
-Acme's sales team has a space, and a member connects the team's data in the Context Hub. They connect the database of leads and describe its tables, add the REST API of the team's customer system, and connect the team's shared sales mailbox. A member then asks the [orchestrator agent](./glossary.md#orchestrator-agent) to find leads and send an outreach email.
+Maya, a [member](./glossary.md#member) of Acme's sales team, works in a space where Omar, another member of the team, connects the team's data in the Context Hub. Omar connects the database of leads and describes its tables, adds the REST API of the team's customer system, and connects the team's shared sales mailbox. Maya then asks the [orchestrator agent](./glossary.md#orchestrator-agent) to find leads and send an outreach email.
 
-The agent reads the lead database, calls the customer system through its API and sends the email from the shared mailbox. The thread appears in the Omnibox, a [Vector Module](./glossary.md#vector-module) that shows the mail threads of a space. The member never held a password for any of the three, because each one runs on the credential of the person who connected it.
+The agent reads the lead database, calls the customer system through its API and sends the email from the shared mailbox. The thread appears in the Omnibox, a [Vector Module](./glossary.md#vector-module) that shows the mail threads of a space. Maya never held a password for any of the three, because each one runs on Omar's credential.
 
 ## What the Context Hub holds
 

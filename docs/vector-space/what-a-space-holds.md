@@ -12,7 +12,7 @@ Members and agents use them to read data, show it and act on it.
 
 ## A lead search in a team's space
 
-Acme's sales team has a space, and a [member](./glossary.md#member) of it asks the [orchestrator agent](./glossary.md#orchestrator-agent) to find leads and send an outreach email. The orchestrator agent uses the contexts in the space's Context Hub, which link messaging channels and a customer-contact system. The team follows the outreach on a page, where data widgets show lead status in tables and conversion in charts. The logic that finds leads runs in a Vector App that the space shows.
+Acme's sales team has a space. Maya, a [member](./glossary.md#member) of Acme's sales team, asks the [orchestrator agent](./glossary.md#orchestrator-agent) to find leads and send an outreach email. The orchestrator agent uses the contexts in the space's Context Hub, which link messaging channels and a customer-contact system. The team follows the outreach on a page, where data widgets show lead status in tables and conversion in charts. The logic that finds leads runs in a Vector App that the space shows.
 
 ## The Context Hub
 

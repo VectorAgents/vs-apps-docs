@@ -43,8 +43,23 @@ test('the scene is the first H2, names no Example and says a team\'s space', () 
   assert.doesNotMatch(text, /^#+ .*Example/m);
   assert.doesNotMatch(plain, /the sales space/i);
   const scene = section(text, 'A lead search in a team\'s space');
-  assert.match(scene, /\nAcme's sales team has a space/);
+  assert.match(scene, /\nAcme's sales team has a space\. /);
   assert.match(scene, /messaging channels and a customer-contact system/);
+});
+
+test('the scene names Maya in place of "a member", with no he or she', () => {
+  const scene = section(text, 'A lead search in a team\'s space');
+  assert.match(scene, /Maya, a \[member\]\(\.\/glossary\.md#member\) of Acme's sales team, asks the \[orchestrator agent\]\(\.\/glossary\.md#orchestrator-agent\) to find leads and send an outreach email\./);
+  assert.doesNotMatch(scene, /a member of it|this member|that member/);
+  assert.doesNotMatch(scene, /\b(?:he|she|his|her|him)\b/i);
+  assert.ok(scene.split(/(?<=\.) /).length <= 5);
+});
+
+test('Maya is introduced once, the first "member" on the page is the glossary link on her introduction, and no persona name appears outside the scene', () => {
+  assert.equal(body.match(/Maya, a /g)?.length, 1);
+  assert.match(body.slice(body.search(/(?<![-#\w])member\b/) - 1), /^\[member\]\(\.\/glossary\.md#member\) of Acme's sales team/);
+  assert.doesNotMatch(text.replace(section(text, 'A lead search in a team\'s space'), ''), /Maya|Omar|Lena|Priya|Erik|Sofia/);
+  assert.doesNotMatch(text, /Omar/);
 });
 
 test('the page has no figure slot and no figure component', () => {
