@@ -12,11 +12,11 @@ Work sits in three nested levels:
 
 - **An organization** is the company account that holds all its users, API keys, resources and spaces.
 - **A [space](./glossary.md#space)** is where one team works. It belongs to one organization, and an agent works only inside its own space.
-- **Pages and widgets** lay out the content of a space. A [page](./glossary.md#page) is a grid of [widgets](./glossary.md#widget) of two kinds. A data widget runs one saved query on a [datasource](./glossary.md#datasource) and renders the result as a chart, a table or a key figure. A document widget holds text that people edit together or that a schedule writes. A [member](./glossary.md#member) can prompt the widget builder in natural language and it writes the query, and an agent can do the same.
+- **Pages and widgets** lay out the content of a space. A [page](./glossary.md#page) is a grid of [widgets](./glossary.md#widget) of two kinds. A data widget runs one saved query on a [datasource](./glossary.md#datasource) and renders the result as a chart, a table or a key figure. A document widget holds text that people edit together or that a schedule writes. Anyone in the space can prompt the widget builder in natural language and it writes the query, and an agent can do the same.
 
 ## A request in a space
 
-A member of a space asks the orchestrator agent to find leads. The orchestrator agent delegates the search to a specialized agent, which looks only at data that the organization has connected to that space and that this member may see, so another member with different access might see different leads. The model call goes through the [AI gateway](./glossary.md#ai-gateway) on the organization's own AI provider account, and no agent holds a provider key. The record shows that the member started the run.
+Maya, a [member](./glossary.md#member) of Acme's sales team, asks the orchestrator agent to find leads. The orchestrator agent delegates the search to a specialized agent, which looks only at data that the organization has connected to that space and that Maya may see. Omar, another member of the team with different access, might see different leads. The model call goes through the [AI gateway](./glossary.md#ai-gateway) on the organization's own AI provider account, and no agent holds a provider key. The record shows that Maya started the run.
 
 ## The three platform rules
 
