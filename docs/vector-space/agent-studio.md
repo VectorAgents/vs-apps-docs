@@ -37,7 +37,7 @@ These facts matter when many agents work together:
 
 - **Separate state**: the platform saves a checkpoint, a stored copy of the progress of an agent that lets it resume, for each child agent, so siblings never share state. A remote A2A agent has no checkpoint, and the remote side carries its conversation.
 - **Caps**: each parent agent has a fixed cap on helpers, and each organization has a fixed cap on running work. The platform sets both caps; the docs give no figure.
-- **Pauses**: A pause, when a child agent waits for a person to answer an [ask](./glossary.md#ask), holds its parent. The parent resumes once, when no child agent is still waiting.
+- **Pauses**: a pause, when a child agent waits for a person to answer an [ask](./glossary.md#ask), holds its parent. The parent resumes once, when no child agent is still waiting.
 - **Records**: every [run](./glossary.md#run), child agent, helper and A2A call opens a record of its own. The tool calls that a remote A2A agent makes on its own side are not recorded. A [thread](./glossary.md#thread) belongs to its owner alone.
 - **Remote credentials**: if a call to a remote agent fails on a credential, the agent gets one generic refusal, so it cannot probe stored credentials. The detail goes to the log. Two organizations that point at one [agent card](./glossary.md#agent-card) never share a credential.
 
@@ -78,7 +78,7 @@ Every paid model call of an evaluation goes through the [AI gateway](./glossary.
 - **Channels**: the owner of a channel links a chat by posting a one-time code in it. The channel accepts a message only from a linked chat and ignores anything else with no reply. A new credential for the channel replaces its webhook secret and unlinks every chat.
 - **Who a channel runs as**: a message in a linked chat runs as the owner of the channel. The owner can choose a [service account](./glossary.md#service-account) to run as instead, if the owner can administer that account and it can view the space. Changing this unlinks every chat.
 - **Group chats**: every member of a group chat acts with the identity of the channel. Group input is untrusted, so those runs carry only the [standing approvals](./glossary.md#standing-approval) that were made for unattended use.
-- **Approvals**: a run that needs a person raises an ask and waits in the [Command Center](./glossary.md#command-center). A decision on an ask gives the run no extra access. No timer denies an ask. An ask that nobody answers expires after 400 days, and a run with no open ask left is cancelled. The ask is the default for a write, and only a standing approval removes it.
+- **Approvals**: a run that needs a person raises an ask and waits in the [Command Center](./glossary.md#command-center). A decision on an ask gives the run no extra access. No timer denies an ask. An ask that nobody answers expires after 400 days, and a run with no open ask left is cancelled. An approval loosens only through a standing approval.
 
 ## Use cases
 

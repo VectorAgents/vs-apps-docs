@@ -150,11 +150,11 @@ test('"resources" names what an agent may use, and "knowledge" appears only in "
 test('the checkpoint and the pause are defined, the caps note says the docs give no figure, and an ask expires after 400 days', () => {
   const tree = section(text, 'How agents are arranged');
   assert.match(tree, /a checkpoint, a stored copy of the progress of an agent that lets it resume, for each child agent/);
-  assert.match(tree, /A pause, when a child agent waits for a person to answer an \[ask\]\(\.\/glossary\.md#ask\), holds its parent/);
+  assert.match(tree, /a pause, when a child agent waits for a person to answer an \[ask\]\(\.\/glossary\.md#ask\), holds its parent/);
   assert.match(tree, /The platform sets both caps; the docs give no figure\./);
   const approvals = section(text, 'Skills, channels and approvals');
   assert.match(approvals, /No timer denies an ask\. An ask that nobody answers expires after 400 days, and a run with no open ask left is cancelled\./);
-  assert.match(approvals, /The ask is the default for a write, and only a standing approval removes it\./);
+  assert.match(approvals, /An approval loosens only through a standing approval\./);
   assert.doesNotMatch(text, /a pause lasts as long as it needs/i);
   assert.match(section(text, 'The life of a change'), /even if the current run is paused for days/);
 });
