@@ -23,7 +23,7 @@ Agent Studio holds the settings of each agent: what it is told to do, which tool
 
 So Agent Studio keeps work in progress apart from what runs. Edits go to a draft, the working copy of the agents. An [evaluation](./glossary.md#evaluation) tests an agent before a change goes live, and an earlier version can be restored if a change goes wrong.
 
-A user with [Can edit](./glossary.md#can-edit) on the space can configure, delete or reset an agent.
+A [space editor](./glossary.md#space-editor) can configure, delete or reset an agent.
 
 ## How agents are arranged
 

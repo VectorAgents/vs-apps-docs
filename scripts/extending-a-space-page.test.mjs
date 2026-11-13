@@ -97,12 +97,12 @@ test('the comparison opens with its lead, then one table of the 4 rows, with cel
     'The server never sees the member.',
   ]);
   assert.deepEqual(cells[1], [
-    'The app reaches what a space manager attached and the member can reach.',
+    'The app reaches what is attached to it and the member can reach.',
     'The agent gets no token, so it cannot call the space.',
     'The server gets no token. It sees only the arguments of each call.',
   ]);
   assert.deepEqual(cells[2], [
-    'A space manager sets the model slot the app uses.',
+    'A space admin sets the model slot the app uses.',
     'The remote agent runs on its own model.',
     'None. The model call of the calling agent goes through the AI gateway.',
   ]);

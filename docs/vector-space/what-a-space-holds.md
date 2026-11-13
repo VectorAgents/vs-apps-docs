@@ -29,7 +29,7 @@ A [widget](./glossary.md#widget) is one cell of the grid, and it is one of two t
 
 ## Vector Apps and Vector Modules
 
-A [Vector App](../vector-apps/glossary.md#app) is a web app that a space shows in an iframe, and a space manager turns it on for a space. In Acme's space, the app that finds leads is a Vector App.
+A [Vector App](../vector-apps/glossary.md#app) is a web app that a space shows in an iframe, and a [space admin](./glossary.md#space-admin) turns it on for a space. In Acme's space, the app that finds leads is a Vector App.
 
 A Vector Module is a first-party product of Vector Space itself, built over context data or over rows that the space keeps. The modules are:
 
