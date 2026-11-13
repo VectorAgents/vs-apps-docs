@@ -20,6 +20,11 @@ test('the page runs the scene, the six steps, Where to go next', () => {
   assert.doesNotMatch(text, /^## (The request|The draft|The send|The pause for approval)$/m);
 });
 
+test('the lead defines the six steps and what each records, and does not announce the page', () => {
+  const lead = body.split(/^## /m)[0].replace(/^import .*$/gm, '').trim();
+  assert.equal(lead, "A request in a space moves in six steps that the platform checks and records, from a member's question to a sent email. Each step runs as one actor, so the record shows who did what.");
+});
+
 test('the slot worked-example-flow appears once, in the scene', () => {
   assert.deepEqual(slotsIn(text), ['worked-example-flow']);
   assert.deepEqual(slotsIn(section(text, "A member's outreach request")), ['worked-example-flow']);
@@ -56,7 +61,7 @@ test('step 1: a read action of the app, so no ask, and access is checked as the 
 
 test('steps 2 and 3: Connectors with three services, "lead qualified" as an act, each lead saved as a contact', () => {
   const find = items[1].body;
-  assert.match(find, /\[Connectors\]\(\.\/glossary\.md#connector\)/);
+  assert.match(find, /\[connectors\]\(\.\/glossary\.md#connector\)/);
   for (const vendor of ['Apollo', 'Exa', 'BrightData']) assert.match(find, new RegExp(`\\b${vendor}\\b`), vendor);
   assert.match(find, /\[act\]\(\.\.\/vector-apps\/glossary\.md#acts\)/);
   assert.match(find, /lead qualified/);
