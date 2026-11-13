@@ -57,7 +57,7 @@ export function Shell({ children }: { children: ReactNode }) {
 }
 ```
 
-Use `requestRefresh` after a space manager changes a capability grant. Vector Space sends a fresh token and `capabilities` updates.
+Use `requestRefresh` after a space admin changes a capability grant. Vector Space sends a fresh token and `capabilities` updates.
 
 ## Result
 

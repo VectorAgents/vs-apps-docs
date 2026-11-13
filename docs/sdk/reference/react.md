@@ -246,7 +246,7 @@ export function LeadsPage() {
   return (
     <RequireCapability
       capability="leads:read"
-      fallback={(capability) => <p>Ask a space manager to grant {capability}.</p>}
+      fallback={(capability) => <p>Ask a space admin to grant {capability}.</p>}
     >
       <h1>Leads</h1>
     </RequireCapability>

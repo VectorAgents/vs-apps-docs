@@ -27,7 +27,7 @@ cd leads-app
 ```
 <!-- /flavour -->
 
-- A member who holds the capability and one who does not. A [space manager](../../vector-space/glossary.md#space-manager) [grants](../glossary.md#capability-grant) capabilities in [Vector Space](../../vector-space/glossary.md#vector-space).
+- A member who holds the capability and one who does not. A [space admin](../../vector-space/glossary.md#space-admin) [grants](../glossary.md#capability-grant) capabilities in [Vector Space](../../vector-space/glossary.md#vector-space).
 - Background: [`RequireCapability` on the client](../../sdk/reference/react.md#react-requirecapability).
 
 ## Steps
@@ -76,7 +76,7 @@ export function LeadsPage() {
   return (
     <RequireCapability
       capability="lead:manage"
-      fallback={(capability) => <p>Ask a space manager to grant {capability}.</p>}
+      fallback={(capability) => <p>Ask a space admin to grant {capability}.</p>}
     >
       <main>
         <h1>Leads</h1>
@@ -151,7 +151,7 @@ export function GatedPage({ capability, children }: { capability: string; childr
   return (
     <RequireCapability
       capability={capability}
-      fallback={(missing) => <p>Ask a space manager to grant {missing}.</p>}
+      fallback={(missing) => <p>Ask a space admin to grant {missing}.</p>}
     >
       {children}
     </RequireCapability>

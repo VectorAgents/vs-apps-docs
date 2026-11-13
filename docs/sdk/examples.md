@@ -8,14 +8,14 @@ Prerequisites: `@vectoragents/vs-apps` 0.4.0 installed. Copy one file into your 
 
 ## Sales outreach app: pages, capabilities and a model slot
 
-Four app pages, each gated by one [capability](../vector-apps/glossary.md#capability), and one [model slot](../vector-apps/glossary.md#model-slot) the space manager points at a model.
+Four app pages, each gated by one [capability](../vector-apps/glossary.md#capability), and one [model slot](../vector-apps/glossary.md#model-slot) the space admin points at a model.
 
 ```ts title="src/app.definition.ts" file="src/examples/sdr.definition.ts"
 ```
 
 ## Customer support app: model slots and connector slots
 
-Two model slots and two connector slots. Each connector declares `eventHandlers`, the handlers a space manager routes its event types to.
+Two model slots and two connector slots. Each connector declares `eventHandlers`, the handlers a space editor routes its event types to.
 
 ```ts title="src/app.definition.ts" file="src/examples/csr.definition.ts"
 ```
