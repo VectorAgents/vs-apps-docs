@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { bannedTermsIn, bodyOf, brokenLinks, linksOf, section, unlink } from './page-helpers.mjs';
+import { assertPersonaScene, bannedTermsIn, bodyOf, brokenLinks, linksOf, section, unlink } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
 const docs = resolve(dirname(fileURLToPath(import.meta.url)), '../docs');
@@ -55,22 +55,17 @@ test('the scene is the first H2, with no Example heading and Acme wording, and o
   assert.doesNotMatch(example, /Jira|Linear|GitHub|Zendesk|ClickUp/);
 });
 
-test('the scene names Erik in place of "a member", with no he or she', () => {
+test('the scene names Erik in place of "a member"', () => {
   const scene = section(text, 'A question about open tickets');
   assert.match(scene, /Each call starts in Erik's run\./);
   assert.doesNotMatch(scene, /a member of it|this member|that member|the member's/);
-  assert.doesNotMatch(scene, /\b(?:he|she|his|her|him)\b/i);
   for (const paragraph of scene.split('\n\n')) assert.ok((unlink(paragraph).match(/[.?!](?:\s|$)/g) ?? []).length <= 5, paragraph);
 });
 
-test('Erik is introduced once and the first "member" on the page is the glossary link on that introduction', () => {
+test('Erik is introduced once and the first "member" on the page is the glossary link on that introduction, and no persona is named outside the scene', () => {
   assert.equal(body.match(/Erik, a /g)?.length, 1);
-  assert.match(body.slice(body.search(/(?<![-#\w])member\b/) - 1), /^\[member\]\(\.\/glossary\.md#member\) of Acme's engineering team/);
+  assertPersonaScene(text, 'A question about open tickets', { memberIntro: "[member](./glossary.md#member) of Acme's engineering team" });
   assert.ok(body.indexOf('Erik') < body.indexOf('[member]'));
-});
-
-test('no persona name appears outside the scene section', () => {
-  assert.doesNotMatch(text.replace(section(text, 'A question about open tickets'), ''), /Erik/);
 });
 
 test('the slot extending-flow appears once, in "Adding an extension"', () => {

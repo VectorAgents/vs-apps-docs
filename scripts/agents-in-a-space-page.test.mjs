@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { bannedTermsIn, bodyOf, brokenLinks, linksOf, section, unlink } from './page-helpers.mjs';
+import { assertPersonaScene, bannedTermsIn, bodyOf, brokenLinks, linksOf, section, unlink } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
 const docs = resolve(dirname(fileURLToPath(import.meta.url)), '../docs');
@@ -27,25 +27,20 @@ test('the scene is the first H2, names no Example and says Acme\'s sales team', 
   assert.match(section(text, 'A lead search handed to two agents'), /\nMaya, a \[member\]\(\.\/glossary\.md#member\) of Acme's sales team, asks/);
 });
 
-test('the scene names Maya in place of "a member", with no he or she', () => {
+test('the scene names Maya in place of "a member"', () => {
   const scene = section(text, 'A lead search handed to two agents');
   assert.match(scene, /^Maya, a \[member\]\(\.\/glossary\.md#member\) of Acme's sales team, asks the orchestrator agent to find leads and send an outreach email\./m);
   assert.match(scene, /each of them sees only what Maya may see\./);
   assert.match(scene, /Maya does not choose which agent does what, and gets one reply/);
   assert.doesNotMatch(scene, /a member of it|the member|that member|this member/);
-  assert.doesNotMatch(scene, /\b(?:he|she|his|her|him)\b/i);
   const paragraph = scene.split('\n').find((l) => l.startsWith('Maya'));
   assert.ok(paragraph.split(/(?<=\.) /).length <= 5, 'rule L4: 5 sentences or fewer');
 });
 
-test('Maya is introduced once, and the first "member" on the page is the glossary link on that introduction', () => {
+test('Maya is introduced once, and the first "member" on the page is the glossary link on that introduction, and no persona is named outside the scene', () => {
   assert.equal(body.match(/Maya, a /g)?.length, 1);
-  assert.match(body.slice(body.search(/(?<![-#\w])member\b/) - 1), /^\[member\]\(\.\/glossary\.md#member\) of Acme's sales team/);
+  assertPersonaScene(text, 'A lead search handed to two agents', { memberIntro: "[member](./glossary.md#member) of Acme's sales team" });
   assert.doesNotMatch(lead, /member/);
-});
-
-test('Maya appears only in the scene section', () => {
-  assert.doesNotMatch(text.replace(section(text, 'A lead search handed to two agents'), ''), /Maya/);
 });
 
 test('the figure slot appears once, inside "The agent tree"', () => {

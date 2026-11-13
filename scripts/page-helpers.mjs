@@ -1,3 +1,4 @@
+import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -83,4 +84,18 @@ export const ROLE_TERMS = 'member|editor|admin';
 export const bannedTermsIn = (text) => {
   const prose = text.replace(/capability grants?/gi, '').replace(new RegExp(`^(#{2,6} |\\s*[-*] (?:\\*\\*)?)Space (${ROLE_TERMS}|roles)\\b`, 'gm'), '$1$2');
   return BANNED_TERMS.filter((pattern) => pattern.test(prose)).map(String);
+};
+
+const PERSONA_NAMES = /\b(?:Maya|Omar|Lena|Priya|Erik|Sofia)\b/;
+
+/**
+ * Persona rules of a page: no persona name outside the `scene` H2 and, when `memberIntro` is given, the first "member" in the
+ * prose (headings skipped) opens it, as the introduction that carries the glossary link.
+ */
+export const assertPersonaScene = (text, scene, { memberIntro } = {}) => {
+  assert.doesNotMatch(text.replace(section(text, scene), ''), PERSONA_NAMES, `a persona is named outside "${scene}"`);
+  if (!memberIntro) return;
+  const prose = bodyOf(text).replace(/^#{1,6} .*$/gm, '');
+  const first = prose.search(/(?<![-#\w])member\b/);
+  assert.ok(first > 0 && prose.slice(first - 1).startsWith(memberIntro), `the first "member" does not open ${memberIntro}`);
 };

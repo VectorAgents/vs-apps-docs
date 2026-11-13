@@ -3,7 +3,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { bannedTermsIn, bodyOf, brokenLinks, linksOf, section, unlink } from './page-helpers.mjs';
+import { assertPersonaScene, bannedTermsIn, bodyOf, brokenLinks, linksOf, section, unlink } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
 const docs = resolve(dirname(fileURLToPath(import.meta.url)), '../docs');
@@ -35,7 +35,6 @@ test('the scene names Maya, lays out the request and says the app is only an exa
   assert.doesNotMatch(plain, /\bthe sales space\b/i);
   assert.match(scene, /\n\nMaya, a \[member\]\(\.\/glossary\.md#member\) of Acme's sales team, asks the \[orchestrator agent\]\(\.\/glossary\.md#orchestrator-agent\) in the team's space to find leads and send an outreach email\. One email goes to one qualified lead, and only after a person approves it\./);
   assert.doesNotMatch(scene, /a member of it|this member|that member/);
-  assert.doesNotMatch(scene, /\b(?:he|she|his|her|him)\b/i);
   assert.match(scene, /\[Vector App\]\(\.\.\/vector-apps\/glossary\.md#app\), a web app that a space shows in an iframe/);
   assert.match(scene, /only an example/);
   assert.doesNotMatch(plain, /\b(animation|animated|figure above|the diagram shows)\b/i);
@@ -43,9 +42,7 @@ test('the scene names Maya, lays out the request and says the app is only an exa
 
 test('Maya is introduced once, the first "member" in the prose is the glossary link on that introduction, and no persona is named outside the scene', () => {
   assert.equal(body.match(/Maya, a /g)?.length, 1);
-  const prosePlain = body.replace(/^#+ .*$/gm, '');
-  assert.match(prosePlain.slice(prosePlain.search(/(?<![-#\w])member\b/) - 1), /^\[member\]\(\.\/glossary\.md#member\) of Acme's sales team/);
-  assert.doesNotMatch(text.replace(section(text, "A member's outreach request"), ''), /Maya/);
+  assertPersonaScene(text, "A member's outreach request", { memberIntro: "[member](./glossary.md#member) of Acme's sales team" });
 });
 
 const steps = section(text, 'The six steps');

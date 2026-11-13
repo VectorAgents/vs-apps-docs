@@ -83,13 +83,12 @@ test('the scene sits in the problem section: a member asks for leads, the call g
   assert.match(problem, /records the run under Maya's name/);
 });
 
-test('the scene names Maya, introduced at first use with the member link on the introduction, and uses no he or she', () => {
+test('the scene names Maya, introduced at first use with the member link on the introduction', () => {
   const problem = section(text, 'The problem Vector Space solves');
   assert.match(problem, /Maya, a \[member\]\(\.\/glossary\.md#member\) of Acme's sales team, asks the \[orchestrator agent\]/);
   assert.ok(text.indexOf('Maya') < text.indexOf('(./glossary.md#member)'));
   assert.match(problem, /reaches only what Maya may reach/);
   assert.doesNotMatch(unlink(problem), /\b(this|that|the) member\b|\bmember of it\b|member's name/);
-  assert.doesNotMatch(plain, /\b(he|she|his|her|him)\b/i);
   assert.equal([...plain.matchAll(/\bMaya\b/g)].length, 3);
 });
 

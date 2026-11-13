@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { bannedTermsIn, bodyOf, brokenLinks, linksOf, section } from './page-helpers.mjs';
+import { assertPersonaScene, bannedTermsIn, bodyOf, brokenLinks, linksOf, section } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
 const docs = resolve(dirname(fileURLToPath(import.meta.url)), '../docs');
@@ -39,8 +39,7 @@ test('the scene names Maya and Omar, introduces each in the persona record form 
 });
 
 test('personas stay in the scene: the other sections and the figure keep the generic member', () => {
-  const rest = text.replace(section(text, 'A lead search limited by region'), '');
-  assert.doesNotMatch(rest, /\b(?:Maya|Omar)\b/);
+  assertPersonaScene(text, 'A lead search limited by region');
   assert.match(section(text, 'One check for every way in'), /\*\*Web interface\*\*: the work runs as the member\./);
 });
 

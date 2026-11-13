@@ -49,10 +49,7 @@ export function termViolations(markdown) {
 
 const PRONOUN = /\b(?:he|she|his|her|him)\b/gi;
 
-/**
- * Gendered pronouns in prose: a scene names a persona or says "they".
- * @returns {{ rule: string, line: number, text: string }[]}
- */
+/** Gendered pronouns in prose, as `{ rule, line, text }`. */
 export function pronounViolations(markdown) {
   const found = [];
   proseLines(markdown).forEach((line, i) => {

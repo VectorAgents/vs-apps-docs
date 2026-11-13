@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { bannedTermsIn, bodyOf, brokenLinks, linksOf, section, unlink } from './page-helpers.mjs';
+import { assertPersonaScene, bannedTermsIn, bodyOf, brokenLinks, linksOf, section, unlink } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
 const { agentStudioAccess } = await import('../src/diagrams/figures/agent-studio-access.ts');
@@ -50,7 +50,7 @@ test('the scene is the support case: a linked chat, the orchestrator agent, a ti
   assert.doesNotMatch(prose, /WhatsApp|Messenger|Instagram|Telegram|Slack|Discord/);
 });
 
-test('the scene names Sofia in place of "a member", opens on the support team and has no he or she', () => {
+test('the scene names Sofia in place of "a member", opens on the support team', () => {
   const scene = section(text, 'A support message in a space');
   assert.match(scene, /^Acme's support team has a space with a \[channel\]/m);
   assert.match(scene, /Sofia, a \[member\]\(\.\/glossary\.md#member\) of the team, owns the channel\./);
@@ -58,16 +58,11 @@ test('the scene names Sofia in place of "a member", opens on the support team an
   assert.match(scene, /A customer writes in a \[linked chat\]/);
   assert.match(scene, /The team set up all of these agents/);
   assert.doesNotMatch(scene, /a support team|a member of a space|this member|that member|its owner/);
-  assert.doesNotMatch(scene, /\b(?:he|she|his|her|him)\b/i);
 });
 
-test('Sofia is introduced once and the first "member" on the page is the glossary link on that introduction', () => {
+test('Sofia is introduced once and the first "member" on the page is the glossary link on that introduction, and no persona is named outside the scene', () => {
   assert.equal(body.match(/Sofia, a /g)?.length, 1);
-  assert.match(body.slice(body.search(/(?<![-#\w])member\b/) - 1), /^\[member\]\(\.\/glossary\.md#member\) of the team, owns the channel/);
-});
-
-test('no persona name appears outside the scene section', () => {
-  assert.doesNotMatch(text.replace(section(text, 'A support message in a space'), ''), /Sofia/);
+  assertPersonaScene(text, 'A support message in a space', { memberIntro: "[member](./glossary.md#member) of the team, owns the channel" });
 });
 
 test('the tree names no level number and says short-lived helper and child agent', () => {

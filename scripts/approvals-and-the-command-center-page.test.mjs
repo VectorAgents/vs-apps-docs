@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { bannedTermsIn, bodyOf, brokenLinks, linksOf, section, unlink } from './page-helpers.mjs';
+import { assertPersonaScene, bannedTermsIn, bodyOf, brokenLinks, linksOf, section, unlink } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
 const docs = resolve(dirname(fileURLToPath(import.meta.url)), '../docs');
@@ -47,22 +47,17 @@ test('the scene is the first H2, with no Example heading and Acme wording, a pos
   assert.doesNotMatch(scene, /email|outreach|lead/i, 'the worked example owns the email');
 });
 
-test('the scene names Maya in place of "a member", with no he or she', () => {
+test('the scene names Maya in place of "a member"', () => {
   const scene = section(text, 'A status note that waits for approval');
   assert.match(scene, /^Maya, a \[member\]\(\.\/glossary\.md#member\) of Acme's sales team, asks the \[orchestrator agent\]/m);
   assert.match(scene, /\nMaya reads the ask and approves it\./);
   assert.match(scene, /Maya also ticks "always allow", so the same post runs later with no ask\./);
   assert.doesNotMatch(scene, /\b(?:a|this|that) member\b|The member/);
-  assert.doesNotMatch(scene, /\b(?:he|she|his|her|him)\b/i);
 });
 
-test('Maya is introduced once and the first "member" on the page is the glossary link on that introduction', () => {
+test('Maya is introduced once and the first "member" on the page is the glossary link on that introduction, and no persona is named outside the scene', () => {
   assert.equal(body.match(/Maya, a /g)?.length, 1);
-  assert.match(body.slice(body.search(/(?<![-#\w])member\b/) - 1), /^\[member\]\(\.\/glossary\.md#member\) of Acme's sales team, asks/);
-});
-
-test('no persona name appears outside the scene section', () => {
-  assert.doesNotMatch(text.replace(section(text, 'A status note that waits for approval'), ''), /Maya|Omar|Lena|Priya|Erik|Sofia/);
+  assertPersonaScene(text, 'A status note that waits for approval', { memberIntro: "[member](./glossary.md#member) of Acme's sales team, asks" });
 });
 
 test('the slot approvals-flow appears once, in "The ask and who decides it"', () => {

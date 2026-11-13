@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { bannedTermsIn, bodyOf, brokenLinks, linksOf, section, unlink } from './page-helpers.mjs';
+import { assertPersonaScene, bannedTermsIn, bodyOf, brokenLinks, linksOf, section, unlink } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
 const docs = resolve(dirname(fileURLToPath(import.meta.url)), '../docs');
@@ -43,26 +43,21 @@ test('the scene is the Acme sales team: lead database, REST API, shared mailbox,
   assert.doesNotMatch(plain, /the sales space/i);
 });
 
-test('the scene names Omar, who connects the data, and Maya, who asks and never held a password, with no he or she', () => {
+test('the scene names Omar, who connects the data, and Maya, who asks and never held a password', () => {
   const scene = section(text, 'A sales team connects its data');
   assert.match(scene, /^A sales team connects its data\n\nMaya, a \[member\]\(\.\/glossary\.md#member\) of Acme's sales team, works in a space where Omar, another member of the team, connects the team's data in the Context Hub\./);
   assert.match(scene, /Omar connects the database of leads/);
   assert.match(scene, /Maya then asks the \[orchestrator agent\]\(\.\/glossary\.md#orchestrator-agent\) to find leads and send an outreach email\./);
   assert.match(scene, /Maya never held a password for any of the three, because each one runs on Omar's credential\./);
   assert.doesNotMatch(scene, /a member connects|a member then|The member never|this member|that member/);
-  assert.doesNotMatch(scene, /\b(?:he|she|his|her|him)\b/i);
 });
 
-test('each persona is introduced once, and the first "member" on the page is the glossary link on the Maya introduction', () => {
+test('each persona is introduced once, and the first "member" on the page is the glossary link on the Maya introduction, and no persona is named outside the scene', () => {
   assert.equal(body.match(/Maya, a /g)?.length, 1);
   assert.equal(body.match(/Omar, another member of the team/g)?.length, 1);
-  assert.match(body.slice(body.search(/(?<![-#\w])members?\b/) - 1), /^\[member\]\(\.\/glossary\.md#member\) of Acme's sales team/);
+  assertPersonaScene(text, 'A sales team connects its data', { memberIntro: "[member](./glossary.md#member) of Acme's sales team" });
   assert.ok(body.indexOf('Maya') < body.indexOf('Omar'));
   assert.doesNotMatch(lead, /member|Maya|Omar/);
-});
-
-test('no persona name appears outside the scene section', () => {
-  assert.doesNotMatch(text.replace(section(text, 'A sales team connects its data'), ''), /Maya|Omar/);
 });
 
 test('the six kinds of resource are listed, with context as the general kind and connector as one way to get one', () => {

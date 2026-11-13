@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { bannedTermsIn, bodyOf, brokenLinks, linksOf, section } from './page-helpers.mjs';
+import { assertPersonaScene, bannedTermsIn, bodyOf, brokenLinks, linksOf, section } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
 const docs = resolve(dirname(fileURLToPath(import.meta.url)), '../docs');
@@ -49,25 +49,20 @@ test('the first H2 after the lead is one request that shows access, the AI gatew
   assert.equal(example.split('\n').filter((l) => l.startsWith('- ')).length, 0);
 });
 
-test('the scene names Maya and Omar in place of "a member", with no he or she', () => {
+test('the scene names Maya and Omar in place of "a member"', () => {
   const scene = section(text, 'A request in a space');
   assert.match(scene, /^Maya, a \[member\]\(\.\/glossary\.md#member\) of Acme's sales team, asks the orchestrator agent to find leads\./m);
   assert.match(scene, /Omar, another member of the team with different access, might see different leads\./);
   assert.match(scene, /Maya may see/);
   assert.match(scene, /Maya started the run\./);
   assert.doesNotMatch(scene, /a member of a space|this member|that member|another member with/);
-  assert.doesNotMatch(scene, /\b(?:he|she|his|her|him)\b/i);
 });
 
-test('each persona is introduced once and the first "member" on the page is the glossary link on the Maya introduction', () => {
+test('each persona is introduced once and the first "member" on the page is the glossary link on the Maya introduction, and no persona is named outside the scene', () => {
   assert.equal(body.match(/Maya, a /g)?.length, 1);
   assert.equal(body.match(/Omar, another member of the team/g)?.length, 1);
-  assert.match(body.slice(body.search(/(?<![-#\w])member\b/) - 1), /^\[member\]\(\.\/glossary\.md#member\) of Acme's sales team/);
+  assertPersonaScene(text, 'A request in a space', { memberIntro: "[member](./glossary.md#member) of Acme's sales team" });
   assert.ok(body.indexOf('Maya') < body.indexOf('Omar'));
-});
-
-test('no persona name appears outside the scene section', () => {
-  assert.doesNotMatch(text.replace(section(text, 'A request in a space'), ''), /Maya|Omar/);
 });
 
 test('the parts section gives one linked line per part: members, orchestrator agent, Command Center, Context Hub, Vector Modules', () => {
