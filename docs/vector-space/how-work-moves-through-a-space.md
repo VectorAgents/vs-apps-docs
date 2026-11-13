@@ -6,11 +6,11 @@ description: One request followed from a member's question to a sent email, step
 import FlowFigure from '@site/src/components/FlowFigure';
 import { workedExampleFlow } from '@site/src/diagrams/figures/worked-example-flow.ts';
 
-A request in a space moves in six steps that the platform checks and records, from a member's question to a sent email. Each step runs as one actor, so the record shows who did what.
+A request in a space moves in six steps that the platform checks and records, from a question to a sent email. Each step runs as one actor, so the record shows who did what.
 
 ## A member's outreach request
 
-Acme's sales team has a space, and a [member](./glossary.md#member) of it asks the [orchestrator agent](./glossary.md#orchestrator-agent) to find leads and send an outreach email. One email goes to one qualified lead, and only after a person approves it.
+Maya, a [member](./glossary.md#member) of Acme's sales team, asks the [orchestrator agent](./glossary.md#orchestrator-agent) in the team's space to find leads and send an outreach email. One email goes to one qualified lead, and only after a person approves it.
 
 The work uses a [Vector App](../vector-apps/glossary.md#app), a web app that a space shows in an iframe. The app is only an example.
 

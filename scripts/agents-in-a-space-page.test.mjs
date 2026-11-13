@@ -24,7 +24,28 @@ test('the scene is the first H2, names no Example and says Acme\'s sales team', 
   assert.equal(headings[0], 'A lead search handed to two agents');
   assert.doesNotMatch(text, /^#+ .*Example/m);
   assert.doesNotMatch(prose, /the sales space/i);
-  assert.match(section(text, 'A lead search handed to two agents'), /\nAcme's sales team has a space/);
+  assert.match(section(text, 'A lead search handed to two agents'), /\nMaya, a \[member\]\(\.\/glossary\.md#member\) of Acme's sales team, asks/);
+});
+
+test('the scene names Maya in place of "a member", with no he or she', () => {
+  const scene = section(text, 'A lead search handed to two agents');
+  assert.match(scene, /^Maya, a \[member\]\(\.\/glossary\.md#member\) of Acme's sales team, asks the orchestrator agent to find leads and send an outreach email\./m);
+  assert.match(scene, /each of them sees only what Maya may see\./);
+  assert.match(scene, /Maya does not choose which agent does what, and gets one reply/);
+  assert.doesNotMatch(scene, /a member of it|the member|that member|this member/);
+  assert.doesNotMatch(scene, /\b(?:he|she|his|her|him)\b/i);
+  const paragraph = scene.split('\n').find((l) => l.startsWith('Maya'));
+  assert.ok(paragraph.split(/(?<=\.) /).length <= 5, 'rule L4: 5 sentences or fewer');
+});
+
+test('Maya is introduced once, and the first "member" on the page is the glossary link on that introduction', () => {
+  assert.equal(body.match(/Maya, a /g)?.length, 1);
+  assert.match(body.slice(body.search(/(?<![-#\w])member\b/) - 1), /^\[member\]\(\.\/glossary\.md#member\) of Acme's sales team/);
+  assert.doesNotMatch(lead, /member/);
+});
+
+test('Maya appears only in the scene section', () => {
+  assert.doesNotMatch(text.replace(section(text, 'A lead search handed to two agents'), ''), /Maya/);
 });
 
 test('the figure slot appears once, inside "The agent tree"', () => {
@@ -81,8 +102,8 @@ test('every link resolves, and Where to go next has 2 to 4 links ordered how-wor
 
 test('the scene is a slice of the lead scenario: one agent finds leads, another drafts the email, each sees what the member may see', () => {
   const example = section(text, 'A lead search handed to two agents');
-  for (const word of ['orchestrator agent', 'leads', 'email', 'member']) assert.ok(example.includes(word), word);
-  assert.match(example, /only what the member may see|only what that member may see/);
+  for (const word of ['orchestrator agent', 'leads', 'email', 'Maya']) assert.ok(example.includes(word), word);
+  assert.match(example, /only what Maya may see/);
 });
 
 test('the page names no banned name or term', () => {
