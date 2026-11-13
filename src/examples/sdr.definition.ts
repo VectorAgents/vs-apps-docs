@@ -1,6 +1,6 @@
 import { defineApp } from '@vectoragents/vs-apps';
 
-/** Model slots the space manager points at a model; the server asks for a slot, never a model. */
+/** Model slots the space admin points at a model; the server asks for a slot, never a model. */
 export const SDR_MODEL_SLOTS = {
   agent: 'sdr-agent',
 } as const;
