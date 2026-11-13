@@ -5,7 +5,7 @@ import { test } from 'node:test';
 
 const sections = {
   'vector-space': [
-    'Vector Space', 'space', 'space manager', 'space editor', 'space admin', 'organization admin', 'page', 'staff',
+    'Vector Space', 'space', 'space editor', 'space admin', 'organization admin', 'page', 'staff',
     'knowledge source', 'Context Hub', 'ask', 'human in the loop', 'channel', 'MCP', 'A2A', 'AI',
     'organization', 'member', 'role', 'share', 'block', 'condition', 'service account', 'agent', 'orchestrator agent',
     'thread', 'run', 'schedule', 'context', 'connector', 'Vector Module', 'extension', 'Command Center', 'Agent Studio', 'governance',
@@ -46,6 +46,10 @@ for (const [section, terms] of Object.entries(sections)) {
 test('a term is defined once across the three glossaries', () => {
   const names = all.map((e) => e.name.toLowerCase());
   assert.deepEqual(names.filter((n, i) => names.indexOf(n) !== i), []);
+});
+
+test('no glossary has a space manager entry, mention or link', () => {
+  for (const [section, body] of Object.entries(texts)) assert.doesNotMatch(body, /space[ -]managers?/i, section);
 });
 
 test('each entry has definition, mapping and owner', () => {
@@ -105,7 +109,6 @@ test('space editor adds editing and space admin holds everything a space editor 
 test('the Can edit, Can manage and custom role entries state the share levels and the limits of a custom role', () => {
   const body = (name) => entries.find((e) => e.name === name).body;
   assert.match(body('Can manage'), /share a resource and manage who reaches it/);
-  assert.doesNotMatch(body('Can edit'), /space manager/);
   assert.match(body('custom role'), /organization admin defines/);
   assert.match(body('custom role'), /never lets its holder add members, add apps, delete the space/);
 });

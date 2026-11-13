@@ -15,7 +15,7 @@ Precedence: rules here win over any reference. A page-type section wins over the
 - **L5 Table cell and reference description.** 15 words or fewer. A cell over 15 words is a note, not an error. References: 9-11.
 - **L6 Active voice.** Name the actor. Bad: "A slot nobody set runs nothing". Good: "If no one sets a slot, the app cannot use that model."
 - **L7 No noun stacks.** Three nouns in a row need a verb. Bad: "Connector-event handler wiring". Good: "Register connector event handlers".
-- **L8 One name per thing.** Use the glossary name every time. A term keeps the capitals the glossary gives it ("Can use", "Context Hub"); a common-noun term is lowercase mid-sentence ("space manager", "organization admin"). Bad: "registry entry" for "app registration".
+- **L8 One name per thing.** Use the glossary name every time. A term keeps the capitals the glossary gives it ("Can use", "Context Hub"); a common-noun term is lowercase mid-sentence ("space admin", "organization admin"). Bad: "registry entry" for "app registration".
 - **L9 Spell out the figure.** Give exact numbers and limits, not "a few" or "many".
 
 ### Voice
@@ -23,12 +23,12 @@ Precedence: rules here win over any reference. A page-type section wins over the
 - **V1 Speak to the reader.** Address the reader as "you" and "your". Bad: "The developer adds a page." Good: "You add a page."
 - **V2 Imperative for steps.** A task step is a command. Bad: "The page can be added to the definition." Good: "Add the page to the definition."
 - **V3 Never name the reader by role.** Do not write "app developer", "the developer" or "the user" for the reader. "Your users" means the people who open your app.
-- **V4 Other roles keep their names.** Write "space manager" and "staff" for people in Space. Link them at first use (T1).
+- **V4 Other roles keep their names.** Write "space editor", "space admin" and "staff" for people in Space. Link them at first use (T1).
 - **V5 No "we" or "our".** The docs state what is true and do not speak as Vector.
 
 ### Terms
 
-- **T1 Vector and SDK terms.** Define at first use, or link to the glossary at first use. This includes role words such as "staff" and "space manager". Link at the first use in the page, not at the first use in a section.
+- **T1 Vector and SDK terms.** Define at first use, or link to the glossary at first use. This includes role words such as "staff" and "space admin". Link at the first use in the page, not at the first use in a section.
 - **T2 Standard terms.** Standard web, TypeScript, Node and React terms need no definition.
 - **T3 Informal words.** A word used with a private meaning ("pull", "boot ping", "ungated", "surface") is a Vector term: apply T1, or replace it with a plain phrase.
 
@@ -69,7 +69,7 @@ Scope: `docs/vector-apps/quickstart.md` only. `scripts/voice.mjs` checks L4, the
 - **TU2 No contractions.**
 - **TU3 Reason first.** A step or section opens with a sentence that says why.
 - **TU4 Imperative steps.** A step starts with an imperative verb. "-ing" forms are allowed where natural.
-- **TU5 Define in one clause.** Define a term in one clause at first use. Link only a destination the reader follows. The page defines "capability", "space manager" and "manifest" in a one-clause appositive at first use, and `scripts/quickstart-page.test.mjs` pins that form.
+- **TU5 Define in one clause.** Define a term in one clause at first use. Link only a destination the reader follows. The page defines "capability", "space admin" and "manifest" in a one-clause appositive at first use, and `scripts/quickstart-page.test.mjs` pins that form.
 - **TU6 Security contract first.** Lead with the security contract. Teach through running code, not folder creation. Say that a client check is display only and the server check decides.
 
 ## Recipe page
