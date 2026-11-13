@@ -62,7 +62,7 @@ Every resource has [General access](./glossary.md#general-access), the [role](./
 
 A credential is the login that a context or datasource uses to reach its outside system. It belongs to the person who created it and is never shared, and not even an [organization admin](./glossary.md#organization-admin) can use it.
 
-When a context or datasource is shared, the people it is shared with run on the credential of its owner. They never get the credential or its target, the database or endpoint behind it. A share names a user or a group, never a role, and the role, Can use or Can edit, is what it gives.
+When a context or datasource is shared, the people it is shared with run on the credential of its owner. They never get the credential or its target, the database or endpoint behind it. A share gives a role, Can use or Can edit, to a user or a group, and attaching a context or datasource to a Vector App shares it with that app.
 
 ## Where to go next
 
