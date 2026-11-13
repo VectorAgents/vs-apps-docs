@@ -187,7 +187,7 @@ Source paths are in the sibling `vector-spaces` repo, under `docs/`. The page is
 
 | Claim | Rests on |
 | --- | --- |
-| An organization is the tenant. Every user, API key, resource and space belongs to one. A space is the unit of work and holds one orchestrator agent, resources, members and groups, pages, and the apps and Vector Modules turned on for it. | `product/OVERVIEW.md` ("How it fits"), `product/GLOSSARY.md` (Tenancy and people: Organization; Spaces and content: Space). |
+| An organization is the tenant. Every user, API key, resource and space belongs to one. A space is the unit of work. It has its members, one orchestrator agent, a Context Hub that includes its Vector Apps and Vector Modules, and its pages. | `product/OVERVIEW.md` ("How it fits"), `product/GLOSSARY.md` (Tenancy and people: Organization; Spaces and content: Space). |
 | Each organization has one organization admin, who a transfer passes to another live member. The admin is a space manager of every space. | `product/GLOSSARY.md` (Tenancy and people: Organization Owner), `systems/access/README.md` (The Organization Owner). |
 | AI provider accounts belong to the organization and pay for its model calls. An account reaches every space by default and can be limited to chosen spaces. The page therefore says each resource belongs to one space and never that spaces share nothing. | `product/OVERVIEW.md` ("What it is"), `systems/AI.md` (Data model, invariant 2: an all-spaces account is the default, a scoped account reaches the spaces with a grant row), `systems/credentials/README.md` (Core primitives: one credential can back resources in more than one space). |
 | A resource is owned by one space. No share reaches a resource of another space. An agent moves only within its space. | `systems/access/RESOURCES.md` (Resources), `systems/access/README.md` (The pool and tenancy), `systems/STUDIO.md` (The agent tree). |
@@ -349,6 +349,7 @@ Source paths are in the sibling `vector-spaces` repo, under `docs/`. The page is
 
 | Claim | Rests on |
 | --- | --- |
+| A space holds what its team works with: the Context Hub, which includes its Vector Apps and Vector Modules, and pages with widgets. | `product/OVERVIEW.md` ("How it fits"). |
 | The Context Hub is the area of a space where its resources are listed and set up. The product shows the list as Resources. | `product/OVERVIEW.md` (The product's layers), `product/GLOSSARY.md` (Spaces and content; Access: Pool). |
 | The Context Hub holds six kinds of resource: contexts, knowledge sources, datasources, skills, apps and Vector Modules. The page names the six in one sentence and leaves each kind to [The Context Hub](../docs/vector-space/context-hub.md). | `product/OVERVIEW.md` (The product's layers), `product/GLOSSARY.md` (Access: Resource). |
 | A context links the space to one outside account or endpoint, such as a mailbox or a REST API. The page says "context" and never "provider", which collides with "AI provider". The rename is in the Context Hub section below. | `product/GLOSSARY.md` (Context Hub: Connector, Provider). |
