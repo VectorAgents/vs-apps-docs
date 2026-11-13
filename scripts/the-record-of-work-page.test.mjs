@@ -61,7 +61,7 @@ test('the four governance views are each named and linked, with who reads them',
     assert.match(views, new RegExp(`\\[${view}\\]\\(\\./glossary\\.md#${view.toLowerCase()}\\)`), view);
   }
   assert.match(views, /organization admin/);
-  assert.match(views, /space manager/);
+  assert.match(views, /space admin/);
   assert.match(views, /never as zero/);
   assert.doesNotMatch(views, /Intelligence/, 'Intelligence is not a fifth view');
 });
