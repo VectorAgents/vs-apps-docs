@@ -48,9 +48,27 @@ test('the scene is the first H2, names no Example and says a team\'s space', () 
   assert.doesNotMatch(plain, /the sales space/i);
   const scene = section(text, 'Two teams in one organization');
   assert.match(scene, /\nAcme has one organization/);
-  assert.match(scene, /sales team's space/);
-  assert.match(scene, /Acme's marketing team has another space/);
+  assert.match(scene, /its sales team has a space of its own/);
   assert.doesNotMatch(plain, /second (team|space)|another space of/i);
+});
+
+test('the scene names Maya and Priya in place of "a member", with no he or she', () => {
+  const scene = section(text, 'Two teams in one organization');
+  assert.match(scene, /Maya, a \[member\]\(\.\/glossary\.md#member\) of Acme's sales team, asks the \[orchestrator agent\]\(\.\/glossary\.md#orchestrator-agent\) to find leads and send an outreach email/);
+  assert.match(scene, /Priya, a member of Acme's marketing team, works in another space and cannot reach those leads, and neither can the agents of that space/);
+  assert.doesNotMatch(scene, /a member of the sales team|members and agents|this member|that member/);
+  assert.doesNotMatch(scene, /\b(?:he|she|his|her|him)\b/i);
+});
+
+test('each persona is introduced once and the first "member" on the page is the glossary link on the Maya introduction', () => {
+  assert.equal(body.match(/Maya, a /g)?.length, 1);
+  assert.equal(body.match(/Priya, a member of Acme's marketing team/g)?.length, 1);
+  assert.match(body.slice(body.search(/(?<![-#\w])member\b/) - 1), /^\[member\]\(\.\/glossary\.md#member\) of Acme's sales team/);
+  assert.ok(body.indexOf('Maya') < body.indexOf('Priya'));
+});
+
+test('no persona name appears outside the scene section', () => {
+  assert.doesNotMatch(text.replace(section(text, 'Two teams in one organization'), ''), /Maya|Priya/);
 });
 
 test('the slot organization-structure appears once, in "The organization as the tenant"', () => {

@@ -10,7 +10,7 @@ An [organization](./glossary.md#organization) is the company account in Vector S
 
 ## Two teams in one organization
 
-Acme has one organization, and its sales team has a space of its own. A [member](./glossary.md#member) of the sales team's space asks the [orchestrator agent](./glossary.md#orchestrator-agent) to find leads and send an outreach email, and the leads live in a resource of that space. Acme's marketing team has another space, and its members and agents cannot reach those leads, although both spaces belong to one organization.
+Acme has one organization, and its sales team has a space of its own. Maya, a [member](./glossary.md#member) of Acme's sales team, asks the [orchestrator agent](./glossary.md#orchestrator-agent) to find leads and send an outreach email, and the leads live in a resource of that space. Priya, a member of Acme's marketing team, works in another space and cannot reach those leads, and neither can the agents of that space, although both spaces belong to one organization.
 
 ## The organization as the tenant
 
