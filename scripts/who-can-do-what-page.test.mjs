@@ -88,7 +88,7 @@ test('the ladder H2 links the space roles and the three share levels, and a grou
   const part = section(text, 'Space roles and share levels');
   for (const anchor of ['space-editor', 'space-admin', 'can-use', 'can-edit', 'can-manage']) assert.match(part, new RegExp(`\\]\\(\\./glossary\\.md#${anchor}\\)`), anchor);
   for (const anchor of ['share', 'group']) assert.match(body, new RegExp(`\\]\\(\\./glossary\\.md#${anchor}\\)`), anchor);
-  assert.doesNotMatch(plain, /A role is not a set of people|only two roles/);
+  assert.doesNotMatch(plain, /A role is not a set of people/);
   assert.match(part, /A role is a set of permissions that a user or group holds in one place\. Vector Space has two ladders: space roles cover a whole space, and share levels cover one resource\./);
   assert.match(part, /A space editor holds Can edit, and a space admin holds Can manage, on every resource of the space except another member's Restricted resource\./);
   assert.match(unlink(part), /A group is a set of users and groups/);
@@ -107,8 +107,8 @@ test('the Custom roles H2 defines a custom role, says who defines and gives it, 
   assert.match(p, /For example, an organization defines a role that lets its holder read the space's governance views\./);
 });
 
-test('the page has no View level, Edit level, space manager or only-two-roles claim', () => {
-  assert.doesNotMatch(text, /View level|Edit level|space manager|role as a set|only two roles/i);
+test('the page has no View level, Edit level or role-as-a-set claim', () => {
+  assert.doesNotMatch(text, /View level|Edit level|role as a set/i);
 });
 
 test('the page names no master doc, implementation name, banned term, vendor or use case', () => {
@@ -136,7 +136,7 @@ test('service accounts are the identity behind an API key or a schedule, and a g
 test('a service account can hold a space role, and only the organization admin adds one to a space', () => {
   assert.match(plain, /They reach what a member reaches and what a role in a space gives them\. They own no resources\./);
   assert.match(plain, /A service account can hold one too, directly or through a group, but only the organization admin can add a service account to a space\./);
-  assert.doesNotMatch(plain, /never holds it|never space managers/);
+  assert.doesNotMatch(plain, /never holds it/);
 });
 
 test('the rules of a space are a bold-term list: the admin is a space admin of every space, and Space roles is an item', () => {

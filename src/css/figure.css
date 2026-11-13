@@ -769,7 +769,7 @@
   }
 }
 
-/* Ladder figures: flat text on the Vector Space tokens. The steps read low to high; a staircase shows them high to low on a wide screen and stacks on a narrow one. */
+/* Steps are in the DOM low to high; column-reverse shows the highest on top. */
 .ladder-figure {
   color: var(--iso-ink);
   font-family: var(--iso-font);

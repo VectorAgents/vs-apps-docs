@@ -76,7 +76,7 @@ test('the page follows the voice checks and names no master doc', () => {
 });
 
 test('a space admin adds the app and picks the model, and a member who can edit the app and share the resource attaches resources', () => {
-  assert.match(text, /when a space admin adds the app/);
+  assert.match(text, /when a \[space admin\]\(\.\.\/vector-space\/glossary\.md#space-admin\) adds the app/);
   assert.match(text, /A member who can edit your app and share the resource attaches resources to it, such as connectors and knowledge sources\./);
   assert.match(text, /and a space admin picks the model\./);
 });

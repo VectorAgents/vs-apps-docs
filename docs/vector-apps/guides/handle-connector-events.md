@@ -151,7 +151,7 @@ curl -s -o /dev/null -w '%{http_code}\n' -X POST -H 'Content-Type: application/j
 
 ## Result
 
-The server mounts `POST /api/events/hello-app`, verifies the events token of each delivery and runs `inbound-message` for the events that Vector Space routes to it. The handler replies through the connector and reads the `ConnectorExecuteResult`. A failed reply makes Vector Space send the event again. A space admin attaches a connector to the `support` slot and routes its event types after the app is registered in Vector Space.
+The server mounts `POST /api/events/hello-app`, verifies the events token of each delivery and runs `inbound-message` for the events that Vector Space routes to it. The handler replies through the connector and reads the `ConnectorExecuteResult`. A failed reply makes Vector Space send the event again. A [space admin](../../vector-space/glossary.md#space-admin) attaches a connector to the `support` slot and routes its event types after the app is registered in Vector Space.
 
 ## Next step
 

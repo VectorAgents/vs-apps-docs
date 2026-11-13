@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { test } from 'node:test';
+import { ROLE_TERMS } from './page-helpers.mjs';
 
 const NOUN_GRANT = /\b(?:an?|the|each|every|one|no|any|all|your|their|its|this|that|these|those|which|of|for|per|with|new|existing|revoked|standing)\s+grants?\b/gi;
 
@@ -21,7 +22,7 @@ const proseLines = (markdown) => {
       .replace(/`[^`]*`/g, '')
       .replace(/\]\([^)]*\)/g, ']')
       .replace(/\*\*Spaces?\*\*/g, '')
-      .replace(/^(#{2,6} |\s*[-*] \*\*\[?)Space (member|editor|admin|roles)\b/, '$1$2');
+      .replace(new RegExp(`^(#{2,6} |\\s*[-*] \\*\\*\\[?)Space (${ROLE_TERMS}|roles)\\b`), '$1$2');
   });
 };
 
@@ -136,7 +137,7 @@ test('diagram labels and text use the current terms', async () => {
   for (const file of readdirSync(dir).filter((f) => f.endsWith('.ts'))) {
     const data = await import(new URL(file, dir));
     // A ladder step label, such as "Space editor", is a role term that stands alone on its line, like a list term.
-    const text = JSON.stringify(data).replace(/","|":"|[{}[\]]/g, '\n').replace(/^Space (member|editor|admin)$/gm, '$1');
+    const text = JSON.stringify(data).replace(/","|":"|[{}[\]]/g, '\n').replace(new RegExp(`^Space (${ROLE_TERMS})$`, 'gm'), '$1');
     const violations = termViolations(text);
     assert.deepEqual(violations, [], `${file}: ${violations.map((v) => `${v.rule} "${v.text}"`).join(', ')}`);
   }
