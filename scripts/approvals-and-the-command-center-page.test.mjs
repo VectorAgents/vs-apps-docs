@@ -30,7 +30,7 @@ test('the lead defines an ask and the Command Center, with glossary links, befor
   assert.match(lead, /\[ask\]\(\.\/glossary\.md#ask\) is anything that an agent or an app waits on a person for/);
   assert.match(lead, /\[Command Center\]\(\.\/glossary\.md#command-center\) is the part of a \[space\]\(\.\/glossary\.md#space\)/);
   assert.match(lead, /\[standing approvals\]\(\.\/glossary\.md#standing-approval\)/);
-  assert.match(lead, /\[schedules\]\(\.\/glossary\.md#schedule\)/);
+  assert.match(lead, /\[schedules\]\(\.\/glossary\.md#schedule\) that a person owns/);
 });
 
 test('the scene is the first H2, with no Example heading and Acme wording, a post to a team chat that raises an ask, then an always-allow', () => {
@@ -58,7 +58,7 @@ test('the ask section says what raises an ask, who decides, and that the Command
   assert.match(ask, /writes/);
   assert.match(ask, /\n\nEach ask goes to its answerer, the person who answers for the run:/);
   assert.deepEqual([...ask.matchAll(/^- \*\*(.+?)\*\*: /gm)].map((m) => unlink(m[1])), ['Member', 'Service account', 'App']);
-  assert.match(ask, /\*\*\[Service account\]\(\.\/glossary\.md#service-account\)\*\*: cannot decide\. The owner of its key answers/);
+  assert.match(ask, /\*\*\[Service account\]\(\.\/glossary\.md#service-account\)\*\*: cannot decide\. The owner of its API key answers\. If there is none, the owner of the \[thread\]\(\.\/glossary\.md#thread\) or \[schedule\]\(\.\/glossary\.md#schedule\) that it ran for answers/);
   assert.match(ask, /\[space managers?\]\(\.\/glossary\.md#space-manager\)/);
   assert.match(ask, /leaves a space stops seeing and deciding its asks/);
 });
@@ -66,16 +66,31 @@ test('the ask section says what raises an ask, who decides, and that the Command
 test('after a decision the run resumes as its own actor and the decision is a second check', () => {
   const after = section(text, 'After a decision');
   assert.match(after, /second check, never extra access/);
-  assert.deepEqual([...after.matchAll(/^- \*\*(.+?)\*\*: /gm)].map((m) => unlink(m[1])), ['Approved', 'Rejected', 'A new message in the thread', "An app's ask"]);
+  assert.deepEqual([...after.matchAll(/^- \*\*(.+?)\*\*: /gm)].map((m) => unlink(m[1])), ['Approved', 'Rejected', 'Ended without a decision', 'Expired']);
   assert.match(after, /\*\*Approved\*\*: the run continues as its own \[actor\]\(\.\/glossary\.md#actor\)/);
   assert.match(after, /never reaches the run/);
-  assert.match(after, /pauses no run/);
+  assert.match(after, /An ask ends in one of four ways:/);
+  assert.match(after, /\*\*Ended without a decision\*\*: a new message in the thread, a stop, a cancelled task, a retired agent, or a deleted thread or agent ends the ask\. The run does not continue\./);
+});
+
+test('an ask expires after 400 days, denies nothing and cancels a paused run with no open ask left', () => {
+  const after = section(text, 'After a decision');
+  const expired = after.split('\n').find((l) => l.startsWith('- **Expired**'));
+  assert.match(expired, /nobody answers within 400 days of the raise/);
+  assert.match(expired, /Nothing is denied\./);
+  assert.match(expired, /When the last open ask of a paused run expires, the run is cancelled\./);
+});
+
+test("an app's ask is a paragraph after the endings list, not an ending", () => {
+  const after = section(text, 'After a decision');
+  assert.match(after, /\n\nAn app's ask pauses no run, because no run waits\. A decision or an expiry is sent back to the app\./);
+  assert.ok(after.indexOf('An app\'s ask pauses') > after.indexOf('- **Expired**'));
 });
 
 test('a standing approval names its context, comes in two kinds and stays until someone revokes it', () => {
   const standing = section(text, 'Standing approvals');
   assert.match(standing, /always allow/);
-  assert.match(standing, /context/);
+  assert.match(standing, /It names the \[context\]\(\.\/glossary\.md#context\) the call goes through, so an approval for a post through one context never covers another context\./);
   assert.match(standing, /personal/i);
   assert.match(standing, /space-wide/);
   assert.match(standing, /space manager can set one/);
@@ -90,7 +105,7 @@ test('a schedule is a background task on a timer that runs as one identity and s
   assert.match(schedules, /timer/);
   assert.match(schedules, /service account/);
   assert.doesNotMatch(schedules, /skipped/);
-  assert.match(schedules, /always allow/);
+  assert.match(schedules, /If the schedule runs as its creator and the creator ticked "always allow" first, every later run goes through with no ask\./);
   assert.match(schedules, /only the owner edits, pauses, runs or deletes a schedule/);
 });
 
@@ -99,10 +114,11 @@ test('every link resolves, every glossary anchor exists, and Where to go next li
   assert.deepEqual(linksOf(section(text, 'Where to go next')), ['./how-work-moves-through-a-space.md', './the-record-of-work.md', './glossary.md']);
 });
 
-test('the page leaves out actor-only powers, polling, simultaneous decisions and any number of retention or skipped fires', () => {
-  assert.doesNotMatch(prose, /polling|poll\b|retention|retain|swept|expire|expiry|abandon/i);
+test('the page leaves out actor-only powers, polling, simultaneous decisions and any number besides the 400-day expiry', () => {
+  assert.doesNotMatch(prose, /polling|poll\b/i);
   assert.doesNotMatch(prose, /\barguments\b|edit(s|ing)? a call|simultaneous|at the same time|race/i);
-  assert.doesNotMatch(prose, /\b\d+\s+(days?|months?|hours?|minutes?|fires?|runs?|asks?)\b/i);
+  assert.doesNotMatch(prose, /\b\d+\s+(months?|hours?|minutes?|fires?|runs?|asks?)\b/i);
+  assert.deepEqual([...prose.matchAll(/\b\d+\s+days?\b/gi)].map((m) => m[0]), ['400 days']);
   assert.doesNotMatch(prose, /\b(once|twice|three|ten)\s+(skipped|consecutive|fires?)\b/i);
 });
 

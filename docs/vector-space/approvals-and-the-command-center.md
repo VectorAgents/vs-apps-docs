@@ -6,7 +6,7 @@ description: Asks, standing approvals and schedules.
 import FlowFigure from '@site/src/components/FlowFigure';
 import { approvalsFlow } from '@site/src/diagrams/figures/approvals-flow.ts';
 
-An [ask](./glossary.md#ask) is anything that an agent or an app waits on a person for, such as approval to make a change. The [Command Center](./glossary.md#command-center) is the part of a [space](./glossary.md#space) where asks wait. It also lists the [standing approvals](./glossary.md#standing-approval) that let a call run without asking and the [schedules](./glossary.md#schedule) that a person runs.
+An [ask](./glossary.md#ask) is anything that an agent or an app waits on a person for, such as approval to make a change. The [Command Center](./glossary.md#command-center) is the part of a [space](./glossary.md#space) where asks wait. It also lists the [standing approvals](./glossary.md#standing-approval) that let a call run without asking and the [schedules](./glossary.md#schedule) that a person owns.
 
 ## A status note that waits for approval
 
@@ -23,7 +23,7 @@ The Command Center is a plain part of a space. It is not a [Vector Module](./glo
 Each ask goes to its answerer, the person who answers for the run:
 
 - **Member**: answers for their own run.
-- **[Service account](./glossary.md#service-account)**: cannot decide. The owner of its key answers. If there is none, the owner of the [thread](./glossary.md#thread) or background task that it ran for answers.
+- **[Service account](./glossary.md#service-account)**: cannot decide. The owner of its API key answers. If there is none, the owner of the [thread](./glossary.md#thread) or [schedule](./glossary.md#schedule) that it ran for answers.
 - **App**: an ask that an app raises from its own server goes to the [space managers](./glossary.md#space-manager).
 
 A space manager also sees an ask whose answerer can no longer view the space. Anyone who leaves a space stops seeing and deciding its asks.
@@ -32,16 +32,18 @@ A space manager also sees an ask whose answerer can no longer view the space. An
 
 ## After a decision
 
-A run that raises an ask stops where it is and waits. A decision is a second check, never extra access. Each way an ask ends:
+A run that raises an ask stops where it is and waits. A decision is a second check, never extra access. An ask ends in one of four ways:
 
-- **Approved**: the run continues as its own [actor](./glossary.md#actor), the same identity as before. The identity of the person who decided never reaches the run.
+- **Approved**: the run continues as its own [actor](./glossary.md#actor), the same identity as before. The identity of the person who decided never reaches the run. A person who approves with changes, or who answers a question that the agent asked, ends the ask the same way.
 - **Rejected**: the rejection goes back to the run.
-- **A new message in the thread**: ends the ask.
-- **An app's ask**: pauses no run, because no run waits. The decision is sent back to the app.
+- **Ended without a decision**: a new message in the thread, a stop, a cancelled task, a retired agent, or a deleted thread or agent ends the ask. The run does not continue.
+- **Expired**: nobody answers within 400 days of the raise. Nothing is denied. When the last open ask of a paused run expires, the run is cancelled.
+
+An app's ask pauses no run, because no run waits. A decision or an expiry is sent back to the app.
 
 ## Standing approvals
 
-A standing approval lets one agent run one operation without asking, or lets one app's approval pass. Vector Space shows it as "always allow". It names the context, so an approval for one context's post never covers another context.
+A standing approval lets one agent run one operation without asking, or lets one app's approval pass. Vector Space shows it as "always allow". It names the [context](./glossary.md#context) the call goes through, so an approval for a post through one context never covers another context.
 
 There are two kinds. A personal approval covers the runs of the person who made it. A member makes one by ticking "always allow" on an ask that they answer. A space-wide approval covers everyone in the space, and a space manager can set one.
 
@@ -53,7 +55,7 @@ A schedule is a background task that an agent or a person sets to run on a timer
 
 Every run of a schedule acts as one identity. That is a service account chosen when the schedule was set up, or else the person who created it. A service account uses its own standing approvals. Any other identity uses the approvals of the owner.
 
-A schedule whose agent writes stops at an ask. If the creator ticked "always allow" first, every later run goes through with no ask.
+A schedule whose agent writes stops at an ask. If the schedule runs as its creator and the creator ticked "always allow" first, every later run goes through with no ask.
 
 ## Where to go next
 
