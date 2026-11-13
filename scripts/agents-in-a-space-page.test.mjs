@@ -67,6 +67,12 @@ test('each term is linked at its first use: agent, orchestrator agent, A2A, thre
   }
 });
 
+test('the lead has no "This page shows" sentence, and the tree section ties an agent to the space of its root orchestrator agent', () => {
+  assert.doesNotMatch(lead, /This page/);
+  assert.match(text, /An agent belongs to the space of the orchestrator agent at its root\./);
+  assert.doesNotMatch(text, /An agent moves only within its own space/);
+});
+
 test('every link resolves, and Where to go next has 2 to 4 links ordered how-work-moves, one-access-model, agent-studio, glossary', () => {
   assert.deepEqual(brokenLinks(text, file), []);
   const next = linksOf(section(text, 'Where to go next'));

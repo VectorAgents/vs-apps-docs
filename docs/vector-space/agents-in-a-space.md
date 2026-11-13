@@ -6,7 +6,7 @@ description: What an agent is, how the orchestrator agent hands work to other ag
 import StructureFigure from '@site/src/components/StructureFigure';
 import { agentTree } from '@site/src/diagrams/figures/agent-tree.ts';
 
-An [agent](./glossary.md#agent) is a model that is set up with instructions, tools and resources, and it works inside one [space](./glossary.md#space). Each space has one [orchestrator agent](./glossary.md#orchestrator-agent), which takes the request of a [member](./glossary.md#member) and hands parts of it to other agents. This page shows how those agents fit together and how their conversations are kept apart.
+An [agent](./glossary.md#agent) is a model that is set up with instructions, tools and resources, and it works inside one [space](./glossary.md#space). Each space has one [orchestrator agent](./glossary.md#orchestrator-agent), which takes the request of a [member](./glossary.md#member) and hands parts of it to other agents.
 
 ## A lead search handed to two agents
 
@@ -38,7 +38,7 @@ The agents of a space form a tree with three kinds of position:
   - **[A2A](./glossary.md#a2a) agent**: a remote agent that its owner runs outside the space. The owner controls its prompt and model, and the orchestrator agent reaches it with an [agent card](./glossary.md#agent-card). A [Vector App](../vector-apps/glossary.md#app), a web app that a space shows in an iframe, can offer an agent of this kind. [Extending a space](./extending-a-space.md) says how.
   - **Short-lived helper**: started by an agent for one task, and retired when the task ends.
 
-An agent moves only within its own space. A [context](./glossary.md#context) is something an agent uses, and work is not handed to it.
+An agent belongs to the space of the orchestrator agent at its root. A [context](./glossary.md#context) is something an agent uses, and work is not handed to it.
 
 ## Threads and runs
 
