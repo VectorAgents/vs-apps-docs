@@ -44,7 +44,7 @@ test('the scene is the first H2, with no Example heading and Acme wording', () =
   assert.equal([...text.matchAll(/^## (.+)$/gm)][0][1], 'The problem Vector Space solves');
   assert.doesNotMatch(text, /^## .*\bExample\b/m);
   assert.doesNotMatch(plain, /\bthe sales space\b/i);
-  assert.match(plain, /Acme's sales team has a space, and a member of it asks the orchestrator agent to find leads and send an outreach email/);
+  assert.match(plain, /Maya, a member of Acme's sales team, asks the orchestrator agent in the team's space to find leads and send an outreach email/);
 });
 
 test('Human Time Return is its own section: seconds, acts, staff-approved baseline, an estimate with no return figure', () => {
@@ -80,7 +80,17 @@ test('the scene sits in the problem section: a member asks for leads, the call g
   assert.match(problem, /find leads and send an outreach email/);
   assert.match(problem, /\]\(\.\/glossary\.md#ai-gateway\)/);
   assert.match(problem, /own AI provider account/);
-  assert.match(problem, /records the run under the member's name/);
+  assert.match(problem, /records the run under Maya's name/);
+});
+
+test('the scene names Maya, introduced at first use with the member link on the introduction, and uses no he or she', () => {
+  const problem = section(text, 'The problem Vector Space solves');
+  assert.match(problem, /Maya, a \[member\]\(\.\/glossary\.md#member\) of Acme's sales team, asks the \[orchestrator agent\]/);
+  assert.ok(text.indexOf('Maya') < text.indexOf('(./glossary.md#member)'));
+  assert.match(problem, /reaches only what Maya may reach/);
+  assert.doesNotMatch(unlink(problem), /\b(this|that|the) member\b|\bmember of it\b|member's name/);
+  assert.doesNotMatch(plain, /\b(he|she|his|her|him)\b/i);
+  assert.equal([...plain.matchAll(/\bMaya\b/g)].length, 3);
 });
 
 test('the three platform rules are one access model, one AI gateway and one record of work, as a list', () => {

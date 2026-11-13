@@ -10,11 +10,11 @@ Access defines the set of operations a user, agent or app is permitted to perfor
 
 ## A lead search limited by region
 
-Acme's sales team has a space, and a [member](./glossary.md#member) of it asks the [orchestrator agent](./glossary.md#orchestrator-agent) to find leads. The search is an operation on a [datasource](./glossary.md#datasource) of leads, and the datasource is open to every member of the space. A [group](./glossary.md#group) that the member belongs to has a [condition](./glossary.md#condition), region equals EU, so the member gets EU leads only.
+Maya, a [member](./glossary.md#member) of Acme's sales team, asks the [orchestrator agent](./glossary.md#orchestrator-agent) to find leads in the team's space. The search is an operation on a [datasource](./glossary.md#datasource) of leads, and the datasource is open to every member of the space. A [group](./glossary.md#group) that Maya belongs to has a [condition](./glossary.md#condition), region equals EU, so Maya gets EU leads only. Omar, another member of the team, is in a group whose condition is region equals US, so the same request gives Omar US leads only.
 
-The same holds when the member opens the lead list in a [Vector App](../vector-apps/glossary.md#app), a web app that a space shows in an iframe, because both ways in reach the datasource through the same check.
+The same holds when Maya opens the lead list in a [Vector App](../vector-apps/glossary.md#app), a web app that a space shows in an iframe, because both ways in reach the datasource through the same check.
 
-An API key that acts as the member gets the same EU leads.
+An API key that acts as Maya gets the same EU leads.
 
 ## What the check reads
 
