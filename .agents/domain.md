@@ -7,6 +7,7 @@ How the engineering skills read this repo's domain documentation. `docs/` is the
 - **`docs/vector-space/glossary.md`, `docs/vector-apps/glossary.md`, `docs/sdk/glossary.md`**: the published glossaries, terms an external developer needs. A term is defined once, in the broadest section that uses it.
 - **`.agents/glossary-internal.md`**: terms only the Vector team needs. Not published.
 - **`.agents/provenance.md`**: what each published claim rests on, and what is not yet verified. Not published.
+- **`.agents/personas.md`**: the cast of named personas for scenes in `docs/vector-space/`, with the naming rules. Not published.
 - **`.agents/adr/`**: ADRs touching the area about to change.
 
 If any is missing, proceed silently. `/domain-modeling` creates them when terms or decisions are resolved.

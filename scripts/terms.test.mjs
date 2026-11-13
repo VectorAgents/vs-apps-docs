@@ -47,6 +47,20 @@ export function termViolations(markdown) {
   return found;
 }
 
+const PRONOUN = /\b(?:he|she|his|her|him)\b/gi;
+
+/**
+ * Gendered pronouns in prose: a scene names a persona or says "they".
+ * @returns {{ rule: string, line: number, text: string }[]}
+ */
+export function pronounViolations(markdown) {
+  const found = [];
+  proseLines(markdown).forEach((line, i) => {
+    for (const m of line.matchAll(PRONOUN)) found.push({ rule: 'pronoun', line: i + 1, text: m[0] });
+  });
+  return found;
+}
+
 const rules = (md) => termViolations(md).map((v) => v.rule);
 
 test('Space: flagged on its own, allowed inside Vector Space', () => {
@@ -118,6 +132,19 @@ test('space manager: every form is flagged in prose, none in code spans, fences 
   assert.deepEqual(rules('A space admin adds apps.'), []);
 });
 
+test('he, she, his, her and him: every form is flagged in prose, none in code spans, fences or link targets', () => {
+  const found = (md) => pronounViolations(md).map((v) => v.text);
+  assert.deepEqual(found('Maya asks and she gets leads.'), ['she']);
+  assert.deepEqual(found('He sees his leads, and Maya sends them to him.'), ['He', 'his', 'him']);
+  assert.deepEqual(found('Omar asks. Her request runs.'), ['Her']);
+  assert.deepEqual(found('Maya asks and they get leads.'), []);
+  assert.deepEqual(found('The theme, other and shed hold each word.'), []);
+  assert.deepEqual(found('Use `she` here.'), []);
+  assert.deepEqual(found('```\nhe says\n```'), []);
+  assert.deepEqual(found('See [the entry](./her-guide.md).'), []);
+  assert.deepEqual(pronounViolations('Fine.\n\nShe is here.'), [{ rule: 'pronoun', line: 3, text: 'She' }]);
+});
+
 test('a violation reports its line', () => {
   assert.deepEqual(termViolations('Fine.\n\nSpace is here.'), [{ rule: 'space', line: 3, text: 'Space' }]);
 });
@@ -132,6 +159,16 @@ test('published pages use the current terms', () => {
   }
 });
 
+test('Vector Space pages never use he, she, his, her or him', () => {
+  const docs = new URL('../docs/vector-space/', import.meta.url);
+  const pages = readdirSync(docs, { recursive: true }).filter((f) => /\.mdx?$/.test(f));
+  assert.ok(pages.length > 0);
+  for (const page of pages) {
+    const violations = pronounViolations(readFileSync(new URL(page, docs), 'utf8'));
+    assert.deepEqual(violations, [], `${page}: ${violations.map((v) => `${v.line} "${v.text}"`).join(', ')}`);
+  }
+});
+
 test('diagram labels and text use the current terms', async () => {
   const dir = new URL('../src/diagrams/figures/', import.meta.url);
   for (const file of readdirSync(dir).filter((f) => f.endsWith('.ts'))) {
@@ -140,5 +177,7 @@ test('diagram labels and text use the current terms', async () => {
     const text = JSON.stringify(data).replace(/","|":"|[{}[\]]/g, '\n').replace(new RegExp(`^Space (${ROLE_TERMS})$`, 'gm'), '$1');
     const violations = termViolations(text);
     assert.deepEqual(violations, [], `${file}: ${violations.map((v) => `${v.rule} "${v.text}"`).join(', ')}`);
+    const pronouns = [...text.matchAll(PRONOUN)].map((m) => m[0]);
+    assert.deepEqual(pronouns, [], `${file}: ${pronouns.join(', ')}`);
   }
 });
