@@ -23,9 +23,10 @@ test('the page runs lead, the scene, the rules, the ladders, custom roles, Where
   ]);
 });
 
-test('the lead names the four kinds, each with a glossary link', () => {
+test('the lead names the four kinds, each with a glossary link except Members, whose link sits on the Omar introduction', () => {
   const lead = body.split(/^## /m)[0];
-  for (const term of ['organization-admin', 'member', 'staff', 'service-account']) {
+  assert.doesNotMatch(lead, /glossary\.md#member\)/);
+  for (const term of ['organization-admin', 'staff', 'service-account']) {
     assert.match(lead, new RegExp(`\\]\\(\\./glossary\\.md#${term}\\)`), term);
   }
 });
@@ -33,12 +34,12 @@ test('the lead names the four kinds, each with a glossary link', () => {
 test('the lead is a bold-term list of the four kinds in order, with no table', () => {
   assert.doesNotMatch(body, /^\s*\|/m);
   const lead = body.split(/^## /m)[0];
-  const terms = [...lead.matchAll(/^- \*\*\[([^\]]+)\]/gm)].map((m) => m[1]);
+  const terms = [...lead.matchAll(/^- \*\*\[?([^\]*]+)/gm)].map((m) => m[1]);
   assert.deepEqual(terms, ['Organization admin', 'Members', 'Staff', 'Service accounts']);
 });
 
 test('the Members bullet says a space role or a share gives a member more', () => {
-  const members = body.split('\n').find((l) => /^- \*\*\[Members\]/.test(l));
+  const members = body.split('\n').find((l) => /^- \*\*Members\*\*/.test(l));
   assert.match(members, /A \[space role or a share\]\(#space-roles-and-share-levels\) gives a member more\./);
 });
 
@@ -146,8 +147,31 @@ test('the rules of a space are a bold-term list: the admin is a space admin of e
   assert.match(unlink(rules), /\*\*Space roles\*\*: a space admin gives a space role to another user\. A group can hold one, and then every user of the group holds it\./);
 });
 
-test('the scene says adding a member takes a space admin', () => {
-  assert.match(unlink(section(text, 'A new member in a team\'s space')), /Adding another member to the space takes a space admin of that space\. The organization admin is a space admin of every space, and can also create a new space\./);
+test('the scene says adding a member takes a space admin, in generic words', () => {
+  assert.match(unlink(section(text, 'A new member in a team\'s space')), /Adding a member to a space takes a space admin of that space\. The organization admin is a space admin of every space, and can also create a new space\./);
+});
+
+test('the scene names Omar and Lena in place of "a member", with no he or she', () => {
+  const scene = section(text, 'A new member in a team\'s space');
+  assert.match(scene, /\nAcme's sales team has a space, and Omar, another \[member\]\(\.\/glossary\.md#member\) of the team, joins it and asks the \[orchestrator agent\]\(\.\/glossary\.md#orchestrator-agent\) to find leads and send an outreach email\./);
+  assert.match(scene, /The agent works for Omar, so it reaches what Omar reaches\./);
+  assert.match(scene, /\nLena, Acme's organization admin, adds Omar to the space\./);
+  assert.doesNotMatch(scene, /new member joins|that member|this member|for that member/);
+  assert.doesNotMatch(scene, /\b(?:he|she|his|her|him)\b/i);
+  for (const para of scene.split(/\n\n+/)) assert.ok(para.split(/(?<=[.!?])\s+/).length <= 5, para);
+});
+
+test('each persona is introduced once and the only "member" glossary link on the page is on the Omar introduction', () => {
+  assert.equal(body.match(/Omar, another /g)?.length, 1);
+  assert.equal(body.match(/Lena, Acme's organization admin/g)?.length, 1);
+  assert.equal(body.match(/\]\(\.\/glossary\.md#member\)/g)?.length, 1);
+  assert.match(body.slice(body.indexOf('Omar, another')), /^Omar, another \[member\]\(\.\/glossary\.md#member\) of the team/);
+  assert.ok(body.indexOf('Omar, another') < body.indexOf('](./glossary.md#member)'));
+  assert.ok(body.indexOf('Omar') < body.indexOf('Lena'));
+});
+
+test('no persona name appears outside the scene section', () => {
+  assert.doesNotMatch(text.replace(section(text, 'A new member in a team\'s space'), ''), /Omar|Lena/);
 });
 
 test('service accounts are the identity behind an API key or a schedule, and a group share reaches every user the group holds', () => {
