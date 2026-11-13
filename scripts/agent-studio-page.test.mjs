@@ -139,7 +139,6 @@ test('a channel runs as its owner or a service account, and group input is untru
 test('Who may change an agent names the space editor and the page makes no audit claim', () => {
   assert.match(section(text, 'What Agent Studio is for'), /A \[space editor\]\(\.\/glossary\.md#space-editor\) can configure, delete or reset an agent\./);
   assert.doesNotMatch(text, /audit/i);
-  assert.doesNotMatch(prose, /space managers?/i);
 });
 
 test('"resources" names what an agent may use, and "knowledge" appears only in "knowledge source"', () => {

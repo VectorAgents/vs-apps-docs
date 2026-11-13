@@ -80,7 +80,7 @@ test('every link resolves, and the page links the quickstart, the SDK overview, 
   for (const target of ['./quickstart.md', '../sdk/overview.md', '../sdk/app-definition.md', './glossary.md']) assert.ok(links.includes(target), target);
 });
 
-test('a space admin owns the activate, configure and deprovision steps, linked to the glossary, and no page text says space manager', () => {
+test('a space admin owns the activate, configure and deprovision steps, linked to the glossary', () => {
   const lifecycle = section(text, 'The lifecycle');
   assert.match(lifecycle, /A \[space admin\]\(\.\.\/vector-space\/glossary\.md#space-admin\) owns three steps\./);
   const rows = tableRows(lifecycle).filter(([step]) => ['Activate', 'Configure', 'Deprovision'].includes(step));
@@ -90,7 +90,6 @@ test('a space admin owns the activate, configure and deprovision steps, linked t
     assert.match(what, /^The space admin /);
   }
   assert.match(text, /The space admin also sets each \[model slot\]\(\.\/glossary\.md#model-slot\) and \[connector slot\]\(\.\/glossary\.md#connector-slot\) and attaches the resources the app may read\./);
-  assert.doesNotMatch(text, /space manager/i);
 });
 
 test('the page follows the voice checks', () => assert.deepEqual(voiceViolations(text), []));

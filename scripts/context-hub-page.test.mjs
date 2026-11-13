@@ -136,9 +136,9 @@ test('each term is linked at its first use', () => {
   }
 });
 
-test('the page names no space role and no space manager: a member connects, and Can edit alone does not', () => {
-  assert.doesNotMatch(plain, /space (manager|editor|admin)/i);
-  assert.doesNotMatch(text, /#space-(manager|editor|admin)\b/);
+test('the page names no space role: a member connects, and Can edit alone does not', () => {
+  assert.doesNotMatch(plain, /space (editor|admin)/i);
+  assert.doesNotMatch(text, /#space-(editor|admin)\b/);
 });
 
 test('the page names no master doc, implementation name, vendor or banned term', () => {

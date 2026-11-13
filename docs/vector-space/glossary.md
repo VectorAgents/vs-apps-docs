@@ -21,13 +21,6 @@ A shared place in Vector Space for one team. A space admin adds members and apps
 - Maps to: no SDK symbol.
 - Owner: Vector Space.
 
-### space manager
-
-A user who can edit on the space, or the organization admin. They add apps, share capabilities and choose the models and contexts for the slots.
-
-- Maps to: no SDK symbol.
-- Owner: Vector Space.
-
 ### space editor
 
 The space role that adds editing to a member. A space editor builds and publishes agents, and edits the settings and event routes of an app.
