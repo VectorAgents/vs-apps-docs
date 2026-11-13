@@ -20,7 +20,7 @@ test('the page runs lead, the scene, five detail sections, Where to go next', ()
     "A member's outreach run",
     'The actor behind every record',
     'The four governance views',
-    'Failure postures',
+    'Behaviour when recording fails',
     'Spend as an estimate',
     'Acts and Human Time Return',
     'Where to go next',
@@ -71,14 +71,16 @@ test('the slot record-of-work appears once, in "The four governance views"', () 
   assert.deepEqual(slotsIn(section(text, 'The four governance views')), ['recordOfWork']);
 });
 
-test('failure postures are a bold-term list: change records fail closed, spend records and the cap fail open, acts are attested', () => {
+test('behaviour when recording fails is a bold-term list: change records fail closed, spend records and the cap fail open, acts are attested', () => {
   assert.equal((text.match(/^\| ?-{3}/gm) ?? []).length, 0, 'tables');
-  const posture = section(text, 'Failure postures');
+  const posture = section(text, 'Behaviour when recording fails');
   const items = [...posture.matchAll(/^- \*\*(.+?)\*\*: (.+)$/gm)].map((m) => [unlink(m[1]), m[2]]);
   assert.deepEqual(items.map((i) => i[0]), ['Change records', 'Spend records', 'Spend cap', 'Acts']);
   assert.deepEqual(items.map((i) => /^fails? closed/.test(i[1])), [true, false, false, false]);
   assert.ok(items.slice(1, 3).every((i) => /^fails? open/.test(i[1])));
   assert.match(items[3][1], /^attested/);
+  assert.match(items[1][1], /the spend of calls made during the failure goes unrecorded\. The platform counts the records that it drops\./);
+  assert.doesNotMatch(posture.replace(items[1][1], ''), /counts the (spend|records)/);
 });
 
 test('the text names each kind of record without an umbrella noun', () => {
@@ -95,17 +97,21 @@ test('spend is an estimate at list price with a rate card, and the unpriced coun
   assert.match(spend, /never (shown )?as free/);
 });
 
-test('the spend cap is read by the organization and set by staff, and its refusal is one cuttable sentence', () => {
+test('the spend cap is read by the organization and set by staff, and its refusal is two cuttable sentences', () => {
   const spend = section(text, 'Spend as an estimate');
   assert.match(spend, /\[spend cap\]\(\.\/glossary\.md#spend-cap\)/);
   assert.match(spend, /organization reads/);
   assert.match(spend, /staff set/i);
   const refusals = sentencesOf(spend).filter((s) => /refus/i.test(s));
-  assert.equal(refusals.length, 1);
-  assert.match(refusals[0], /cap/);
-  const paragraph = spend.split(/\n{2,}/).find((p) => p.includes(refusals[0]));
-  assert.ok(paragraph.trim().endsWith(refusals[0].trim()), 'the refusal sentence ends its paragraph');
+  assert.equal(refusals.length, 2, 'two sentences say refuse');
+  assert.match(refusals[0], /cap is enforced/);
+  assert.match(refusals[1], /not yet enforced/);
+  const paragraph = spend.split(/\n{2,}/).find((p) => p.includes(refusals[0])).trim();
+  assert.deepEqual(sentencesOf(paragraph).slice(-2), refusals, 'the two sentences end their paragraph');
+  assert.equal(refusals[0], 'When a cap is enforced, the platform refuses further model calls at the cap.');
+  assert.equal(refusals[1], 'A cap that is not yet enforced only counts the calls it would refuse.');
   assert.doesNotMatch(text.replace(spend, ''), /refus/i);
+  assert.doesNotMatch(prose, /shadow/i);
 });
 
 test('acts: admitted and attested by the platform, Human Time Return an estimate in seconds that points to Why Vector Space for its parts', () => {
@@ -117,7 +123,11 @@ test('acts: admitted and attested by the platform, Human Time Return an estimate
   assert.match(acts, /\]\(\.\/why-vector-space\.md#human-time-return\)/);
   assert.match(acts, /counted in seconds/);
   assert.match(acts, /estimate/);
-  assert.match(acts, /apart from spend/);
+  assert.match(acts, /in addition to spend/);
+  assert.doesNotMatch(acts, /apart from spend|four things/);
+  assert.match(acts, /lists the three things that make up the figure/);
+  assert.match(acts, /An act is fixed when the platform accepts it, so a later change to the baseline does not alter it\./);
+  assert.doesNotMatch(acts, /settles/);
   assert.match(acts, /computes no return figure/);
 });
 
