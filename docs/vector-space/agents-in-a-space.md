@@ -6,11 +6,11 @@ description: What an agent is, how the orchestrator agent hands work to other ag
 import StructureFigure from '@site/src/components/StructureFigure';
 import { agentTree } from '@site/src/diagrams/figures/agent-tree.ts';
 
-An [agent](./glossary.md#agent) is a model that is set up with instructions, tools and resources, and it works inside one [space](./glossary.md#space). Each space has one [orchestrator agent](./glossary.md#orchestrator-agent), which takes the request of a [member](./glossary.md#member) and hands parts of it to other agents.
+An [agent](./glossary.md#agent) is a model that is set up with instructions, tools and resources, and it works inside one [space](./glossary.md#space). Each space has one [orchestrator agent](./glossary.md#orchestrator-agent), which takes each request and hands parts of it to other agents.
 
 ## A lead search handed to two agents
 
-Acme's sales team has a space, and a member of it asks the orchestrator agent to find leads and send an outreach email. The orchestrator agent hands the lead search to an agent for that job and the email draft to another, and each of them sees only what the member may see. The member does not choose which agent does what, and gets one reply that is built from the answers of both.
+Maya, a [member](./glossary.md#member) of Acme's sales team, asks the orchestrator agent to find leads and send an outreach email. The orchestrator agent hands the lead search to an agent for that job and the email draft to another, and each of them sees only what Maya may see. Maya does not choose which agent does what, and gets one reply that is built from the answers of both.
 
 ## Agents and the orchestrator agent
 
