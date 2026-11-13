@@ -22,7 +22,7 @@ An existing registration blocks a new one: see "Replace an existing registration
 
 ## Local source only
 
-After a pull, pending database migrations break pages in the local space. Read `docs/systems/DATABASE.md` under "Branch databases" in `../vector-spaces`, then run `pnpm migration:run` there.
+After a pull, pending database migrations break pages in the local space. Read `docs/engineering/DATABASE.md` under "Branch databases" in `../vector-spaces`, then run `pnpm migration:run` there.
 
 ## Drive the interface
 
