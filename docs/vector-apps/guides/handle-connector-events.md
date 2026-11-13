@@ -7,7 +7,7 @@ Receive an inbound event from a connector in your server, and answer it through 
 <!-- flavour nest -->
 The guide uses `ConnectorEventsService` and the `ConnectorExecuteResult` type from the `@vectoragents/vs-apps/nest` subpath of the [SDK](../../sdk/glossary.md#sdk).
 
-A [connector slot](../glossary.md#connector-slot) can declare event handlers. When a [space manager](../../vector-space/glossary.md#space-manager) routes an event type of the attached connector to a handler, [Vector Space](../../vector-space/glossary.md#vector-space) sends each event to your server. `ConnectorEventsService` holds the function that runs for each handler. `ConnectorExecuteResult` is what a call back to the connector returns.
+A [connector slot](../glossary.md#connector-slot) can declare event handlers. When a [space editor](../../vector-space/glossary.md#space-editor) routes an event type of the attached connector to a handler, [Vector Space](../../vector-space/glossary.md#vector-space) sends each event to your server. `ConnectorEventsService` holds the function that runs for each handler. `ConnectorExecuteResult` is what a call back to the connector returns.
 
 ## Goal
 
@@ -151,11 +151,11 @@ curl -s -o /dev/null -w '%{http_code}\n' -X POST -H 'Content-Type: application/j
 
 ## Result
 
-The server mounts `POST /api/events/hello-app`, verifies the events token of each delivery and runs `inbound-message` for the events that Vector Space routes to it. The handler replies through the connector and reads the `ConnectorExecuteResult`. A failed reply makes Vector Space send the event again. A space manager attaches a connector to the `support` slot and routes its event types after the app is registered in Vector Space.
+The server mounts `POST /api/events/hello-app`, verifies the events token of each delivery and runs `inbound-message` for the events that Vector Space routes to it. The handler replies through the connector and reads the `ConnectorExecuteResult`. A failed reply makes Vector Space send the event again. A space admin attaches a connector to the `support` slot and routes its event types after the app is registered in Vector Space.
 
 ## Next step
 
-Register the app in Vector Space with Part 2 of the [quickstart](../quickstart.md), so that a space manager can attach a connector to the `support` slot and route its events.
+Register the app in Vector Space with Part 2 of the [quickstart](../quickstart.md), so that a space admin can attach a connector to the `support` slot and route its events.
 <!-- /flavour -->
 <!-- flavour node todo -->
 <!-- /flavour -->

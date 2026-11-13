@@ -89,7 +89,7 @@ flowchart TB
     | Manifest field | Vector Space shows |
     | --- | --- |
     | Pages | Navigation entries |
-    | Capabilities | The capabilities a [space manager](../vector-space/glossary.md#space-manager) can grant |
+    | Capabilities | The capabilities a [space admin](../vector-space/glossary.md#space-admin) can grant |
     | Resources | A configuration sheet |
     | Agents and [Model Context Protocol (MCP)](../vector-space/glossary.md#mcp) servers | Subagents and connectors |
 
@@ -238,8 +238,8 @@ Any handler makes `eventsUrl` required in the manifest. `buildManifests` sets it
 Vector registers your manifest URL in Vector Space. After that:
 
 - The app page shows in the navigation of the space, for users who hold the page's capability.
-- A space manager grants the declared capabilities. Only declared capabilities can be granted.
-- A space manager picks a model for each model slot and attaches one connector to each connector slot. If no one sets a slot, the app cannot use it.
+- A space admin grants the declared capabilities. Only declared capabilities can be granted.
+- A space admin picks a model for each model slot and attaches one connector to each connector slot. If no one sets a slot, the app cannot use it.
 - A manifest change waits as a pending review. Vector applies it before it goes live, unless auto-apply is on for the [app registration](../vector-apps/glossary.md#app-registration).
 
 Vector Space reads the manifest again when Vector asks it to and when the app announces that it started.

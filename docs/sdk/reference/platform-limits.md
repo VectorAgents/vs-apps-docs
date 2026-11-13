@@ -60,7 +60,7 @@ Holds for `@vectoragents/vs-apps` 0.4.0. The value of `modality` in each entry o
 
 ## Capability filters
 
-Holds for `@vectoragents/vs-apps` 0.4.0. The values of `capabilities` in each entry of `resources.models[]`. Each value narrows the models that a [space manager](../../vector-space/glossary.md#space-manager) can choose for the slot. These are model abilities, not app [capabilities](../../vector-apps/glossary.md#capability).
+Holds for `@vectoragents/vs-apps` 0.4.0. The values of `capabilities` in each entry of `resources.models[]`. Each value narrows the models that a [space admin](../../vector-space/glossary.md#space-admin) can choose for the slot. These are model abilities, not app [capabilities](../../vector-apps/glossary.md#capability).
 
 A model passes a filter unless Vector Space records that the model lacks the ability. A model with no record for an ability passes.
 

@@ -1,6 +1,6 @@
 import { defineApp } from '@vectoragents/vs-apps';
 
-/** Model slots the space manager points at a model; the server asks for a slot, never a model. */
+/** Model slots the space admin points at a model; the server asks for a slot, never a model. */
 export const CSR_MODEL_SLOTS = {
   conversationSummary: 'conversation-summary',
   workflowConversation: 'workflow-conversation',
@@ -12,7 +12,7 @@ export const CSR_CHANNEL_SLOTS = {
   messenger: 'messenger',
 } as const;
 
-/** Handlers a space manager routes a messaging connector's event types to. */
+/** Handlers a space editor routes a messaging connector's event types to. */
 export const CSR_CONNECTOR_HANDLERS = {
   inboundMessage: 'inbound-message',
   messageStatus: 'message-status',
