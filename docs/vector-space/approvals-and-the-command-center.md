@@ -10,9 +10,9 @@ An [ask](./glossary.md#ask) is anything that an agent or an app waits on a perso
 
 ## A status note that waits for approval
 
-Acme's sales team has a space, and a [member](./glossary.md#member) of it asks the [orchestrator agent](./glossary.md#orchestrator-agent) to post a status note to the team chat. The post goes out through a [connector](./glossary.md#connector), and it changes something outside the space. So the [run](./glossary.md#run) stops, and an ask appears in the Command Center.
+Maya, a [member](./glossary.md#member) of Acme's sales team, asks the [orchestrator agent](./glossary.md#orchestrator-agent) to post a status note to the team chat in the team's space. The post goes out through a [connector](./glossary.md#connector), and it changes something outside the space. So the [run](./glossary.md#run) stops, and an ask appears in the Command Center.
 
-The member reads the ask and approves it. The run continues and the note is posted. The member also ticks "always allow", so the same post runs later with no ask.
+Maya reads the ask and approves it. The run continues and the note is posted. Maya also ticks "always allow", so the same post runs later with no ask.
 
 ## The ask and who decides it
 
