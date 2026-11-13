@@ -86,8 +86,8 @@ test('APIs and MCP servers give the three routes and the five types of authentic
 
 test('the Omnibox is defined in the scene where it first appears, with Vector Module linked there', () => {
   const scene = section(text, 'A sales team connects its data');
-  assert.match(scene, /the thread appears in the Omnibox, a \[Vector Module\]\(\.\/glossary\.md#vector-module\) that shows the mail threads of a space\./);
-  assert.equal(body.indexOf('Omnibox'), body.indexOf('the Omnibox, a [Vector Module]') + 4, 'no Omnibox before its definition');
+  assert.match(scene, /The thread appears in the Omnibox, a \[Vector Module\]\(\.\/glossary\.md#vector-module\) that shows the mail threads of a space\./);
+  assert.equal(body.indexOf('Omnibox'), body.indexOf('Omnibox, a [Vector Module]'), 'no Omnibox before its definition');
   assert.doesNotMatch(section(text, 'Mailboxes and the Omnibox'), /Vector Module/);
 });
 

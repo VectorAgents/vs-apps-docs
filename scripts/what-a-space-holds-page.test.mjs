@@ -31,7 +31,7 @@ test('the description and lead say what the team works with, in two bullets, wit
   const lead = body.split(/^## /m)[0];
   assert.match(lead, /^A \[space\]\(\.\/glossary\.md#space\) holds what its team works with:$/m);
   assert.deepEqual(lead.match(/^- .+$/gm), [
-    '- **[Context Hub](./glossary.md#context-hub)**: the area where the space lists what it can reach, including its Vector Apps and Vector Modules.',
+    '- **[Context Hub](./glossary.md#context-hub)**: the area where the space lists what it can reach, including its [Vector Apps](../vector-apps/glossary.md#app) and [Vector Modules](./glossary.md#vector-module).',
     '- **[Pages](./glossary.md#page)**: grids of widgets that show data.',
   ]);
   assert.match(lead, /\nMembers and agents use them to read data, show it and act on it\.\n/);

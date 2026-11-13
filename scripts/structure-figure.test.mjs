@@ -220,7 +220,7 @@ test('space-structure: the Context Hub card text says six kinds and does not dra
   assert.doesNotMatch(byId('contextHub').text, /draws Vector Modules beside/);
 });
 
-test('space-structure: the figure desc still says five parts', () => {
+test('space-structure: the figure desc says five parts', () => {
   assert.match(spaceStructure.desc, /holds five parts/);
 });
 

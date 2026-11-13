@@ -9,7 +9,7 @@ The [Context Hub](./glossary.md#context-hub) is the area of a [space](./glossary
 
 Acme's sales team has a space, and a [space manager](./glossary.md#space-manager) connects the team's data in the Context Hub. They connect the database of leads and describe its tables, add the REST API of the team's customer system, and connect the team's shared sales mailbox. A member then asks the [orchestrator agent](./glossary.md#orchestrator-agent) to find leads and send an outreach email.
 
-The agent reads the lead database, calls the customer system through its API and sends the email from the shared mailbox, and the thread appears in the Omnibox, a [Vector Module](./glossary.md#vector-module) that shows the mail threads of a space. The member never held a password for any of the three, because each one runs on the credential of the person who connected it.
+The agent reads the lead database, calls the customer system through its API and sends the email from the shared mailbox. The thread appears in the Omnibox, a [Vector Module](./glossary.md#vector-module) that shows the mail threads of a space. The member never held a password for any of the three, because each one runs on the credential of the person who connected it.
 
 ## What the Context Hub holds
 
