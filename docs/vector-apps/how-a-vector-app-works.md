@@ -20,16 +20,16 @@ Your server decides who may do what. A check in your client is for display only.
 
 ## The lifecycle
 
-An app goes through six steps. Each step has one owner. [Staff](../vector-space/glossary.md#staff), the Vector employees who run Vector Space, own the register step. A [space manager](../vector-space/glossary.md#space-manager) owns three steps.
+An app goes through six steps. Each step has one owner. [Staff](../vector-space/glossary.md#staff), the Vector employees who run Vector Space, own the register step. A [space admin](../vector-space/glossary.md#space-admin) owns three steps.
 
 | Step | Who | What happens |
 | --- | --- | --- |
 | Build | You | You write the client, the server and the app definition. |
 | Register | Vector staff | Staff add the app from its manifest URL. |
-| Activate | A space manager | The space manager adds the app to a space. |
-| Configure | A space manager | The space manager shares the app and sets what it may use. |
+| Activate | A space admin | The space admin adds the app to a space. |
+| Configure | A space admin | The space admin shares the app and sets what it may use. |
 | Update | You, then Vector staff | You deploy a new manifest. Staff apply it. |
-| Deprovision | A space manager | The space manager removes the app from a space. |
+| Deprovision | A space admin | The space admin removes the app from a space. |
 
 ### Build
 
@@ -43,15 +43,15 @@ Registering does not add the app to any space.
 
 ### Activate
 
-A space manager adds the app to a space. Vector Space first checks that the organization may use the app. Then it calls `POST /api/provision` on your server to push a [service secret](./glossary.md#service-secret).
+A space admin adds the app to a space. Vector Space first checks that the organization may use the app. Then it calls `POST /api/provision` on your server to push a [service secret](./glossary.md#service-secret).
 
-If any part fails, Vector Space tells your server to deprovision, and the activation fails. The space manager can try again.
+If any part fails, Vector Space tells your server to deprovision, and the activation fails. The space admin can try again.
 
 ### Configure
 
-A new app is shared with no one. The space manager shares it with members and groups. That decides who can open it and which [capabilities](./glossary.md#capability) they hold.
+A new app is shared with no one. The space admin shares it with members and groups. That decides who can open it and which [capabilities](./glossary.md#capability) they hold.
 
-The space manager also sets each [model slot](./glossary.md#model-slot) and [connector slot](./glossary.md#connector-slot) and attaches the resources the app may read. Until a required slot is set, the app needs setup, but it stays in the space.
+The space admin also sets each [model slot](./glossary.md#model-slot) and [connector slot](./glossary.md#connector-slot) and attaches the resources the app may read. Until a required slot is set, the app needs setup, but it stays in the space.
 
 ### Update
 
@@ -65,9 +65,9 @@ After staff apply a manifest, Vector Space brings every space that has the app i
 
 ### Deprovision
 
-A space manager removes the app from a space, or someone deletes the space. Vector Space calls `DELETE /api/deprovision` on your server and removes the agents and MCP servers that the app added to the space.
+A space admin removes the app from a space, or someone deletes the space. Vector Space calls `DELETE /api/deprovision` on your server and removes the agents and MCP servers that the app added to the space.
 
-The call is best effort. If your server does not answer, Vector Space still removes the app. A space manager can add the app again later.
+The call is best effort. If your server does not answer, Vector Space still removes the app. A space admin can add the app again later.
 
 ## The six token kinds
 

@@ -329,7 +329,7 @@ export async function requireCapability(req: IncomingMessage, capability: string
 
 A check that fails throws an `AppAuthError`. The server replies with status 401 when the token is missing or invalid, and 403 when the token lacks the capability. `GET /api/hello` returns the claims of a verified user token.
 
-`GET /api/client-config` tells the client which parent origin and which key set to trust. Vector Space calls `POST /api/provision` and `DELETE /api/deprovision` when a space manager, the person who adds apps to a space, adds or removes the app. The harness run does not call them.
+`GET /api/client-config` tells the client which parent origin and which key set to trust. Vector Space calls `POST /api/provision` and `DELETE /api/deprovision` when a space admin, the person who adds apps to a space, adds or removes the app. The harness run does not call them.
 
 The client configuration also returns `SPACE_API_URL` as `spaceApiUrl`, the Vector Space API address that your app page can use. When the server starts, it also tells Vector Space which manifests it holds. `platform.pingManifests` sends the hash of each manifest to Vector Space, and Vector Space reads again a manifest that changed, so a restart refreshes the manifest in Vector Space. The platform skips the ping while it holds a dev issuer, so the harness run sends no ping.
 
@@ -387,7 +387,7 @@ import { manifests } from './manifests';
 export class AppModule {}
 ```
 
-Vector Space calls `POST /api/provision` and `DELETE /api/deprovision` when a space manager, the person who adds apps to a space, adds or removes the app. The module stores the secret that Vector Space sends in the credential store you pass to `forRoot`. The store below keeps the secrets in memory and loses them on restart, so implement `AppCredentialStore` over your own storage before production. The harness run does not call these routes.
+Vector Space calls `POST /api/provision` and `DELETE /api/deprovision` when a space admin, the person who adds apps to a space, adds or removes the app. The module stores the secret that Vector Space sends in the credential store you pass to `forRoot`. The store below keeps the secrets in memory and loses them on restart, so implement `AppCredentialStore` over your own storage before production. The harness run does not call these routes.
 
 ```ts title="server/src/credential-store.ts" starter
 import { Injectable } from '@nestjs/common';
