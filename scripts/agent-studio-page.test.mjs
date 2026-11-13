@@ -80,7 +80,7 @@ test('each term is linked at its first use', () => {
     ['thread', 'thread'], ['agent card', 'agent-card'], ['member', 'member'], ['Datasource', 'datasource'], ['condition', 'condition'],
     ['Context', 'context'], ['run', 'run'], ['AI gateway', 'ai-gateway'], ['AI provider accounts', 'ai-provider-account'],
     ['Skills', 'skill'], ['Can use', 'can-use'], ['Can edit', 'can-edit'], ['service account', 'service-account'], ['ask', 'ask'],
-    ['Command Center', 'command-center'], ['standing approval', 'standing-approval'],
+    ['Command Center', 'command-center'], ['standing approvals', 'standing-approval'],
   ]) {
     const first = new RegExp(`(?<![\\w-])${term}\\b`, 'i').exec(noDescription.replace(/\[([^\]]*)\]\([^)]*\)/g, (_, t) => `\u0000${t}`));
     assert.ok(first, term);
@@ -95,6 +95,8 @@ test('each term is linked at its first use', () => {
 test('version is defined in the lead and draft in What Agent Studio is for, where each first appears', () => {
   assert.match(lead, /set up, tested and published\./);
   assert.match(lead, /a version, a fixed copy of the settings of an agent/);
+  assert.match(lead, /A change to a versioned setting is saved as a version/);
+  assert.doesNotMatch(lead, /each change is saved as a version/);
   assert.match(section(text, 'What Agent Studio is for'), /a draft, the working copy of the agents/);
 });
 
@@ -109,6 +111,10 @@ test('the life of a change gives the edit, publish, reset and restore rules in p
   assert.match(life, /A chat in the web interface, channels and calls from other agents run the published version/);
   assert.match(life, /correct, partly correct or wrong/);
   assert.match(life, /not part of a version/);
+  assert.match(life, /\*\*Reset\*\*: rewrites the draft of each published agent from its published version/);
+  assert.ok(life.indexOf('without a publish') > life.indexOf('A judge model'), 'the judge sentence follows the evaluation paragraph');
+  assert.match(life, /Evaluation questions wait behind chat work/);
+  assert.doesNotMatch(life, /Evaluation items|outside tracing service/);
 });
 
 test('the access check says a scope only narrows, a new agent has no tools and the check uses the asking member', () => {
@@ -117,9 +123,10 @@ test('the access check says a scope only narrows, a new agent has no tools and t
   assert.match(access, /its scope can narrow that further/);
   assert.match(access, /A run that a channel, an app or an API key starts acts as the identity of that channel, app or key instead/);
   assert.match(access, /runs each time a run starts or resumes/);
-  assert.match(access, /starts with no tools and no knowledge/);
+  assert.match(access, /starts with no tools and no resources/);
   assert.match(access, /does not filter the response/);
-  assert.match(access, /fails closed/);
+  assert.match(access, /If a condition needs a value that the member does not have, the member reaches nothing/);
+  assert.doesNotMatch(access, /fails closed|attribute value/);
 });
 
 test('a channel runs as its owner or a service account, and group input is untrusted', () => {
@@ -129,9 +136,33 @@ test('a channel runs as its owner or a service account, and group input is untru
   assert.match(features, /Group input is untrusted/);
 });
 
-test('Who may change an agent names the organization admin and no space manager', () => {
-  assert.match(section(text, 'What Agent Studio is for'), /An \[organization admin\]\(\.\/glossary\.md#organization-admin\) can configure, delete or reset an agent/);
+test('Who may change an agent names Can edit on the space and the page makes no audit claim', () => {
+  assert.match(section(text, 'What Agent Studio is for'), /A user with \[Can edit\]\(\.\/glossary\.md#can-edit\) on the space can configure, delete or reset an agent\./);
+  assert.doesNotMatch(text, /audit/i);
   assert.doesNotMatch(prose, /space managers?/i);
+});
+
+test('"resources" names what an agent may use, and "knowledge" appears only in "knowledge source"', () => {
+  assert.match(section(text, 'What Agent Studio is for'), /which tools and resources it may use/);
+  assert.doesNotMatch(prose.replace(/knowledge sources?/gi, ''), /knowledge/i);
+});
+
+test('the checkpoint and the pause are defined, the caps note says the docs give no figure, and an ask expires after 400 days', () => {
+  const tree = section(text, 'How agents are arranged');
+  assert.match(tree, /a checkpoint, a stored copy of the progress of an agent that lets it resume, for each child agent/);
+  assert.match(tree, /A pause, when a child agent waits for a person to answer an \[ask\]\(\.\/glossary\.md#ask\), holds its parent/);
+  assert.match(tree, /The platform sets both caps; the docs give no figure\./);
+  const approvals = section(text, 'Skills, channels and approvals');
+  assert.match(approvals, /No timer denies an ask\. An ask that nobody answers expires after 400 days, and a run with no open ask left is cancelled\./);
+  assert.match(approvals, /The ask is the default for a write, and only a standing approval removes it\./);
+  assert.doesNotMatch(text, /a pause lasts as long as it needs/i);
+  assert.match(section(text, 'The life of a change'), /even if the current run is paused for days/);
+});
+
+test('plain wording: no "often", "space-wide approval" for the shared approval', () => {
+  assert.doesNotMatch(prose, /\boften\b/i);
+  assert.match(section(text, 'Use cases'), /A space-wide approval can pre-approve the run/);
+  assert.doesNotMatch(prose, /standing approval of the space/i);
 });
 
 test('the use cases are financial analysis and employee onboarding', () => {
@@ -139,7 +170,8 @@ test('the use cases are financial analysis and employee onboarding', () => {
   assert.match(cases, /\*\*Financial analysis\.\*\*/);
   assert.match(cases, /\*\*Employee onboarding\.\*\*/);
   assert.match(cases, /service account/);
-  assert.match(cases, /shared folder of welcome documents/);
+  assert.match(cases, /It reaches only what is shared with that account or open to every member of the space, such as a folder of welcome documents in a \[knowledge source\]\(\.\/glossary\.md#knowledge-source\)\./);
+  assert.doesNotMatch(cases, /shared folder/);
   assert.doesNotMatch(cases, /Vector App/);
 });
 
