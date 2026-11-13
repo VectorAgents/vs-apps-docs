@@ -38,9 +38,31 @@ test('the page has no figure slot and no figure component', () => {
 
 test('the scene is the Acme sales team: lead database, REST API, shared mailbox, orchestrator agent', () => {
   const scene = section(text, 'A sales team connects its data');
-  assert.match(scene, /^A sales team connects its data\n\nAcme's sales team has a space/);
+  assert.match(scene, /^A sales team connects its data\n\nMaya, a \[member\]/);
   for (const word of ['database of leads', 'REST API', 'shared sales mailbox', 'orchestrator agent', 'Omnibox', 'credential']) assert.ok(scene.includes(word), word);
   assert.doesNotMatch(plain, /the sales space/i);
+});
+
+test('the scene names Omar, who connects the data, and Maya, who asks and never held a password, with no he or she', () => {
+  const scene = section(text, 'A sales team connects its data');
+  assert.match(scene, /^A sales team connects its data\n\nMaya, a \[member\]\(\.\/glossary\.md#member\) of Acme's sales team, works in a space where Omar, another member of the team, connects the team's data in the Context Hub\./);
+  assert.match(scene, /Omar connects the database of leads/);
+  assert.match(scene, /Maya then asks the \[orchestrator agent\]\(\.\/glossary\.md#orchestrator-agent\) to find leads and send an outreach email\./);
+  assert.match(scene, /Maya never held a password for any of the three, because each one runs on Omar's credential\./);
+  assert.doesNotMatch(scene, /a member connects|a member then|The member never|this member|that member/);
+  assert.doesNotMatch(scene, /\b(?:he|she|his|her|him)\b/i);
+});
+
+test('each persona is introduced once, and the first "member" on the page is the glossary link on the Maya introduction', () => {
+  assert.equal(body.match(/Maya, a /g)?.length, 1);
+  assert.equal(body.match(/Omar, another member of the team/g)?.length, 1);
+  assert.match(body.slice(body.search(/(?<![-#\w])members?\b/) - 1), /^\[member\]\(\.\/glossary\.md#member\) of Acme's sales team/);
+  assert.ok(body.indexOf('Maya') < body.indexOf('Omar'));
+  assert.doesNotMatch(lead, /member|Maya|Omar/);
+});
+
+test('no persona name appears outside the scene section', () => {
+  assert.doesNotMatch(text.replace(section(text, 'A sales team connects its data'), ''), /Maya|Omar/);
 });
 
 test('the six kinds of resource are listed, with context as the general kind and connector as one way to get one', () => {
@@ -122,7 +144,7 @@ test('credentials belong to their creator, a shared resource runs on the owner\'
 test('each term is linked at its first use', () => {
   const noDescription = body.replace(/^#+ .*$/gm, '').replace(/Vector Space/g, 'VS');
   for (const [term, anchor] of [
-    ['Context Hub', 'context-hub'], ['space', 'space'], ['members', 'member'], ['agents', 'agent'],
+    ['Context Hub', 'context-hub'], ['space', 'space'], ['member', 'member'], ['agents', 'agent'],
     ['orchestrator agent', 'orchestrator-agent'], ['Context', 'context'], ['Knowledge source', 'knowledge-source'], ['Datasource', 'datasource'],
     ['widgets', 'widget'], ['Skill', 'skill'], ['Vector Module', 'vector-module'], ['connector', 'connector'], ['Can edit', 'can-edit'],
     ['MCP', 'mcp'], ['Can use', 'can-use'], ['General access', 'general-access'], ['role', 'role'], ['share', 'share'], ['group', 'group'],
