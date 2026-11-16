@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { assertPersonaScene, bannedTermsIn, bodyOf, brokenLinks, linksOf, section } from './page-helpers.mjs';
+import { assertPersonaScene, bannedTermsIn, bodyOf, brokenLinks, linksOf, longSentences, section } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
 const docs = resolve(dirname(fileURLToPath(import.meta.url)), '../docs');
@@ -33,7 +33,7 @@ test('the scene names Maya and Omar, introduces each in the persona record form 
   assert.match(scene, /Omar, another member of the team, is in a group whose condition is region equals US, so the same request gives Omar US leads only\./);
   assert.equal(scene.match(/\bMaya, a /g)?.length, 1, 'Maya is introduced once');
   assert.equal(scene.match(/\bOmar, another member of the team\b/g)?.length, 1, 'Omar is introduced once');
-  assert.match(scene, /The same holds when Maya opens the lead list/);
+  assert.match(scene, /Maya can also open the lead list in a \[Vector App\]\(\.\.\/vector-apps\/glossary\.md#app\), a web app that a space shows in an iframe\. Both ways in reach the datasource through the same check, so Maya sees the same EU leads\./);
   assert.match(scene, /\nAn API key that acts as Maya gets the same EU leads\./);
   assert.doesNotMatch(scene, /\b(?:the|this|that) member\b/);
 });
@@ -62,9 +62,11 @@ test('the API-key variant is one closing paragraph that can be cut alone', () =>
   assert.doesNotMatch(paragraphs.slice(0, -1).join('\n'), /API key|service account/i);
 });
 
-test('the check reads General access, shares, blocks and conditions, with each term linked', () => {
+test('the check reads General access, shares, blocks and conditions, with each term linked once on the page', () => {
   const reads = section(text, 'What the check reads');
   for (const anchor of ['general-access', 'share', 'block', 'role', 'can-use', 'can-edit']) assert.ok(reads.includes(`](./glossary.md#${anchor})`), anchor);
+  assert.deepEqual([...reads.matchAll(/^- \*\*(?:\[)?(.+?)(?:\]\([^)]*\))?\*\*: /gm)].map((m) => m[1]), ['General access', 'Share', 'Block', 'Condition']);
+  assert.match(reads, /\*\*Condition\*\*: limits which rows an allowed operation may touch/);
 });
 
 test('a block names its two presets and a group share reaches nested groups', () => {
@@ -75,16 +77,24 @@ test('a block names its two presets and a group share reaches nested groups', ()
 
 test('the page uses user, not caller', () => assert.doesNotMatch(prose, /\bcaller\b/));
 
+test('a share of a group and a block are each stated in two sentences, one fact each', () => {
+  const reads = section(text, 'What the check reads');
+  assert.match(reads, /\*\*\[Share\]\(\.\/glossary\.md#share\)\*\*: gives one user, group or Vector App a role on a resource\. A share of a group reaches every user that the group holds, including through groups nested inside it\./);
+  assert.match(reads, /whatever their shares give\. A block is Everything,/);
+});
+
 test('a Restricted resource is closed even to an organization admin unless a share names it', () => {
   const reads = section(text, 'What the check reads');
   assert.match(reads, /Restricted/);
   assert.match(reads, /organization admin/);
   assert.match(reads, /unless a share names them/);
+  assert.doesNotMatch(reads, /easy to miss/);
 });
 
 test('the combination says what wins, never a numbered order', () => {
   const combine = section(text, 'How the inputs combine');
-  assert.match(combine, /what wins/);
+  assert.match(combine, /Four rules say what wins:/);
+  assert.doesNotMatch(combine, /not a numbered order/);
   assert.match(combine, /A block wins/);
   assert.doesNotMatch(combine, /^\s*\d+\.\s/m);
   assert.doesNotMatch(noLinks, /\bsteps?\b|\bfirst,|\bsecond,|\bthird,|\bthen\b/i);
@@ -109,14 +119,27 @@ test('one sentence says an approval is a second check', () => {
 test('the page covers the web interface, the API, agents and apps', () => {
   const every = section(text, 'A centralized check for every way in');
   for (const word of ['app', 'API', 'agent', 'Vector App']) assert.ok(every.includes(word), word);
-  assert.ok(lead.includes('and apps. The check reads four inputs, with clear rules that say which input wins.'), 'the lead splits the check from its four inputs');
-  assert.doesNotMatch(lead, /and the check reads four inputs/);
+  assert.ok(lead.includes('and apps. The check reads four inputs, and rules say which input wins.'), 'the lead splits the check from its four inputs');
+  assert.doesNotMatch(lead, /and the check reads four inputs|clear rules/);
   assert.ok(lead.includes('the [web interface](./glossary.md#web-interface), the API, agents and apps'));
 });
 
-test('every link resolves, and Where to go next has 2 to 4 links ordered who-can-do-what, how-work-moves, glossary', () => {
+test('every link resolves, and Where to go next gives a result sentence, one primary step and Related links to other topics', () => {
   assert.deepEqual(brokenLinks(text, file), []);
-  assert.deepEqual(linksOf(section(text, 'Where to go next')), ['./who-can-do-what.md', './how-work-moves-through-a-space.md', './glossary.md']);
+  const next = section(text, 'Where to go next');
+  const parts = next.match(/^Where to go next\n\n(You now know [^\n]+\.) (Read \[[^\]]+\]\([^)]+\) next: [^\n]+)\n\nRelated:\n\n((?:- [^\n]+\n?)+)\s*$/);
+  assert.ok(parts, 'a result sentence, a primary step and a Related list');
+  assert.deepEqual(linksOf(parts[2]), ['./how-work-moves-through-a-space.md']);
+  assert.deepEqual(linksOf(parts[3]), ['./who-can-do-what.md', './approvals-and-the-command-center.md', './glossary.md']);
+  assert.match(parts[3], /the four kinds of people and callers in Vector Space, and the space roles and share levels that say what each may do/);
+});
+
+test('a glossary term is linked once, a sentence holds 3 glossary links or fewer and 35 words or fewer, and the description is 160 characters or fewer', () => {
+  const anchors = [...body.matchAll(/\]\(([^)\s]*glossary\.md#[^)\s]+)\)/g)].map((m) => m[1]);
+  assert.deepEqual(anchors.filter((a, i) => anchors.indexOf(a) !== i), []);
+  for (const sentence of body.split(/(?<=[.!?])\s+|\n/)) assert.ok((sentence.match(/glossary\.md#/g) ?? []).length <= 3, sentence);
+  assert.deepEqual(longSentences(body.replace(/\]\([^)]*\)/g, ']').replace(/\[|\]/g, ''), { max: 35 }), []);
+  assert.ok(text.match(/^description: (.+)$/m)[1].length <= 160);
 });
 
 test('each term is linked at its first use: group, orchestrator agent, member, Vector App', () => {
@@ -145,9 +168,3 @@ test('the page names no banned name or term', () => {
 });
 
 test('the page follows the voice checks', () => assert.deepEqual(voiceViolations(text), []));
-
-test('the Identity and roles link names four kinds and the space roles and share levels', () => {
-  const next = section(text, 'Where to go next');
-  assert.match(next, /the four kinds of people and callers in Vector Space, and the space roles and share levels that say what each may do/);
-  assert.doesNotMatch(next, /five kinds/);
-});
