@@ -11,7 +11,12 @@ const titleRoots = /^(client|server|shared)\//;
 const titleFolders = /^vector-apps\/(recipes|guides)\//;
 const codeBlock = /^```(ts|tsx)\b([^\n]*)\n([\s\S]*?)^```/gm;
 
-export const isStarterCodeBlock = (meta) => /(^|\s)starter(\s|$)/.test(meta.replace(/title="[^"]*"/, ''));
+const hasMetaWord = (meta, word) => new RegExp(`(^|\\s)${word}(\\s|$)`).test(meta.replace(/title="[^"]*"/, ''));
+
+export const isStarterCodeBlock = (meta) => hasMetaWord(meta, 'starter');
+
+/** An excerpt is part of a file, so it does not typecheck alone. */
+export const isExcerptCodeBlock = (meta) => hasMetaWord(meta, 'excerpt');
 
 function docFiles(dir) {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
@@ -72,7 +77,7 @@ export function checkSnippets({
         for (const [, lang, meta, body] of readFileSync(file, 'utf8').matchAll(codeBlock)) {
           index++;
           // The starter's CI typechecks a `starter` code block.
-          if (isStarterCodeBlock(meta)) continue;
+          if (isStarterCodeBlock(meta) || isExcerptCodeBlock(meta)) continue;
           const title = /title="([^"]+)"/.exec(meta)?.[1];
           const code = fileMeta(meta) ? readEmbedded(baseDir, fileMeta(meta)) : body;
           // A titled block is written at its title path so relative imports between a page's blocks resolve.
