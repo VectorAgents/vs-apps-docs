@@ -3,6 +3,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
+import { assertConceptEnding, assertCoreRules, assertGlossaryLinks } from './core-concept-checks.mjs';
 import { assertPersonaScene, bannedTermsIn, bodyOf, brokenLinks, linksOf, section, unlink } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
@@ -25,7 +26,7 @@ test('the page runs lead, the scene, the rules, the ladders, custom roles, Where
 
 test('the lead names the four kinds, each with a glossary link', () => {
   const lead = body.split(/^## /m)[0];
-  for (const term of ['organization-admin', 'member', 'staff', 'service-account']) {
+  for (const term of ['organization-admin', 'member', 'staff', 'service-account', 'ai-provider-account']) {
     assert.match(lead, new RegExp(`\\]\\(\\./glossary\\.md#${term}\\)`), term);
   }
 });
@@ -33,13 +34,13 @@ test('the lead names the four kinds, each with a glossary link', () => {
 test('the lead is a bold-term list of the four kinds in order, with no table', () => {
   assert.doesNotMatch(body, /^\s*\|/m);
   const lead = body.split(/^## /m)[0];
-  const terms = [...lead.matchAll(/^- \*\*\[([^\]]+)\]/gm)].map((m) => m[1]);
+  const terms = [...lead.matchAll(/^- \*\*\[?([^\]*]+)/gm)].map((m) => m[1]);
   assert.deepEqual(terms, ['Organization admin', 'Members', 'Staff', 'Service accounts']);
 });
 
 test('the Members bullet says a space role or a share gives a member more', () => {
   const members = body.split('\n').find((l) => /^- \*\*\[Members\]/.test(l));
-  assert.match(members, /A \[space role or a share\]\(#space-roles-and-share-levels\) gives a member more\./);
+  assert.match(members, /A \[space role\]\(#space-roles-and-share-levels\) or a \[share\]\(\.\/glossary\.md#share\) gives a member more\./);
 });
 
 test('the scene is the first H2, names no Example and says Acme\'s sales team', () => {
@@ -54,9 +55,15 @@ test('the ladder H2 lists the three space roles, then the three share levels', (
   assert.deepEqual([...ladder.matchAll(/^- \*\*(?:\[)?([^\]*]+)/gm)].map((m) => m[1]), ['Space member', 'Space editor', 'Space admin', 'Can use', 'Can edit', 'Can manage']);
 });
 
-test('every link resolves, every glossary anchor exists, and Where to go next links its two pages and the glossary', () => {
-  assert.deepEqual(brokenLinks(text, file), []);
-  assert.deepEqual(linksOf(section(text, 'Where to go next')), ['./one-access-model.md', './organizations-and-spaces.md', './glossary.md']);
+test('every link resolves and every glossary anchor exists', () => assert.deepEqual(brokenLinks(text, file), []));
+
+test('Where to go next gives a result sentence, one primary step, one related link and the glossary', () => {
+  assertConceptEnding(text, { next: './one-access-model.md', related: ['./organizations-and-spaces.md'] });
+});
+
+test('the shared rules hold: description, link text, directional words, dashes, contractions, parts lists, glossary links once', () => {
+  assertCoreRules(text);
+  assertGlossaryLinks(text);
 });
 
 test('the page says one organization admin, and the glossary row agrees', () => {
@@ -68,17 +75,17 @@ test('the page says one organization admin, and the glossary row agrees', () => 
   assert.match(row, /\bone\b/i);
 });
 
-test('the page says a Restricted resource is closed to the organization admin unless a share names them, and points to one-access-model', () => {
+test('the page says a Restricted resource is closed to the organization admin unless a share names them, in the page itself', () => {
   const sentence = body.split(/(?<=[.!?])\s+/).find((s) => /Restricted/.test(s));
   assert.ok(sentence, 'a sentence on Restricted');
   assert.match(unlink(sentence), /organization admin/);
   assert.match(unlink(sentence), /share/);
-  assert.match(sentence, /\(\.\/one-access-model\.md\)/);
+  assert.doesNotMatch(sentence, /one-access-model|gives the rule/);
 });
 
 test('staff get two sentences and no claim of global reach', () => {
   const lead = body.split(/^## /m)[0];
-  const staff = lead.split('\n').find((l) => /^- \*\*\[Staff\]/.test(l));
+  const staff = lead.split('\n').find((l) => /^- \*\*Staff\*\*/.test(l));
   const sentences = unlink(staff.replace(/^- \*\*[^:]*:\s*/, '')).split(/(?<=[.!?])\s+/).filter(Boolean);
   assert.equal(sentences.length, 2, staff);
   assert.doesNotMatch(staff, /global/i);
@@ -86,7 +93,8 @@ test('staff get two sentences and no claim of global reach', () => {
 
 test('the ladder H2 links the space roles and the three share levels, and a group share reaches its users', () => {
   const part = section(text, 'Space roles and share levels');
-  for (const anchor of ['space-editor', 'space-admin', 'can-use', 'can-edit', 'can-manage']) assert.match(part, new RegExp(`\\]\\(\\./glossary\\.md#${anchor}\\)`), anchor);
+  for (const anchor of ['space-editor', 'can-use', 'can-edit', 'can-manage']) assert.match(part, new RegExp(`\\]\\(\\./glossary\\.md#${anchor}\\)`), anchor);
+  assert.match(section(text, 'A new member in a team\'s space'), /\[space admin\]\(\.\/glossary\.md#space-admin\)/);
   for (const anchor of ['share', 'group']) assert.match(body, new RegExp(`\\]\\(\\./glossary\\.md#${anchor}\\)`), anchor);
   assert.doesNotMatch(plain, /A role is not a set of people/);
   assert.match(part, /A role is a set of permissions that a user or group holds in one place\. Vector Space has two ladders: space roles cover a whole space, and share levels cover one resource\./);

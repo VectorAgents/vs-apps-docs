@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
+import { assertConceptEnding, assertCoreRules, assertGlossaryLinks } from './core-concept-checks.mjs';
 import { assertPersonaScene, bannedTermsIn, bodyOf, brokenLinks, linksOf, section, unlink } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
@@ -32,9 +33,9 @@ test('the description and lead say what the team works with, in two bullets, wit
   assert.match(lead, /^A \[space\]\(\.\/glossary\.md#space\) holds what its team works with:$/m);
   assert.deepEqual(lead.match(/^- .+$/gm), [
     '- **[Context Hub](./glossary.md#context-hub)**: the area where the space lists what it can reach, including its [Vector Apps](../vector-apps/glossary.md#app) and [Vector Modules](./glossary.md#vector-module).',
-    '- **[Pages](./glossary.md#page)**: grids of widgets that show data.',
+    '- **[Pages](./glossary.md#page)**: grids of [widgets](./glossary.md#widget) that show data.',
   ]);
-  assert.match(lead, /\nMembers and agents use them to read data, show it and act on it\.\n/);
+  assert.match(lead, /\nPeople and \[agents\]\(\.\/glossary\.md#agent\) use them to read data, show it and act on it\.\n/);
   assert.doesNotMatch(text, /four parts|these parts/);
 });
 
@@ -63,31 +64,32 @@ test('the page has no figure slot and no figure component', () => {
   assert.doesNotMatch(text, /<(FigurePlaceholder|StructureFigure|FlowFigure)\b/);
 });
 
-test('the Context Hub section names the six kinds of resource and links the Context Hub page', () => {
+test('the Context Hub section names the six kinds of resource in one sentence and defines three of them, without handing the kinds to another page', () => {
   const hub = section(text, 'The Context Hub');
-  for (const [kind, link] of [
-    ['contexts', './glossary.md#context'], ['knowledge sources', './glossary.md#knowledge-source'], ['datasources', './glossary.md#datasource'],
-    ['skills', './glossary.md#skill'], ['Vector Apps', '../vector-apps/glossary.md#app'], ['Vector Modules', './glossary.md#vector-module'],
-  ]) assert.ok(hub.includes(`[${kind}](${link})`), kind);
-  assert.match(hub, /six kinds of resource/);
-  assert.match(hub, /\]\(\.\/context-hub\.md\)/);
-  assert.doesNotMatch(hub, /connector/i);
+  for (const [kind, link] of [['contexts', './glossary.md#context'], ['knowledge sources', './glossary.md#knowledge-source'], ['datasources', './glossary.md#datasource']]) {
+    assert.ok(hub.includes(`[${kind}](${link})`), kind);
+  }
+  for (const link of ['./glossary.md#skill', '../vector-apps/glossary.md#app', './glossary.md#vector-module']) assert.ok(linksOf(body).includes(link), link);
+  assert.match(hub, /six kinds of resource: \[contexts\].*, skills, Vector Apps and Vector Modules\./);
+  assert.match(hub, /A context links the space to one outside account or endpoint\. A datasource is a database that agents and widgets query, and a \[skill\]\(\.\/glossary\.md#skill\) is a set of named instructions with their tools\./);
+  assert.doesNotMatch(hub, /context-hub\.md|describes each kind|connector/i);
 });
 
-test('pages and widgets get their own section', () => {
+test('pages and widgets get their own section, with page and widget linked once in the lead', () => {
   const pages = section(text, 'Pages and widgets');
-  assert.match(pages, /\]\(\.\/glossary\.md#page\)/);
-  assert.match(pages, /\]\(\.\/glossary\.md#widget\)/);
+  assert.match(pages, /^Pages and widgets\n\nA page is a grid of widgets, with filters that apply to the whole page, and any member can create one\./);
+  assert.match(pages, /A widget is one cell of the grid, and it is one of two things:/);
+  for (const link of ['./glossary.md#page', './glossary.md#widget']) assert.ok(linksOf(body.split(/^## /m)[0]).includes(link), link);
 });
 
 test('Vector Apps and Vector Modules share one section: an app is a web app that a space shows in an iframe, and the modules are omnibox, contacts and Calendar', () => {
   const apps = section(text, 'Vector Apps and Vector Modules');
   assert.match(apps, /a web app that a space shows in an iframe/);
-  assert.match(apps, /\]\(\.\.\/vector-apps\/glossary\.md#app\)/);
   for (const module of ['Omnibox', 'Contacts', 'Calendar']) assert.match(apps, new RegExp(module));
-  assert.match(apps, /\]\(\.\/context-hub\.md#mailboxes-and-the-omnibox\)/);
+  assert.match(apps, /\*\*Omnibox\*\*: shows conversations from a connected mailbox and lets a member read and reply\.\n/);
+  assert.doesNotMatch(apps, /context-hub\.md/);
   assert.doesNotMatch(apps, /Command Center/);
-  assert.match(apps, /organization's license lists it/);
+  assert.match(apps, /\[organization\]\(\.\/glossary\.md#organization\)'s license lists it/);
   assert.doesNotMatch(apps, /is different|alike|differ|not an app/);
 });
 
@@ -97,9 +99,16 @@ test('the page leaves out Command Center, the access starting state and implemen
   assert.doesNotMatch(plain, /Yjs|Plate|text-to-SQL|SELECT|WidgetConfig|ModuleKey|provider/);
 });
 
-test('every link resolves, every glossary anchor exists, and Where to go next links its two pages and the glossary', () => {
-  assert.deepEqual(brokenLinks(text, file), []);
-  assert.deepEqual(linksOf(section(text, 'Where to go next')), ['./agents-in-a-space.md', './extending-a-space.md', './glossary.md']);
+test('every link resolves and every glossary anchor exists', () => assert.deepEqual(brokenLinks(text, file), []));
+
+test('Where to go next gives a result sentence, one primary step, 2 related links and the glossary, and not the Context Hub page', () => {
+  assertConceptEnding(text, { next: './agents-in-a-space.md', related: ['./extending-a-space.md', './one-access-model.md'] });
+  assert.doesNotMatch(section(text, 'Where to go next'), /context-hub\.md/);
+});
+
+test('the shared rules hold: description, link text, directional words, dashes, contractions, parts lists, glossary links once', () => {
+  assertCoreRules(text);
+  assertGlossaryLinks(text);
 });
 
 test('the page names no master doc, implementation name, banned term, vendor or use case', () => {

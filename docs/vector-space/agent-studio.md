@@ -15,13 +15,13 @@ import { agentStudioLifecycle } from '@site/src/diagrams/figures/agent-studio-li
 
 Acme's support team has a space with a [channel](./glossary.md#channel), an agent that people reach through a messaging service. Sofia, a [member](./glossary.md#member) of the team, owns the channel. A customer writes in a [linked chat](./glossary.md#linked-chat), a chat on the channel that Sofia has linked to the space. The message reaches the [orchestrator agent](./glossary.md#orchestrator-agent), which hands it to a ticket-classifier agent that sorts it by topic and urgency.
 
-The orchestrator agent then hands the case to a remote [A2A](./glossary.md#a2a) agent of the team's customer system, which looks up the customer. The orchestrator agent sends one reply back to the chat. The team set up all of these agents in Agent Studio, tested them on a draft and published them in one step, which made the new settings live for everyone who reaches the space.
+The orchestrator agent then hands the case to a remote [A2A](./glossary.md#a2a) agent of the team's customer system, which looks up the customer. The orchestrator agent sends one reply back to the chat. The team set up all of these agents in Agent Studio and tested them on a draft. One publish step made the new settings live for everyone who reaches the space.
 
 ## What Agent Studio is for
 
-Agent Studio holds the settings of each agent: what it is told to do, which tools and resources it may use, which channels reach it and which evaluations score it. A bad change to an agent reaches every person who uses the space.
+Agent Studio holds the settings of each agent: what it is told to do, which tools and resources it may use, which channels reach it and which [evaluations](./glossary.md#evaluation) score it. A bad change to an agent reaches every person who uses the space.
 
-So Agent Studio keeps work in progress apart from what runs. Edits go to a draft, the working copy of the agents. An [evaluation](./glossary.md#evaluation) tests an agent before a change goes live, and an earlier version can be restored if a change goes wrong.
+So Agent Studio keeps work in progress apart from what runs. Edits go to a draft, the working copy of the agents. An evaluation tests an agent before a change goes live, and a previous version can be restored if a change goes wrong.
 
 A [space editor](./glossary.md#space-editor) can configure, delete or reset an agent.
 
@@ -31,12 +31,12 @@ Each space has one orchestrator agent. It is the root of the agent tree, and eve
 
 <StructureFigure data={agentStudioTree} />
 
-The orchestrator agent hands work to agents for a job, and those agents can hand work to their own child agents. Only the output of the orchestrator agent reaches the [member](./glossary.md#member), and the child agents report up to it. An agent can also start a short-lived helper for one task. The helper has no child agents, and it retires when it finishes cleanly.
+The orchestrator agent hands work to agents for a job, and those agents can hand work to their own child agents. Only the output of the orchestrator agent reaches the member, and the child agents report up to it. An agent can also start a short-lived helper for one task. The helper has no child agents, and it retires when it finishes cleanly.
 
 These facts matter when many agents work together:
 
 - **Separate state**: the platform saves a checkpoint, a stored copy of the progress of an agent that lets it resume, for each child agent, so siblings never share state. A remote A2A agent has no checkpoint, and the remote side carries its conversation.
-- **Caps**: each parent agent has a fixed cap on helpers, and each organization has a fixed cap on running work. The platform sets both caps; the docs give no figure.
+- **Caps**: each parent agent has a fixed cap on helpers, and each [organization](./glossary.md#organization) has a fixed cap on running work. The platform sets both caps.
 - **Pauses**: a pause, when a child agent waits for a person to answer an [ask](./glossary.md#ask), holds its parent. The parent resumes once, when no child agent is still waiting.
 - **Records**: every [run](./glossary.md#run), child agent, helper and A2A call opens a record of its own. The tool calls that a remote A2A agent makes on its own side are not recorded. A [thread](./glossary.md#thread) belongs to its owner alone.
 - **Remote credentials**: if a call to a remote agent fails on a credential, the agent gets one generic refusal, so it cannot probe stored credentials. The detail goes to the log. Two organizations that point at one [agent card](./glossary.md#agent-card) never share a credential.
@@ -56,15 +56,15 @@ A condition does not bind an owner or an [organization admin](./glossary.md#orga
 
 ## The life of a change
 
-Every edit writes to the draft. An edit that changes a versioned setting saves a new version at the same moment, so nobody presses a save button. Three actions then move the draft and the published agents:
+Every edit writes to the draft. An edit that changes a versioned setting saves a new version at the same moment. Three actions then move the draft and the published agents:
 
 <FlowFigure data={agentStudioLifecycle} />
 
 - **Publish**: makes the draft of every agent in the tree its published version in one step, and removes agents that were deleted in the draft.
 - **Reset**: rewrites the draft of each published agent from its published version, brings back a published agent that was deleted in the draft, and deletes agents that were never published.
-- **Restore**: moves the draft back to an earlier version. It saves no version itself, and the next edit does.
+- **Restore**: moves the draft back to a previous version. It saves no version itself, and the next edit does.
 
-A run keeps the version it started on. An edit applies from the next run, even if the current run is paused for days. A chat in the web interface, channels and calls from other agents run the published version. A test in Agent Studio, or an evaluation that is set to the draft, runs the draft.
+A run keeps the version it started on. An edit applies from the next run, even if the current run is paused for days. A chat in the [web interface](./glossary.md#web-interface), channels and calls from other agents run the published version. A test in Agent Studio, or an evaluation that is set to the draft, runs the draft.
 
 An evaluation is a set of saved questions, each with the expected answer that its author wrote. Each question runs as a real run, against the draft or the published version as chosen. A judge model compares each answer with the expected answer, scores it as correct, partly correct or wrong, and gives a short reason. The judge is set to score consistently, so a change in score comes from the agent and not from the judge. The judge model is set for each agent and is not part of a version.
 
@@ -82,13 +82,16 @@ Every paid model call of an evaluation goes through the [AI gateway](./glossary.
 
 ## Use cases
 
-**Financial analysis.** A finance team's space has an analyst agent. A member asks for revenue by region, and the agent queries a datasource. The condition of the member decides which rows come back, so two members who ask the same question can get different totals. Sharing the result is a write, and it waits for approval.
-
-**Employee onboarding.** An HR team's space has an orchestrator agent that runs onboarding for new hires as a service account. It reaches only what is shared with that account or open to every member of the space, such as a folder of welcome documents in a [knowledge source](./glossary.md#knowledge-source). When a step needs approval, such as sending a welcome email, the run waits in the Command Center. A service account cannot decide, so the owner of its API key answers. A space-wide approval can pre-approve the run, because "always allow" belongs to one person and not to an account.
+- **Financial analysis**: a finance team's space has an analyst agent. A member asks for revenue by region, and the agent queries a datasource. The condition of the member decides which rows come back, so two members who ask the same question can get different totals. Sharing the result is a write, and it waits for approval.
+- **Employee onboarding**: an HR team's space has an orchestrator agent that runs onboarding for new hires as a service account. It reaches only what is shared with that account or open to every member of the space, such as a folder of welcome documents in a [knowledge source](./glossary.md#knowledge-source). When a step needs approval, such as sending a welcome email, the run waits in the Command Center. A service account cannot decide, so the owner of its API key answers. A space-wide approval can pre-approve the run, because "always allow" belongs to one person and not to an account.
 
 ## Where to go next
 
-- [One access model](./one-access-model.md): the check that decides what a user, an agent or an app may do in a space.
+You now know how a team sets up, tests and publishes the agents of a space. Read [One access model](./one-access-model.md) next: it shows the check that decides what a member, an agent or an app may do in a space.
+
+**Related**
+
 - [Approvals and the Command Center](./approvals-and-the-command-center.md): how an ask waits for a person and is decided.
 - [The record of work](./the-record-of-work.md): how each run is recorded, and the four views that read the records.
-- [Glossary](./glossary.md): every term of Vector Space, each defined in a sentence.
+
+Look up any term in the [Vector Space glossary](./glossary.md).

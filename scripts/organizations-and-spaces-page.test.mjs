@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
+import { assertConceptEnding, assertCoreRules, assertGlossaryLinks } from './core-concept-checks.mjs';
 import { assertPersonaScene, bannedTermsIn, bodyOf, brokenLinks, linksOf, section, unlink } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
@@ -55,7 +56,7 @@ test('the scene is the first H2, names no Example and says a team\'s space', () 
 test('the scene names Maya and Priya in place of "a member"', () => {
   const scene = section(text, 'Two teams in one organization');
   assert.match(scene, /Maya, a \[member\]\(\.\/glossary\.md#member\) of Acme's sales team, asks the \[orchestrator agent\]\(\.\/glossary\.md#orchestrator-agent\) to find leads and send an outreach email/);
-  assert.match(scene, /Priya, a member of Acme's marketing team, works in another space and cannot reach those leads, and neither can the agents of that space/);
+  assert.match(scene, /Priya, a member of Acme's marketing team, works in another space\. Priya cannot reach those leads, and neither can the agents of that space/);
   assert.doesNotMatch(scene, /a member of the sales team|members and agents|this member|that member/);
 });
 
@@ -71,9 +72,15 @@ test('the slot organization-structure appears once, in "The organization as the 
   assert.deepEqual(slotsIn(section(text, 'The organization as the tenant')), ['organizationStructure']);
 });
 
-test('every link resolves, every glossary anchor exists, and Where to go next links its three pages and the glossary', () => {
-  assert.deepEqual(brokenLinks(text, file), []);
-  assert.deepEqual(linksOf(section(text, 'Where to go next')), ['./what-a-space-holds.md', './who-can-do-what.md', './one-access-model.md', './glossary.md']);
+test('every link resolves and every glossary anchor exists', () => assert.deepEqual(brokenLinks(text, file), []));
+
+test('Where to go next gives a result sentence, one primary step, 2 related links and the glossary', () => {
+  assertConceptEnding(text, { next: './what-a-space-holds.md', related: ['./who-can-do-what.md', './one-access-model.md'] });
+});
+
+test('the shared rules hold: description, link text, directional words, dashes, contractions, parts lists, glossary links once', () => {
+  assertCoreRules(text);
+  assertGlossaryLinks(text);
 });
 
 test('the page says each resource belongs to one space and never that spaces share nothing', () => {

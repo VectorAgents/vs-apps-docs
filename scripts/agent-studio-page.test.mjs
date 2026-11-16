@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
+import { assertConceptEnding, assertCoreRules, assertGlossaryLinks } from './core-concept-checks.mjs';
 import { assertPersonaScene, bannedTermsIn, bodyOf, brokenLinks, linksOf, section, unlink } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
@@ -16,9 +17,6 @@ const body = bodyOf(text).replace(/^import .*$/gm, '').trim();
 const prose = unlink(body.replace(/<(?:StructureFigure|FlowFigure)[^>]*\/>/g, ''));
 const lead = body.split(/^## /m)[0];
 const headings = [...text.matchAll(/^## (.+)$/gm)].map((m) => m[1]);
-
-/** The page eases only the paragraph cap of the shared voice checks, from 5 to 7 sentences. */
-const PARAGRAPH_MAX = 7;
 
 test('the page runs lead, the scene, six detail H2s, Where to go next', () => {
   assert.deepEqual(headings, [
@@ -91,7 +89,7 @@ test('each term is linked at its first use', () => {
   const noDescription = body.replace(/^description:.*$/m, '').replace(/^#+ .*$/gm, '').replace(/Vector Space/g, 'VS');
   for (const [term, anchor] of [
     ['Agent Studio', 'agent-studio'], ['agents', 'agent'], ['space', 'space'], ['channel', 'channel'], ['linked chat', 'linked-chat'],
-    ['orchestrator agent', 'orchestrator-agent'], ['A2A', 'a2a'], ['evaluation', 'evaluation'], ['organization admin', 'organization-admin'],
+    ['orchestrator agent', 'orchestrator-agent'], ['A2A', 'a2a'], ['evaluations', 'evaluation'], ['organization admin', 'organization-admin'],
     ['thread', 'thread'], ['agent card', 'agent-card'], ['member', 'member'], ['Datasource', 'datasource'], ['condition', 'condition'],
     ['Context', 'context'], ['run', 'run'], ['AI gateway', 'ai-gateway'], ['AI provider accounts', 'ai-provider-account'],
     ['Skills', 'skill'], ['Can use', 'can-use'], ['Can edit', 'can-edit'], ['space editor', 'space-editor'], ['service account', 'service-account'], ['ask', 'ask'],
@@ -118,12 +116,13 @@ test('version is defined in the lead and draft in What Agent Studio is for, wher
 test('the life of a change gives the edit, publish, reset and restore rules in plain words', () => {
   const life = section(text, 'The life of a change');
   assert.match(life, /Every edit writes to the draft/);
-  assert.match(life, /nobody presses a save button/);
+  assert.match(life, /saves a new version at the same moment\. Three actions/);
+  assert.doesNotMatch(life, /save button/);
   assert.match(life, /\*\*Publish\*\*.*every agent in the tree.*one step/);
   assert.match(life, /\*\*Reset\*\*.*brings back a published agent.*never published/);
   assert.match(life, /\*\*Restore\*\*.*saves no version itself, and the next edit does/);
   assert.match(life, /keeps the version it started on/);
-  assert.match(life, /A chat in the web interface, channels and calls from other agents run the published version/);
+  assert.match(life, /A chat in the \[web interface\]\(\.\/glossary\.md#web-interface\), channels and calls from other agents run the published version/);
   assert.match(life, /correct, partly correct or wrong/);
   assert.match(life, /not part of a version/);
   assert.match(life, /\*\*Reset\*\*: rewrites the draft of each published agent from its published version/);
@@ -161,11 +160,12 @@ test('"resources" names what an agent may use, and "knowledge" appears only in "
   assert.doesNotMatch(prose.replace(/knowledge sources?/gi, ''), /knowledge/i);
 });
 
-test('the checkpoint and the pause are defined, the caps note says the docs give no figure, and an ask expires after 400 days', () => {
+test('the checkpoint and the pause are defined, the caps are stated without a figure, and an ask expires after 400 days', () => {
   const tree = section(text, 'How agents are arranged');
   assert.match(tree, /a checkpoint, a stored copy of the progress of an agent that lets it resume, for each child agent/);
   assert.match(tree, /a pause, when a child agent waits for a person to answer an \[ask\]\(\.\/glossary\.md#ask\), holds its parent/);
-  assert.match(tree, /The platform sets both caps; the docs give no figure\./);
+  assert.match(tree, /The platform sets both caps\./);
+  assert.doesNotMatch(tree, /the docs give no figure/);
   const approvals = section(text, 'Skills, channels and approvals');
   assert.match(approvals, /No timer denies an ask\. An ask that nobody answers expires after 400 days, and a run with no open ask left is cancelled\./);
   assert.match(approvals, /An approval loosens only through a standing approval\./);
@@ -181,28 +181,26 @@ test('plain wording: no "often", "space-wide approval" for the shared approval',
 
 test('the use cases are financial analysis and employee onboarding', () => {
   const cases = section(text, 'Use cases');
-  assert.match(cases, /\*\*Financial analysis\.\*\*/);
-  assert.match(cases, /\*\*Employee onboarding\.\*\*/);
+  assert.match(cases, /^- \*\*Financial analysis\*\*: /m);
+  assert.match(cases, /^- \*\*Employee onboarding\*\*: /m);
   assert.match(cases, /service account/);
   assert.match(cases, /It reaches only what is shared with that account or open to every member of the space, such as a folder of welcome documents in a \[knowledge source\]\(\.\/glossary\.md#knowledge-source\)\./);
   assert.doesNotMatch(cases, /shared folder/);
   assert.doesNotMatch(cases, /Vector App/);
 });
 
-test('every link resolves, and Where to go next has 3 links and the glossary in order', () => {
+test('every link resolves, and Where to go next gives a result sentence, one primary step, 2 related links and the glossary', () => {
   assert.deepEqual(brokenLinks(text, file), []);
-  assert.deepEqual(linksOf(section(text, 'Where to go next')), [
-    './one-access-model.md', './approvals-and-the-command-center.md', './the-record-of-work.md', './glossary.md',
-  ]);
+  assertConceptEnding(text, { next: './one-access-model.md', related: ['./approvals-and-the-command-center.md', './the-record-of-work.md'] });
 });
 
-test('the page follows the voice checks with a paragraph cap of 7 sentences, and has no em dash', () => {
-  assert.deepEqual(voiceViolations(text).filter((v) => v.rule !== 'paragraph-length'), []);
-  const long = voiceViolations(text).filter((v) => v.rule === 'paragraph-length');
-  for (const { text: paragraph } of long) {
-    const sentences = paragraph.split(/(?<=[.!?])\s+/).filter((s) => s.trim());
-    assert.ok(sentences.length <= PARAGRAPH_MAX, paragraph);
-  }
+test('the shared rules hold: description, link text, directional words, dashes, contractions, parts lists, glossary links once', () => {
+  assertCoreRules(text);
+  assertGlossaryLinks(text);
+});
+
+test('the page follows the voice checks and has no em dash', () => {
+  assert.deepEqual(voiceViolations(text), []);
   assert.doesNotMatch(prose, /—/);
 });
 

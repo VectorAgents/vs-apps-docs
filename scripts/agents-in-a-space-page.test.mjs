@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
+import { assertConceptEnding, assertCoreRules, assertGlossaryLinks } from './core-concept-checks.mjs';
 import { assertPersonaScene, bannedTermsIn, bodyOf, brokenLinks, linksOf, section, unlink } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
@@ -30,7 +31,7 @@ test('the scene is the first H2, names no Example and says Acme\'s sales team', 
 test('the scene names Maya in place of "a member"', () => {
   const scene = section(text, 'A lead search handed to two agents');
   assert.match(scene, /^Maya, a \[member\]\(\.\/glossary\.md#member\) of Acme's sales team, asks the orchestrator agent to find leads and send an outreach email\./m);
-  assert.match(scene, /each of them sees only what Maya may see\./);
+  assert.match(scene, /Each of them sees only what Maya may see\./);
   assert.match(scene, /Maya does not choose which agent does what, and gets one reply/);
   assert.doesNotMatch(scene, /a member of it|the member|that member|this member/);
   const paragraph = scene.split('\n').find((l) => l.startsWith('Maya'));
@@ -89,10 +90,24 @@ test('the lead has no "This page shows" sentence, and the tree section ties an a
   assert.doesNotMatch(text, /An agent moves only within its own space/);
 });
 
-test('every link resolves, and Where to go next has 2 to 4 links ordered how-work-moves, one-access-model, agent-studio, glossary', () => {
+test('every link resolves, and Where to go next gives a result sentence, one primary step, 2 related links and the glossary', () => {
   assert.deepEqual(brokenLinks(text, file), []);
-  const next = linksOf(section(text, 'Where to go next'));
-  assert.deepEqual(next, ['./how-work-moves-through-a-space.md', './one-access-model.md', './agent-studio.md', './glossary.md']);
+  assertConceptEnding(text, { next: './how-work-moves-through-a-space.md', related: ['./one-access-model.md', './agent-studio.md'] });
+});
+
+test('the shared rules hold: description, link text, directional words, dashes, contractions, parts lists, glossary links once', () => {
+  assertCoreRules(text);
+  assertGlossaryLinks(text);
+});
+
+test('the page hands no part of its topic to another page: Agent Studio and extensions are stated, not deferred', () => {
+  assert.match(section(text, 'Agents and the orchestrator agent'), /Agents are set up in \[Agent Studio\]\(\.\/agent-studio\.md\), which holds the instructions and the \[evaluations\]\(\.\/glossary\.md#evaluation\) of each agent\./);
+  assert.doesNotMatch(section(text, 'The agent tree'), /extending-a-space\.md|says how/);
+});
+
+test('the tree says a context is a resource an agent uses', () => {
+  assert.match(section(text, 'The agent tree'), /A \[context\]\(\.\/glossary\.md#context\) is a resource that an agent uses\./);
+  assert.doesNotMatch(text, /work is not handed to it/);
 });
 
 test('the scene is a slice of the lead scenario: one agent finds leads, another drafts the email, each sees what the member may see', () => {

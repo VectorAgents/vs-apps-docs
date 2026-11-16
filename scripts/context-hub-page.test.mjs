@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
+import { assertConceptEnding, assertCoreRules, assertGlossaryLinks } from './core-concept-checks.mjs';
 import { assertPersonaScene, bannedTermsIn, bodyOf, brokenLinks, linksOf, section, unlink } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
@@ -16,7 +17,7 @@ const headings = [...text.matchAll(/^## (.+)$/gm)].map((m) => m[1]);
 
 test('the page runs lead, the scene, five detail H2s, Where to go next', () => {
   assert.deepEqual(headings, [
-    'A sales team connects its data',
+    'A sales team\'s data in the Context Hub',
     'What the Context Hub holds',
     'Datasources',
     'APIs and MCP servers',
@@ -29,7 +30,7 @@ test('the page runs lead, the scene, five detail H2s, Where to go next', () => {
 
 test('the lead defines the Context Hub with a glossary link and says what it gives', () => {
   assert.match(lead, /^The \[Context Hub\]\(\.\/glossary\.md#context-hub\) is the area of a \[space\]\(\.\/glossary\.md#space\) that lists what the space can reach/);
-  assert.match(lead, /nobody hands out a login/);
+  assert.match(unlink(lead), /It gives a team one place to connect its data and services\. People and agents read data, call APIs and read mail through the space, and nobody hands out a login\./);
 });
 
 test('the page has no figure slot and no figure component', () => {
@@ -37,15 +38,15 @@ test('the page has no figure slot and no figure component', () => {
 });
 
 test('the scene is the Acme sales team: lead database, REST API, shared mailbox, orchestrator agent', () => {
-  const scene = section(text, 'A sales team connects its data');
-  assert.match(scene, /^A sales team connects its data\n\nMaya, a \[member\]/);
+  const scene = section(text, 'A sales team\'s data in the Context Hub');
+  assert.match(scene, /^A sales team's data in the Context Hub\n\nMaya, a \[member\]/);
   for (const word of ['database of leads', 'REST API', 'shared sales mailbox', 'orchestrator agent', 'Omnibox', 'credential']) assert.ok(scene.includes(word), word);
   assert.doesNotMatch(plain, /the sales space/i);
 });
 
 test('the scene names Omar, who connects the data, and Maya, who asks and never held a password', () => {
-  const scene = section(text, 'A sales team connects its data');
-  assert.match(scene, /^A sales team connects its data\n\nMaya, a \[member\]\(\.\/glossary\.md#member\) of Acme's sales team, works in a space where Omar, another member of the team, connects the team's data in the Context Hub\./);
+  const scene = section(text, 'A sales team\'s data in the Context Hub');
+  assert.match(scene, /^A sales team's data in the Context Hub\n\nMaya, a \[member\]\(\.\/glossary\.md#member\) of Acme's sales team, works in a space where Omar, another member of the team, connects the team's data in the Context Hub\./);
   assert.match(scene, /Omar connects the database of leads/);
   assert.match(scene, /Maya then asks the \[orchestrator agent\]\(\.\/glossary\.md#orchestrator-agent\) to find leads and send an outreach email\./);
   assert.match(scene, /Maya never held a password for any of the three, because each one runs on Omar's credential\./);
@@ -55,7 +56,7 @@ test('the scene names Omar, who connects the data, and Maya, who asks and never 
 test('each persona is introduced once, and the first "member" on the page is the glossary link on the Maya introduction, and no persona is named outside the scene', () => {
   assert.equal(body.match(/Maya, a /g)?.length, 1);
   assert.equal(body.match(/Omar, another member of the team/g)?.length, 1);
-  assertPersonaScene(text, 'A sales team connects its data', { memberIntro: "[member](./glossary.md#member) of Acme's sales team" });
+  assertPersonaScene(text, 'A sales team\'s data in the Context Hub', { memberIntro: "[member](./glossary.md#member) of Acme's sales team" });
   assert.ok(body.indexOf('Maya') < body.indexOf('Omar'));
   assert.doesNotMatch(lead, /member|Maya|Omar/);
 });
@@ -63,12 +64,15 @@ test('each persona is introduced once, and the first "member" on the page is the
 test('the six kinds of resource are listed, with context as the general kind and connector as one way to get one', () => {
   const hub = section(text, 'What the Context Hub holds');
   assert.match(hub, /six kinds of resource/);
-  for (const anchor of ['context', 'knowledge-source', 'datasource', 'skill', 'vector-module']) {
+  for (const anchor of ['context', 'knowledge-source', 'datasource', 'skill']) {
     assert.match(hub, new RegExp(`\\]\\(\\./glossary\\.md#${anchor}\\)`), anchor);
   }
+  assert.ok(linksOf(body).includes('./glossary.md#vector-module'), 'Vector Module is linked once, in the scene');
+  assert.match(hub, /- \*\*Vector Module\*\*: a first-party product of Vector Space, such as the Omnibox, that sits in the Context Hub\./);
   assert.match(hub, /\]\(\.\.\/vector-apps\/glossary\.md#app\)/);
   assert.match(hub, /\*\*Resources\*\*/);
-  assert.match(hub, /A context is the general kind, and a \[connector\]\(\.\/glossary\.md#connector\) is a context made from a pre-built provider/);
+  assert.match(hub, /A context is the general kind, and a \[connector\]\(\.\/glossary\.md#connector\) is a context made from a pre-built provider\. The files and documents of a space are the content of a knowledge source that a context syncs\./);
+  assert.doesNotMatch(hub, /are not a kind of resource/);
   assert.equal([...hub.matchAll(/^- \*\*/gm)].length, 6);
 });
 
@@ -77,7 +81,7 @@ test('datasources list exactly four databases and no other database or engine', 
   assert.match(data, /one of four types of database: PostgreSQL, MySQL, SQL Server or Snowflake\./);
   assert.doesNotMatch(plain, /BigQuery|Oracle|MongoDB|SQLite|Trino|polyglot|federat|dialect|transpil/i);
   assert.match(data, /A member connects one of four types of database/);
-  assert.match(data, /The member who connects it imports the schema/);
+  assert.match(data, /The member who connects it imports the schema, which lists the tables and columns of the database\. The member then writes a description for each one, so that an agent knows what the data means\./);
   assert.match(data, /that member can edit them/);
   assert.match(data, /imports the schema/);
   assert.match(data, /Comments that a PostgreSQL database already holds/);
@@ -108,8 +112,8 @@ test('APIs and MCP servers give the three routes and the five types of authentic
 });
 
 test('the Omnibox is defined in the scene where it first appears, with Vector Module linked there', () => {
-  const scene = section(text, 'A sales team connects its data');
-  assert.match(scene, /The thread appears in the Omnibox, a \[Vector Module\]\(\.\/glossary\.md#vector-module\) that shows the mail threads of a space\./);
+  const scene = section(text, 'A sales team\'s data in the Context Hub');
+  assert.match(scene, /The \[thread\]\(\.\/glossary\.md#thread\) appears in the Omnibox, a \[Vector Module\]\(\.\/glossary\.md#vector-module\) that shows the mail threads of a space\./);
   assert.equal(body.indexOf('Omnibox'), body.indexOf('Omnibox, a [Vector Module]'), 'no Omnibox before its definition');
   assert.doesNotMatch(section(text, 'Mailboxes and the Omnibox'), /Vector Module/);
 });
@@ -131,7 +135,7 @@ test('credentials belong to their creator, a shared resource runs on the owner\'
   assert.match(cred, /not even an \[organization admin\]\(\.\/glossary\.md#organization-admin\) can use it/);
   assert.match(cred, /run on the credential of its owner/);
   assert.match(cred, /never get the credential or its target/);
-  assert.match(cred, /A share gives a role, Can use, Can edit or Can manage, to a user or a group, and attaching a context or datasource to a Vector App shares it with that app/);
+  assert.match(cred, /A share gives a user or a group one role: Can use, Can edit or \[Can manage\]\(\.\/glossary\.md#can-manage\)\. Attaching a context or datasource to a Vector App shares it with that app\./);
   assert.doesNotMatch(cred, /roles?\b[^.]*\b(people|subjects?)\b/i);
   assert.match(cred, /\]\(\.\/one-access-model\.md\)/);
 });
@@ -170,15 +174,19 @@ test('the page names no master doc, implementation name, vendor or banned term',
 
 test('the page assumes no TypeScript, Node or React', () => assert.doesNotMatch(plain, /TypeScript|Node|React/));
 
-test('every link resolves, and Where to go next has 4 links and the glossary in order', () => {
+test('the shared rules hold: description, link text, directional words, dashes, contractions, parts lists, glossary links once', () => {
+  assertCoreRules(text);
+  assertGlossaryLinks(text);
+});
+
+test('every link resolves, and Where to go next gives a result sentence, one primary step, 3 related links and the glossary', () => {
   assert.deepEqual(brokenLinks(text, file), []);
-  assert.deepEqual(linksOf(section(text, 'Where to go next')), [
-    './one-access-model.md', './who-can-do-what.md', './extending-a-space.md', './agents-in-a-space.md', './glossary.md',
-  ]);
+  assertConceptEnding(text, { next: './one-access-model.md', related: ['./who-can-do-what.md', './extending-a-space.md', './agents-in-a-space.md'] });
   const next = section(text, 'Where to go next');
   assert.match(next, /the four kinds of people and callers in Vector Space, and the space roles and share levels that say what each may do/);
   assert.doesNotMatch(next, /five kinds/);
-  assert.match(next, /^Where to go next\n\nA member can now connect a database, an API and a mailbox, and knows whose credential each one runs on\./);
+  assert.match(next, /^Where to go next\n\nYou now know what the Context Hub holds and whose credential each resource runs on\./);
+  assert.doesNotMatch(next, /extending-a-space\.md#|compares an MCP server/);
 });
 
 test('the page follows the voice checks and has no em dash', () => {
