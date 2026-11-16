@@ -12,6 +12,16 @@ const pages = {
   'vector-apps/quickstart.md': ['../sdk/app-definition.md', '/vector-apps/category/recipes', '../sdk/reference/harness.md'],
   'sdk/examples.md': ['app-definition.md', '/vector-apps/category/recipes', '/sdk/builder'],
   'sdk/app-definition.md': ['examples.md', '/vector-apps/category/recipes', '/sdk/category/reference'],
+  'sdk/overview.md': ['../vector-apps/quickstart.md', 'app-definition.md'],
+  'sdk/reference/root.md': ['browser.md'],
+  'sdk/reference/browser.md': ['react.md'],
+  'sdk/reference/react.md': ['harness.md'],
+  'sdk/reference/harness.md': ['server.md'],
+  'sdk/reference/server.md': ['orpc.md'],
+  'sdk/reference/orpc.md': ['extract.md'],
+  'sdk/reference/extract.md': ['conformance.md'],
+  'sdk/reference/conformance.md': ['platform-limits.md'],
+  'sdk/reference/platform-limits.md': ['../app-definition.md'],
 };
 
 const withLead = new Set(['sdk/app-definition.md', 'sdk/examples.md']);
@@ -27,7 +37,7 @@ for (const [file, targets] of Object.entries(pages)) {
   });
 
   test(`${file} Next steps items are a link plus a one-line reason`, () => {
-    const items = block(text)[0].split('\n').slice(1).filter((l) => l.trim());
+    const items = block(text)[0].split('\n').slice(1).filter((l) => l.trim() && !l.startsWith('<!--'));
     if (withLead.has(file)) assert.match(items.shift(), /^[^-.!?][^.!?]*\.$/, 'lead is one non-bullet sentence');
     assert.equal(items.length, targets.length);
     for (const line of items) assert.match(line, /^- \[[^\]]+\]\([^)]+\): [^\n]*\S\.$/);

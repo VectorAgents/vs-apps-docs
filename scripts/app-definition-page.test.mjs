@@ -5,31 +5,59 @@ import { join } from 'node:path';
 import { test } from 'node:test';
 import { checkSnippets } from './check-snippets.mjs';
 import { coreFieldRules, resourceFieldRules } from '../src/data/field-rules.ts';
+import { descriptionOf, longCells, overlong, withoutCode } from './sdk-page-helpers.mjs';
+import { installedSdkVersion } from './starter-sync.mjs';
 
 const pageUrl = new URL('../docs/sdk/app-definition.md', import.meta.url);
 const text = readFileSync(pageUrl, 'utf8');
-const headings = [...text.matchAll(/^#{2,3} (.+)$/gm)].map((m) => m[1]);
+const headings = [...text.matchAll(/^#{2,4} (.+)$/gm)].map((m) => m[1]);
 
-test('answers the four questions', () => {
-  for (const h of ['What an app definition is', 'What an app definition does', 'How to write one', 'How it reflects in Vector Space']) {
+const slug = (heading) => heading.toLowerCase().replace(/[^\w\s-]/g, '').replaceAll(' ', '-');
+
+test('answers the four questions under task and noun-phrase headings', () => {
+  for (const h of ['What an app definition is', 'Where the app definition is used', 'Write an app definition', 'How it reflects in Vector Space']) {
     assert.ok(headings.includes(h), h);
   }
+  for (const old of ['What an app definition does', 'How to write one']) assert.ok(!headings.includes(old), old);
 });
 
-test('states each of the ten uses once, in order', () => {
-  const uses = [...text.matchAll(/^\d+\. \*\*(.+?)\.\*\*/gm)].map((m) => m[1]);
+test('states each use once, in order, as a heading', () => {
+  const uses = [...text.matchAll(/^#### (.+)\n/gm)].map((m) => m[1]).slice(0, 10);
   assert.deepEqual(uses, [
     'Validate on import',
     'Type navigation and routes',
     'Generate and serve the manifest',
     'List agent-callable routes',
-    'Merge the [agent catalog](./glossary.md#agent-catalog)',
-    "Keep the server's app registry",
+    'Merge the agent catalog',
+    'Keep the app registry of the server',
     'Check the token',
     'Receive connector events',
     'Look up a model slot',
     'Read the manifest in Vector Space',
   ]);
+});
+
+test('states no count or number that refers to an item of its own list, and links a use by its anchor', () => {
+  assert.doesNotMatch(text, /\b(ten|three) (uses|places|groups)\b|\buse \d|\[use \d+\]|^\d+\. \*\*/m);
+  assert.match(text, /\[Import check\]\(#validate-on-import\)/);
+  const slugs = headings.map(slug);
+  for (const [, anchor] of text.matchAll(/\]\(#([^)]+)\)/g)) assert.ok(slugs.includes(anchor), anchor);
+});
+
+test('has a description of one sentence and 160 characters or fewer, and no SDK version in its text', () => {
+  const description = descriptionOf(text);
+  assert.ok(description && description.length <= 160);
+  assert.doesNotMatch(description, /^(This page|Learn)\b/);
+  assert.doesNotMatch(text, new RegExp(installedSdkVersion().replaceAll('.', '\\.')));
+});
+
+test('every table cell is one sentence of 15 words or fewer and no sentence runs over 35 words', () => {
+  assert.deepEqual(longCells(text), []);
+  assert.deepEqual(overlong(text), []);
+});
+
+test('writes "member", never "user", for the people who open an app', () => {
+  assert.doesNotMatch(withoutCode(text).replace(/\buser tokens?\b/gi, ''), /\busers?\b/i);
 });
 
 test('contrasts definition and manifest and says Vector Space never sees the definition', () => {
@@ -77,8 +105,9 @@ test('field rows equal the field-rules table, per object, with no extra rows', (
 
 test('states the empty capabilities and ungated page rules and the typo warning', () => {
   assert.match(text, /`capabilities: \[\]` is valid/);
-  assert.match(text, /page without a capability has no gate/i);
+  assert.match(text, /page without (a capability|one) has no gate/i);
   assert.match(text, /:::warning[\s\S]*does not check[\s\S]*:::/);
+  assert.equal([...text.matchAll(/^:::warning/gm)].length, 1);
 });
 
 test('states what the SDK guarantees and what is Vector Space side, and the pending review', () => {

@@ -1,17 +1,15 @@
 ---
 title: Extract reference
+description: Signature, behaviour and example of each `@vectoragents/vs-apps/extract` export.
 ---
 
-Reference for `@vectoragents/vs-apps/extract` 0.4.0. The subpath is the build-time tooling that turns the [agent pages](../glossary.md#agent-catalog) and actions declared in your client into one JSON file. `buildManifests` merges that file into the [manifest](../../vector-apps/glossary.md#manifest) at server boot. The `vs-apps` command runs it.
-
-Every symbol below follows one layout: signature, behaviour, example. Each example is a complete file and is typechecked against the installed package.
+The `@vectoragents/vs-apps/extract` subpath is the build-time tooling that turns the [agent pages](../glossary.md#agent-catalog) and actions declared in your client into one JSON file. `buildManifests` merges that file into the [manifest](../../vector-apps/glossary.md#manifest) at server boot. The `vs-apps` command runs the extraction.
 
 ## Prerequisites
 
-- `@vectoragents/vs-apps` installed with a registry token.
 - `vite-node` as a dev dependency of the client package. The command runs your own copy, so the entry loads through the build settings of your client.
 - Pages and actions declared with `defineAgentPage`, covered in the [root reference](./root.md).
-- Node.js. The subpath does not run in a browser.
+- Node.js 20.19 or later. The subpath does not run in a browser.
 
 ## `extractAgentCatalog`
 
@@ -31,11 +29,11 @@ interface ExtractAgentCatalogOptions {
 }
 ```
 
-| Option | Meaning |
-| --- | --- |
-| `outPath` | Where to write the catalog file. |
-| `load` | Imports the modules that call `defineAgentPage` and `page.action`. |
-| `log` | Receives the result line. Defaults to `console.log`. |
+| Option | Required | Meaning |
+| --- | --- | --- |
+| `outPath` | required | Where to write the catalog file. |
+| `load` | required | Imports the modules that call `defineAgentPage` and `page.action`. |
+| `log` | optional | Receives the result line, `console.log` by default. |
 
 ### Behaviour
 
@@ -43,8 +41,8 @@ interface ExtractAgentCatalogOptions {
 - Validates what registered and throws on a failure, so a broken declaration breaks the build.
 - Writes the file only when its text differs from the file already there. A watcher or a server that restarts on the file fires on a real change only. The result's `changed` says which case ran.
 - Logs a line such as `agent-catalog: 1 pages, 1 actions`, with `(unchanged)` when nothing changed.
-- Keep the entry declaration-only. It names the modules to load and the output path, and everything else is the SDK's.
 - Page ids must be unique across every app that the server hosts.
+- Wraps `installBrowserStubs`, `collectExtractedActions` and `writeExtractedCatalogFile`, which the subpath also exports for a custom extraction routine. `writeExtractedCatalogFile` writes without validation and without the change check.
 
 ### Example
 
@@ -68,9 +66,9 @@ void extractAgentCatalog({
 });
 ```
 
-The entry imports `actions.js` because TypeScript requires an extension there. The command resolves it to `actions.ts`. A relative `outPath` is relative to the folder that you run the command from.
+Keep the entry declaration-only: it names the modules to load and the output path, and the SDK does the rest. The entry imports `actions.js` because TypeScript requires an extension there, and the command resolves it to `actions.ts`. A relative `outPath` is relative to the folder that you run the command from.
 
-Run the entry with the `vs-apps` command from the client package. The command sets `AGENT_CATALOG_EXTRACT=1`, so the build configuration of the client can leave out plugins that would restart the dev server during the run, such as a route generator.
+Run the entry with the `vs-apps` command from the client package. The command sets `AGENT_CATALOG_EXTRACT=1`. The build configuration of the client can then leave out plugins that would restart the dev server during the run, such as a route generator.
 
 ```bash
 vs-apps catalog extract scripts/agent-catalog.ts
@@ -106,14 +104,6 @@ export const catalog = readExtractedAgentCatalog('agent-catalog.json');
 
 Pass `catalog` to `buildManifests`, as the [server reference](./server.md) shows.
 
-## Lower-level functions
+## Next steps
 
-`installBrowserStubs`, `collectExtractedActions` and `writeExtractedCatalogFile` are the steps that `extractAgentCatalog` wraps. Call them only to build your own extraction routine. `writeExtractedCatalogFile` writes without validation and without the change check.
-
-## Result
-
-A client entry that writes `agent-catalog.json`, and a server file that reads it for `buildManifests`.
-
-## Next step
-
-Continue with the [conformance reference](./conformance.md).
+- [Conformance reference](./conformance.md): test your server against a fake Vector Space.

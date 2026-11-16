@@ -1,14 +1,12 @@
 ---
 title: oRPC reference
+description: Signature, behaviour and example of each `@vectoragents/vs-apps/orpc` export.
 ---
 
-Reference for `@vectoragents/vs-apps/orpc` 0.4.0. The subpath binds the SDK to [oRPC](https://orpc.unnoq.com), the contract library that an app server shares with its client. It holds the routes every app server exposes, a contract builder that marks a route for the space agent, and the function that lists those routes for the [manifest](../../vector-apps/glossary.md#manifest).
-
-Every symbol below follows one layout: signature, behaviour, example. Each example is a complete file and is typechecked against the installed package.
+The `@vectoragents/vs-apps/orpc` subpath binds the SDK to [oRPC](https://orpc.unnoq.com), the contract library that an app server shares with its client. It holds the routes every app server exposes and a contract builder that marks a route for the space agent. It also holds the function that lists those routes for the [manifest](../../vector-apps/glossary.md#manifest).
 
 ## Prerequisites
 
-- `@vectoragents/vs-apps` installed with a registry token.
 - `@orpc/contract` installed. It is a peer dependency of the subpath.
 - `zod` version 3, installed with `npm install zod@3`, for the schemas of a route.
 - A server that builds its manifests with `buildManifests`, covered in the [server reference](./server.md).
@@ -28,17 +26,17 @@ interface AgentRouteMeta {
 }
 ```
 
-| Field | Meaning |
-| --- | --- |
-| `description` | What the route does. The agent reads it to decide when to call the route. |
-| `approvalRequired` | Whether a person must approve each call. Defaults to `true` unless the method is `GET`. |
+| Field | Required | Meaning |
+| --- | --- | --- |
+| `description` | required | What the route does, read by the agent to decide when to call it. |
+| `approvalRequired` | optional | Whether a person must approve each call, `true` unless the method is `GET`. |
 
 ### Behaviour
 
 - Use `agentOc` in place of `oc` for every route that the agent may call. A route built with plain `oc` stays out of the catalog.
 - `.meta({ agent: { description } })` marks the route. A route without it is not listed.
-- The route needs `method` and `path`, set with `.route(...)`. `buildEndpoints` throws without them.
-- The agent calls the route with a user token that Vector Space mints, so the guard of your server still applies.
+- Set `method` and `path` with `.route(...)`. Without them `buildEndpoints` throws `agent-exposed contract procedure "<key>" has no route method/path`.
+- The agent calls the route with a user token that [Vector Space](../../vector-space/glossary.md#vector-space) mints, so the guard of your server still applies.
 
 ### Example
 
@@ -81,16 +79,21 @@ interface AgentEndpointDef {
 }
 ```
 
-| Field | Meaning |
+| Property | Meaning |
 | --- | --- |
-| `key` | The route's position in the contract, joined with dots, for example `leads.list`. |
-| `paramsJsonSchema` | The input schema of the route as JSON Schema. Absent for a route without an input. |
+| `key` | The position of the route in the contract, joined with dots, such as `leads.list`. |
+| `method` | The HTTP method of the route. |
+| `path` | The path of the route. |
+| `description` | The description from `meta.agent`. |
+| `approvalRequired` | Whether a person must approve each call. |
+| `paramsJsonSchema` | The input schema as JSON Schema, absent for a route without an input. |
+| `capability` | Set from the auth metadata of the route, absent when the route has none. |
 
 ### Behaviour
 
 - Walks the whole contract, including nested routers, and lists each route that has `meta.agent`.
-- Throws at boot when a marked route has no `method` and `path`, or no `description`. A bad mark breaks the build and does not drop the route from the catalog silently.
-- Runs on the server. `defineApp` no longer takes a contract, so no client bundle carries the walk.
+- Throws at boot for a marked route without a description: `agent-exposed contract procedure "<key>" has no description`. A bad mark breaks the build and never drops the route silently.
+- Runs on the server, so no client bundle carries the walk.
 - Pass the result to `buildManifests` as `endpoints`, keyed by the app key. `buildManifests` anchors each endpoint at the API base of the app.
 - On a stack that is not oRPC, build the `AgentEndpointDef` list yourself and pass it the same way.
 
@@ -142,7 +145,7 @@ const appPlatformContract: {
 ### Behaviour
 
 - Spread it into the contract of your app next to the contract of each app key, as the example does.
-- The `app.*` routes have no implementation here. Bind each one to the `actions` of the app platform (`platform.actions`), or to `AppActionsService` on Nest. The platform adds the verified space and the token of the caller.
+- The `app.*` routes have no implementation here. Bind each one to the `actions` of the [app platform](../glossary.md#app-platform), `platform.actions`, or to `AppActionsService` on Nest.js. The platform adds the verified space and the token of the caller.
 - `healthOutputSchema` is the output schema of `health.check`.
 
 ### Example
@@ -154,10 +157,6 @@ import { leadsContract } from './contract';
 export const appContract = { ...appPlatformContract, leads: leadsContract };
 ```
 
-## Result
+## Next steps
 
-A contract with two agent routes, a manifest that lists them as endpoints, and the shared platform routes in one `appContract`.
-
-## Next step
-
-Continue with the [extract reference](./extract.md).
+- [Extract reference](./extract.md): write the agent catalog at build time.

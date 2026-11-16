@@ -1,16 +1,14 @@
 ---
 title: Server reference
+description: Signature, behaviour and example of the `@vectoragents/vs-apps/server` export that tells Vector Space your manifests changed.
 ---
 
-Reference for `@vectoragents/vs-apps/server` 0.4.0. This page covers the one symbol of the subpath that reaches out to [Vector Space](../../vector-space/glossary.md#vector-space): `pingManifests`. It tells Vector Space that your [manifests](../../vector-apps/glossary.md#manifest) changed, so Vector Space does not wait for a [staff](../../vector-space/glossary.md#staff) refresh.
-
-Every symbol below follows one layout: signature, behaviour, example. Each example is a complete file and is typechecked against the installed package.
+Of the exports of `@vectoragents/vs-apps/server`, `pingManifests` is the one that reaches out to [Vector Space](../../vector-space/glossary.md#vector-space). It tells Vector Space that your [manifests](../../vector-apps/glossary.md#manifest) changed, so Vector Space does not wait for a [staff](../../vector-space/glossary.md#staff) refresh.
 
 ## Prerequisites
 
-- `@vectoragents/vs-apps` installed with a registry token.
-- A server that builds its manifests with `buildManifests`, covered in the [app definition guide](../app-definition.md). `buildManifests` takes the agent catalog that [`readExtractedAgentCatalog`](./extract.md) reads.
-- The origin of a Vector Space the server can reach, for example `https://space.example.com`.
+- A server that builds its manifests with `buildManifests`, covered in the [app definition guide](../app-definition.md). `buildManifests` takes the [agent catalog](../glossary.md#agent-catalog) that [`readExtractedAgentCatalog`](./extract.md#readextractedagentcatalog) reads.
+- The origin of a Vector Space that the server can reach, for example `https://space.example.com`.
 
 ## `pingManifests`
 
@@ -26,20 +24,21 @@ function pingManifests(options: {
 }): Promise<void>;
 ```
 
-| Option | Meaning |
-| --- | --- |
-| `spaceBaseUrl` | The Vector Space origin, with no `/api` suffix. One trailing `/` is removed. |
-| `manifests` | The record that `buildManifests` returns, keyed by app key. |
-| `log` | Receives each failure message. Defaults to `console.warn`. |
+| Option | Required | Meaning |
+| --- | --- | --- |
+| `spaceBaseUrl` | required | The Vector Space origin, with no `/api` suffix. |
+| `manifests` | required | The record that `buildManifests` returns, keyed by app key. |
+| `log` | optional | Receives each failure message, `console.warn` by default. |
 
 ### Behaviour
 
-- Call it once at boot, after `buildManifests`. A server that runs `createAppPlatform` calls `platform.pingManifests()` instead. It sends the same ping with the platform's own `spaceBaseUrl` and `manifests`, and does nothing while the platform holds a dev issuer.
+- Call it once at boot, after `buildManifests`. A server that runs [`createAppPlatform`](../glossary.md#app-platform) calls `platform.pingManifests()` instead. It sends the same ping with the platform's own `spaceBaseUrl` and `manifests`. It does nothing while the platform holds a [dev issuer](../glossary.md#dev-issuer).
+- Removes one trailing `/` from `spaceBaseUrl`.
 - Sends `POST {spaceBaseUrl}/api/apps/manifest-ping` once for each manifest. The body is JSON with `appKey` and `manifestHash`, the SHA-256 hex digest of the manifest as the server serves it.
-- Vector Space re-pulls the manifest of each app whose hash changed.
-- Stops on a status from 200 to 299 or on `429`, which means Vector Space is already pulling that app.
+- Vector Space reads the manifest again for each app whose hash changed.
+- Stops on a status from 200 to 299 or on `429`, which means Vector Space is already reading that manifest.
 - Tries a failing ping up to 3 times, at 0, 5 and 15 seconds after the call. It logs each failure.
-- Never throws. Failures go to `log`, so call it without `await`. A manual refresh in Vector Space remains the fallback.
+- Never throws. Failures go to `log`, so call it without `await`. A manual refresh in Vector Space is the fallback.
 - Resolves after every manifest has either succeeded or used its 3 attempts.
 - Sends no credentials. The body holds a hash and an app key, not manifest data.
 
@@ -73,10 +72,6 @@ if (process.env.SPACE_API_URL) {
 <!-- flavour nest todo -->
 <!-- /flavour -->
 
-## Result
+## Next steps
 
-A boot step that tells Vector Space the hash of every manifest, and does nothing when no Vector Space URL is set.
-
-## Next step
-
-Continue with the [oRPC reference](./orpc.md).
+- [oRPC reference](./orpc.md): mark the routes that the space agent may call.

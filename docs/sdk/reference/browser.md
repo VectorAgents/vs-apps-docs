@@ -1,19 +1,17 @@
 ---
 title: Browser reference
+description: Signature, behaviour and example of each `@vectoragents/vs-apps/browser` export.
 ---
 
-Reference for `@vectoragents/vs-apps/browser` 0.4.0. The subpath is the framework-free browser runtime of an [app](../../vector-apps/glossary.md#app). It holds the boot config loader, the user directory types, and the embed session, iframe bridge and token verifier that [`AppProvider`](./react.md) drives. An app imports `loadAppClientConfig`, `DirectoryUser` and `DirectoryGroup` from it, and `AppClientConfig` from the package root. An app without React also calls `startAppSession`.
-
-Every symbol below follows one layout: signature, behaviour, example. Each example is a complete file and is typechecked against the installed package.
+The `@vectoragents/vs-apps/browser` subpath is the framework-free browser runtime of an [app](../../vector-apps/glossary.md#app). It holds the loader of the boot configuration and the types of the member directory. It also holds the embed session, the iframe bridge and the token verifier that [`AppProvider`](./react.md#react-appprovider) drives. An app imports `loadAppClientConfig`, `DirectoryUser` and `DirectoryGroup` from it, and `AppClientConfig` from the package root. An app without React also calls `startAppSession`.
 
 ## Prerequisites
 
-- `@vectoragents/vs-apps` installed with a registry token.
-- A server route that returns the client config, `GET /api/client-config`, when the config is not baked into the bundle.
+- A server route that returns the client configuration, `GET /api/client-config`, when the configuration is not baked into the bundle.
 
 ## `loadAppClientConfig`
 
-Resolves the boot config for the iframe bridge and the token verifier.
+Resolves the boot configuration for the iframe bridge and the token verifier.
 
 ### Signature
 
@@ -24,19 +22,19 @@ function loadAppClientConfig(options?: {
 }): Promise<AppClientConfig>;
 ```
 
-| Option | Meaning |
-| --- | --- |
-| `baked` | Config known at build time. Used when `baked.allowedParentOrigin` is set. |
-| `url` | Where to fetch the config otherwise. Defaults to `/api/client-config`. |
+| Option | Required | Meaning |
+| --- | --- | --- |
+| `baked` | optional | The configuration known at build time, used when `baked.allowedParentOrigin` is set. |
+| `url` | optional | Where to fetch the configuration otherwise, `/api/client-config` by default. |
 
 ### Behaviour
 
-- Returns the `baked` values without a network call when `baked.allowedParentOrigin` is set. Only the four config fields are copied, and empty optional fields are dropped.
+- Returns the `baked` values without a network call when `baked.allowedParentOrigin` is set. It copies only the four configuration fields and drops empty optional fields.
 - Otherwise fetches `url` and returns the JSON body.
 - Rejects with `client config fetch failed: <status>` on a non-2xx response.
 - Rejects with `client config: ALLOWED_PARENT_ORIGIN is not set on the server` when the body has no `allowedParentOrigin`.
-- Starts the fetch on every call. Create the promise once and share it.
-- Importing the module must not trigger the fetch. Build tooling that loads route modules outside a browser has no origin to fetch from, so call it lazily.
+- Starts the fetch on every call, so create the promise once and share it.
+- Call it lazily. Build tooling that loads route modules outside a browser has no origin to fetch from, so the import of your module must not start the fetch.
 
 ### Example
 
@@ -56,7 +54,7 @@ Pass the result to `AppProvider`'s `config` prop.
 
 ## `AppClientConfig`
 
-The boot config shape. The package root exports it, so a server and a client share one type.
+The shape of the boot configuration. The package root exports it, so a server and a client share one type.
 
 ### Signature
 
@@ -69,17 +67,17 @@ interface AppClientConfig {
 }
 ```
 
-| Field | Meaning |
-| --- | --- |
-| `allowedParentOrigin` | The one origin the iframe bridge accepts messages from. |
-| `spaceJwksUrl` | Where the browser fetches [Vector Space](../../vector-space/glossary.md#vector-space) signing keys to verify a token. |
-| `tokenIssuer` | The expected `iss` claim of a token. |
-| `spaceApiUrl` | The Vector Space API base. Setting it enables the user directory. |
+| Field | Required | Meaning |
+| --- | --- | --- |
+| `allowedParentOrigin` | required | The one origin the iframe bridge accepts messages from. |
+| `spaceJwksUrl` | optional | Where the browser fetches the signing keys of [Vector Space](../../vector-space/glossary.md#vector-space) to verify a token. |
+| `tokenIssuer` | optional | The expected `iss` claim of a token. |
+| `spaceApiUrl` | optional | The Vector Space API base, which enables the member directory. |
 
 ### Behaviour
 
 - Only `allowedParentOrigin` is required. `loadAppClientConfig` rejects without it.
-- The server env is the source of the values in every environment, so the same bundle runs in the [harness](./harness.md) and in Vector Space.
+- The environment of the server is the source of the values in every environment, so the same bundle runs in the [harness](./harness.md) and in Vector Space.
 - Without `spaceApiUrl`, `useApp().directory` is `null` and `useUsers` returns placeholder names.
 
 ### Example
@@ -98,7 +96,7 @@ export const config = loadAppClientConfig({ baked });
 
 ## `startAppSession`
 
-Runs the app side of the embed protocol for one [app page](../../vector-apps/glossary.md#app-page) and exposes its state as an external store. [`AppProvider`](./react.md) calls it for a React tree. Call it yourself on another framework.
+Runs the app side of the embed protocol for one [app page](../../vector-apps/glossary.md#app-page) and exposes its state as an external store. [`AppProvider`](./react.md#react-appprovider) calls it for a React tree, and you call it on another framework.
 
 ### Signature
 
@@ -129,19 +127,19 @@ interface AppSessionState {
 }
 ```
 
-| Option | Meaning |
-| --- | --- |
-| `config` | Boot config, or a promise of it. |
-| `registry` | The [agent action registry](./root.md#createagentactionregistry) that receives the actions that Vector Space dispatches. |
-| `navigate` | Called when Vector Space asks the app to open a path. |
-| `onToken` | Called with each verified token, and with `null` on `dispose`. |
-| `onTheme` | Called with `'light'` or `'dark'` when Vector Space changes theme. |
+| Option | Required | Meaning |
+| --- | --- | --- |
+| `config` | required | The boot configuration, or a promise of it. |
+| `registry` | required | The [agent action registry](./root.md#createagentactionregistry) that receives the dispatched actions. |
+| `navigate` | required | Called when Vector Space asks the app to open a path. |
+| `onToken` | optional | Called with each verified token, and with `null` on `dispose`. |
+| `onTheme` | optional | Called with `'light'` or `'dark'` when Vector Space changes theme. |
 
 ### Behaviour
 
-- Starts the iframe bridge once the config resolves. The bridge accepts messages only from `allowedParentOrigin`.
-- Verifies each token against the key set of the config. A token that fails verification is logged to the console and ignored, so `claims` stays `null`.
-- Opens the user directory on the first verified token, when the config sets `spaceApiUrl`.
+- Starts the iframe bridge once the configuration resolves. The bridge accepts messages only from `allowedParentOrigin`.
+- Verifies each token against the key set of the configuration. A token that fails verification is logged to the console and ignored, so `claims` stays `null`.
+- Opens the member directory on the first verified token, when the configuration sets `spaceApiUrl`.
 - Dispatches each action that Vector Space sends into `registry`, and reports the document height to Vector Space through a `ResizeObserver`.
 - Keeps the token in memory only.
 - `getSnapshot` returns the same object until the state changes, so it works as the snapshot function of a store such as `useSyncExternalStore`.
@@ -175,7 +173,7 @@ export function stopSession(): void {
 
 ## `DirectoryUser`
 
-One user in the space directory.
+One member in the space directory.
 
 ### Signature
 
@@ -192,8 +190,8 @@ interface DirectoryUser {
 
 - `useUsers` returns these in a map keyed by `id`.
 - `directory.search(q, take?)` returns them as an array.
-- An identifier that Vector Space cannot show keeps its entry with `deleted: true`.
-- `avatarUrl` is `null` when the user has none.
+- An id that Vector Space cannot show keeps its entry with `deleted: true`.
+- `avatarUrl` is `null` when the member has none.
 
 ### Example
 
@@ -231,7 +229,7 @@ export function MemberPicker({ onPick }: { onPick: (user: DirectoryUser) => void
 
 ## `DirectoryGroup`
 
-One user group in the space directory.
+One group in the space directory.
 
 ### Signature
 
@@ -246,7 +244,7 @@ interface DirectoryGroup {
 ### Behaviour
 
 - `directory.groups()` returns every group.
-- `userIds` holds user ids. Resolve them to names with `useUsers`.
+- `userIds` holds member ids. Resolve them to names with `useUsers`.
 - `id` is numeric, unlike the string `DirectoryUser.id`.
 
 ### Example
@@ -276,10 +274,6 @@ export function GroupList() {
 }
 ```
 
-## Result
+## Next steps
 
-A lazy `getClientConfig` helper for `AppProvider`, an app session that works without React, and member and group pickers typed with `DirectoryUser` and `DirectoryGroup`.
-
-## Next step
-
-Continue with the [react reference](./react.md).
+- [React reference](./react.md): bind the app session to a React tree with `AppProvider`.
