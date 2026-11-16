@@ -27,7 +27,7 @@ Four views read the records. Each answers one question.
 
 - **[Overview](./glossary.md#overview)**: what was spent, run or broken, by source. A figure opens the records behind it.
 - **[Health](./glossary.md#health)**: what is wrong now, such as a context whose calls fail.
-- **[Activity](./glossary.md#activity)**: what happened, in time order. A decided [ask](./glossary.md#ask) shows here.
+- **Activity**: what happened, in time order. A decided [ask](./glossary.md#ask) shows here.
 - **[Audit](./glossary.md#audit)**: who changed what. It covers changes to access, to what the organization may use and to credentials and keys. Audit reads the change records.
 
 The organization admin reads the whole organization. A [space admin](./glossary.md#space-admin) reads the same views for their own space. Another user's [thread](./glossary.md#thread) is never readable here. A figure that cannot be read shows as missing, never as zero.
@@ -61,12 +61,17 @@ An act is one thing that an app did, such as qualifying a lead. Only apps record
 
 An app declares each act as an activity or an audit entry, and the matching view shows it.
 
-[Human Time Return](./glossary.md#human-time-return) is the time that an app's work gives back to people, counted in seconds. [Why Vector Space](./why-vector-space.md#human-time-return) lists the three things that make up the figure.
+[Human Time Return](./glossary.md#human-time-return) is the time that an app's work gives back to people, counted in seconds. Staff approve the seconds per unit of an act, and that approved figure is the baseline. Only successful acts with an approved baseline are valued, and the platform shows how many are not.
 
 An act is fixed when the platform accepts it, so a later change to the baseline does not alter it. Human Time Return is read in [Intelligence](./glossary.md#intelligence), in addition to spend. Intelligence is not one of the four views. Human Time Return is an estimate, and the platform computes no return figure.
 
 ## Where to go next
 
+You now know what Vector Space records about each piece of work, how the four views read it and how spend and Human Time Return are estimated. Read [Approvals and the Command Center](./approvals-and-the-command-center.md) next: it shows how an ask waits for a person and is decided, before Activity shows it.
+
+Related:
+
 - [Why Vector Space](./why-vector-space.md): the problem Vector Space solves and the three rules that every part of it follows.
-- [Approvals and the Command Center](./approvals-and-the-command-center.md): how an ask waits for a person and is decided, before Activity shows it.
-- [Glossary](./glossary.md): every term of Vector Space, each defined in a sentence.
+- [One access model](./one-access-model.md): the check that decides who a piece of work may run as and what it may reach.
+- [How work moves through a space](./how-work-moves-through-a-space.md): one request followed from a member to the result, with the actor of each step.
+- [Vector Space glossary](./glossary.md): every term of Vector Space, each defined in a sentence.
