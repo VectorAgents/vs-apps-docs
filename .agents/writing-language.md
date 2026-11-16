@@ -73,7 +73,7 @@ Reader: someone who works in or judges a space and has not used Vector Space. Th
 
 ## Tutorial page
 
-Scope: `docs/vector-apps/quickstart.md` only. `scripts/voice.mjs` checks L4 and the shared voice checks.
+Scope: `docs/vector-apps/quickstart.md` only. `quickstart-page.test.mjs` runs `voiceViolations` from `scripts/voice.mjs` on it: the 35-word cap (L3) and the 5-sentence paragraph (L4). `scripts/voice.test.mjs` runs the contraction (V9), dash (V7), link text (P2) and description (P1) checks on every page under `docs/`.
 
 - **TU1 Task order.** Open with one paragraph that states what the reader builds, the result and, in one sentence, that a client check is display only and the server check decides. Prerequisites and the first command follow. Put no diagram, file tree or roadmap sentence before the first command. Show the file tree at the step that needs it.
 - **TU2 Reason only when it changes the action.** Open a step with its reason only when the reason changes what the reader does, or when a wrong action fails silently. Otherwise open with the command.
