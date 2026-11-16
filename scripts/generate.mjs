@@ -2,6 +2,7 @@ import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync
 import { tmpdir } from 'node:os';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { glossaryIndex, slugOf } from './glossary-index.mjs';
 
 const pageFile = /\.mdx?$/;
 const openMarker = /^<!-- flavour (\S+)( todo)? -->$/;
@@ -41,16 +42,6 @@ function parse(text, where, knownFlavour, errors) {
   if (open) fail(open.at, `block "${open.flavour}" is not closed`);
   return parts;
 }
-
-/** The anchor slug of heading text, as Docusaurus makes it: markup dropped, lowercase, punctuation removed, spaces to hyphens. */
-const slugOf = (text) =>
-  text
-    .replace(/!?\[([^\]]*)\]\([^)]*\)/g, '$1')
-    .replace(/<[^>]+>/g, '')
-    .replace(/[`*]/g, '')
-    .toLowerCase()
-    .replace(/[^\p{L}\p{N}\p{M}_ -]/gu, '')
-    .replace(/ /g, '-');
 
 /**
  * `lines` with every heading given the explicit id `<flavour>-<slug>`, so ids in different blocks never collide and
@@ -191,6 +182,11 @@ export function generate({ root, config }) {
       })),
     });
   }
+  const glossaries = Object.fromEntries(
+    ['vector-space', 'vector-apps', 'sdk'].filter((s) => pages.has(`${s}/glossary.md`)).map((s) => [s, pages.get(`${s}/glossary.md`).text]),
+  );
+  // Outside site/, so Docusaurus neither publishes nor searches it.
+  emit('glossary-index.json', `${JSON.stringify(glossaryIndex(glossaries), null, 1)}\n`);
   emit('flavours.json', `${JSON.stringify({ pages: manifest }, null, 2)}\n`);
   if (todos > config.todoCap) {
     const noun = todos === 1 ? 'notice exceeds' : 'notices exceed';
