@@ -3,7 +3,7 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { linksOf, section } from './page-helpers.mjs';
+import { bodyOf, linksOf, longSentences, section, unlink } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -89,7 +89,7 @@ test('a space admin owns the activate, configure and deprovision steps, linked t
     assert.equal(owner, 'A space admin');
     assert.match(what, /^The space admin /);
   }
-  assert.match(text, /The space admin also sets each \[model slot\]\(\.\/glossary\.md#model-slot\) and \[connector slot\]\(\.\/glossary\.md#connector-slot\) and attaches the resources the app may read\./);
+  assert.match(text, /The space admin also sets each model slot and \[connector slot\]\(\.\/glossary\.md#connector-slot\) and attaches the resources the app may read\./);
 });
 
 test('the page follows the voice checks', () => assert.deepEqual(voiceViolations(text), []));
@@ -97,4 +97,43 @@ test('the page follows the voice checks', () => assert.deepEqual(voiceViolations
 test('the page names no placeholder example app and no master doc', () => {
   assert.doesNotMatch(text, /\b(Hiring|SDR|CSR)\b/);
   assert.doesNotMatch(text, /(PROTOCOL|BINDINGS|REGISTRY|OVERVIEW|APPS|GLOSSARY)\.md/);
+});
+
+test('the description is a noun phrase of 160 characters or fewer that does not open with "This page" or "Learn"', () => {
+  const description = text.match(/^description: (.+)$/m)?.[1];
+  assert.ok(description);
+  assert.ok(description.length <= 160, `${description.length} characters`);
+  assert.doesNotMatch(description, /^(This page|Learn)\b/i);
+});
+
+test('no sentence passes 35 words, and no dash or directional word appears in prose', () => {
+  const prose = unlink(bodyOf(text)).replace(/`[^`]*`/g, 'CODE');
+  assert.deepEqual(longSentences(prose, { max: 35 }), []);
+  assert.doesNotMatch(prose, /[\u2013\u2014]| - /);
+  assert.doesNotMatch(prose, /\b(above|below|earlier|as shown)\b/i);
+});
+
+test('link text names its target, and a glossary term is linked once', () => {
+  assert.doesNotMatch(text, /\[(here|this page|read more|learn more|https?:[^\]]*)\]\(/i);
+  const seen = linksOf(bodyOf(text)).filter((l) => /glossary\.md#/.test(l));
+  assert.deepEqual(seen.filter((l, i) => seen.indexOf(l) !== i), []);
+});
+
+test('the page follows the build-page frame: no scene, no result sentence, no Related links, no "user" for a member', () => {
+  assert.doesNotMatch(text, /^## (A |An )?(scene|example)\b|You now know|^Related$/im);
+  assert.doesNotMatch(unlink(bodyOf(text)).replace(/\buser token\b/gi, ''), /\buser (id|ids)\b|\bthe user\b|\busers\b/i);
+});
+
+test('the first use of a term is its glossary link: model slots, the app definition, agents, MCP, members, groups, organization, AI gateway', () => {
+  const lifecycle = section(text, 'The lifecycle');
+  assert.match(lifecycle, /such as \[model slots\]\(\.\/glossary\.md#model-slot\)/);
+  assert.match(lifecycle, /\| You write the client, the server and the \[app definition\]\(\.\.\/sdk\/glossary\.md#app-definition\)\. \|/);
+  assert.match(lifecycle, /removes the \[agents\]\(\.\.\/vector-space\/glossary\.md#agent\) and \[MCP\]\(\.\.\/vector-space\/glossary\.md#mcp\) servers/);
+  assert.match(lifecycle, /\[members\]\(\.\.\/vector-space\/glossary\.md#member\) and \[groups\]\(\.\.\/vector-space\/glossary\.md#group\)/);
+  assert.match(lifecycle, /\[organization\]\(\.\.\/vector-space\/glossary\.md#organization\)/);
+  assert.match(text, /\[AI gateway\]\(\.\.\/vector-space\/glossary\.md#ai-gateway\)/);
+});
+
+test('A2A is linked and not expanded', () => {
+  assert.doesNotMatch(text, /Agent2Agent|Model Context Protocol/);
 });

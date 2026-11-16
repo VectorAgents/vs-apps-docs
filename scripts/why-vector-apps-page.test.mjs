@@ -3,7 +3,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { linksOf, section } from './page-helpers.mjs';
+import { bodyOf, linksOf, longSentences, section, unlink } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
 const docs = resolve(dirname(fileURLToPath(import.meta.url)), '../docs');
@@ -77,6 +77,41 @@ test('the page follows the voice checks and names no master doc', () => {
 
 test('a space admin adds the app and picks the model, and a member who can edit the app and share the resource attaches resources', () => {
   assert.match(text, /when a \[space admin\]\(\.\.\/vector-space\/glossary\.md#space-admin\) adds the app/);
-  assert.match(text, /A member who can edit your app and share the resource attaches resources to it, such as connectors and knowledge sources\./);
+  assert.match(unlink(text), /A member who can edit your app and share the resource attaches resources to it, such as connectors and knowledge sources\./);
   assert.match(text, /and a space admin picks the model\./);
+});
+
+test('the description is a noun phrase of 160 characters or fewer that does not open with "This page" or "Learn"', () => {
+  const description = text.match(/^description: (.+)$/m)?.[1];
+  assert.ok(description);
+  assert.ok(description.length <= 160, `${description.length} characters`);
+  assert.doesNotMatch(description, /^(This page|Learn)\b/i);
+});
+
+test('no sentence passes 35 words, and no dash or directional word appears in prose', () => {
+  const prose = unlink(bodyOf(text)).replace(/`[^`]*`/g, 'CODE');
+  assert.deepEqual(longSentences(prose, { max: 35 }), []);
+  assert.doesNotMatch(prose, /[\u2013\u2014]| - /);
+  assert.doesNotMatch(prose, /\b(above|below|earlier|as shown)\b/i);
+});
+
+test('link text names its target, and a glossary term is linked once', () => {
+  assert.doesNotMatch(text, /\[(here|this page|read more|learn more|https?:[^\]]*)\]\(/i);
+  const seen = linksOf(bodyOf(text)).filter((l) => /glossary\.md#/.test(l));
+  assert.deepEqual(seen.filter((l, i) => seen.indexOf(l) !== i), []);
+});
+
+test('the page follows the build-page frame: no scene, no result sentence, no Related links, no "user" for a member', () => {
+  assert.doesNotMatch(text, /^## (A |An )?(scene|example)\b|You now know|^Related$/im);
+  assert.doesNotMatch(unlink(bodyOf(text)).replace(/\buser token\b/gi, ''), /\buser (id|ids)\b|\bthe user\b|\busers\b/i);
+});
+
+test('the first use of a member, an organization and the AI gateway is a glossary link', () => {
+  assert.match(text, /\[members\]\(\.\.\/vector-space\/glossary\.md#member\)/);
+  assert.match(text, /\[organization\]\(\.\.\/vector-space\/glossary\.md#organization\)/);
+  assert.match(text, /\[AI gateway\]\(\.\.\/vector-space\/glossary\.md#ai-gateway\)/);
+});
+
+test('a sentence states one idea: the ticket and the missing provider key are two sentences', () => {
+  assert.doesNotMatch(text, /in place of a key, so your app/);
 });
