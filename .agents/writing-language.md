@@ -32,7 +32,7 @@ Precedence: rules here win over any reference. A page-type section wins over the
 
 ### Terms
 
-- **T1 Vector and SDK terms.** Link a glossary term at its first use on each page, in the page and not in a section. The link shows the definition on hover. Until the hover exists, add a one-clause definition at first use. Role words such as "staff" and "space admin" count. A term your reader already knows (see the Reader line) needs no link. A sentence carries at most 3 glossary links. Link the rest at their next use.
+- **T1 Vector and SDK terms.** Link a glossary term at its first use on each page, in the page and not in a section. The link shows the definition on hover. Role words such as "staff" and "space admin" count. A term your reader already knows (see the Reader line) needs no link. A sentence carries at most 3 glossary links. Link the rest at their next use.
 - **T2 Informal words.** A word used with a private meaning ("pull", "boot ping", "ungated", "surface") is a Vector term: apply T1, or replace it with a plain phrase.
 
 ### Abbreviations

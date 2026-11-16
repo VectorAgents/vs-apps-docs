@@ -202,6 +202,16 @@ test('the docs root and output folder come from config', () => {
   assert.ok(exists('site/plain.md') && exists('site/guides/call.md') && exists('pairs/react/node/guides/call.md'));
 });
 
+test('glossary-index.json holds an entry per glossary heading and stays outside site/', () => {
+  const { read, files } = run({ 'sdk/glossary.md': '# G\n\n### harness\n\nA local stand-in.\n\n- Owner: SDK.\n', 'plain.md': '# P\n' });
+  assert.deepEqual(JSON.parse(read('glossary-index.json')), { 'sdk#harness': { term: 'harness', definition: 'A local stand-in.', owner: 'SDK' } });
+  assert.ok(files().every((f) => f.startsWith('site/')));
+});
+
+test('glossary-index.json is empty when the docs have no glossary', () => {
+  assert.deepEqual(JSON.parse(run({ 'plain.md': '# P\n' }).read('glossary-index.json')), {});
+});
+
 test('flavours.json lists each flavoured page with its URL, axes and the pair copy that holds each tree', () => {
   const { read } = run({ 'quickstart.md': both, 'plain.md': '# P\n', 'recipes/index.md': server() });
   assert.deepEqual(JSON.parse(read('flavours.json')).pages, [
