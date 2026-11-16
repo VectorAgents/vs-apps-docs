@@ -1,28 +1,23 @@
 ---
 title: Open a route and read the caller
+description: Leave one route of your server open to anyone, and read the verified caller on another route.
 ---
 
-Leave one route of your server open to anyone, and read who is calling on another route.
+Leave one route of your server open to anyone, and read who is calling on another route. When you finish, `GET /api/open` answers with no token, and `GET /api/caller` answers with the claims of the caller and refuses a request with no token.
+
+This guide covers a Nest.js server.
 
 <!-- flavour nest -->
-Both use the `@vectoragents/vs-apps/nest` subpath of the [SDK](../../sdk/glossary.md#sdk).
-
-By default the adapter's global guard verifies the user token of every route. `@Public` opts one route out of that check. `appCaller` returns the verified claims and the raw token for a route that stays behind the guard.
-
-## Goal
-
-End with two routes on the server of the quickstart app: `GET /api/open`, which answers with no token, and `GET /api/caller`, which answers with the caller's claims and refuses a request with no token.
-
 ## Prerequisites
 
-- The Nest.js app from Part 1 of the [quickstart](../quickstart.md), running with `npm run dev:space`. Part 2, step 1 of the quickstart sets up the `.env` file that command reads.
+- The Nest.js app from Part 1 of the [quickstart](../quickstart.md#part-1-run-the-app-locally), running with `npm run dev:space`. Step 1 of [Part 2](../quickstart.md#part-2-add-the-app-to-a-space) sets up the `.env` file that command reads.
 - Background: the [server primitives](../../sdk/reference/root.md) that the adapter wraps.
 
 ## Steps
 
 ### 1. Open a route with `@Public`
 
-The global guard rejects a request that has no user token. Put `@Public()` on a route to skip the guard for it. The route then runs for every caller, so return nothing that belongs to one [space](../../vector-space/glossary.md#space) or one user.
+This guide uses the `@vectoragents/vs-apps/nest` subpath of the [SDK](../../sdk/glossary.md#sdk). By default, the global guard of the adapter verifies the user token of every route and rejects a request that has none. Put `@Public()` on a route to skip the guard for it.
 
 ```ts title="server/src/open-route.controller.ts"
 import { Controller, Get } from '@nestjs/common';
@@ -37,6 +32,10 @@ export class OpenRouteController {
   }
 }
 ```
+
+:::warning
+A public route runs for every caller. Return nothing that belongs to one [space](../../vector-space/glossary.md#space) or one member.
+:::
 
 `@Public()` also works on a controller class. Every route of the class is then open.
 
@@ -65,13 +64,13 @@ export class CallerController {
 }
 ```
 
-`appCaller` returns `{ userToken, claims, headers }`. `userToken` is the token string the caller sent. `headers` are the headers of the request. `claims` is the verified payload, with `sub` (the user identifier), `appKey`, `spaceId` and `capabilities`.
+`appCaller` returns `{ userToken, claims, headers }`. `userToken` is the token string the caller sent. `headers` are the headers of the request. `claims` is the verified payload, with `sub` (the member identifier), `appKey`, `spaceId` and `capabilities`.
 
-The guard attaches both values to every route that is not `@Public`. On a `@Public` route the guard attaches nothing, so `appCaller` throws a `401` there.
+The guard attaches both values to every route that is not `@Public`. On a `@Public` route the guard attaches nothing, so `appCaller` throws a `401` there. To add a capability check to the caller route, use `RequireCapability`, as the quickstart controller does.
 
 ### 3. Register the routes
 
-Put both controllers in one module, so that `server/src/app.module.ts` changes by one line.
+Put both controllers in one module, so that `server/src/app.module.ts` changes by two lines.
 
 ```ts title="server/src/open-route.module.ts"
 import { Module } from '@nestjs/common';
@@ -84,7 +83,27 @@ import { OpenRouteController } from './open-route.controller';
 export class OpenRouteModule {}
 ```
 
-Import `OpenRouteModule` in `server/src/app.module.ts`: add it to the `imports` array, after `AppPlatformModule.forRoot(...)`.
+In `server/src/app.module.ts`, import `OpenRouteModule`.
+
+```ts title="server/src/app.module.ts" showLineNumbers=3 excerpt
+import { MemoryCredentialStore } from './credential-store';
+import { HelloController } from './hello.controller';
+import { manifests } from './manifests';
+// added-next-line
+import { OpenRouteModule } from './open-route.module';
+
+@Module({
+```
+
+Then add it to the `imports` array, after `AppPlatformModule.forRoot(...)`.
+
+```ts title="server/src/app.module.ts" showLineNumbers=21 excerpt
+    }),
+    // added-next-line
+    OpenRouteModule,
+  ],
+  controllers: [HelloController],
+```
 
 ### 4. Check the routes
 
@@ -95,15 +114,11 @@ curl -s -o /dev/null -w '%{http_code}\n' http://localhost:<SERVER_PORT>/api/open
 curl -s -o /dev/null -w '%{http_code}\n' http://localhost:<SERVER_PORT>/api/caller
 ```
 
-**Check**: the first command prints `200`, because `@Public` skips the guard. The second prints `401`, because the guard refuses a request with no user token.
+The first command prints `200`, because `@Public` skips the guard. The second prints `401`, because the guard refuses a request with no user token.
 
-## Result
+## Next steps
 
-The server answers `/api/open` for anyone. It answers `/api/caller` only for a request that carries a valid user token, and returns that caller's `sub`, `appKey`, `spaceId` and `capabilities`. To add a capability check to the caller route, use `RequireCapability`, as the quickstart controller does.
-
-## Next step
-
-Register the app in Vector Space with Part 2 of the [quickstart](../quickstart.md), so that an app page sends a real user token to `/api/caller`.
+- [Add the app to a space](../quickstart.md#part-2-add-the-app-to-a-space): send a real user token to `/api/caller` from an app page.
 <!-- /flavour -->
 <!-- flavour node todo -->
 <!-- /flavour -->

@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { after, test } from 'node:test';
 import { generate } from './generate.mjs';
-import { bannedTermsIn, bodyOf, brokenLinks, longSentences, nextLinks, rowsOf, treesOf, unlink } from './page-helpers.mjs';
+import { bannedTermsIn, bodyOf, brokenLinks, lastStep, longSentences, nextLinks, rowsOf, treesOf, unlink } from './page-helpers.mjs';
 
 const config = {
   docsRoot: 'docs',
@@ -88,4 +88,10 @@ test('bannedTermsIn finds a shared banned term, lets capability grant and Vector
   assert.deepEqual(bannedTermsIn('A capability grant lets the Vector Space app read.'), []);
   assert.deepEqual(bannedTermsIn('The operating system plane.'), ['/operating system/i', '/\\bplane\\b/i']);
   assert.deepEqual(bannedTermsIn('Each Space has a grant.'), ['/\\bgrants?\\b/i', '/(?<!Vector )\\bSpace\\b/']);
+});
+
+test('lastStep gives the last ### step of the Steps section', () => {
+  const page = '## Steps\n\n### 1. Add it\n\nText.\n\n### 2. Check it\n\nOutput.\n\n## Next steps\n\n- [A](./a.md): reason.\n';
+  assert.match(lastStep(page), /^2\. Check it\n\nOutput\./);
+  assert.equal(lastStep('## Prerequisites\n\nNone.\n'), '');
 });
