@@ -1,12 +1,12 @@
 ---
 title: Approvals and the Command Center
-description: Asks, standing approvals and schedules.
+description: How an ask waits for a person, and the standing approvals and schedules that the Command Center lists.
 ---
 
 import FlowFigure from '@site/src/components/FlowFigure';
 import { approvalsFlow } from '@site/src/diagrams/figures/approvals-flow.ts';
 
-An [ask](./glossary.md#ask) is anything that an agent or an app waits on a person for, such as approval to make a change. The [Command Center](./glossary.md#command-center) is the part of a [space](./glossary.md#space) where asks wait. It also lists the [standing approvals](./glossary.md#standing-approval) that let a call run without asking and the [schedules](./glossary.md#schedule) that a person owns.
+An [ask](./glossary.md#ask) is anything that an [agent](./glossary.md#agent) or a [Vector App](../vector-apps/glossary.md#app) waits on a person for, such as approval to make a change. The [Command Center](./glossary.md#command-center) is the part of a [space](./glossary.md#space) where asks wait. It also lists the [standing approvals](./glossary.md#standing-approval) that let a call run without asking and the [schedules](./glossary.md#schedule) that a person owns.
 
 ## A status note that waits for approval
 
@@ -16,12 +16,12 @@ Maya reads the ask and approves it. The run continues and the note is posted. Ma
 
 ## The ask and who decides it
 
-An agent raises an ask when its run reaches an operation that writes, such as a post to a team chat. It also raises one when it needs a person to answer a question. A [Vector App](../vector-apps/glossary.md#app), a web app that a space shows in an iframe, raises one for an approval that it declares.
+An agent raises an ask when its run reaches an operation that writes, such as a post to a team chat. It also raises one when it needs a person to answer a question. A Vector App, a web app that a space shows in an iframe, raises one for an approval that it declares.
 
 Each ask goes to its answerer, the person who answers for the run:
 
 - **Member**: answers for their own run.
-- **[Service account](./glossary.md#service-account)**: cannot decide. The owner of its API key answers. If there is none, the owner of the [thread](./glossary.md#thread) or [schedule](./glossary.md#schedule) that it ran for answers.
+- **[Service account](./glossary.md#service-account)**: cannot decide. The owner of its API key answers. If there is none, the owner of the [thread](./glossary.md#thread) or schedule that it ran for answers.
 - **App**: an ask that an app raises from its own server goes to the [space admins](./glossary.md#space-admin).
 
 A space admin also sees an ask whose answerer can no longer view the space. Anyone who leaves a space stops seeing and deciding its asks.
@@ -41,7 +41,7 @@ An app's ask pauses no run, because no run waits. A decision or an expiry is sen
 
 ## Standing approvals
 
-A standing approval lets one agent run one operation without asking, or lets one app's approval pass. Vector Space shows it as "always allow". It names the [context](./glossary.md#context) the call goes through, so an approval for a post through one context never covers another context.
+A standing approval lets one agent run one operation without asking, or lets one app's approval pass. [Vector Space](./glossary.md#vector-space) shows it as "always allow". It names the [context](./glossary.md#context) the call goes through, so an approval for a post through one context never covers another context.
 
 There are two kinds. A personal approval covers the runs of the person who made it. A member makes one by ticking "always allow" on an ask that they answer. A space-wide approval covers everyone in the space, and a space admin can set one.
 
@@ -57,6 +57,12 @@ A schedule whose agent writes stops at an ask. If the schedule runs as its creat
 
 ## Where to go next
 
+You now know how an ask is raised and decided, and how standing approvals and schedules let work run without one.
+
+Read [Extending a space](./extending-a-space.md) next to see how a team adds its own logic to a space.
+
+Related:
+
 - [How work moves through a space](./how-work-moves-through-a-space.md): one request followed through an ask to a sent email.
 - [The record of work](./the-record-of-work.md): where a decided ask shows in Activity.
-- [Glossary](./glossary.md): every term of Vector Space, each defined in a sentence.
+- [Vector Space glossary](./glossary.md): every term of Vector Space, each defined in a sentence.
