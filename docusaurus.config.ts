@@ -50,7 +50,15 @@ const config: Config = {
         { type: 'html', position: 'right', value: `<span class="sdk-version">@vectoragents/vs-apps ${sdkVersion}</span>` },
       ],
     },
-    prism: { theme: themes.github, darkTheme: themes.dracula },
+    prism: {
+      theme: themes.github,
+      darkTheme: themes.dracula,
+      magicComments: [
+        { className: 'theme-code-block-highlighted-line', line: 'highlight-next-line', block: { start: 'highlight-start', end: 'highlight-end' } },
+        { className: 'code-line-added', line: 'added-next-line', block: { start: 'added-start', end: 'added-end' } },
+        { className: 'code-line-removed', line: 'removed-next-line', block: { start: 'removed-start', end: 'removed-end' } },
+      ],
+    },
   },
 };
 
