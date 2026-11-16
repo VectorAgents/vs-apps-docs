@@ -9,7 +9,7 @@ An [app](./glossary.md#app) is a product that you build and host yourself and th
 
 You write three parts: a client, a server and a [manifest](./glossary.md#manifest). The client holds your screens. The server runs on your own origin, serves the manifest and decides who may do what. The manifest tells Vector Space which pages and permissions your app has and what it needs from a space.
 
-The `hello-app` of the [quickstart](./quickstart.md) is a small app with one [app page](./glossary.md#app-page). Once it is added to a space, members open that page from the navigation of the space. The page shows the user id and space id that the user token carries.
+The `hello-app` of the [quickstart](./quickstart.md) is a small app with one [app page](./glossary.md#app-page). Once it is added to a space, [members](../vector-space/glossary.md#member) open that page from the navigation of the space. The page shows the member id and space id that the user token carries.
 
 ## Where an app fits
 
@@ -21,9 +21,9 @@ An app can also offer an A2A agent and an MCP server of its own. You declare the
 
 A space gives your app four things. Each one stays inside the rules of the space.
 
-- **Member identity.** The user token identifies the member and the space. It lists the capabilities that the member holds in your app.
-- **Platform data.** A member who can edit your app and share the resource attaches resources to it, such as connectors and knowledge sources. These are the [allowed resources](./glossary.md#allowed-resources). A call reaches a resource only when the app is allowed it and the member may open it.
-- **Governed model access.** You declare a [model slot](./glossary.md#model-slot), and a space admin picks the model. Your server asks for a model through the slot and gets a short-lived ticket for the [AI](../vector-space/glossary.md#ai) gateway in place of a key, so your app holds no AI provider key. The gateway is the one route that each paid model call of Vector Space takes, on the AI accounts of the organization. A production Vector Space publishes no gateway address to apps, so it refuses the request with status `503`. A local stack runs the gateway and answers it.
+- **Member identity.** The user token identifies the member and the space. It lists the [capabilities](./glossary.md#capability) that the member holds in your app.
+- **Platform data.** A member who can edit your app and share the resource attaches resources to it, such as [connectors](../vector-space/glossary.md#connector) and [knowledge sources](../vector-space/glossary.md#knowledge-source). These are the [allowed resources](./glossary.md#allowed-resources). A call reaches a resource only when the app is allowed it and the member may open it.
+- **Governed model access.** You declare a [model slot](./glossary.md#model-slot), and a space admin picks the model. Your server asks for a model through the slot and gets a short-lived ticket for the [AI gateway](../vector-space/glossary.md#ai-gateway) in place of a key. Your app holds no AI provider key. The gateway is the one route that each paid model call of Vector Space takes, on the AI accounts of the [organization](../vector-space/glossary.md#organization). A production Vector Space publishes no gateway address to apps, so it refuses the request with status `503`. A local stack runs the gateway and answers it.
 - **A record of work.** Your app declares [acts](./glossary.md#acts), records of what it did, and [approvals](./glossary.md#approvals), points where a person must confirm an action. Vector Space keeps the record and shows each approval to the person who must decide.
 
 Your server checks every call. A check in your client is for display only.
