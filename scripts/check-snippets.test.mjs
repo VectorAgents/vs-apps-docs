@@ -3,7 +3,7 @@ import { mkdtempSync, mkdirSync, rmSync, writeFileSync, readFileSync } from 'nod
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { test } from 'node:test';
-import { checkSnippets as check, isExcerptCodeBlock, isStarterCodeBlock } from './check-snippets.mjs';
+import { checkSnippets as check, isExcerptCodeBlock, isStarterCodeBlock, removedLinesOut } from './check-snippets.mjs';
 import { generate } from './generate.mjs';
 
 const ticks = '```';
@@ -90,6 +90,40 @@ test('skips an excerpt code block that also starts at a line number', () => {
   const result = checkSnippets({ docsDir: docs, stampFile: stamp });
   assert.equal(result.ok, true, result.output);
   assert.equal(result.count, 0);
+});
+
+test('typechecks a whole file as the reader ends with it, without the lines marked removed', () => {
+  const { docs, stamp } = docsDir(
+    [
+      `${ticks}ts title="a.ts"`,
+      'export const a = {',
+      '  // removed-next-line',
+      "  version: '0.1.0',",
+      '  // added-next-line',
+      "  version: '0.2.0',",
+      '  // removed-start',
+      "  name: 'old',",
+      "  key: 'old',",
+      '  // removed-end',
+      "  name: 'new',",
+      '};',
+      ticks,
+      '',
+    ].join('\n'),
+  );
+  const result = checkSnippets({ docsDir: docs, stampFile: stamp });
+  assert.equal(result.ok, true, result.output);
+  assert.equal(result.count, 1);
+});
+
+test('still typechecks the added lines of a whole file', () => {
+  const { docs, stamp } = docsDir(`${ticks}ts title="a.ts"\n// added-next-line\nexport const n: number = 'x';\n${ticks}\n`);
+  assert.equal(checkSnippets({ docsDir: docs, stampFile: stamp }).ok, false);
+});
+
+test('removedLinesOut drops each form of the removed marker with the lines it marks', () => {
+  const code = ['a', '// removed-next-line', 'b', '/* removed-next-line */', 'c', '{/* removed-next-line */}', 'd', '{/* removed-start */}', 'e', 'f', '{/* removed-end */}', 'g'].join('\n');
+  assert.equal(removedLinesOut(code), 'a\ng');
 });
 
 test('isExcerptCodeBlock reads the excerpt word in the code block meta, not in a title', () => {

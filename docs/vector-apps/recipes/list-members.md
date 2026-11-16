@@ -1,27 +1,30 @@
 ---
 title: List and pick members
+description: Show lead owners by name, search members for an owner picker and list the members of each group from the space directory.
+start: leads-app
 ---
 
 <!-- flavour react -->
-Show the owners of leads by name, let a member pick an owner and list the people in each group. The data comes from the [space](../../vector-space/glossary.md#space) directory.
-
-## Goal
-
-End with an owners list built with `useUsers`, a member picker built with the directory search, and a roster of each group.
+Show the owners of leads by name, let a [member](../../vector-space/glossary.md#member) pick an owner and list the people in each group. When you finish, the leads app page reads all three from the directory of the [space](../../vector-space/glossary.md#space).
 
 ## Prerequisites
 
-- The app from the [quickstart](../quickstart.md), added to a space (Part 2) and run with `npm run dev:space`. The harness has no directory, because `npm run dev` clears `SPACE_API_URL`.
+- A GitHub package token in `GITHUB_PACKAGES_TOKEN`, as in [step 0 of the quickstart](../quickstart.md#0-set-up-access-to-the-package-registry). The scaffold command reads it.
+- The `leads-app` start, added to a space and run with `npm run dev:space`. The harness has no directory, because `npm run dev` clears `SPACE_API_URL`. Scaffold the start and work inside the new folder. For a Nest.js server, use `--server nest`.
+
+```bash
+npm create @vectoragents/app leads-app -- --client react --server node --start leads-app
+cd leads-app
+```
+
 - `SPACE_API_URL` in `.env`, set to the [Vector Space](../../vector-space/glossary.md#vector-space) API origin followed by `/api`, for example `https://space-api.example.com/api`. The starter returns it as `spaceApiUrl` in `/api/client-config`. Without it, `useApp().directory` is `null`.
 - Background: [`useUsers`](../../sdk/reference/react.md#react-useusers), [`DirectoryUser` and `DirectoryGroup`](../../sdk/reference/browser.md#directoryuser).
 
 ## Steps
 
-Each snippet is a complete file.
-
 ### 1. Resolve owner identifiers to names
 
-`useUsers` takes user identifiers your data already holds, for example the owner of each lead. It fetches again only when the set of identifiers changes, so a new array on each render costs nothing. If Vector Space cannot show an identifier, the map holds an entry with `deleted: true` and the name `Former member`. Vector Space cannot show an identifier for a deleted user, a user who left the organization or an unknown identifier.
+`useUsers` takes member identifiers your data already holds, for example the owner of each lead. It fetches again only when the set of identifiers changes, so a new array on each render costs nothing. If Vector Space cannot show an identifier, the map holds an entry with `deleted: true` and the name `Former member`. Vector Space cannot show an identifier for a deleted member, a member who left the organization or an unknown identifier.
 
 ```tsx title="client/src/LeadOwners.tsx"
 import { useUsers } from '@vectoragents/vs-apps/react';
@@ -133,7 +136,7 @@ export function GroupRoster({ group }: { group: DirectoryGroup }) {
 
 ### 4. List groups
 
-`directory.groups()` returns every `DirectoryGroup` of the space. Its `id` is numeric, unlike the string identifier of a user. Like `search`, it rejects when Vector Space answers with an error, so the snippet shows an error line.
+`directory.groups()` returns every `DirectoryGroup` of the space. Its `id` is numeric, unlike the string identifier of a member. Like `search`, it rejects when Vector Space answers with an error, so the snippet shows an error line.
 
 ```tsx title="client/src/TeamGroups.tsx"
 import type { DirectoryGroup } from '@vectoragents/vs-apps/browser';
@@ -169,13 +172,39 @@ export function TeamGroups() {
 
 ### 5. Mount the components
 
-In `client/src/LeadsPage.tsx`, import `LeadOwners`, `OwnerPicker` and `TeamGroups`. Render `<LeadOwners ownerIds={ownerIds} />` with the owner identifiers the app page holds, `<OwnerPicker onPick={pickOwner} />`, where `pickOwner` is your function that stores the picked `user.id`, and `<TeamGroups />`. Each component calls `useApp` or `useUsers`, so it must render inside `AppProvider`, as the app pages do.
+Each component calls `useApp` or `useUsers`, so it must render inside `AppProvider`, as the app pages do. The leads app page keeps the owner identifiers in state, and the picker adds the member it returns.
 
-## Result
+```tsx title="client/src/LeadsPage.tsx"
+// added-start
+import { useState } from 'react';
+import { LeadOwners } from './LeadOwners';
+import { OwnerPicker } from './OwnerPicker';
+import { TeamGroups } from './TeamGroups';
+// added-end
 
-Owner identifiers render as names, a search box returns members for a picker with one call per pause in typing, and each group of the space lists its members by name. A failed search or group call shows an error line.
+export function LeadsPage() {
+  // added-next-line
+  const [ownerIds, setOwnerIds] = useState<string[]>([]);
 
-## Next step
+  return (
+    <main>
+      <h1>Leads</h1>
+      <p>No leads yet.</p>
+      {/* added-start */}
+      <LeadOwners ownerIds={ownerIds} />
+      <OwnerPicker onPick={(user) => setOwnerIds((ids) => (ids.includes(user.id) ? ids : ids.concat(user.id)))} />
+      <TeamGroups />
+      {/* added-end */}
+    </main>
+  );
+}
+```
 
-Let the space agent drive these app pages with [expose agent actions](./expose-agent-actions.md).
+### 6. Check the lists in the space
+
+Run `npm run dev:space` and open the leads app page in the space. Type a name in the **Find an owner** box and pause for 300 ms. The box lists up to 5 matching members, one button each. Select one: the name appears in the owners list. `TeamGroups` lists each group of the space with the names of its members. A failed search or group call shows an error line.
+
+## Next steps
+
+- [Expose agent actions on an app page](./expose-agent-actions.md): let the space agent drive these app pages.
 <!-- /flavour -->

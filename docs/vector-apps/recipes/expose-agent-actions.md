@@ -1,18 +1,15 @@
 ---
 title: Expose agent actions on an app page
+description: Declare an agent action on the leads app page, bind a handler to it and write it into the agent catalog.
 start: leads-app
 ---
 
-Let the [space](../../vector-space/glossary.md#space) agent open a Lead List on the leads [app page](../glossary.md#app-page). The recipe declares the app page and the [agent action](../../sdk/glossary.md#agent-action) with `defineAgentPage`, binds a handler with `useAgentAction`, and writes both into the [agent catalog](../../sdk/glossary.md#agent-catalog).
-
-## Goal
-
-End with the action `leads.open_lead_list` in the [manifest](../glossary.md#manifest) and bound to a handler while the leads app page is mounted.
+Declare an [agent action](../../sdk/glossary.md#agent-action) on the `leads` [app page](../glossary.md#app-page), bind a handler to it and write it into the [agent catalog](../../sdk/glossary.md#agent-catalog). When you finish, `leads.open_lead_list` is in the [manifest](../glossary.md#manifest), and the space [agent](../../vector-space/glossary.md#agent) can call it while the app page is mounted.
 
 ## Prerequisites
 
 - A GitHub package token in `GITHUB_PACKAGES_TOKEN`, as in step 0 of the [quickstart](../quickstart.md). The scaffold command reads it.
-- The `leads-app` start of the starter. It is `hello-app` with an ungated `leads` app page. Scaffold it and work inside the new folder. For a Nest.js server, use `--server nest`.
+- The `leads-app` start. Scaffold it and work inside the new folder. For a Nest.js server, use `--server nest`.
 
 ```bash
 npm create @vectoragents/app leads-app -- --client react --server node --start leads-app
@@ -25,12 +22,16 @@ cd leads-app
 
 ### 1. Install zod 3 and vite-node
 
-The parameter schema needs `zod` version 3. Zod 4 gives an empty `paramsJsonSchema`, so the agent sees no parameters. The catalog command in step 4 runs through `vite-node`, a dev dependency of the client package.
+The parameter schema needs `zod` version 3. The catalog command in step 4 runs through `vite-node`, a dev dependency of the client package.
 
 ```bash
 npm install zod@3 --workspace client
 npm install --save-dev vite-node --workspace client
 ```
+
+:::warning
+Zod 4 gives an empty `paramsJsonSchema` and no error, so the agent sees no parameters. Install zod 3.
+:::
 
 ### 2. Declare the app page and the action
 
@@ -58,23 +59,30 @@ The action identifier is `leads.open_lead_list`. `id` must be a snake_case local
 
 ### 3. Bind a handler
 
-The action is available to the agent only while a component that binds it is mounted. The handler receives the parameters parsed by the schema. Replace `client/src/LeadsPage.tsx` with this file.
+The action is available to the agent only while a component that binds it is mounted. The handler receives the parameters parsed by the schema.
 
 ```tsx title="client/src/LeadsPage.tsx"
+// added-start
 import { useAgentAction } from '@vectoragents/vs-apps/react';
 import { useState } from 'react';
 import { openLeadListAction } from './actions';
+// added-end
 
 export function LeadsPage() {
+  // added-start
   const [openId, setOpenId] = useState<string | null>(null);
 
   useAgentAction(openLeadListAction, ({ leadListId }) => {
     setOpenId(leadListId);
   });
 
+  // added-end
   return (
     <main>
       <h1>Leads</h1>
+      {/* removed-next-line */}
+      <p>No leads yet.</p>
+      {/* added-next-line */}
       <p>{openId ? `Lead List ${openId} is open.` : 'Pick a Lead List.'}</p>
     </main>
   );
@@ -83,9 +91,9 @@ export function LeadsPage() {
 
 ### 4. Write the catalog
 
-`server/src/manifests.ts` reads `server/agent-catalog.json` with `readExtractedAgentCatalog` and passes it to `buildManifests`. The app ships the file empty and has no entry that fills it.
+`server/src/manifests.ts` reads `server/agent-catalog.json` with `readExtractedAgentCatalog` and passes it to `buildManifests`. The file starts empty. This step adds the entry that fills it.
 
-Add the entry below. It loads `actions.ts`, so the app page and the action register, and then writes the file. The import ends in `.js` because TypeScript requires an extension there. The command resolves it to `actions.ts`.
+The entry loads `actions.ts`, so the app page and the action register, and then writes the file. The import ends in `.js` because TypeScript requires an extension there. The command resolves it to `actions.ts`.
 
 ```ts title="client/scripts/agent-catalog.ts"
 import { extractAgentCatalog } from '@vectoragents/vs-apps/extract';
@@ -108,14 +116,10 @@ The command prints `agent-catalog: 1 pages, 1 actions`. The file now lists `lead
 
 ### 5. Check the action
 
-Restart the server so `buildManifests` reads the new catalog. It throws at boot if the catalog names an app page key that the definition lacks.
+Restart the server so `buildManifests` reads the new catalog. If `pageId` matches no app page key of the definition, the server stops at start with `extracted page "<pageId>" references unknown page "<pageId>"`. Set `pageId` to the app page key.
 
-Open the leads app page in a space and ask the agent to open a Lead List. After each successful call, the SDK reports the mounted actions. A call with parameters that fail the schema returns `INVALID_PARAMS` and the handler does not run.
+Open the leads app page in a space and ask the agent to open a Lead List. The app page shows `Lead List <id> is open.` After each successful call, the SDK reports the mounted actions. A call with parameters that fail the schema returns `INVALID_PARAMS`, and the handler does not run.
 
-## Result
+## Next steps
 
-The catalog file lists `leads.open_lead_list`, and `buildManifests` merges it into the `leads` app page. While the leads app page is mounted, calling the action runs the handler with typed parameters.
-
-## Next step
-
-Model actions that exist only inside another action with [agent action trees](../guides/agent-action-trees.md).
+- [Agent action trees](../guides/agent-action-trees.md): model actions that exist only inside another action.

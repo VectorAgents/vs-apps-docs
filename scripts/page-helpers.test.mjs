@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { after, test } from 'node:test';
 import { generate } from './generate.mjs';
-import { bannedTermsIn, bodyOf, brokenLinks, longSentences, rowsOf, treesOf, unlink } from './page-helpers.mjs';
+import { bannedTermsIn, bodyOf, brokenLinks, longSentences, nextLinks, rowsOf, treesOf, unlink } from './page-helpers.mjs';
 
 const config = {
   docsRoot: 'docs',
@@ -54,6 +54,13 @@ test('treesOf names the generator when the trees are missing', () => {
 test('bodyOf drops the front matter and unlink keeps the label of a link', () => {
   assert.equal(bodyOf('---\ntitle: T\n---\nText [a](./b.md) here\n'), 'Text [a](./b.md) here\n');
   assert.equal(unlink('Text [a](./b.md) and [c](d.md#e).'), 'Text a and c.');
+});
+
+test('nextLinks gives the first link of each Next steps bullet, and every link of an old Next step', () => {
+  const steps = '## Steps\n\nSee [x](./x.md).\n\n## Next steps\n\n- [A](./a.md): one reason with [b](./b.md).\n- [C](./c.md#d): another reason.\n';
+  assert.deepEqual(nextLinks(steps), ['./a.md', './c.md#d']);
+  assert.deepEqual(nextLinks('## Next step\n\nGo to [A](./a.md).\n'), ['./a.md']);
+  assert.deepEqual(nextLinks('## Steps\n\nText.\n'), []);
 });
 
 test('rowsOf returns the cells of every table row, the header included, and skips the rule line', () => {
