@@ -3,7 +3,8 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { assertConceptEnding, assertCoreRules, assertGlossaryLinks } from './core-concept-checks.mjs';
+import { assertWhereNext, glossaryLinkProblems } from './concept-link-rules.mjs';
+import { assertCoreRules } from './core-concept-checks.mjs';
 import { assertPersonaScene, bannedTermsIn, bodyOf, brokenLinks, linksOf, section, unlink } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
@@ -75,12 +76,12 @@ test('the slot organization-structure appears once, in "The organization as the 
 test('every link resolves and every glossary anchor exists', () => assert.deepEqual(brokenLinks(text, file), []));
 
 test('Where to go next gives a result sentence, one primary step, 2 related links and the glossary', () => {
-  assertConceptEnding(text, { next: './what-a-space-holds.md', related: ['./who-can-do-what.md', './one-access-model.md'] });
+  assertWhereNext(text, { primary: './what-a-space-holds.md', related: ['./who-can-do-what.md', './one-access-model.md'] });
 });
 
 test('the shared rules hold: description, link text, directional words, dashes, contractions, parts lists, glossary links once', () => {
   assertCoreRules(text);
-  assertGlossaryLinks(text);
+  assert.deepEqual(glossaryLinkProblems(text), []);
 });
 
 test('the page says each resource belongs to one space and never that spaces share nothing', () => {

@@ -3,7 +3,8 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { assertConceptEnding, assertCoreRules, assertGlossaryLinks } from './core-concept-checks.mjs';
+import { assertWhereNext, glossaryLinkProblems } from './concept-link-rules.mjs';
+import { assertCoreRules } from './core-concept-checks.mjs';
 import { assertPersonaScene, bannedTermsIn, bodyOf, brokenLinks, linksOf, section, unlink } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
@@ -191,12 +192,12 @@ test('the use cases are financial analysis and employee onboarding', () => {
 
 test('every link resolves, and Where to go next gives a result sentence, one primary step, 2 related links and the glossary', () => {
   assert.deepEqual(brokenLinks(text, file), []);
-  assertConceptEnding(text, { next: './one-access-model.md', related: ['./approvals-and-the-command-center.md', './the-record-of-work.md'] });
+  assertWhereNext(text, { primary: './one-access-model.md', related: ['./approvals-and-the-command-center.md', './the-record-of-work.md'] });
 });
 
 test('the shared rules hold: description, link text, directional words, dashes, contractions, parts lists, glossary links once', () => {
   assertCoreRules(text);
-  assertGlossaryLinks(text);
+  assert.deepEqual(glossaryLinkProblems(text), []);
 });
 
 test('the page follows the voice checks and has no em dash', () => {

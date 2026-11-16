@@ -56,10 +56,11 @@ For example, an organization defines a role that lets its holder read the space'
 
 ## Where to go next
 
-You now know the four kinds of people and callers, and the roles that say what each may do. Read [One access model](./one-access-model.md) next to see how Vector Space decides what a member, an agent or an app may do on a resource, whatever the way in.
+You now know the four kinds of people and callers, and the roles that say what each may do.
 
-**Related**
+Read [One access model](./one-access-model.md) next to see how Vector Space decides what a member, an agent or an app may do on a resource, whatever the way in.
+
+Related:
 
 - [Organizations and spaces](./organizations-and-spaces.md): the organization that holds users, resources and spaces, and the space where one team works.
-
-Look up any term in the [Vector Space glossary](./glossary.md).
+- [Vector Space glossary](./glossary.md): every term of Vector Space, each defined in a sentence.

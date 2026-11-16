@@ -41,11 +41,12 @@ A module draws on contexts attached to it, so the Omnibox module reads the mailb
 
 ## Where to go next
 
-You now know what a space holds: the Context Hub with its apps and modules, and pages with widgets. Read [Agents in a space](./agents-in-a-space.md) next to see how the orchestrator agent hands work to other agents.
+You now know what a space holds: the Context Hub with its apps and modules, and pages with widgets.
 
-**Related**
+Read [Agents in a space](./agents-in-a-space.md) next to see how the orchestrator agent hands work to other agents.
+
+Related:
 
 - [Extending a space](./extending-a-space.md): how a Vector App, an A2A agent and an MCP server compare as ways to extend a space.
 - [One access model](./one-access-model.md): the centralized check that decides what a person, an agent or an app may do on a resource.
-
-Look up any term in the [Vector Space glossary](./glossary.md).
+- [Vector Space glossary](./glossary.md): every term of Vector Space, each defined in a sentence.

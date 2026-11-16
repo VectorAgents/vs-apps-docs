@@ -3,7 +3,8 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { assertConceptEnding, assertCoreRules, assertGlossaryLinks } from './core-concept-checks.mjs';
+import { assertWhereNext, glossaryLinkProblems } from './concept-link-rules.mjs';
+import { assertCoreRules } from './core-concept-checks.mjs';
 import { assertPersonaScene, bannedTermsIn, bodyOf, brokenLinks, linksOf, section, unlink } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
@@ -92,12 +93,12 @@ test('the lead has no "This page shows" sentence, and the tree section ties an a
 
 test('every link resolves, and Where to go next gives a result sentence, one primary step, 2 related links and the glossary', () => {
   assert.deepEqual(brokenLinks(text, file), []);
-  assertConceptEnding(text, { next: './how-work-moves-through-a-space.md', related: ['./one-access-model.md', './agent-studio.md'] });
+  assertWhereNext(text, { primary: './how-work-moves-through-a-space.md', related: ['./one-access-model.md', './agent-studio.md'] });
 });
 
 test('the shared rules hold: description, link text, directional words, dashes, contractions, parts lists, glossary links once', () => {
   assertCoreRules(text);
-  assertGlossaryLinks(text);
+  assert.deepEqual(glossaryLinkProblems(text), []);
 });
 
 test('the page hands no part of its topic to another page: Agent Studio and extensions are stated, not deferred', () => {

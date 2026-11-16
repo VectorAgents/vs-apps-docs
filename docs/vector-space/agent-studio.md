@@ -87,11 +87,12 @@ Every paid model call of an evaluation goes through the [AI gateway](./glossary.
 
 ## Where to go next
 
-You now know how a team sets up, tests and publishes the agents of a space. Read [One access model](./one-access-model.md) next: it shows the check that decides what a member, an agent or an app may do in a space.
+You now know how a team sets up, tests and publishes the agents of a space.
 
-**Related**
+Read [One access model](./one-access-model.md) next: it shows the check that decides what a member, an agent or an app may do in a space.
+
+Related:
 
 - [Approvals and the Command Center](./approvals-and-the-command-center.md): how an ask waits for a person and is decided.
 - [The record of work](./the-record-of-work.md): how each run is recorded, and the four views that read the records.
-
-Look up any term in the [Vector Space glossary](./glossary.md).
+- [Vector Space glossary](./glossary.md): every term of Vector Space, each defined in a sentence.

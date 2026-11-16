@@ -66,12 +66,13 @@ When a context or datasource is shared, the people it is shared with run on the 
 
 ## Where to go next
 
-You now know what the Context Hub holds and whose credential each resource runs on. Read [One access model](./one-access-model.md) next: it shows the check that decides what a member, an agent or an app may do on a resource.
+You now know what the Context Hub holds and whose credential each resource runs on.
 
-**Related**
+Read [One access model](./one-access-model.md) next: it shows the check that decides what a member, an agent or an app may do on a resource.
+
+Related:
 
 - [Identity and roles](./who-can-do-what.md): the four kinds of people and callers in Vector Space, and the space roles and share levels that say what each may do.
 - [Extending a space](./extending-a-space.md): how a Vector App, an A2A agent and an MCP server compare as ways to extend a space.
 - [Agents in a space](./agents-in-a-space.md): how the orchestrator agent and the agents it manages use what the Context Hub lists.
-
-Look up any term in the [Vector Space glossary](./glossary.md).
+- [Vector Space glossary](./glossary.md): every term of Vector Space, each defined in a sentence.

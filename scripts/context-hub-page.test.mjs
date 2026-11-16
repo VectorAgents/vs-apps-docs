@@ -3,7 +3,8 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { assertConceptEnding, assertCoreRules, assertGlossaryLinks } from './core-concept-checks.mjs';
+import { assertWhereNext, glossaryLinkProblems } from './concept-link-rules.mjs';
+import { assertCoreRules } from './core-concept-checks.mjs';
 import { assertPersonaScene, bannedTermsIn, bodyOf, brokenLinks, linksOf, section, unlink } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
@@ -176,12 +177,12 @@ test('the page assumes no TypeScript, Node or React', () => assert.doesNotMatch(
 
 test('the shared rules hold: description, link text, directional words, dashes, contractions, parts lists, glossary links once', () => {
   assertCoreRules(text);
-  assertGlossaryLinks(text);
+  assert.deepEqual(glossaryLinkProblems(text), []);
 });
 
 test('every link resolves, and Where to go next gives a result sentence, one primary step, 3 related links and the glossary', () => {
   assert.deepEqual(brokenLinks(text, file), []);
-  assertConceptEnding(text, { next: './one-access-model.md', related: ['./who-can-do-what.md', './extending-a-space.md', './agents-in-a-space.md'] });
+  assertWhereNext(text, { primary: './one-access-model.md', related: ['./who-can-do-what.md', './extending-a-space.md', './agents-in-a-space.md'] });
   const next = section(text, 'Where to go next');
   assert.match(next, /the four kinds of people and callers in Vector Space, and the space roles and share levels that say what each may do/);
   assert.doesNotMatch(next, /five kinds/);

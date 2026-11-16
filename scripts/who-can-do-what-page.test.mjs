@@ -3,7 +3,8 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { assertConceptEnding, assertCoreRules, assertGlossaryLinks } from './core-concept-checks.mjs';
+import { assertWhereNext, glossaryLinkProblems } from './concept-link-rules.mjs';
+import { assertCoreRules } from './core-concept-checks.mjs';
 import { assertPersonaScene, bannedTermsIn, bodyOf, brokenLinks, linksOf, section, unlink } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
@@ -58,12 +59,12 @@ test('the ladder H2 lists the three space roles, then the three share levels', (
 test('every link resolves and every glossary anchor exists', () => assert.deepEqual(brokenLinks(text, file), []));
 
 test('Where to go next gives a result sentence, one primary step, one related link and the glossary', () => {
-  assertConceptEnding(text, { next: './one-access-model.md', related: ['./organizations-and-spaces.md'] });
+  assertWhereNext(text, { primary: './one-access-model.md', related: ['./organizations-and-spaces.md'] });
 });
 
 test('the shared rules hold: description, link text, directional words, dashes, contractions, parts lists, glossary links once', () => {
   assertCoreRules(text);
-  assertGlossaryLinks(text);
+  assert.deepEqual(glossaryLinkProblems(text), []);
 });
 
 test('the page says one organization admin, and the glossary row agrees', () => {

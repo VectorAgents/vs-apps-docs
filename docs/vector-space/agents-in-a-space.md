@@ -47,11 +47,12 @@ An agent belongs to the space of the orchestrator agent at its root. A [context]
 
 ## Where to go next
 
-You now know how the orchestrator agent hands work to other agents, and how threads and runs keep that work apart. Read [How work moves through a space](./how-work-moves-through-a-space.md) next to follow one request from a member to a sent email.
+You now know how the orchestrator agent hands work to other agents, and how threads and runs keep that work apart.
 
-**Related**
+Read [How work moves through a space](./how-work-moves-through-a-space.md) next to follow one request from a member to a sent email.
+
+Related:
 
 - [One access model](./one-access-model.md): the check that decides what a member, an agent or an app may do in a space.
 - [Agent Studio](./agent-studio.md): how the agents of a space are set up, tested and published.
-
-Look up any term in the [Vector Space glossary](./glossary.md).
+- [Vector Space glossary](./glossary.md): every term of Vector Space, each defined in a sentence.

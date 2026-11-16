@@ -45,11 +45,12 @@ That is why the leads stay with the sales team.
 
 ## Where to go next
 
-You now know that an organization is the tenant and that a space is the unit of work for one team. Read [Inside a space](./what-a-space-holds.md) next to see what the team of a space works with.
+You now know that an organization is the tenant and that a space is the unit of work for one team.
 
-**Related**
+Read [Inside a space](./what-a-space-holds.md) next to see what the team of a space works with.
+
+Related:
 
 - [Identity and roles](./who-can-do-what.md): the four kinds of people and callers, and how each stands in an organization and its spaces.
 - [One access model](./one-access-model.md): the centralized check that every operation on a resource passes through, and the rules that say which input wins.
-
-Look up any term in the [Vector Space glossary](./glossary.md).
+- [Vector Space glossary](./glossary.md): every term of Vector Space, each defined in a sentence.

@@ -3,7 +3,8 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { assertCoreRules, assertGlossaryLinks } from './core-concept-checks.mjs';
+import { glossaryLinkProblems } from './concept-link-rules.mjs';
+import { assertCoreRules } from './core-concept-checks.mjs';
 import { assertPersonaScene, bannedTermsIn, bodyOf, brokenLinks, linksOf, section } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
@@ -27,7 +28,7 @@ test('the lead says what Vector Space is, what it gives, then what a run does: a
 });
 
 test('the lead links at most 3 glossary terms per sentence, and each term once on the page', () => {
-  assertGlossaryLinks(text);
+  assert.deepEqual(glossaryLinkProblems(text), []);
   const sentences = lead.split('\n\n')[0].split(/(?<=[.!?])\s+/);
   assert.equal(sentences.length, 3);
 });
