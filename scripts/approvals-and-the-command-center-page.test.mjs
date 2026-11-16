@@ -65,9 +65,8 @@ test('the slot approvals-flow appears once, in "The ask and who decides it"', ()
   assert.deepEqual(slotsIn(section(text, 'The ask and who decides it')), ['approvals-flow']);
 });
 
-test('the ask section says what raises an ask, who decides, and that the Command Center is not a Vector Module', () => {
+test('the ask section says what raises an ask, who decides', () => {
   const ask = section(text, 'The ask and who decides it');
-  assert.match(ask, /not a \[Vector Module\]\(\.\/glossary\.md#vector-module\)/);
   assert.match(ask, /writes/);
   assert.match(ask, /\n\nEach ask goes to its answerer, the person who answers for the run:/);
   assert.deepEqual([...ask.matchAll(/^- \*\*(.+?)\*\*: /gm)].map((m) => unlink(m[1])), ['Member', 'Service account', 'App']);

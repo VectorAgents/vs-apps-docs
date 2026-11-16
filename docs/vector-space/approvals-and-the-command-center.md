@@ -18,8 +18,6 @@ Maya reads the ask and approves it. The run continues and the note is posted. Ma
 
 An agent raises an ask when its run reaches an operation that writes, such as a post to a team chat. It also raises one when it needs a person to answer a question. A [Vector App](../vector-apps/glossary.md#app), a web app that a space shows in an iframe, raises one for an approval that it declares.
 
-The Command Center is a plain part of a space. It is not a [Vector Module](./glossary.md#vector-module).
-
 Each ask goes to its answerer, the person who answers for the run:
 
 - **Member**: answers for their own run.

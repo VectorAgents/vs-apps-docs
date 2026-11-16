@@ -73,11 +73,6 @@ test('the parts section gives one linked line per part: members, orchestrator ag
   items.forEach((item, i) => assert.ok(linksOf(item).includes(owners[i]), item));
 });
 
-test('the Command Center is a plain part of a space, not a Vector Module', () => {
-  const item = section(text, 'The parts of a space').split('\n').find((l) => l.includes('Command Center'));
-  assert.match(item, /plain part of a space, not a Vector Module/);
-});
-
 test('the Vector Modules item lists omnibox, contacts and Calendar as sub-items with no caveat', () => {
   const parts = section(text, 'The parts of a space');
   const subItems = parts.split('\n').filter((l) => l.startsWith('  - '));
