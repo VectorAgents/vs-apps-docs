@@ -3,7 +3,7 @@ title: Vector Apps glossary
 sidebar_label: Glossary
 ---
 
-Each term has one name in these docs. Pages link a term at first use. Each entry gives the definition, the code symbol or field it maps to, and who owns it. The terms of Vector Space itself, such as [space](../vector-space/glossary.md#space) and [space admin](../vector-space/glossary.md#space-admin), are in the [Vector Space glossary](../vector-space/glossary.md). The terms of the SDK are in the [SDK glossary](../sdk/glossary.md).
+Each term has one name in these docs. Each entry gives the definition, the code symbol or field it maps to, and who owns it. The terms of Vector Space itself, such as [space](../vector-space/glossary.md#space) and [space admin](../vector-space/glossary.md#space-admin), are in the [Vector Space glossary](../vector-space/glossary.md). The terms of the SDK are in the [SDK glossary](../sdk/glossary.md).
 
 ## Terms
 
@@ -16,21 +16,20 @@ A product you ship into spaces: a React client, a server and one [app definition
 
 ### app registration
 
-The record Vector creates in Vector Space from your manifest URL. One registration per app. Vector Space re-pulls the manifest on a pull or the app's boot ping.
+The record Vector creates in Vector Space from your [manifest](#manifest) URL, one per app. Vector Space fetches the manifest again when [staff](../vector-space/glossary.md#staff) ask or when the app starts.
 
-- Maps to: no SDK symbol.
 - Owner: Vector Space.
 
 ### manifest
 
-The JSON the server builds from the app definitions and serves at `GET /api/manifest/:appKey`. Vector Space reads it. The definition file itself is never sent.
+The JSON the server builds from the [app definitions](../sdk/glossary.md#app-definition) and serves at `GET /api/manifest/:appKey`. Vector Space reads it. The definition file itself is never sent.
 
 - Maps to: `buildManifests` in `@vectoragents/vs-apps/server`.
 - Owner: SDK builds it. Vector Space reads it.
 
 ### app page
 
-One screen of the app. It becomes a navigation entry in Vector Space, shown only to users who hold the page's capability.
+One screen of the app. It becomes a navigation entry in Vector Space, shown only to members who hold the page's [capability](#capability).
 
 - Maps to: `pages[]` in the definition (`key`, `label`, `path`, optional `capability`). `appPages(...)` lists them on the client.
 - Owner: SDK declares it. Vector Space renders the navigation entry.
@@ -46,7 +45,7 @@ A named permission of the form `<group>:<action>` with an `effect` of `read` or 
 
 A [share](../vector-space/glossary.md#share) on named capabilities, at Can use, for users or groups. A space admin makes it. Only declared capabilities can be shared.
 
-- Maps to: no SDK symbol. `useApp().capabilities` holds the capabilities granted to the current user.
+- Maps to: `useApp().capabilities` holds the capabilities granted to the current member.
 - Owner: Vector Space.
 
 ### model slot
@@ -65,7 +64,7 @@ A named requirement for one external connector, such as ClickUp or a REST API. A
 
 ### acts
 
-Declared records of what the app did, such as an import. Each act has a `kind` of `activity` or `audit`. Vector Space refuses an undeclared act key. An act is what [Human Time Return](../vector-space/glossary.md#human-time-return) values.
+Declared records of what the app did, such as an import, each with a `kind` of `activity` or `audit`. Vector Space refuses an undeclared act key. An act is what [Human Time Return](../vector-space/glossary.md#human-time-return) values.
 
 - Maps to: `acts[]` in the definition.
 - Owner: SDK declares them. Vector Space bounds and records them.
@@ -79,9 +78,9 @@ Declared points where a person must confirm an action. Each one raises an [ask](
 
 ### app token
 
-A short-lived token that Vector Space issues in exchange for the service secret. The SDK calls it a service token. A plain exchange gives a token limited to what the app may do, with no user involved. An exchange that names a `userId` gives a user token under that member's own access, with `viaServer: true`. Vector Space refuses it unless the space admits that user.
+A short-lived token that Vector Space issues in exchange for the [service secret](#service-secret). The SDK calls it a service token. It is limited to what the app may do or, when the exchange names a `userId`, to that member's own access.
 
-- Maps to: `createSpaceS2s` and `SpaceS2sService`.
+- Maps to: `createSpaceS2s` and `SpaceS2sService`. An exchange that names a `userId` gives a token with `viaServer: true`, which Vector Space refuses unless the space admits that user.
 - Owner: Vector Space issues it. The SDK requests it.
 
 ### service secret
@@ -93,14 +92,13 @@ The secret Vector Space creates for each pair of app and space and pushes to the
 
 ### binding
 
-An app attached to one space. The binding keeps a copy of the capabilities, acts and approvals that the manifest declares. It also holds the model, connector and resource choices of that space. Vector Space updates the copy each time it reads the manifest.
+An app attached to one space. It keeps a copy of the [capabilities](#capability), [acts](#acts) and [approvals](#approvals) that the manifest declares, and the model, connector and resource choices of that space. Vector Space updates the copy each time it reads the manifest.
 
-- Maps to: no SDK symbol. The SDK sees the effect through the verified token and `loadAppClientConfig`.
+- Maps to: `loadAppClientConfig` and the verified token, through which the app sees the effect of a binding.
 - Owner: Vector Space.
 
 ### allowed resources
 
-The resources attached to an app, such as connectors and knowledge sources. They come from the [Context Hub](../vector-space/glossary.md#context-hub). An action runs only on resources that are allowed for the app and open to the member. The member's access never grows through the app.
+The resources attached to an app from the [Context Hub](../vector-space/glossary.md#context-hub), such as connectors and knowledge sources. An action runs only on resources that are allowed for the app and open to the member. The member's access never grows through the app.
 
-- Maps to: no SDK symbol.
 - Owner: Vector Space.

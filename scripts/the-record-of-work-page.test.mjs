@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { assertPersonaScene, bannedTermsIn, bodyOf, brokenLinks, linksOf, section, unlink } from './page-helpers.mjs';
+import { assertPersonaScene, bannedTermsIn, bodyOf, brokenLinks, linksOf, longSentences, section, unlink } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
 const docs = resolve(dirname(fileURLToPath(import.meta.url)), '../docs');
@@ -71,11 +71,14 @@ test('the actor section defines an execution, then lists its actor and what star
   assert.match(actor, /\[schedule\]\(\.\/glossary\.md#schedule\) is not an actor/);
 });
 
-test('the four governance views are each named and linked, with who reads them', () => {
+test('the four governance views are each named, with Activity linked at its first use in the scene, and with who reads them', () => {
   const views = section(text, 'The four governance views');
-  for (const view of ['Overview', 'Health', 'Activity', 'Audit']) {
+  for (const view of ['Overview', 'Health', 'Audit']) {
     assert.match(views, new RegExp(`\\[${view}\\]\\(\\./glossary\\.md#${view.toLowerCase()}\\)`), view);
   }
+  assert.match(views, /^- \*\*Activity\*\*: what happened, in time order\./m);
+  assert.equal(text.match(/\]\(\.\/glossary\.md#activity\)/g)?.length, 1);
+  assert.match(section(text, "A member's outreach run"), /\[Activity\]\(\.\/glossary\.md#activity\)/);
   assert.match(views, /organization admin/);
   assert.match(views, /space admin/);
   assert.match(views, /never as zero/);
@@ -130,26 +133,39 @@ test('the spend cap is read by the organization and set by staff, and its refusa
   assert.doesNotMatch(prose, /shadow/i);
 });
 
-test('acts: admitted and attested by the platform, Human Time Return an estimate in seconds that points to Why Vector Space for its parts', () => {
+test('acts: admitted and attested by the platform, Human Time Return an estimate in seconds whose baseline and valuation the page states itself', () => {
   const acts = section(text, 'Acts and Human Time Return');
   assert.match(text, /\[Acts\]\(\.\.\/vector-apps\/glossary\.md#acts\)/);
   assert.match(acts, /An act is one thing that an app did/);
   assert.match(acts, /\[Human Time Return\]\(\.\/glossary\.md#human-time-return\)/);
   assert.match(acts, /\[Intelligence\]\(\.\/glossary\.md#intelligence\)/);
-  assert.match(acts, /\]\(\.\/why-vector-space\.md#human-time-return\)/);
+  assert.doesNotMatch(acts, /why-vector-space\.md/);
   assert.match(acts, /counted in seconds/);
   assert.match(acts, /estimate/);
   assert.match(acts, /in addition to spend/);
-  assert.doesNotMatch(acts, /apart from spend|four things/);
-  assert.match(acts, /lists the three things that make up the figure/);
+  assert.doesNotMatch(acts, /apart from spend|four things|lists the three things/);
+  assert.match(acts, /Staff approve the seconds per unit of an act, and that approved figure is the baseline\. Only successful acts with an approved baseline are valued, and the platform shows how many are not\./);
   assert.match(acts, /An act is fixed when the platform accepts it, so a later change to the baseline does not alter it\./);
   assert.doesNotMatch(acts, /settles/);
   assert.match(acts, /computes no return figure/);
 });
 
-test('every link resolves, every glossary anchor exists, and Where to go next links its two pages and the glossary', () => {
+test('every link resolves, every glossary anchor exists, and Where to go next gives a result sentence, one primary step and Related links to other topics', () => {
   assert.deepEqual(brokenLinks(text, file), []);
-  assert.deepEqual(linksOf(section(text, 'Where to go next')), ['./why-vector-space.md', './approvals-and-the-command-center.md', './glossary.md']);
+  const next = section(text, 'Where to go next');
+  const parts = next.match(/^Where to go next\n\n(You now know [^\n]+\.) (Read \[[^\]]+\]\([^)]+\) next: [^\n]+)\n\nRelated:\n\n((?:- [^\n]+\n?)+)\s*$/);
+  assert.ok(parts, 'a result sentence, a primary step and a Related list');
+  assert.deepEqual(linksOf(parts[2]), ['./approvals-and-the-command-center.md']);
+  assert.deepEqual(linksOf(parts[3]), ['./why-vector-space.md', './one-access-model.md', './how-work-moves-through-a-space.md', './glossary.md']);
+  assert.doesNotMatch(text.replace(next, ''), /why-vector-space\.md/, 'the page states its own spend and Human Time Return facts and links no sibling inline');
+});
+
+test('a glossary term is linked once, a sentence holds 3 glossary links or fewer and 35 words or fewer, and the description is 160 characters or fewer', () => {
+  const anchors = [...body.matchAll(/\]\(([^)\s]*glossary\.md#[^)\s]+)\)/g)].map((m) => m[1]);
+  assert.deepEqual(anchors.filter((a, i) => anchors.indexOf(a) !== i), []);
+  for (const sentence of body.split(/(?<=[.!?])\s+|\n/)) assert.ok((sentence.match(/glossary\.md#/g) ?? []).length <= 3, sentence);
+  assert.deepEqual(longSentences(plain, { max: 35 }), []);
+  assert.ok(text.match(/^description: (.+)$/m)[1].length <= 160);
 });
 
 test('the page leaves out replay, retention, the gateway and any number of days or months', () => {
