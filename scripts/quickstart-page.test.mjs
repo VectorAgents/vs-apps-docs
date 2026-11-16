@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { linksOf, section, treesOf } from './page-helpers.mjs';
+import { bodyOf, linksOf, section, treesOf } from './page-helpers.mjs';
 import { CLI_PACKAGE } from './starter-source.mjs';
 import { voiceViolations } from './voice.mjs';
 
@@ -25,8 +25,9 @@ for (const { tree, text } of trees) {
   const codeBlocks = [...text.matchAll(/^```(\w+)([^\n]*)\n([\s\S]*?)^```/gm)].map(([, lang, meta, body]) => ({ lang, meta, body }));
   const part1 = section(text, 'Part 1');
   const part2 = section(text, 'Part 2');
-  const goal = section(text, 'Goal');
-  const result = section(text, 'Result');
+  const opening = bodyOf(text).trim().split('\n\n')[0];
+  const description = text.match(/^description: (.*)$/m)?.[1] ?? '';
+  const firstCommand = text.indexOf('```');
   const subsections = (part) => part.split(/^### /m).slice(1);
   const steps = (part) => subsections(part).filter((s) => /^\d+\. /.test(s));
   const title = (step) => step.split('\n')[0];
@@ -49,48 +50,60 @@ for (const { tree, text } of trees) {
   });
 
   t('follows the page order', () => {
-    assert.deepEqual(titles, [
-      'Goal',
-      'Prerequisites',
-      'Part 1: Run the app locally',
-      'Part 2: Add the app to a space',
-      'Result',
-      'Next steps',
-    ]);
+    assert.deepEqual(titles, ['Prerequisites', 'Part 1: Run the app locally', 'Part 2: Add the app to a space', 'Next steps']);
+  });
+
+  t('has a description of one sentence, 160 characters or fewer, that starts with a verb', () => {
+    assert.ok(description.length > 0 && description.length <= 160, description);
+    assert.match(description, /^[A-Z][a-z]+ /);
+    assert.doesNotMatch(description, /^(This|Learn|Here)\b/);
+    assert.equal(description.split(/(?<=\.)\s/).length, 1);
+    assert.match(description, /\.$/);
   });
 
   t('has the Quickstart frontmatter title and a one-paragraph opening that links Space', () => {
     assert.match(text, /^---\ntitle: Quickstart\n/);
-    const opening = text.replace(/^---\n[\s\S]*?\n---\n/, '').trim().split('\n\n')[0];
     assert.doesNotMatch(opening, /^#/);
     assert.match(opening, /\]\((\.\.?\/)+vector-space\/glossary\.md#vector-space\)/);
   });
 
-  t('Goal names both end states and ends with the Mermaid diagram and its caption', () => {
-    assert.match(goal, /harness/);
-    assert.match(goal, /open in a space/);
-    assert.match(goal, /scaffold/);
-    assert.doesNotMatch(goal, /\bclone/i);
+  t('the opening states what you build, the result and one security sentence, with no code before the first command', () => {
+    assert.match(opening, /harness/);
+    assert.match(opening, /add it to a \[space\]/);
+    assert.match(opening, /Build a small app/);
+    assert.doesNotMatch(opening, /\bclone/i);
+    assert.match(opening, /A check in the browser is display only: the server check decides\./);
+    assert.doesNotMatch(opening, /\busers?\b/);
+    const before = text.slice(0, firstCommand);
+    assert.doesNotMatch(before, /```mermaid/);
+    assert.doesNotMatch(before, /hello-app\/\n/);
+    assert.equal(before.split('```').length - 1, 0);
+  });
+
+  t('the first diagram sits in the step that opens the app page, after the first command', () => {
     const diagrams = codeBlocks.filter((f) => f.lang === 'mermaid');
     assert.equal(diagrams.length, 2);
-    const [{ body }] = diagrams;
+    assert.ok(text.indexOf('```mermaid') > firstCommand);
+    const open = steps(part2)[5];
+    assert.equal(open.split('```mermaid').length, 2);
+    const { body } = diagrams.at(-1);
+    assert.ok(open.includes(body));
     assert.match(body, /^sequenceDiagram$/m);
     assert.match(body, /^\s+accTitle: \S/m);
     assert.match(body, /^\s+accDescr: \S/m);
     assert.equal([...body.matchAll(/^\s+participant \w+ as /gm)].length, 4);
     assert.match(body, /display only/);
-    assert.ok(goal.includes('```mermaid'));
-    assert.match(goal.split('```mermaid')[1].split(/^```$/m)[1], /Only the server check protects data\./);
+    assert.match(open.split('</DiagramControls>')[1], /Only the server check protects data\./);
   });
 
   t('each mermaid code block sits inside DiagramControls, imported right after the opening paragraph', () => {
-    const body = text.replace(/^---\n[\s\S]*?\n---\n/, '').trim();
-    const [opening, importLine] = body.split('\n\n');
-    assert.doesNotMatch(opening, /DiagramControls/);
+    const [openingParagraph, importLine] = bodyOf(text).trim().split('\n\n');
+    assert.doesNotMatch(openingParagraph, /DiagramControls/);
     assert.equal(importLine, "import DiagramControls from '@site/src/components/DiagramControls';");
-    assert.match(text, /<DiagramControls>\n\n```mermaid\n[\s\S]*?\n```\n\n<\/DiagramControls>\n\nVector Space mints the token/);
+    const wrapped = (after) => new RegExp(`<DiagramControls>\\n\\n\`\`\`mermaid\\n(?:(?!\`\`\`)[\\s\\S])*\`\`\`\\n\\n</DiagramControls>\\n\\n${after}`);
+    assert.match(text, wrapped('Vector Space mints the token'));
+    assert.match(text, wrapped('Step \\(3\\) of the harness diagram produces'));
     assert.equal(count(/<DiagramControls>/g), 2);
-    assert.match(text, /<DiagramControls>\n\n```mermaid\n[\s\S]*?\n```\n\n<\/DiagramControls>\n\nStep \(3\) in the diagram produces/);
   });
 
   t('step 2 shows the harness diagram after the dev server code block and before the Check', () => {
@@ -104,7 +117,7 @@ for (const { tree, text } of trees) {
     assert.match(body, /^\s+accDescr: \S/m);
     assert.equal([...body.matchAll(/^\s+participant \w+ as /gm)].length, 4);
     assert.match(body, /display only/);
-    assert.match(afterBody, /^\n\n<\/DiagramControls>\n\nStep \(3\) in the diagram produces `Verified in the browser`\. Steps \(5\) and \(6\) produce `Verified on the server`\.\n\n\*\*Check\*\*/);
+    assert.match(afterBody, /^\n\n<\/DiagramControls>\n\nStep \(3\) of the harness diagram produces `Verified in the browser`\. Steps \(5\) and \(6\) produce `Verified on the server`\.\n\n\*\*Check\*\*/);
   });
 
   t('prerequisites are one app-side checklist and state the baseline once', () => {
@@ -143,7 +156,7 @@ for (const { tree, text } of trees) {
       '2. Ask Vector to register the app',
       '3. Publish the space agent',
       '4. Add the app to a space',
-      '5. Share the app with a user',
+      '5. Share the app with a member',
       '6. Open the app page',
     ]);
     assert.match(intro, /\]\(#3-publish-the-space-agent\)/);
@@ -151,7 +164,7 @@ for (const { tree, text } of trees) {
     const roled = rest.filter((step) => step.includes('**Role**: space admin.'));
     assert.deepEqual(roled.map(title), rest.slice(3, 5).map(title));
     assert.equal([...part2.matchAll(/\*\*Role\*\*: space admin\./g)].length, 2);
-    assert.match(text, /An organization admin, [^.]*, to do \[step 3\]\(#3-publish-the-space-agent\)\. A space admin to do steps 4 and 5\./);
+    assert.match(text, /An \[organization admin\]\([^)]*\), [^.]*, to do \[step 3\]\(#3-publish-the-space-agent\)\. A space admin to do steps 4 and 5\./);
     assert.match(text, /then continue at step 4\. \*\*Hello app\*\* appears/);
     assert.doesNotMatch(text, /Each step names the role/);
   });
@@ -165,9 +178,12 @@ for (const { tree, text } of trees) {
     const [access] = steps(part1);
     const npmrc = codeBlocks.find((f) => /title="~\/\.npmrc"/.test(f.meta));
     assert.ok(npmrc, 'a code block titled ~/.npmrc');
-    assert.deepEqual(npmrc.body.trim().split('\n'), [
+    const lines = npmrc.body.trim().split('\n');
+    assert.deepEqual(lines, [
+      '# added-start',
       '@vectoragents:registry=https://npm.pkg.github.com',
       '//npm.pkg.github.com/:_authToken=${GITHUB_PACKAGES_TOKEN}',
+      '# added-end',
     ]);
     assert.ok(access.includes(npmrc.body));
     assert.equal(count(/export GITHUB_PACKAGES_TOKEN=/g), 1);
@@ -177,10 +193,11 @@ for (const { tree, text } of trees) {
     assert.doesNotMatch(text, /_authToken=[A-Za-z0-9_]{20,}/);
   });
 
-  t('one tree of the generated layout, after the scaffold, with no per-step trees or new markers', () => {
+  t('one tree of the generated layout, in the step that reads the files, with no per-step trees or new markers', () => {
     const layouts = codeBlocks.filter((f) => f.lang === 'text' && /^hello-app\/$/m.test(f.body));
     assert.equal(layouts.length, 1);
-    assert.ok(steps(part1)[1].includes(layouts[0].body));
+    assert.ok(steps(part1)[3].includes(layouts[0].body));
+    assert.ok(text.indexOf(layouts[0].body) > text.indexOf('npm run dev'));
     for (const name of ['client/', 'server/', 'shared/', '.env.example', '.npmrc', 'index.html', 'main.tsx', 'vite.config.ts']) {
       assert.ok(layouts[0].body.includes(name), name);
     }
@@ -373,38 +390,90 @@ for (const { tree, text } of trees) {
     assert.doesNotMatch(addApp, /\b404\b/);
   });
 
-  t('the Result summarises the last Check and has no second output block', () => {
-    assert.doesNotMatch(result, /^```/m);
-    assert.match(result, /same three lines as the last Check/);
-    assert.match(result, /one token/);
+  t('ends on a Check with the exact output, and holds no Goal or Result section', () => {
+    const last = steps(part2).at(-1);
+    assert.equal(title(last), '6. Open the app page');
+    assert.ok(hasCheck(last));
+    assert.match(last.split(/^\*\*Check\*\*/m)[1], /^```text\nVerified in the browser: user <id> in space <id>\.\n/m);
+    assert.doesNotMatch(text, /^## (Goal|Result)$/m);
+    assert.doesNotMatch(text, /same three lines as the last Check/);
   });
 
-  t('links the six glossary terms, the concept page and the harness reference', () => {
+  t('links the glossary terms and the harness reference', () => {
     assert.ok(targets.includes('sdk/app-definition.md'));
     const links = targets.filter((l) => l.includes('glossary.md#'));
-    assert.deepEqual([...links].sort(), [
+    const common = [
+      'glossary.md#app-page',
       'glossary.md#app-registration',
+      'glossary.md#capability',
+      'glossary.md#manifest',
       'sdk/glossary.md#agent-catalog',
       'sdk/glossary.md#app-definition',
       'sdk/glossary.md#dev-issuer',
       'sdk/glossary.md#harness',
+      'vector-space/glossary.md#member',
+      'vector-space/glossary.md#organization-admin',
+      'vector-space/glossary.md#space',
+      'vector-space/glossary.md#space-admin',
       'vector-space/glossary.md#vector-space',
-    ]);
+    ];
+    assert.deepEqual([...new Set(links)].sort(), (nest ? common : [...common, 'sdk/glossary.md#sdk']).sort());
     assert.ok(linksOf(section(text, 'Next steps')).map(bare).some((link) => link.endsWith('reference/harness.md')));
   });
 
-  t('defines capability, space admin and manifest in one clause at first use', () => {
-    for (const term of ['capability', 'space admin', 'manifest']) {
-      const at = prose.indexOf(term);
+  t('links each glossary term at its first use and gives no appositive definition', () => {
+    const plain = prose.replace(/`[^`]*`/g, 'CODE');
+    const firstUse = (term) => plain.search(new RegExp(`\\b${term}\\b`, 'i'));
+    for (const term of ['capability', 'space admin', 'manifest', 'harness', 'member']) {
+      const at = firstUse(term);
       assert.ok(at >= 0, term);
-      assert.match(prose.slice(at + term.length), /^,\s(a|the)\s[^.]*?[,.]/, term);
+      assert.match(plain.slice(Math.max(0, at - 1), at + term.length + 2), new RegExp(`^\\[${term}\\]\\(`, 'i'), `${term} is linked at first use`);
+    }
+    assert.doesNotMatch(prose, /capability\]\([^)]*\), a permission/);
+    assert.doesNotMatch(prose, /manifest\]\([^)]*\), a JSON document/);
+  });
+
+  t('a sentence carries at most three glossary links', () => {
+    for (const sentence of prose.split(/(?<=[.!?])\s+/)) {
+      assert.ok((sentence.match(/\]\([^)]*glossary\.md#/g) ?? []).length <= 3, sentence);
     }
   });
 
   t('provision and deprovision calls come when a space admin adds or removes the app', () => {
     const lines = prose.split('\n').filter((l) => l.includes('DELETE /api/deprovision') && l.includes('when a '));
     assert.ok(lines.length >= 1);
-    for (const line of lines) assert.match(line, /when a space admin, the person who adds apps to a space, adds or removes the app/);
+    for (const line of lines) assert.match(line, /when a \[?space admin\]?(\([^)]*\))? adds or removes the app/);
+  });
+
+  t('names the people who open the app members, never users', () => {
+    const plain = prose.replace(/`[^`]*`/g, 'CODE').replace(/\buser (token|ids?)\b/g, 'TERM');
+    assert.doesNotMatch(plain, /\busers?\b/i);
+    assert.match(steps(part2)[4], /pick the member/);
+    assert.match(steps(part2)[4], /\*\*Direct access\*\* lists the member\./);
+  });
+
+  t('puts the reason after the command only when it changes the action, and has no roadmap sentence', () => {
+    assert.doesNotMatch(text, /so you start from running code/);
+    assert.doesNotMatch(text, /Steps 3 to 5 read/);
+    assert.doesNotMatch(text, /The tour reads/);
+    assert.equal(count(/The harness stands in for Vector Space/g), 1);
+    assert.match(steps(part1)[1], /^The address of this page names your pair/m);
+  });
+
+  t('names no SDK package version in page text', () => {
+    assert.doesNotMatch(text, /@vectoragents\/vs-apps(?:\/[\w-]+)*@?\s?\d+\.\d+/);
+    assert.match(steps(part1)[1], /@vectoragents\/vs-apps@<version>/);
+  });
+
+  t('points at page content by name, not by direction', () => {
+    assert.doesNotMatch(prose, /\b(above|below|earlier|as shown)\b/i);
+  });
+
+  t('link text names the target', () => {
+    const labels = [...text.matchAll(/\[([^\]]+)\]\([^)]+\)/g)].map((m) => m[1].toLowerCase());
+    for (const label of labels) {
+      assert.doesNotMatch(label, /^(here|this page|read more|learn more|https?:\/\/\S+|create one)$/);
+    }
   });
 
   t('follows the writing standard', () => {
