@@ -7,7 +7,7 @@ The sections below follow the page folders: Why Vector Space is under `docs/vect
 ## Sources
 
 - SDK behaviour rests on the installed `@vectoragents/vs-apps` 0.4.0 dist (compiled output and type declarations) and its README. The SDK source in `packages/apps` of the sibling `vector-spaces` repo settles a claim that the dist leaves open.
-- Every code snippet typechecks against the installed package, except the quickstart's `starter` code blocks. The starter's CI typechecks those excerpts ([ADR 0003](adr/0003-quickstart-runs-create-app-from-github-packages.md)). The stamp at the foot of each page shows the version and date of the last run.
+- Every code snippet typechecks against the installed package, except the quickstart's `starter` codeblocks. The starter's CI typechecks those excerpts ([ADR 0003](adr/0003-quickstart-runs-create-app-from-github-packages.md)). The stamp at the foot of each page shows the version and date of the last run.
 - The published pages say "organization admin" for the role the master docs call the Organization Owner (`OrganizationRole.OWNER`), so a citation of "The Organization Owner" backs an "organization admin" claim. "Owner" stays free for the owner of a resource or thread.
 - Space-side claims come from Space-side documentation, except the checks under [Verified in a local Space](#verified-in-a-local-space). This covers registration, the pending review, auto-apply, navigation entries, grants and the configuration sheet.
 
