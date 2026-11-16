@@ -202,7 +202,9 @@ export function LeadsPage() {
 
 ### 6. Check the lists in the space
 
-Run `npm run dev:space` and open the leads app page in the space. Type a name in the **Find an owner** box and pause for 300 ms. The box lists up to 5 matching members, one button each. Select one: the name appears in the owners list. `TeamGroups` lists each group of the space with the names of its members. A failed search or group call shows an error line.
+Run `npm run dev:space` and open the leads app page in the space. Type a name in the **Find an owner** box and pause for 300 ms. The box lists up to 5 matching members, one button each. Select one: the name appears in the owners list.
+
+`TeamGroups` lists each group of the space with the names of its members. A failed search or group call shows an error line.
 
 ## Next steps
 
