@@ -3,7 +3,8 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { assertPersonaScene, bannedTermsIn, bodyOf, brokenLinks, linksOf, section, unlink } from './page-helpers.mjs';
+import { assertPersonaScene, bannedTermsIn, bodyOf, brokenLinks, longSentences, section, unlink } from './page-helpers.mjs';
+import { assertWhereNext, glossaryLinkProblems } from './concept-link-rules.mjs';
 import { voiceViolations } from './voice.mjs';
 
 const docs = resolve(dirname(fileURLToPath(import.meta.url)), '../docs');
@@ -27,7 +28,7 @@ test('the page runs lead, the scene, four detail sections, Where to go next', ()
 
 test('the lead defines an ask and the Command Center, with glossary links, before the first H2', () => {
   const lead = body.split(/^## /m)[0];
-  assert.match(lead, /\[ask\]\(\.\/glossary\.md#ask\) is anything that an agent or an app waits on a person for/);
+  assert.match(lead, /\[ask\]\(\.\/glossary\.md#ask\) is anything that an \[agent\]\(\.\/glossary\.md#agent\) or a \[Vector App\]\(\.\.\/vector-apps\/glossary\.md#app\) waits on a person for/);
   assert.match(lead, /\[Command Center\]\(\.\/glossary\.md#command-center\) is the part of a \[space\]\(\.\/glossary\.md#space\)/);
   assert.match(lead, /\[standing approvals\]\(\.\/glossary\.md#standing-approval\)/);
   assert.match(lead, /\[schedules\]\(\.\/glossary\.md#schedule\) that a person owns/);
@@ -70,7 +71,7 @@ test('the ask section says what raises an ask, who decides', () => {
   assert.match(ask, /writes/);
   assert.match(ask, /\n\nEach ask goes to its answerer, the person who answers for the run:/);
   assert.deepEqual([...ask.matchAll(/^- \*\*(.+?)\*\*: /gm)].map((m) => unlink(m[1])), ['Member', 'Service account', 'App']);
-  assert.match(ask, /\*\*\[Service account\]\(\.\/glossary\.md#service-account\)\*\*: cannot decide\. The owner of its API key answers\. If there is none, the owner of the \[thread\]\(\.\/glossary\.md#thread\) or \[schedule\]\(\.\/glossary\.md#schedule\) that it ran for answers/);
+  assert.match(ask, /\*\*\[Service account\]\(\.\/glossary\.md#service-account\)\*\*: cannot decide\. The owner of its API key answers\. If there is none, the owner of the \[thread\]\(\.\/glossary\.md#thread\) or schedule that it ran for answers/);
   assert.match(ask, /\[space admins?\]\(\.\/glossary\.md#space-admin\)/);
   assert.match(ask, /leaves a space stops seeing and deciding its asks/);
 });
@@ -121,10 +122,22 @@ test('a schedule is a background task on a timer that runs as one identity and s
   assert.match(schedules, /only the owner edits, pauses, runs or deletes a schedule/);
 });
 
-test('every link resolves, every glossary anchor exists, and Where to go next links its two pages and the glossary', () => {
-  assert.deepEqual(brokenLinks(text, file), []);
-  assert.deepEqual(linksOf(section(text, 'Where to go next')), ['./how-work-moves-through-a-space.md', './the-record-of-work.md', './glossary.md']);
+test('every link resolves and every glossary anchor exists', () => assert.deepEqual(brokenLinks(text, file), []));
+
+test('Where to go next gives a result sentence, one primary step and Related', () => {
+  assertWhereNext(text, { primary: './extending-a-space.md', related: ['./how-work-moves-through-a-space.md', './the-record-of-work.md'] });
 });
+
+test('the page links each glossary entry once, at most 3 in a sentence', () => assert.deepEqual(glossaryLinkProblems(text), []));
+
+test('the description is one noun-phrase sentence of 160 characters or fewer', () => {
+  const description = text.match(/^description: (.+)$/m)[1];
+  assert.ok(description.length <= 160);
+  assert.doesNotMatch(description, /^(This page|Learn|How to)\b/);
+  assert.equal(description.match(/[.?!]/g).length, 1);
+});
+
+test('no sentence of the page passes 35 words', () => assert.deepEqual(longSentences(plain, { max: 35 }), []));
 
 test('the page leaves out actor-only powers, polling, simultaneous decisions and any number besides the 400-day expiry', () => {
   assert.doesNotMatch(prose, /polling|poll\b/i);
