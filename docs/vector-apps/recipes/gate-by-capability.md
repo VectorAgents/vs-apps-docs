@@ -304,7 +304,7 @@ For the server, call the route with no token. `SERVER_PORT` is the value in `.en
 curl -s -o /dev/null -w '%{http_code}\n' http://localhost:<SERVER_PORT>/api/leads
 ```
 
-The command prints `401`. Then mint a development token without `lead:manage` through the [harness token route](../../sdk/reference/harness.md#post-apidevtoken) and send it as a bearer token. The server answers `403` with the body `{"error":"Missing capability: lead:manage"}`. A token that holds the capability gets `200`.
+The command prints `401`. Then mint a development token without `lead:manage` through the [harness token route](../../sdk/reference/harness.md#post-api__devtoken) and send it as a bearer token. The server answers `403` with the body `{"error":"Missing capability: lead:manage"}`. A token that holds the capability gets `200`.
 
 ## Next steps
 

@@ -161,7 +161,7 @@ test('never uses the csr-agents page', () => {
 const slugOf = (heading) => {
   const explicit = heading.match(/\{#([\w-]+)\}\s*$/);
   if (explicit) return explicit[1];
-  return heading.trim().toLowerCase().replace(/[^\p{L}\p{N}\s-]/gu, '').replace(/\s/g, '-');
+  return heading.trim().toLowerCase().replace(/[^\p{L}\p{N}\s_-]/gu, '').replace(/\s/g, '-');
 };
 const anchorsOf = (text) =>
   new Set([...text.replace(/^```[\s\S]*?^```/gm, '').matchAll(/^#{1,6} (.+)$/gm)].map(([, heading]) => slugOf(heading)));

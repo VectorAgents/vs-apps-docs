@@ -40,7 +40,7 @@ for (const name of neutral) {
   });
 }
 
-const anchorOf = (heading) => heading.trim().toLowerCase().replace(/[^\p{L}\p{N}\s-]/gu, '').replace(/\s/g, '-');
+const anchorOf = (heading) => heading.trim().toLowerCase().replace(/[^\p{L}\p{N}\s_-]/gu, '').replace(/\s/g, '-');
 const anchorsOf = (text) =>
   new Set([...text.replace(/^```[\s\S]*?^```/gm, '').matchAll(/^#{1,6} (.+)$/gm)].map(([, h]) => h.match(/\{#([\w-]+)\}\s*$/)?.[1] ?? anchorOf(h)));
 const walk = (dir) =>
