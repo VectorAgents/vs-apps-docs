@@ -10,6 +10,8 @@ const pages = new URL('../src/pages/', import.meta.url);
 const lead = body.slice(body.search(/^# .*\n/m), body.indexOf('<div className="path-cards">')).replace(/^# .*\n/, '').trim();
 const cards = [...body.matchAll(/<section className="path-card[^"]*"[^>]*>([\s\S]*?)<\/section>/g)].map(([, card]) => ({
   eyebrow: card.match(/<p className="path-eyebrow">(.+?)<\/p>/)?.[1],
+  heading: card.match(/<h2 [^>]*>(.+?)<\/h2>/)?.[1],
+  linkTexts: [...card.matchAll(/\[([^\]]+)\]\([^)]+\)|<Link [^>]*>([^<]+)<\/Link>/g)].map((m) => m[1] ?? m[2]),
   links: [...card.matchAll(/\]\(([^)]+)\)/g)].map((m) => m[1]),
   card,
 }));
@@ -77,6 +79,21 @@ test('the page has no snippet, goal H2, reference strip, badge, emoji, time esti
   assert.ok(!/\p{Extended_Pictographic}/u.test(body));
   assert.ok(!/\b\d+\s*(?:min|minutes|hours?)\b/i.test(body));
   assert.ok(!/flavour|Node|Nest/i.test(body));
+});
+
+test('no card heading repeats the text of a link', () => {
+  for (const { heading, linkTexts } of cards) {
+    assert.ok(heading, 'every card has an H2');
+    assert.ok(!linkTexts.map((t) => t.toLowerCase()).includes(heading.toLowerCase()), heading);
+  }
+});
+
+test('the description is one sentence of 160 characters or fewer and names what the page holds', () => {
+  const description = text.match(/^description: (.+)$/m)?.[1];
+  assert.ok(description);
+  assert.ok(description.length <= 160, `${description.length} characters`);
+  assert.ok(!/^(This page|Learn)\b/i.test(description));
+  assert.equal(description.split(/(?<=\.) /).length, 1);
 });
 
 test('the page never calls the site the hub', () => {
