@@ -5,6 +5,7 @@ import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { installedSdkVersion } from './starter-sync.mjs';
 import { linksOf, section } from './page-helpers.mjs';
+import { descriptionOf, longCells, overlong, tablesOf, withoutCode } from './sdk-page-helpers.mjs';
 
 const file = fileURLToPath(new URL('../docs/sdk/overview.md', import.meta.url));
 const text = readFileSync(file, 'utf8');
@@ -22,8 +23,34 @@ test('the overview lists the nine subpaths of the installed package and no other
   assert.deepEqual(rows, subpaths.map(importPath));
 });
 
-test('the overview names the SDK version it describes', () => {
-  assert.match(text, new RegExp(`\`@vectoragents/vs-apps\` ${installedSdkVersion().replaceAll('.', '\\.')}\\b`));
+test('the overview holds no SDK version and has a description of 160 characters or fewer', () => {
+  assert.doesNotMatch(text, new RegExp(installedSdkVersion().replaceAll('.', '\\.')));
+  const description = descriptionOf(text);
+  assert.ok(description && description.length <= 160);
+  assert.doesNotMatch(description, /^(This page|Learn)\b/);
+});
+
+test('the one table has a row per subpath: import path, one-sentence use and a link', () => {
+  const tables = tablesOf(section(text, 'Subpaths'));
+  assert.equal(tables.length, 1);
+  assert.deepEqual(tables[0].header, ['Import', 'What it is for', 'Reference']);
+  for (const row of tables[0].rows) assert.match(row[2], /^\[[^\]]+\]\([^)]+\)$/, row[0]);
+  assert.deepEqual(longCells(text), []);
+  assert.deepEqual(overlong(text), []);
+});
+
+test('the subpath without a reference page says where its docs are', () => {
+  const nest = tablesOf(text)[0].rows.find(([importPath]) => importPath.includes('/nest'));
+  assert.match(nest[2], /\(\/vector-apps\/category\/guides\)/);
+});
+
+test('the overview writes "member", never "user", and ends with Next steps of 1 to 3 links with a reason', () => {
+  assert.doesNotMatch(withoutCode(text), /\busers?\b/i);
+  const next = text.split(/^## /m).at(-1);
+  assert.match(next, /^Next steps\n/);
+  const items = next.split('\n').slice(1).filter((l) => l.trim());
+  assert.ok(items.length >= 1 && items.length <= 3);
+  for (const item of items) assert.match(item, /^- \[[^\]]+\]\([^)]+\): .*\S\.$/);
 });
 
 test('the overview covers the dev harness', () => {

@@ -1,14 +1,12 @@
 ---
 title: Root reference
+description: Signature, behaviour and example of the agent page and action registry exports of `@vectoragents/vs-apps`.
 ---
 
-Reference for `@vectoragents/vs-apps` 0.4.0, the package root. The root holds the [app definition](../glossary.md#app-definition) and the schemas shared by client and server. A client imports three symbols from it: `defineAgentPage`, `appPages` and `createAgentActionRegistry`. `defineApp` is covered in the [app definition guide](../app-definition.md).
-
-Every symbol below follows one layout: signature, behaviour, example. Each example is a complete file and is typechecked against the installed package.
+The `@vectoragents/vs-apps` package root holds the [app definition](../glossary.md#app-definition) and the schemas that the client and the server share. A client imports three exports from it: `defineAgentPage`, `appPages` and `createAgentActionRegistry`. The [app definition guide](../app-definition.md) covers `defineApp`.
 
 ## Prerequisites
 
-- `@vectoragents/vs-apps` installed with a registry token.
 - `zod` version 3, installed with `npm install zod@3`, for the parameter schema of an action. Zod 4 gives an empty `paramsJsonSchema`, so the agent sees no parameters.
 
 ## `defineAgentPage`
@@ -40,20 +38,27 @@ interface AgentActionInput<S extends z.ZodTypeAny = z.ZodTypeAny> {
 }
 ```
 
-| Field | Meaning |
-| --- | --- |
-| `pageId` | Unique id of the page. Prefixes every action id on it. |
-| `description` | What the page is for. The agent reads it to decide when the page applies. |
-| `id` | Local action name in snake_case. The factory namespaces it as `<pageId>.<id>`. |
-| `params` | A zod schema for the action params. Omit it for an action without params. |
+| Field | Required | Meaning |
+| --- | --- | --- |
+| `pageId` | required | Unique id of the page, used as the prefix of every action id on it. |
+| `description` | required | What the page is for, read by the agent to decide when it applies. |
+
+`page.action(...)` and `action.child(...)` take an `AgentActionInput`:
+
+| Field | Required | Meaning |
+| --- | --- | --- |
+| `id` | required | Local action name in snake_case, which the factory namespaces as `<pageId>.<id>`. |
+| `description` | required | What the action does, read by the agent to decide when to call it. |
+| `params` | optional | A zod schema for the action params, left out for an action without params. |
 
 ### Behaviour
 
 - Registers the page and each action in a module-level collector at import time.
 - `page.action(...)` roots an action on the page. `action.child(...)` declares an action that is available only while its parent is mounted.
-- Throws on a duplicate `pageId`, a duplicate action id, or an `id` that is not a snake_case local name.
+- Throws `duplicate agent page "<pageId>"` for a repeated `pageId`, and `duplicate agent action id "<id>"` for a repeated action id.
+- Throws `agent action "<id>" on page "<pageId>" must be a local snake_case name` for an `id` that is not a snake_case local name.
 - Declaring an action does not make it callable. A component must bind it with `useAgentAction` from [`/react`](./react.md).
-- Write each `description` for the agent. The SDK puts it in the manifest, which Vector Space reads.
+- Write each `description` for the agent. The SDK puts it in the manifest, which [Vector Space](../../vector-space/glossary.md#vector-space) reads.
 
 ### Example
 
@@ -98,17 +103,17 @@ interface AppPageDef {
 }
 ```
 
-| Parameter | Meaning |
-| --- | --- |
-| `apps` | The app definitions bundled in the client. |
-| `appKey` | The `appKey` claim from `useApp().claims`, or `undefined` before the handshake. |
+| Parameter | Required | Meaning |
+| --- | --- | --- |
+| `apps` | required | The app definitions bundled in the client. |
+| `appKey` | required | The `appKey` claim from `useApp().claims`, or `undefined` before the handshake. |
 
 ### Behaviour
 
 - Returns the `pages` of the definition whose `key` equals `appKey`.
 - Returns `[]` when `appKey` is `undefined` or matches no definition.
 - Does not filter by capability. Filter on `page.capability` with `useApp().hasCapability`, as the example does.
-- Capability checks only shape the UI. The server must enforce the same capability.
+- A capability check in the client only shapes the UI. The server must enforce the same [capability](../../vector-apps/glossary.md#capability).
 
 ### Example
 
@@ -173,15 +178,15 @@ type AgentActionDispatchResult =
 
 | Method | Meaning |
 | --- | --- |
-| `register` | Stores a handler under `def.id` and returns a function that removes it. The function removes the entry only while it still holds this handler. |
-| `getMountedActions` | Serialised definitions of every mounted action, with `params` as JSON Schema. |
-| `dispatch` | Runs the handler for `actionId`. Never throws. Returns the outcome as a result object. |
+| `register` | Stores a handler under `def.id` and returns a function that removes it. |
+| `getMountedActions` | Returns every mounted action as a serialised definition, with `params` as JSON Schema. |
+| `dispatch` | Runs the handler for `actionId` and returns the outcome as a result object. |
 
 ### Behaviour
 
-- [`AgentActionRegistryProvider`](./react.md) creates one registry for the tree, and `useAgentAction` is the only caller of `register` in a React app. Call `createAgentActionRegistry` directly only on another framework, where the registry goes to `startAppSession` from [`/browser`](./browser.md), or in a test.
-- Registering a second handler for the same id replaces the first.
-- `dispatch` validates `params` against the action's schema and passes the parsed value to the handler. Without a schema, `params` reach the handler unchanged.
+- [`AgentActionRegistryProvider`](./react.md#react-agentactionregistryprovider) creates one registry for the tree, and `useAgentAction` is the only caller of `register` in a React app. Call `createAgentActionRegistry` directly only on another framework, where the registry goes to `startAppSession` from [`/browser`](./browser.md#startappsession), or in a test.
+- Registering a second handler for the same id replaces the first. The function that `register` returns removes the entry only while it still holds its own handler.
+- `dispatch` never throws. It validates `params` against the action's schema and passes the parsed value to the handler. Without a schema, `params` reach the handler unchanged.
 - `context` reaches the handler as its second argument. Concurrent dispatches do not share it.
 - A child action is available only while its parent is mounted. Dispatching it without the parent returns `UNAVAILABLE_ACTION` with `missingParent`.
 - A handler that throws, or rejects, returns `HANDLER_ERROR` with the error message.
@@ -217,10 +222,6 @@ export async function openFirstList(): Promise<string> {
 }
 ```
 
-## Result
+## Next steps
 
-An `actions.ts` that declares an agent page with a root action and a child action, a landing component that lists the pages the user may open, and a registry that mounts and dispatches an action without React.
-
-## Next step
-
-Continue with the [browser reference](./browser.md).
+- [Browser reference](./browser.md): load the boot configuration and start the app session.
