@@ -6,7 +6,7 @@ description: How a request is decided, the same for the web interface, the API, 
 import StructureFigure from '@site/src/components/StructureFigure';
 import { accessCheck } from '@site/src/diagrams/figures/access-check.ts';
 
-Access defines the set of operations a user, agent or app is permitted to perform on a resource within a space. Vector Space works it out for each operation with one check, the same for the [web interface](./glossary.md#web-interface), the API, agents and apps. The check reads four inputs, with clear rules that say which input wins.
+Access defines the set of operations a user, agent or app is permitted to perform on a resource within a space. Vector Space works it out for each operation with a centralized check, the same for the [web interface](./glossary.md#web-interface), the API, agents and apps. The check reads four inputs, with clear rules that say which input wins.
 
 ## A lead search limited by region
 
@@ -38,7 +38,7 @@ These rules say what wins, and they are not a numbered order:
 - A condition narrows what is left after the other inputs, and nothing widens past it.
 - Conditions apply to datasources and contexts only. On a datasource a condition limits the rows of every query, and on a [context](./glossary.md#context) it limits the arguments of a call, so the response is not filtered afterwards.
 
-## One check for every way in
+## A centralized check for every way in
 
 The rules are the same for every way in, and what differs is who the work runs as:
 

@@ -17,7 +17,7 @@ const noLinks = body.replace(/\]\([^)]*\)/g, ']');
 const headings = [...text.matchAll(/^## (.+)$/gm)].map((m) => m[1]);
 
 test('the page runs lead, the scene, three detail H2s, Where to go next', () => {
-  assert.deepEqual(headings, ['A lead search limited by region', 'What the check reads', 'How the inputs combine', 'One check for every way in', 'Where to go next']);
+  assert.deepEqual(headings, ['A lead search limited by region', 'What the check reads', 'How the inputs combine', 'A centralized check for every way in', 'Where to go next']);
   assert.match(lead, /^Access defines the set of operations a user, agent or app is permitted to perform on a resource within a space\./, 'the lead opens with the definition');
 });
 
@@ -40,7 +40,7 @@ test('the scene names Maya and Omar, introduces each in the persona record form 
 
 test('personas stay in the scene: the other sections and the figure keep the generic member', () => {
   assertPersonaScene(text, 'A lead search limited by region');
-  assert.match(section(text, 'One check for every way in'), /\*\*Web interface\*\*: the work runs as the member\./);
+  assert.match(section(text, 'A centralized check for every way in'), /\*\*Web interface\*\*: the work runs as the member\./);
 });
 
 test('the figure slot appears once, inside "How the inputs combine"', () => {
@@ -95,19 +95,19 @@ test('conditions apply to datasources and contexts only', () => {
 });
 
 test('a capability grant is a share on named capabilities of a Vector App at Can use, linked to the Apps glossary', () => {
-  const every = section(text, 'One check for every way in');
+  const every = section(text, 'A centralized check for every way in');
   assert.match(every, /\[capability grant\]\(\.\.\/vector-apps\/glossary\.md#capability-grant\) is a share on named capabilities of a Vector App at Can use/);
 });
 
 test('one sentence says an approval is a second check', () => {
-  const every = section(text, 'One check for every way in');
+  const every = section(text, 'A centralized check for every way in');
   const sentences = every.replace(/\]\([^)]*\)/g, ']').match(/[^.]*\bapproval\b[^.]*\./g) ?? [];
   assert.equal(sentences.filter((s) => /second check/.test(s)).length, 1);
   assert.ok(linksOf(every).includes('./approvals-and-the-command-center.md'));
 });
 
 test('the page covers the web interface, the API, agents and apps', () => {
-  const every = section(text, 'One check for every way in');
+  const every = section(text, 'A centralized check for every way in');
   for (const word of ['app', 'API', 'agent', 'Vector App']) assert.ok(every.includes(word), word);
   assert.ok(lead.includes('and apps. The check reads four inputs, with clear rules that say which input wins.'), 'the lead splits the check from its four inputs');
   assert.doesNotMatch(lead, /and the check reads four inputs/);

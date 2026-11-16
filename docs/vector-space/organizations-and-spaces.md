@@ -47,5 +47,5 @@ That is why the leads stay with the sales team.
 
 - [Inside a space](./what-a-space-holds.md): what the team of a space works with, which is where its data connects, how the data is shown, and which apps and tools run inside the space.
 - [Identity and roles](./who-can-do-what.md): the four kinds of people and callers in Vector Space, and how each stands in an organization and its spaces.
-- [One access model](./one-access-model.md): the one check that decides each request, and the rules that say which of its inputs wins.
+- [One access model](./one-access-model.md): the centralized check that every operation on a resource passes through, and the rules that say which of its inputs wins.
 - [Glossary](./glossary.md): every term of Vector Space, each defined in a sentence.

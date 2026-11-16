@@ -296,7 +296,7 @@ A Vector App, an [A2A](#a2a) agent or an [MCP](#mcp) server that adds logic of a
 
 ### Command Center
 
-The part of a space where an [ask](#ask) waits for a person. It is a plain part of a space, not a Vector Module.
+The part of a space where an [ask](#ask) waits for a person.
 
 - Maps to: no SDK symbol.
 - Owner: Vector Space.

@@ -163,9 +163,8 @@ test('Vector Module lists Calendar and Human Time Return is an estimate', () => 
   assert.match(body('Human Time Return'), /not a spend figure/);
 });
 
-test('Command Center is not a Vector Module and the orchestrator agent entry says one', () => {
+test('the orchestrator agent entry says one', () => {
   const body = (name) => entries.find((e) => e.name === name).body;
-  assert.match(body('Command Center'), /not a Vector Module/);
   assert.match(body('orchestrator agent'), /one/i);
 });
 

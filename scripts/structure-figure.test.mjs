@@ -277,7 +277,7 @@ test('agent-tree: the A2A agent is outside the space on a dashed link and the le
   assert.deepEqual(data.links.filter((l) => !l.remote).map((l) => `${l.from}>${l.to}`).sort(), ['email>helper', 'lead>child', 'orchestrator>email', 'orchestrator>lead']);
 });
 
-test('access-check: every caller reaches the Context Hub through the one Access check', async () => {
+test('access-check: every caller reaches the Context Hub through the centralized Access check', async () => {
   const data = await load('access-check');
   assert.equal(data.slabs.length, 1);
   assert.deepEqual(labels(data.parts).sort(), ['Access check', 'Context Hub', 'Member', 'Orchestrator agent', 'Service account', 'Vector App']);
