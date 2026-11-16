@@ -38,3 +38,10 @@ test('the definitions ship in the client bundle and stay out of the search index
   assert.ok(bundled, 'a bundle holds the definitions');
   for (const file of ['docs-gen/site/glossary-index.json', 'build/glossary-index.json']) assert.equal(existsSync(join(root, file)), false, file);
 });
+
+test('no indexed hover definition has more than 50 words', () => {
+  for (const [key, { definition }] of Object.entries(index)) {
+    const words = definition.split(/\s+/).length;
+    assert.ok(words <= 50, `${key}: ${words} words`);
+  }
+});
