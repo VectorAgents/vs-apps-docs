@@ -39,7 +39,7 @@ test('the space section leads with no count and lists Members, Orchestrator agen
   assert.match(bullets[0], /^- \*\*Members\*\*: /);
   assert.match(bullets[1], /^- \*\*Orchestrator agent\*\*: /);
   assert.equal(bullets[2], '- **[Context Hub](./glossary.md#context-hub)**: the area where the space lists what it can reach, including its [Vector Apps](../vector-apps/glossary.md#app) and [Vector Modules](./glossary.md#vector-module).');
-  assert.equal(bullets[3], '- **Pages**: the [pages](./glossary.md#page) of the space.');
+  assert.equal(bullets[3], '- **Pages**: the [pages](./glossary.md#page) of the space, each a grid of [widgets](./glossary.md#widget) that show data, with filters that apply to the whole page. Any member can create one, and a page belongs to this space only.');
 });
 
 test('the scene is the first H2, names no Example and says a team\'s space', () => {
