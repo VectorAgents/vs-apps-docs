@@ -19,7 +19,7 @@ The starter repo is `VectorAgents/vector-app-quickstart`, owned by Vector. It ho
 - The starter holds templates and a CLI. The generated project has the harness wired, so `npm run dev` needs no `.env`. The starter's own CI generates every pair with and without the overlay, then runs `npm install`, `npm run typecheck`, the tests, and boots each server in `dev` and `dev:space`.
 - The page and the starter live in two repos, so they can drift. A CI job in this repo runs the CLI once per pair against a generated project and fails when any of these hold:
   - The generated project pins an SDK version that differs from the SDK version installed here.
-  - A page `starter` code block is not a verbatim substring of its generated file.
+  - A page `starter` codeblock is not a verbatim substring of its generated file.
   - A path in the page's directory tree is missing from the generated project.
   - The start overlay a page names with `start: leads-app` in its front matter is missing from the starter.
   - A page uses an environment variable that the generated `.env.example` and `.npmrc` lack and the page does not set.
@@ -27,7 +27,7 @@ The starter repo is `VectorAgents/vector-app-quickstart`, owned by Vector. It ho
 - The starter's overlay drift test fails when an overlay file differs from its template file outside the four files the overlay replaces.
 - A starter commit can fail this repo's CI with no change here, and a page edit to an excerpt can need a starter commit first.
 - The CLI version is independent of the templates. A new flavour is a new template directory with a `flavour.json`, with no CLI release. The CLI refuses an unknown `schemaVersion` and tells the reader to run `npm create @vectoragents/app@latest`.
-- `scripts/check-snippets.mjs` skips every `starter` code block and leaves it out of the `snippets` count. The starter's CI typechecks those excerpts instead. Every other page is still typechecked here.
+- `scripts/check-snippets.mjs` skips every `starter` codeblock and leaves it out of the `snippets` count. The starter's CI typechecks those excerpts instead. Every other page is still typechecked here.
 - Part 1 has three Checks: `npm view @vectoragents/vs-apps version` in step 0, `npm ls @vectoragents/vs-apps` after install, and the harness run. The page shows excerpts of the generated project and the reader edits no file.
 - The starter repo is public. The CLI package is on GitHub Packages and needs a token with the `read:packages` scope, which step 0 of the quickstart sets up in the user-level `~/.npmrc`. The package must be readable by the same token as the SDK, including for a reader with no access to the starter repo. If it is not, the package access is granted in the org package settings.
 - The harness reference is a manual-wiring guide for an app that is not built from the starter.

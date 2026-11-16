@@ -25,9 +25,9 @@ A line under a quickstart step heading that names who does the step: `**Role**: 
 - Maps to: no SDK symbol. `scripts/quickstart-page.test.mjs` pins it.
 - Owner: docs.
 
-### code block
+### codeblock
 
-A block of code in a docs page, opened and closed by three backticks. The text after the opening backticks names the language, such as `ts` or `mermaid`. A `ts` or `tsx` code block is a code snippet: `scripts/check-snippets.mjs` typechecks it. A `starter` code block also carries `title="path"` and must be a verbatim copy of text in that file of the starter repo. `scripts/starter-sync.mjs` checks this. A `mermaid` code block is a diagram: the page test counts them, and `DiagramControls` wraps each one.
+A block of code in a docs page, opened and closed by three backticks. Never write "fence". The text after the opening backticks names the language, such as `ts` or `mermaid`. A `ts` or `tsx` codeblock is a code snippet: `scripts/check-snippets.mjs` typechecks it. A `starter` codeblock also carries `title="path"` and must be a verbatim copy of text in that file of the starter repo. `scripts/starter-sync.mjs` checks this. A `mermaid` codeblock is a diagram: the page test counts them, and `DiagramControls` wraps each one.
 
 - Maps to: no SDK symbol. `codeBlocks` in `scripts/quickstart-page.test.mjs` and `checkCodeBlocks` in `scripts/starter-sync.mjs`.
 - Owner: docs.

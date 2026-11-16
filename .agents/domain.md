@@ -18,7 +18,15 @@ Name domain concepts as the glossaries define them. A concept missing from all o
 
 ## Where a term lives
 
-A term is published if a published docs page uses it, or it maps to an SDK symbol or manifest field. Otherwise it is internal. A term lives in exactly one file, and in exactly one of the three published glossaries.
+A term is published if a published docs page uses it, or it maps to an SDK export or manifest field. Otherwise it is internal. A term lives in exactly one file, and in exactly one of the three published glossaries.
+
+## Who reads the pages
+
+Concept pages in `docs/vector-space/` are read by decision makers (CTO, CIO) as well as developers. They look for what the product gives them and whether it is safe, so a lead may state the benefit as a plain fact. Quickstart, recipes, guides and SDK pages are read by a developer who wants to finish a task.
+
+## Words for code
+
+Write "export" for a named thing a package exports (a function, hook, component, class or type), never "symbol". Write "codeblock" for a block of code in a page, never "fence".
 
 ## Flag ADR conflicts
 
