@@ -3,6 +3,8 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
+import { glossaryLinkProblems } from './concept-link-rules.mjs';
+import { assertCoreRules } from './core-concept-checks.mjs';
 import { assertPersonaScene, bannedTermsIn, bodyOf, brokenLinks, linksOf, section } from './page-helpers.mjs';
 import { voiceViolations } from './voice.mjs';
 
@@ -19,14 +21,23 @@ test('the page runs lead, the request in a space, three detail H2s, Where to rea
   assert.deepEqual([...text.matchAll(/^## (.+)$/gm)].map((m) => m[1]), ['A request in a space', 'The three platform rules', 'The parts of a space', 'Ways to extend a space', 'Where to read next']);
 });
 
-test('the lead says what Vector Space is, then what a run does: access rules, own AI provider accounts, a record of who ran it', () => {
-  assert.match(lead, /^\[Vector Space\]\(\.\/glossary\.md#vector-space\) is where /);
-  for (const part of ['organization', 'own data', 'access rules', 'AI provider accounts', 'who ran']) assert.ok(lead.includes(part), part);
+test('the lead says what Vector Space is, what it gives, then what a run does: access rules, own AI provider accounts, a record of who started it', () => {
+  assert.match(lead, /^\[Vector Space\]\(\.\/glossary\.md#vector-space\) is the platform where /);
+  for (const part of ['organization', 'own data', 'into one place', 'access rules', 'AI provider accounts', 'who started it']) assert.ok(lead.includes(part), part);
+  assert.doesNotMatch(lead, /rather than|scattered/);
 });
+
+test('the lead links at most 3 glossary terms per sentence, and each term once on the page', () => {
+  assert.deepEqual(glossaryLinkProblems(text), []);
+  const sentences = lead.split('\n\n')[0].split(/(?<=[.!?])\s+/);
+  assert.equal(sentences.length, 3);
+});
+
+test('the shared rules hold: description, link text, directional words, dashes, contractions, parts lists', () => assertCoreRules(text));
 
 test('the lead lists the three levels: organization, space, pages and widgets', () => {
   const items = lead.split('\n').filter((l) => l.startsWith('- '));
-  assert.deepEqual(items.map((l) => l.match(/^- \*\*(?:An organization|A \[space\]\([^)]*\)|Pages and widgets)\*\*/)?.[0] !== undefined), [true, true, true]);
+  assert.deepEqual(items.map((l) => l.match(/^- \*\*(?:Organization|Spaces|Pages and widgets)\*\*: /)?.[0] !== undefined), [true, true, true]);
   assert.ok(linksOf(lead).includes('./glossary.md#page') && linksOf(lead).includes('./glossary.md#widget'));
 });
 
@@ -52,7 +63,8 @@ test('the first H2 after the lead is one request that shows access, the AI gatew
 test('the scene names Maya and Omar in place of "a member"', () => {
   const scene = section(text, 'A request in a space');
   assert.match(scene, /^Maya, a \[member\]\(\.\/glossary\.md#member\) of Acme's sales team, asks the orchestrator agent to find leads\./m);
-  assert.match(scene, /Omar, another member of the team with different access, might see different leads\./);
+  assert.match(scene, /Omar, another member of the team with different access, sees different leads\./);
+  assert.doesNotMatch(scene, /\b(might|may|could)\b(?! see\.)|\bhe\b|\bshe\b|\bhis\b|\bher\b/);
   assert.match(scene, /Maya may see/);
   assert.match(scene, /Maya started the run\./);
   assert.doesNotMatch(scene, /a member of a space|this member|that member|another member with/);
@@ -76,7 +88,7 @@ test('the parts section gives one linked line per part: members, orchestrator ag
 test('the Vector Modules item lists omnibox, contacts and Calendar as sub-items with no caveat', () => {
   const parts = section(text, 'The parts of a space');
   const subItems = parts.split('\n').filter((l) => l.startsWith('  - '));
-  assert.deepEqual(subItems.map((l) => l.match(/^  - (Omnibox|Contacts|Calendar)/)?.[1]), ['Omnibox', 'Contacts', 'Calendar']);
+  assert.deepEqual(subItems.map((l) => l.match(/^  - \*\*(Omnibox|Contacts|Calendar)\*\*: /)?.[1]), ['Omnibox', 'Contacts', 'Calendar']);
   assert.doesNotMatch(text, /Calendar[^.\n]*(not yet|coming|planned|soon|beta|later|may )/i);
   assert.equal(text.match(/Calendar/g)?.length, 1);
 });
@@ -97,14 +109,15 @@ test('the extensions are a Vector App, an A2A agent and an MCP server, one line 
   const outside = section(text, 'Ways to extend a space');
   const items = outside.split('\n').filter((l) => l.startsWith('- '));
   assert.equal(items.length, 3);
-  assert.match(items[0], /^- \*\*\[Vector App\]\(\.\.\/vector-apps\/glossary\.md#app\)\*\*: a web app that a space shows in an iframe/);
-  assert.match(items[1], /^- \*\*\[A2A\]\(\.\/glossary\.md#a2a\) agent\*\*: /);
-  assert.match(items[2], /^- \*\*\[MCP\]\(\.\/glossary\.md#mcp\) server\*\*: /);
+  assert.match(items[0], /^- \*\*Vector App\*\*: a web app that a space shows in an iframe/);
+  assert.match(items[1], /^- \*\*A2A agent\*\*: /);
+  assert.match(items[2], /^- \*\*MCP server\*\*: /);
+  for (const link of ['../vector-apps/glossary.md#app', './glossary.md#a2a', './glossary.md#mcp']) assert.ok(linksOf(outside).includes(link), link);
   assert.ok(linksOf(outside).includes('./extending-a-space.md'));
 });
 
 test('the page defines an extension as a Vector App, an A2A agent or an MCP server and never calls them kinds', () => {
-  assert.match(prose, /An extension is a Vector App, an A2A agent or an MCP server\./);
+  assert.match(prose.replace(/[\[\]]/g, ''), /An extension is a Vector App, an A2A agent or an MCP server\./);
   assert.doesNotMatch(prose, /kinds? of extension|one of three kinds|three kinds/i);
 });
 
@@ -124,9 +137,11 @@ test('every link resolves and every glossary anchor exists', () => {
   assert.deepEqual(brokenLinks(text, file), []);
 });
 
-test('Where to read next groups all twelve other pages in three groups, then the glossary, with no "Where to go next"', () => {
+test('Where to read next groups all twelve other pages in three groups, then the glossary, with no result sentence and no primary step', () => {
   assert.doesNotMatch(text, /Where to go next|stands alone/);
   const next = section(text, 'Where to read next');
+  assert.doesNotMatch(next, /You now know|\bnext:|Related/);
+  assert.match(next, /^Where to read next\n\nPick the group that matches your goal: /);
   assert.deepEqual(
     [...next.matchAll(/^\*\*(.+)\*\*$/gm)].map((m) => m[1]),
     ['Core concepts', 'Architecture and governance', 'Workflows and extensions'],
@@ -148,15 +163,15 @@ test('Where to read next groups all twelve other pages in three groups, then the
   ]);
 });
 
-test('each term is linked at its first use: Vector Space, organization, agents, member, orchestrator agent, space', () => {
+test('each term is linked at its first use: Vector Space, AI agents, organization, orchestrator agent, member, spaces', () => {
   const clean = body;
   for (const [term, target] of [
     ['Vector Space', './glossary.md#vector-space'],
     ['organization', './glossary.md#organization'],
-    ['agents', './glossary.md#agent'],
+    ['AI agents', './glossary.md#agent'],
     ['member', './glossary.md#member'],
     ['orchestrator agent', './glossary.md#orchestrator-agent'],
-    ['space', './glossary.md#space'],
+    ['spaces', './glossary.md#space'],
   ]) {
     const first = new RegExp(`(?<![-#\\w])${term}\\b`).exec(clean);
     assert.ok(first, term);

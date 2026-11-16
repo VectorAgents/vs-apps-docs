@@ -6,9 +6,9 @@ description: The Context Hub with its Vector Apps and Vector Modules, and pages 
 A [space](./glossary.md#space) holds what its team works with:
 
 - **[Context Hub](./glossary.md#context-hub)**: the area where the space lists what it can reach, including its [Vector Apps](../vector-apps/glossary.md#app) and [Vector Modules](./glossary.md#vector-module).
-- **[Pages](./glossary.md#page)**: grids of widgets that show data.
+- **[Pages](./glossary.md#page)**: grids of [widgets](./glossary.md#widget) that show data.
 
-Members and agents use them to read data, show it and act on it.
+People and [agents](./glossary.md#agent) use them to read data, show it and act on it.
 
 ## A lead search in a team's space
 
@@ -16,31 +16,37 @@ Maya, a [member](./glossary.md#member) of Acme's sales team, asks the [orchestra
 
 ## The Context Hub
 
-The Context Hub holds six kinds of resource, and a resource is a thing that a space holds and that access rules cover: [contexts](./glossary.md#context), [knowledge sources](./glossary.md#knowledge-source), [datasources](./glossary.md#datasource), [skills](./glossary.md#skill), [Vector Apps](../vector-apps/glossary.md#app) and [Vector Modules](./glossary.md#vector-module). Vector Space shows the list of them as **Resources**. In Acme's space, a context links the customer system and a datasource holds the leads, and [the Context Hub page](./context-hub.md) describes each kind.
+The Context Hub holds six kinds of resource: [contexts](./glossary.md#context), [knowledge sources](./glossary.md#knowledge-source), [datasources](./glossary.md#datasource), skills, Vector Apps and Vector Modules. A resource is a thing that a space holds and that access rules cover, and [Vector Space](./glossary.md#vector-space) shows the list of them as **Resources**. A context links the space to one outside account or endpoint. A datasource is a database that agents and widgets query, and a [skill](./glossary.md#skill) is a set of named instructions with their tools. In Acme's space, a context links the customer system and a datasource holds the leads.
 
 ## Pages and widgets
 
-A [page](./glossary.md#page) is a grid of widgets, with filters that apply to the whole page, and any member can create one. In Acme's space, the sales team builds a page whose widgets query a datasource of leads.
+A page is a grid of widgets, with filters that apply to the whole page, and any member can create one. In Acme's space, the sales team builds a page whose widgets query a datasource of leads.
 
-A [widget](./glossary.md#widget) is one cell of the grid, and it is one of two things:
+A widget is one cell of the grid, and it is one of two things:
 
 - **Data widget**: runs a query against one datasource and shows the result as a chart, a table or a single key figure.
-- **Document widget**: holds text. The people who may edit a collaborative document edit it live, and only the runs of a schedule write a managed document.
+- **Document widget**: holds text. The people who may edit a collaborative document edit it live, and only the runs of a [schedule](./glossary.md#schedule) write a managed document.
 
 ## Vector Apps and Vector Modules
 
-A [Vector App](../vector-apps/glossary.md#app) is a web app that a space shows in an iframe, and a [space admin](./glossary.md#space-admin) turns it on for a space. In Acme's space, the app that finds leads is a Vector App.
+A Vector App is a web app that a space shows in an iframe, and a [space admin](./glossary.md#space-admin) turns it on for a space. In Acme's space, the app that finds leads is a Vector App.
 
 A Vector Module is a first-party product of Vector Space itself, built over context data or over rows that the space keeps. The modules are:
 
-- **Omnibox**: shows conversations from a connected mailbox and lets a member read and reply. [The Context Hub](./context-hub.md#mailboxes-and-the-omnibox) says how mailboxes reach it.
+- **Omnibox**: shows conversations from a connected mailbox and lets a member read and reply.
 - **Contacts**: holds the contact rows of the space.
 - **Calendar**: shows the meetings of the connected calendars.
 
-A module draws on contexts attached to it, so the Omnibox module reads the mailbox that a context links. A module appears in a space when the organization's license lists it.
+A module draws on contexts attached to it, so the Omnibox module reads the mailbox that a context links. A module appears in a space when the [organization](./glossary.md#organization)'s license lists it.
 
 ## Where to go next
 
-- [Agents in a space](./agents-in-a-space.md): how the orchestrator agent, the agents below it, their threads and their runs work together.
+You now know what a space holds: the Context Hub with its apps and modules, and pages with widgets.
+
+Read [Agents in a space](./agents-in-a-space.md) next to see how the orchestrator agent hands work to other agents.
+
+Related:
+
 - [Extending a space](./extending-a-space.md): how a Vector App, an A2A agent and an MCP server compare as ways to extend a space.
-- [Glossary](./glossary.md): every term of Vector Space, each defined in a sentence.
+- [One access model](./one-access-model.md): the centralized check that decides what a person, an agent or an app may do on a resource.
+- [Vector Space glossary](./glossary.md): every term of Vector Space, each defined in a sentence.
