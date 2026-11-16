@@ -1,6 +1,7 @@
 ---
 title: Vector Apps glossary
 sidebar_label: Glossary
+description: Terms of building a Vector App, each with its definition, the code symbol it maps to and its owner.
 ---
 
 Each term has one name in these docs. Each entry gives the definition, the code symbol or field it maps to, and who owns it. The terms of Vector Space itself, such as [space](../vector-space/glossary.md#space) and [space admin](../vector-space/glossary.md#space-admin), are in the [Vector Space glossary](../vector-space/glossary.md). The terms of the SDK are in the [SDK glossary](../sdk/glossary.md).
