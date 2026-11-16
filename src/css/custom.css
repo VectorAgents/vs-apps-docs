@@ -457,3 +457,14 @@ html:not(:has(.flavour-block)) .flavour-picker {
 [data-theme='dark'] .flavour-picker__seg button[aria-pressed='true'] {
   color: #0b1220;
 }
+
+/* Marked codeblock lines. The inset shadow adds the left bar without changing the line's layout. */
+.code-line-added {
+  background: rgba(46, 160, 67, 0.25);
+  box-shadow: inset 3px 0 0 #2ea043;
+}
+
+.code-line-removed {
+  background: rgba(248, 81, 73, 0.25);
+  box-shadow: inset 3px 0 0 #f85149;
+}
