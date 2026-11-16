@@ -32,7 +32,7 @@ test('the lead defines organization and space before the first H2', () => {
 
 test('the space section leads with no count and lists Members, Orchestrator agent, Context Hub and Pages', () => {
   const unit = section(text, 'The space as the unit of work');
-  assert.match(unit, /^A space is where one team works\. It has these things of its own:$/m);
+  assert.match(unit, /^A space is where one team works\. It is made of these parts:$/m);
   assert.doesNotMatch(text, /four parts/);
   const bullets = unit.match(/^- .+$/gm);
   assert.equal(bullets.length, 4);
