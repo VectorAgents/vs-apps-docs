@@ -18,6 +18,23 @@ export const isStarterCodeBlock = (meta) => hasMetaWord(meta, 'starter');
 /** An excerpt is part of a file, so it does not typecheck alone. */
 export const isExcerptCodeBlock = (meta) => hasMetaWord(meta, 'excerpt');
 
+const removedMarker = (word) => new RegExp(`^\\s*(?:\\{\\s*)?(?://|/\\*)\\s*removed-${word}\\b`);
+
+/** The code a reader ends with: the lines marked removed, and their markers, are dropped before the typecheck. */
+export function removedLinesOut(code) {
+  const kept = [];
+  let skipNext = false;
+  let inBlock = false;
+  for (const line of code.split('\n')) {
+    if (inBlock) inBlock = !removedMarker('end').test(line);
+    else if (skipNext) skipNext = false;
+    else if (removedMarker('start').test(line)) inBlock = true;
+    else if (removedMarker('next-line').test(line)) skipNext = true;
+    else kept.push(line);
+  }
+  return kept.join('\n');
+}
+
 function docFiles(dir) {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
     const path = join(dir, entry.name);
@@ -79,7 +96,7 @@ export function checkSnippets({
           // The starter's CI typechecks a `starter` code block.
           if (isStarterCodeBlock(meta) || isExcerptCodeBlock(meta)) continue;
           const title = /title="([^"]+)"/.exec(meta)?.[1];
-          const code = fileMeta(meta) ? readEmbedded(baseDir, fileMeta(meta)) : body;
+          const code = fileMeta(meta) ? readEmbedded(baseDir, fileMeta(meta)) : removedLinesOut(body);
           // A titled block is written at its title path so relative imports between a page's blocks resolve.
           const placed = title && !titled.has(title);
           if (placed) titled.add(title);

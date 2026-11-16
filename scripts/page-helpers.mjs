@@ -7,7 +7,15 @@ export const section = (text, title) => text.split(/^## /m).find((s) => s.starts
 
 export const linksOf = (text) => [...text.matchAll(/\]\(([^)]+)\)/g)].map((m) => m[1]);
 
-export const nextLinks = (text) => linksOf(section(text, 'Next step'));
+/**
+ * The links of the Next step or Next steps section. A section of bullets gives the first link of each bullet, so a link
+ * inside the reason does not count. Any other section gives every link.
+ */
+export const nextLinks = (text) => {
+  const next = section(text, 'Next step');
+  const bullets = next.split('\n').filter((line) => /^[-*] /.test(line));
+  return bullets.length > 0 ? bullets.flatMap((line) => linksOf(line).slice(0, 1)) : linksOf(next);
+};
 
 export const snippetsOf = (text, langs = 'tsx?') =>
   [...text.matchAll(new RegExp(`^\`\`\`(?:${langs})[^\\n]*\\n([\\s\\S]*?)^\`\`\``, 'gm'))].map(([, body]) => body).join('\n');

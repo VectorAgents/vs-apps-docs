@@ -1,35 +1,34 @@
 ---
 title: Add an app page and a capability
+description: Add a leads and an icp app page, gate each by a capability, link them without a reload and open them in a space.
 ---
 
 <!-- flavour react -->
-Grow the `hello-app` definition by two [app pages](../glossary.md#app-page) and the [capabilities](../glossary.md#capability) that gate them, link the app pages without a reload, then see them in a [space](../../vector-space/glossary.md#space).
-
-## Goal
-
-End with the `leads` and `icp` app pages in the navigation of the space, gated by the new `lead:manage` and `icp:manage` capabilities. A link inside the app changes the app page without reloading the iframe.
+Add two [app pages](../glossary.md#app-page), `leads` and `icp`, gate each with a [capability](../glossary.md#capability) and link them without a page reload. When you finish, a [space](../../vector-space/glossary.md#space) lists both app pages to the [members](../../vector-space/glossary.md#member) who hold the capabilities.
 
 ## Prerequisites
 
-- The app from the [quickstart](../quickstart.md), registered in a space (Part 2) and run with `npm run dev:space`.
+- The app from the [quickstart](../quickstart.md), registered in a space and run with `npm run dev:space`.
 - `SPACE_API_URL` in `.env`, set to the [Vector Space](../../vector-space/glossary.md#vector-space) API origin followed by `/api`, for example `https://space-api.example.com/api`. Step 4 uses it.
 - Background: the [app definition](../../sdk/app-definition.md) page, the [`RequireCapability` reference](../../sdk/reference/react.md#react-requirecapability).
 
 ## Steps
 
-Each snippet is a complete file. The starter has one app page, `home`, and no router. Each step lists what it changes in the starter.
-
 ### 1. Extend the definition
 
-The starter file holds the `home` app page and the `hello:view` capability. This step adds the `leads` and `icp` app pages and their capabilities, and moves the app pages into one exported array. Step 3 reads the same array for the path type.
+The `icp` app page holds the ideal customer profile (ICP) library. This step adds the `leads` and `icp` app pages and their capabilities to `shared/src/index.ts`, and moves the app pages into one exported array. Step 3 reads the same array for the path type.
 
 An app page `capability` must match a capability `key` exactly, because `defineApp` does not check it. A capability key has the form `<group>:<action>`, and an app page `path` starts with `/`. `as const satisfies` keeps each path as a literal type, and TypeScript still checks each entry as an `AppPageDef`. `slice()` copies the read-only array into the mutable one that `defineApp` takes.
 
 ```ts title="shared/src/index.ts"
+// removed-next-line
+import { defineApp } from '@vectoragents/vs-apps';
+// added-next-line
 import { defineApp, type AppPageDef } from '@vectoragents/vs-apps';
 
 export const CAPABILITY = 'hello:view';
 
+// added-start
 export const pages = [
   { key: 'home', label: 'Home', path: '/', capability: CAPABILITY },
   { key: 'leads', label: 'Leads', path: '/leads', capability: 'lead:manage' },
@@ -37,23 +36,40 @@ export const pages = [
 ] as const satisfies readonly AppPageDef[];
 
 export type PagePath = (typeof pages)[number]['path'];
+// added-end
 
 export const definition = defineApp({
   key: 'hello-app',
   name: 'Hello app',
+  // removed-next-line
+  version: '0.1.0',
+  // added-next-line
   version: '0.2.0',
+  // removed-start
+  pages: [
+    {
+      key: 'home',
+      label: 'Home',
+      path: '/',
+      capability: CAPABILITY,
+    },
+  ],
+  capabilities: [{ key: CAPABILITY, label: 'View hello', effect: 'read' }],
+  // removed-end
+  // added-start
   pages: pages.slice(),
   capabilities: [
     { key: CAPABILITY, label: 'View hello', effect: 'read' },
     { key: 'lead:manage', label: 'Manage Leads', effect: 'write' },
     { key: 'icp:manage', label: 'Manage ICPs', effect: 'write' },
   ],
+  // added-end
 });
 ```
 
 ### 2. Write the app pages
 
-Gate each app page with the same capability as its definition entry, so the browser matches the definition. The starter has neither file.
+Gate each app page with the same capability as its definition entry, so the browser matches the definition.
 
 ```tsx title="client/src/LeadsPage.tsx"
 import { RequireCapability } from '@vectoragents/vs-apps/react';
@@ -84,15 +100,13 @@ export function IcpPage() {
 }
 ```
 
-Enforce `lead:manage` and `icp:manage` on the endpoints the app pages call, as in [gate an app page and an endpoint](./gate-by-capability.md).
+The server enforces both capabilities on the endpoints that the app pages call. [Gate an app page and an endpoint by capability](./gate-by-capability.md) shows how.
 
 ### 3. Link between app pages without a reload
 
-A member picks an app page in the navigation of the space, and Vector Space asks the app to open its path. `AppProvider` then calls its `navigate` prop. The starter's `navigate` only calls `history.replaceState`. It changes the address and leaves the screen as it is, because the starter has no router.
+A member picks an app page in the navigation of the space, and Vector Space asks the app to open its path. `AppProvider` then calls its `navigate` prop. The `navigate` prop of the starter calls `history.replaceState`. It changes the address and leaves the screen as it is, because the starter has no router.
 
-A plain `<a href>` inside the app does not help. It loads the document again, and the iframe repeats the token handshake with Vector Space.
-
-Add a small router. `navigate` pushes the path and tells the subscribers, and `usePath` re-renders on each change and on the back button. A router library works the same way: pass its navigate function as the `navigate` prop.
+A plain `<a href>` inside the app loads the document again, and the iframe repeats the token handshake with Vector Space. Add a small router instead. `navigate` pushes the path and tells the subscribers, and `usePath` re-renders on each change and on the back button. A router library works the same way: pass its navigate function as the `navigate` prop.
 
 ```ts title="client/src/router.ts"
 import { useSyncExternalStore } from 'react';
@@ -151,7 +165,7 @@ export function Nav() {
 }
 ```
 
-`routes` is typed with `PagePath`, so an app page added to `pages` without a component fails to compile. The `home` prop takes the starter `HelloPage`.
+`routes` is typed with `PagePath`, so an app page added to `pages` without a component fails to compile. The `home` prop takes the `HelloPage` of the starter.
 
 ```tsx title="client/src/CurrentPage.tsx"
 import type { PagePath } from '@hello-app/shared';
@@ -171,9 +185,48 @@ export function CurrentPage({ home }: { home: ReactElement }) {
 }
 ```
 
-Change `client/src/App.tsx` in three places. Import `Nav`, `CurrentPage` and `navigate`. Replace the `navigate` prop of `AppProvider` with `navigate={navigate}`. Replace `<HelloPage />` inside `BootGate` with `<Nav />` and `<CurrentPage home={<HelloPage />} />`.
+In `client/src/App.tsx`, import `CurrentPage`, `Nav` and `navigate`.
 
-Run `npm run dev` and open `http://localhost:5173/harness.html`. Click Leads, then ICP Library. The app page changes, and the Network panel of your browser developer tools shows no new document request. The harness dev panel opens an app page through the same `navigate` prop.
+```tsx title="client/src/App.tsx" showLineNumbers=1 excerpt
+import { loadAppClientConfig } from '@vectoragents/vs-apps/browser';
+import { AppProvider, BootGate } from '@vectoragents/vs-apps/react';
+// added-next-line
+import { CurrentPage } from './CurrentPage';
+import { HelloPage } from './HelloPage';
+// added-start
+import { Nav } from './Nav';
+import { navigate } from './router';
+// added-end
+import { setAppToken } from './token';
+```
+
+Then pass `navigate` to `AppProvider`, and render `Nav` and `CurrentPage` in place of `HelloPage`.
+
+```tsx title="client/src/App.tsx" showLineNumbers=13 excerpt
+    <AppProvider
+      config={config}
+      // removed-next-line
+      navigate={(path) => window.history.replaceState(null, '', path)}
+      // added-next-line
+      navigate={navigate}
+      onToken={setAppToken}
+      onTheme={(theme) => {
+        document.documentElement.dataset.theme = theme;
+      }}
+    >
+      <BootGate fallback={<p>Waiting for Space.</p>}>
+        {/* removed-next-line */}
+        <HelloPage />
+        {/* added-start */}
+        <Nav />
+        <CurrentPage home={<HelloPage />} />
+        {/* added-end */}
+      </BootGate>
+    </AppProvider>
+  );
+```
+
+Run `npm run dev` and open `http://localhost:5173/harness.html`. Select **Leads**, then **ICP Library**. The app page changes, and the Network panel of your browser developer tools shows no new document request. The harness dev panel opens an app page through the same `navigate` prop.
 
 ### 4. Let Vector Space read the manifest
 
@@ -183,13 +236,13 @@ A manifest change waits as a pending review until Vector applies it. If Vector S
 
 ### 5. Grant the capabilities
 
-A [space admin](../../vector-space/glossary.md#space-admin) grants `lead:manage` and `icp:manage` to a member. The member refreshes the browser page, and both app pages appear in the navigation.
+A [space admin](../../vector-space/glossary.md#space-admin) grants `lead:manage` and `icp:manage` to a member in Vector Space.
 
-## Result
+### 6. Check the app pages in the space
 
-The definition declares three app pages and three capabilities. The space shows `leads` and `icp` to members who hold `lead:manage` and `icp:manage`, and a link inside the app changes the app page without a reload.
+Refresh the browser page as that member. The navigation of the app lists **Home**, **Leads** and **ICP Library**. Select **Leads**: the app page shows the heading `Leads` and the text `No leads yet.` Select **ICP Library**: the app page shows the heading `ICP Library`.
 
-## Next step
+## Next steps
 
-Check the same capabilities on the server and share one fallback across app pages with [gate an app page and an endpoint](./gate-by-capability.md).
+- [Gate an app page and an endpoint by capability](./gate-by-capability.md): enforce the same capabilities on the server and share one fallback across app pages.
 <!-- /flavour -->

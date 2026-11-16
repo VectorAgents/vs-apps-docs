@@ -50,8 +50,8 @@ for (const [file, targets] of Object.entries(pages)) {
   });
 }
 
-test('no other page has a Next steps block', () => {
-  const files = globSync('docs/**/*.{md,mdx}', { cwd: root });
+test('no other page has a Next steps block, except the recipes that scripts/recipes.test.mjs checks', () => {
+  const files = globSync('docs/**/*.{md,mdx}', { cwd: root }).filter((f) => !f.startsWith('docs/vector-apps/recipes/'));
   const have = files
     .filter((f) => /^## Next steps$/m.test(readFileSync(join(root, f), 'utf8')))
     .map((f) => f.replace('docs/', ''));
