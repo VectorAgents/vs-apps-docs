@@ -22,7 +22,7 @@ Maya, a [member](./glossary.md#member) of Acme's sales team, asks the orchestrat
 
 Agents that act on an organization's data need limits on data access, AI spend and accountability. Vector Space sets those limits with three rules, and every part of the platform follows all three.
 
-- **One access model**: one check decides each request, and a person and an agent face that same check, whether the request comes from the [web interface](./glossary.md#web-interface), the API, an agent or an app, as [One access model](./one-access-model.md) shows.
+- **One access model**: every operation on a resource passes through a centralized check, whether a person or an agent starts it, and whether it comes through the [web interface](./glossary.md#web-interface), the API or an app. [One access model](./one-access-model.md) shows how the check works.
 - **One AI gateway**: every paid model call goes through the gateway, so no agent or app holds an AI provider key and the organization controls its spend.
 - **One record of work**: every run, call and cost is recorded with the person or service that started it. [The record of work](./the-record-of-work.md) describes the four governance views of who ran what, and how spend is tracked.
 
@@ -67,7 +67,7 @@ To explore the platform, choose the section that matches your goal: understandin
 **Architecture and governance**
 
 - [Why Vector Space](./why-vector-space.md): the problem of controlling agents that work on an organization's own data, and the three rules that answer it.
-- [One access model](./one-access-model.md): the one check that decides each request, and the rules that say which of its inputs wins.
+- [One access model](./one-access-model.md): the centralized check that every operation on a resource passes through, and the rules that say which of its inputs wins.
 - [The record of work](./the-record-of-work.md): what the platform writes down about each piece of work, and the four governance views that show it.
 
 **Workflows and extensions**
