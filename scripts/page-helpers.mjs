@@ -17,6 +17,9 @@ export const nextLinks = (text) => {
   return bullets.length > 0 ? bullets.flatMap((line) => linksOf(line).slice(0, 1)) : linksOf(next);
 };
 
+/** The last `###` step of the Steps section, heading included. */
+export const lastStep = (text) => section(text, 'Steps').split(/^### /m).at(-1);
+
 export const snippetsOf = (text, langs = 'tsx?') =>
   [...text.matchAll(new RegExp(`^\`\`\`(?:${langs})[^\\n]*\\n([\\s\\S]*?)^\`\`\``, 'gm'))].map(([, body]) => body).join('\n');
 
