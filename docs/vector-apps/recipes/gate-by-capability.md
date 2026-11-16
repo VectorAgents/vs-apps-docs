@@ -180,8 +180,7 @@ import { manifests } from './manifests';
 
 Then add it next to `HelloController`.
 
-```ts title="server/src/app.module.ts" showLineNumbers=20 excerpt
-      devIssuer: process.env.VA_DEV_ISSUER === 'true',
+```ts title="server/src/app.module.ts" showLineNumbers=21 excerpt
     }),
   ],
   // removed-next-line
