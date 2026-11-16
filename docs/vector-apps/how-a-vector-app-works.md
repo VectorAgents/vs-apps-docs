@@ -10,7 +10,7 @@ An [app](./glossary.md#app) is a web app that runs on its own origin and that a 
 
 ## The parts of an app
 
-You write three parts: a client, a server and a [manifest](./glossary.md#manifest). Your client runs in an iframe inside the space. Your server runs on your own origin and serves the manifest. Vector Space supplies the other two parts that your app uses: platform data and the [AI](../vector-space/glossary.md#ai) gateway.
+You write three parts: a client, a server and a [manifest](./glossary.md#manifest). Your client runs in an iframe inside the space. Your server runs on your own origin and serves the manifest. Vector Space supplies the other two parts that your app uses: platform data and the [AI gateway](../vector-space/glossary.md#ai-gateway).
 
 <StructureFigure data={appsOverview} figure={1} />
 
@@ -24,7 +24,7 @@ An app goes through six steps. Each step has one owner. [Staff](../vector-space/
 
 | Step | Who | What happens |
 | --- | --- | --- |
-| Build | You | You write the client, the server and the app definition. |
+| Build | You | You write the client, the server and the [app definition](../sdk/glossary.md#app-definition). |
 | Register | Vector staff | Staff add the app from its manifest URL. |
 | Activate | A space admin | The space admin adds the app to a space. |
 | Configure | A space admin | The space admin shares the app and sets what it may use. |
@@ -37,21 +37,21 @@ You describe the app in one [app definition](../sdk/app-definition.md). Your ser
 
 ### Register
 
-Staff give Vector Space the URL of your manifest. Vector Space reads and checks it, then shows staff what the manifest declares, such as model slots. Staff then create the [app registration](./glossary.md#app-registration).
+Staff give Vector Space the URL of your manifest. Vector Space reads and checks it, then shows staff what the manifest declares, such as [model slots](./glossary.md#model-slot). Staff then create the [app registration](./glossary.md#app-registration).
 
 Registering does not add the app to any space.
 
 ### Activate
 
-A space admin adds the app to a space. Vector Space first checks that the organization may use the app. Then it calls `POST /api/provision` on your server to push a [service secret](./glossary.md#service-secret).
+A space admin adds the app to a space. Vector Space first checks that the [organization](../vector-space/glossary.md#organization) may use the app. Then it calls `POST /api/provision` on your server to push a [service secret](./glossary.md#service-secret).
 
 If any part fails, Vector Space tells your server to deprovision, and the activation fails. The space admin can try again.
 
 ### Configure
 
-A new app is shared with no one. The space admin shares it with members and groups. That decides who can open it and which [capabilities](./glossary.md#capability) they hold.
+A new app is shared with no one. The space admin shares it with [members](../vector-space/glossary.md#member) and [groups](../vector-space/glossary.md#group). That decides who can open it and which [capabilities](./glossary.md#capability) they hold.
 
-The space admin also sets each [model slot](./glossary.md#model-slot) and [connector slot](./glossary.md#connector-slot) and attaches the resources the app may read. Until a required slot is set, the app needs setup, but it stays in the space.
+The space admin also sets each model slot and [connector slot](./glossary.md#connector-slot) and attaches the resources the app may read. Until a required slot is set, the app needs setup, but it stays in the space.
 
 ### Update
 
@@ -61,11 +61,11 @@ If the manifest has not changed, nothing happens. If it has, Vector Space holds 
 
 A change that reaches past your app always waits for staff, even with auto-apply on. A new [approval](./glossary.md#approvals) key is one example.
 
-After staff apply a manifest, Vector Space brings every space that has the app in line with it. A capability that you removed is no longer granted. Vector Space has no rollback. To go back, serve the earlier manifest and ask staff to apply it.
+After staff apply a manifest, Vector Space brings every space that has the app in line with it. A capability that you removed is no longer granted. Vector Space has no rollback. To go back, serve the previous manifest and ask staff to apply it.
 
 ### Deprovision
 
-A space admin removes the app from a space, or someone deletes the space. Vector Space calls `DELETE /api/deprovision` on your server and removes the agents and MCP servers that the app added to the space.
+A space admin removes the app from a space, or someone deletes the space. Vector Space calls `DELETE /api/deprovision` on your server and removes the [agents](../vector-space/glossary.md#agent) and [MCP](../vector-space/glossary.md#mcp) servers that the app added to the space.
 
 The call is best effort. If your server does not answer, Vector Space still removes the app. A space admin can add the app again later.
 
@@ -73,7 +73,7 @@ The call is best effort. If your server does not answer, Vector Space still remo
 
 Vector Space signs six kinds of token with one key set. Your app only verifies them. Each token carries the app it is for, and each one expires.
 
-Two kinds go with interfaces that your app can offer. [A2A](../vector-space/glossary.md#a2a) is the Agent2Agent protocol, for one agent that calls another. [MCP](../vector-space/glossary.md#mcp) is the Model Context Protocol, for an agent that calls a server of tools.
+Two kinds go with interfaces that your app can offer: an [A2A](../vector-space/glossary.md#a2a) agent that other agents call, and an MCP server of tools that agents call.
 
 | Token | How it travels | Default lifetime |
 | --- | --- | --- |
