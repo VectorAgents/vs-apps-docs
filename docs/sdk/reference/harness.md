@@ -65,7 +65,7 @@ Serve `harness.html` with your bundler, and open `/harness.html` on the client p
 
 ## Dev routes
 
-The app server serves three routes on the same origin as the page, under `/api`, and your bundler forwards `/api` to it. The [app platform](../glossary.md#app-platform) of `@vectoragents/vs-apps/server` serves all three, and only while it holds a [dev issuer](../glossary.md#dev-issuer), which `VA_DEV_ISSUER=true` turns on in the example. The harness calls the first two routes. The third publishes the key set that verifies the dev tokens.
+The app server serves three routes on the same origin as the page, under `/api`, and your bundler forwards `/api` to it. The app platform of `@vectoragents/vs-apps/server` serves all three, and only while it holds a [dev issuer](../glossary.md#dev-issuer), which `VA_DEV_ISSUER=true` turns on in the example. The harness calls the first two routes. The third publishes the key set that verifies the dev tokens.
 
 ### `GET /api/__dev/manifests`
 
@@ -115,7 +115,7 @@ Returns status `200` and the public key set of the dev issuer. The set verifies 
 <!-- flavour node -->
 ## Serve the dev routes
 
-`createAppPlatform` serves the three dev routes, the manifest route and the other routes that [Vector Space](../../vector-space/glossary.md#vector-space) calls. It serves the dev routes once it holds a dev issuer. `createDevIssuer` signs and verifies tokens, so one object does both. It stores nothing and makes a new key on each call, so a restart makes the tokens of the open harness invalid. To keep them valid, save the `privateKey` of the issuer and pass it back to `createDevIssuer`.
+`createAppPlatform` serves the three dev routes, the manifest route and the other routes that Vector Space calls. It serves the dev routes once it holds a dev issuer. `createDevIssuer` signs and verifies tokens, so one object does both. It stores nothing and makes a new key on each call, so a restart makes the tokens of the open harness invalid. To keep them valid, save the `privateKey` of the issuer and pass it back to `createDevIssuer`.
 
 The platform also needs an `AppCredentialStore`, where it keeps the secret that Vector Space pushes when it adds the app. The store in the next snippet keeps the secrets in memory. The platform answers Fetch requests, so `handlePlatformRoute` bridges a `node:http` request to one. It returns `true` when the platform answered the request, and `false` for every other request.
 

@@ -10,6 +10,7 @@ import {
   linkTextViolations,
   voiceViolations,
 } from './voice.mjs';
+import { longCells } from './sdk-page-helpers.mjs';
 
 const words = (n) => Array.from({ length: n }, () => 'word').join(' ');
 const rules = (md) => voiceViolations(md).map((v) => v.rule);
@@ -141,6 +142,8 @@ const pages = readdirSync(docsDir, { recursive: true })
   .map((file) => ({ file, markdown: readFileSync(join(docsDir, file), 'utf8') }));
 
 for (const [name, check] of [
+  ['no sentence over 35 words', (md) => voiceViolations(md).filter((v) => v.rule === 'sentence-length')],
+  ['no table cell of more than one sentence or 15 words', (md) => longCells(md).map((text) => ({ text }))],
   ['no contractions', contractionViolations],
   ['no em dash, en dash or spaced hyphen', dashViolations],
   ['no banned link text', linkTextViolations],

@@ -257,7 +257,7 @@ Any handler makes `eventsUrl` required in the manifest. `buildManifests` sets it
 | `label` | required | Non-empty string. |
 | `description` | optional | String. |
 | `defaultEventTypes` | optional | At least one lower-case slug when set, each the default of one handler only. |
-| `singleEventType` | optional | A boolean where `true` limits `defaultEventTypes` to at most one type. |
+| `singleEventType` | optional | `defaultEventTypes` must hold at most one type when `singleEventType` is `true`. |
 
 ## How it reflects in Vector Space
 

@@ -4,13 +4,13 @@ import { bodyOf, unlink } from './page-helpers.mjs';
 export const descriptionOf = (text) => text.match(/^---\n[\s\S]*?^description: (.+)$/m)?.[1];
 
 /** The words of `text`, with each code span counted as one word and each link as its label. */
-export const wordCount = (text) => unlink(text).replace(/`[^`]*`/g, 'CODE').trim().split(/\s+/).filter(Boolean).length;
+const wordCount = (text) => unlink(text).replace(/`[^`]*`/g, 'CODE').trim().split(/\s+/).filter(Boolean).length;
 
 /** The sentence count of `text`, with code spans reduced to one word. */
 const sentenceCount = (text) => unlink(text).replace(/`[^`]*`/g, 'CODE').split(/(?<=[.!?])\s+/).filter((s) => s.trim()).length;
 
 /** The cells of the pipe tables of `text`, the separator rows left out. */
-export const cellsOf = (text) =>
+const cellsOf = (text) =>
   text
     .replace(/^```[^\n]*\n[\s\S]*?^```/gm, '')
     .split('\n')

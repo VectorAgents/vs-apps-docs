@@ -4,6 +4,7 @@ import { dirname, join, relative } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { removedLinesOut } from './check-snippets.mjs';
+import { slugOf } from './glossary-index.mjs';
 import { bodyOf, codeOf, lastStep, linksOf, nextLinks, section, snippetsOf, titledSnippets, treesOf } from './page-helpers.mjs';
 
 const docs = join(dirname(fileURLToPath(import.meta.url)), '..', 'docs');
@@ -166,14 +167,10 @@ test('never uses the csr-agents page', () => {
   }
 });
 
-// Docusaurus slug of a heading: lowercase, drop punctuation, spaces to hyphens, or the explicit {#id}.
-const slugOf = (heading) => {
-  const explicit = heading.match(/\{#([\w-]+)\}\s*$/);
-  if (explicit) return explicit[1];
-  return heading.trim().toLowerCase().replace(/[^\p{L}\p{N}\s_-]/gu, '').replace(/\s/g, '-');
-};
+// An explicit `{#id}` wins over the generated slug.
+const headingSlug = (heading) => heading.match(/\{#([\w-]+)\}\s*$/)?.[1] ?? slugOf(heading.trim());
 const anchorsOf = (text) =>
-  new Set([...text.replace(/^```[\s\S]*?^```/gm, '').matchAll(/^#{1,6} (.+)$/gm)].map(([, heading]) => slugOf(heading)));
+  new Set([...text.replace(/^```[\s\S]*?^```/gm, '').matchAll(/^#{1,6} (.+)$/gm)].map(([, heading]) => headingSlug(heading)));
 
 test('every #anchor link from a recipe or guide targets a heading that exists', () => {
   let checked = 0;

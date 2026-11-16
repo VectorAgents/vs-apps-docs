@@ -1,10 +1,10 @@
 ---
 title: SDK glossary
 sidebar_label: Glossary
-description: Terms of the SDK, each with its definition, the code symbol it maps to and its owner.
+description: Terms of the SDK, each with its definition, the export it maps to and its owner.
 ---
 
-Each term has one name in these docs. Each entry gives the definition, the code symbol or field it maps to, and who owns it. The terms of building an app are in the [Vector Apps glossary](../vector-apps/glossary.md), and the terms of the platform are in the [Vector Space glossary](../vector-space/glossary.md).
+Each term has one name in these docs. Each entry gives the definition, the export or field it maps to, and who owns it. The terms of building an app are in the [Vector Apps glossary](../vector-apps/glossary.md), and the terms of the platform are in the [Vector Space glossary](../vector-space/glossary.md).
 
 ## Terms
 

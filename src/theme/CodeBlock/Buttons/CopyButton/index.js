@@ -13,6 +13,10 @@ function finalCode(button) {
     .join('\n');
 }
 
+/**
+ * The copy button of a codeblock. Swizzled from the classic theme so that it copies the final code: the rendered rows
+ * without `code-line-removed`, which the stock button would paste along with the lines it shows struck out.
+ */
 export default function CopyButton({className}) {
   const [isCopied, setIsCopied] = useState(false);
   const timer = useRef(undefined);

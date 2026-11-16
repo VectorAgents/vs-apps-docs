@@ -93,7 +93,7 @@ export function checkSnippets({
         const blocks = [];
         for (const [, lang, meta, body] of readFileSync(file, 'utf8').matchAll(codeBlock)) {
           index++;
-          // The starter's CI typechecks a `starter` code block.
+          // The starter's CI typechecks a `starter` block, and an excerpt is not a whole file.
           if (isStarterCodeBlock(meta) || isExcerptCodeBlock(meta)) continue;
           const title = /title="([^"]+)"/.exec(meta)?.[1];
           const code = fileMeta(meta) ? readEmbedded(baseDir, fileMeta(meta)) : removedLinesOut(body);

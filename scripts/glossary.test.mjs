@@ -2,6 +2,9 @@ import assert from 'node:assert/strict';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { test } from 'node:test';
+import { glossaryLinkProblems } from './concept-link-rules.mjs';
+import { plain as plainOf, slugOf } from './glossary-index.mjs';
+import { treesOf } from './page-helpers.mjs';
 
 const sections = {
   'vector-space': [
@@ -69,8 +72,6 @@ test('each entry has a definition and an owner, and a mapping only when a symbol
 });
 
 const definitionOf = (body) => body.trim().split(/\n\s*\n/)[0];
-const plainOf = (md) => md.replace(/\[([^\]]*)\]\([^)]*\)/g, '$1').replace(/\s+/g, ' ').trim();
-const slugOf = (name) => name.toLowerCase().replaceAll(' ', '-');
 
 test('each definition is 3 sentences and 50 words or fewer', () => {
   for (const { name, body } of entries) {
@@ -274,7 +275,6 @@ test('app token maps the SDK name service token', () => {
 });
 
 test('every link to a glossary term resolves to a page and an anchor that exist', () => {
-  const slugOf = (name) => name.toLowerCase().replaceAll(' ', '-');
   const anchors = Object.fromEntries(Object.entries(texts).map(([section, t]) => [section, parse(t).map((e) => slugOf(e.name))]));
   let count = 0;
   const pages = readdirSync(docsDir, { recursive: true }).filter((f) => /\.mdx?$/.test(f));
@@ -301,4 +301,11 @@ test('each term links to the glossary that defines it', () => {
       assert.equal(file.split('/')[0], home[anchor], `${page}: ${anchor} is defined in the ${home[anchor]} glossary`);
     }
   }
+});
+
+test('every page links a glossary entry once per tree, at most 3 in a sentence', () => {
+  const pages = readdirSync(docsDir, { recursive: true }).filter((f) => /\.mdx?$/.test(f) && !/(^|\/)glossary\.md$/.test(f));
+  assert.ok(pages.length > 40);
+  const found = pages.flatMap((page) => treesOf(page).flatMap(({ tree, text }) => glossaryLinkProblems(text).map((p) => `${page} ${tree}: ${p}`)));
+  assert.deepEqual(found, []);
 });
