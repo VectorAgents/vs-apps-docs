@@ -24,7 +24,7 @@ Each organization has one [organization admin](./glossary.md#organization-admin)
 
 ## The space as the unit of work
 
-A space is where one team works. It has these things of its own:
+A space is where one team works. It is made of these parts:
 
 - **Members**: the users of the space, which include [service accounts](./glossary.md#service-account), users that are not people, such as the identity behind an API key or a schedule. Only users of the organization can join its spaces. Membership alone reaches what each resource's [General access](./glossary.md#general-access) gives every member, and a [share](./glossary.md#share) gives a user, a [group](./glossary.md#group) or an app more.
 - **Orchestrator agent**: the one agent that each space starts with, which takes a request and delegates parts of it to other agents.
