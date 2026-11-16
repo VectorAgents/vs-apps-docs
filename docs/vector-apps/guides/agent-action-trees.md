@@ -116,4 +116,4 @@ The command prints `agent-catalog: 1 pages, 2 actions`. The file `server/agent-c
 
 ## Next steps
 
-- [React reference](../../sdk/reference/react.md): look up every registry symbol.
+- [React reference](../../sdk/reference/react.md): look up every export of the agent action registry.

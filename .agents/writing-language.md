@@ -1,6 +1,6 @@
 # Docs language checklist
 
-Reader: a working developer who knows TypeScript, Node and React and has not used Space. This holds for the build pages (`docs/vector-apps/` and `docs/sdk/`). The concept pages set their own reader (Concept page). The glossary pages and the entry page serve both readers.
+Reader: a working developer who knows TypeScript, Node and React and has not used Vector Space. This holds for the build pages (`docs/vector-apps/` and `docs/sdk/`). The concept pages set their own reader (Concept page). The glossary pages and the entry page serve both readers.
 Coverage: prose, tables, headings, code comments. Not identifiers or string values in code. Code comments copied from the starter are not edited.
 Precedence: rules here win over any reference. A page-type section wins over the shared layer on that page.
 
@@ -73,7 +73,7 @@ Reader: someone who works in or judges a space and has not used Vector Space. Th
 
 ## Tutorial page
 
-Scope: `docs/vector-apps/quickstart.md` only. `quickstart-page.test.mjs` runs `voiceViolations` from `scripts/voice.mjs` on it: the 35-word cap (L3) and the 5-sentence paragraph (L4). `scripts/voice.test.mjs` runs the contraction (V9), dash (V7), link text (P2) and description (P1) checks on every page under `docs/`.
+Scope: `docs/vector-apps/quickstart.md` only. `quickstart-page.test.mjs` runs `voiceViolations` from `scripts/voice.mjs` on it: the 35-word cap (L3) and the 5-sentence paragraph (L4). `scripts/voice.test.mjs` runs the sentence cap (L3), table cell (L5), contraction (V9), dash (V7), link text (P2) and description (P1) checks on every page under `docs/`.
 
 - **TU1 Task order.** Open with one paragraph that states what the reader builds, the result and, in one sentence, that a client check is display only and the server check decides. Prerequisites and the first command follow. Put no diagram, file tree or roadmap sentence before the first command. Show the file tree at the step that needs it.
 - **TU2 Reason only when it changes the action.** Open a step with its reason only when the reason changes what the reader does, or when a wrong action fails silently. Otherwise open with the command.

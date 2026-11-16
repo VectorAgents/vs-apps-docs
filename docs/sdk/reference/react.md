@@ -46,7 +46,7 @@ interface AppProviderProps {
 - Opens the member directory on the first verified token, when the configuration sets `spaceApiUrl`.
 - Passes each verified token to `onToken`, so you can attach it to your own API client.
 - Reports the document height to Vector Space through a `ResizeObserver`.
-- Registers [agent actions](../glossary.md#agent-action) by wrapping the tree in `AgentActionRegistryProvider`. Do not add a second one.
+- Registers agent actions by wrapping the tree in `AgentActionRegistryProvider`. Do not add a second one.
 - Restarts the session when `config` changes, so create `config` once.
 - Logs a `config` promise that rejects to the console. No token arrives, so a `BootGate` stays on its fallback.
 

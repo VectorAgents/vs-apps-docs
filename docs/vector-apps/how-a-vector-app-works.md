@@ -28,7 +28,7 @@ An app goes through six steps. Each step has one owner. [Staff](../vector-space/
 | Register | Vector staff | Staff add the app from its manifest URL. |
 | Activate | A space admin | The space admin adds the app to a space. |
 | Configure | A space admin | The space admin shares the app and sets what it may use. |
-| Update | You, then Vector staff | You deploy a new manifest. Staff apply it. |
+| Update | You, then Vector staff | You deploy a new manifest and staff apply it. |
 | Deprovision | A space admin | The space admin removes the app from a space. |
 
 ### Build
@@ -79,7 +79,7 @@ Two kinds go with interfaces that your app can offer: an [A2A](../vector-space/g
 | --- | --- | --- |
 | User token | Vector Space posts it to your client, which sends it to your server. | 5 minutes |
 | Provisioning token | Sent when Vector Space reads the manifest, pushes the secret or removes the app. | 2 minutes |
-| A2A token | Sent with each call to an agent your app offers. It can identify the member. | 5 minutes |
+| A2A token | Sent with each call to an agent your app offers and can identify the member. | 5 minutes |
 | MCP token | Sent with each call to a tool server your app offers. | 5 minutes |
 | [App token](./glossary.md#app-token) | Your server trades the service secret for it, then calls Vector Space with it. | 10 minutes |
 | Events token | Sent with a connector event or with the decision on an approval. | 5 minutes |

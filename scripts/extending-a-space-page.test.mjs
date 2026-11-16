@@ -112,20 +112,20 @@ test('the comparison opens with its lead, then one table of the 4 rows, with cel
   const cells = data.map((r) => r.slice(1).map(unlink));
   assert.deepEqual(cells[0], [
     'The app sees the member by name, with the capabilities they hold.',
-    'Only an agent that an app offers sees the member. Others get a stored credential.',
+    'Only an agent that an app offers sees the member; others get a stored credential.',
     'The server never sees the member.',
   ]);
   assert.deepEqual(cells[1], [
     'The app reaches what is attached to it and the member can reach.',
     'The agent gets no token, so it cannot call the space.',
-    'The server gets no token. It sees only the arguments of each call.',
+    'The server gets no token and sees only the arguments of each call.',
   ]);
   assert.deepEqual(cells[2], [
     'A space admin sets the model slot the app uses.',
     'The remote agent runs on its own model.',
-    'None. The model call of the calling agent goes through the AI gateway.',
+    'None: the model call of the calling agent goes through the AI gateway.',
   ]);
-  assert.deepEqual(cells[3], ['Yes, from the server of the app.', 'No. An app that offers it can record acts for it.', 'No.']);
+  assert.deepEqual(cells[3], ['Yes, from the server of the app.', 'No, but an app that offers it can record acts for it.', 'No.']);
   assert.match(data[2][1], /\[model slot\]\(\.\.\/vector-apps\/glossary\.md#model-slot\)/);
   assert.match(data[2][3], /\[AI gateway\]\(\.\/glossary\.md#ai-gateway\)/);
 });

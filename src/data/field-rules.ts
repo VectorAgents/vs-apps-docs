@@ -124,6 +124,6 @@ export const resourceFieldRules: FieldRule[] = [
   {
     path: 'resources.connectors[].eventHandlers[].singleEventType',
     required: false,
-    rule: 'A boolean where `true` limits `defaultEventTypes` to at most one type.',
+    rule: '`defaultEventTypes` must hold at most one type when `singleEventType` is `true`.',
   },
 ];

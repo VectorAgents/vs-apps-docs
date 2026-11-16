@@ -152,7 +152,7 @@ export function AppHome() {
 
 ## `createAgentActionRegistry`
 
-Creates the registry that holds the [agent actions](../glossary.md#agent-action) that are mounted now and dispatches calls to their handlers.
+Creates the registry that holds the agent actions that are mounted now and dispatches calls to their handlers.
 
 ### Signature
 

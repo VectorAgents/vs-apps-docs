@@ -8,7 +8,8 @@ export const slugOf = (text) =>
     .replace(/[^\p{L}\p{N}\p{M}_ -]/gu, '')
     .replace(/ /g, '-');
 
-const plain = (text) =>
+/** Markdown as plain text: links reduced to their label, code and bold marks dropped, whitespace collapsed. */
+export const plain = (text) =>
   text
     .replace(/!?\[([^\]]*)\]\([^)]*\)/g, '$1')
     .replace(/[`*]/g, '')

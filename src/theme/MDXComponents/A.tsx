@@ -11,7 +11,7 @@ const OPEN_DELAY_MS = 120;
 const CARD_WIDTH_PX = 320;
 const CLOSE_DELAY_MS = 200;
 const EDGE_PX = 8;
-// Space above a link that the sticky navbar takes; a card that would reach under it opens below the link.
+// The sticky navbar (`--ifm-navbar-height`, 3.75rem = 60px) plus 12px; a card that would reach under it opens below the link.
 const NAVBAR_PX = 72;
 
 const entries: Record<string, Entry> = index;
@@ -61,7 +61,6 @@ function GlossaryLink({ entry, ...props }: Props & { entry: Entry }): ReactEleme
     setPlacement((previous) => ({ ...previous, below: above < NAVBAR_PX }));
   }, [open]);
 
-  // A tap outside the card is the touch way to close it.
   useEffect(() => {
     if (!open) return;
     const away = (event: PointerEvent) => {
@@ -72,7 +71,6 @@ function GlossaryLink({ entry, ...props }: Props & { entry: Entry }): ReactEleme
   }, [open]);
 
   const onClick = (event: MouseEvent<HTMLAnchorElement>) => {
-    // First tap on touch opens the card; the card's own link navigates.
     if ((event.nativeEvent as PointerEvent).pointerType === 'touch' && !open) {
       event.preventDefault();
       clearTimeout(timer.current);

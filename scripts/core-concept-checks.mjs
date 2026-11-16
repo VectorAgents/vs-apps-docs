@@ -1,8 +1,7 @@
 import assert from 'node:assert/strict';
 import { bodyOf } from './page-helpers.mjs';
+import { contractionViolations, dashViolations, descriptionViolations, linkTextViolations } from './voice.mjs';
 
-const BANNED_OPENER = /^(?:This page|Learn)\b/;
-const BANNED_LINK_TEXT = /^(?:here|this page|read more|learn more|https?:\/\/\S+)$/i;
 const DIRECTIONAL = /\b(?:above|as shown|earlier)\b/i;
 
 /** The prose of `text` with front matter, imports, codeblocks and figure tags removed and each link reduced to its label. */
@@ -15,17 +14,14 @@ const proseOf = (text) =>
  */
 export function assertCoreRules(text) {
   const description = text.match(/^description: (.+)$/m)?.[1];
-  assert.ok(description, 'description');
-  assert.ok(description.length <= 160, `description is ${description.length} characters`);
-  assert.doesNotMatch(description, BANNED_OPENER);
+  assert.deepEqual(descriptionViolations(text), []);
   assert.equal(description.split(/(?<=[.!?])\s+/).length, 1, 'description is one sentence');
-
-  for (const [, label] of bodyOf(text).matchAll(/\[([^\]]*)\]\([^)]*\)/g)) assert.doesNotMatch(label, BANNED_LINK_TEXT, `link text "${label}"`);
+  assert.deepEqual(linkTextViolations(text), []);
+  assert.deepEqual(dashViolations(text), []);
+  assert.deepEqual(contractionViolations(text), []);
 
   const prose = proseOf(text);
   assert.doesNotMatch(prose, DIRECTIONAL);
-  assert.doesNotMatch(prose, /[–—]| - /, 'no em dash, en dash or spaced hyphen');
-  assert.doesNotMatch(prose, /\b(?:\w+n['’]t|\w+['’](?:re|ve|ll|d|m)|(?:it|that|there|here|what|let|he|she|who|how|where|when|why)['’]s)\b/i, 'no contraction');
   assert.doesNotMatch(prose, /\b(?:bedrock|absolute|heavily governed|seamless|powerful|robust|simply|just|easily)\b/i, 'no intensifier');
 
   for (const item of bodyOf(text).split('\n').filter((l) => /^\s*- \*\*/.test(l))) {
