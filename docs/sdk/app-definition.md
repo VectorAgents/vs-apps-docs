@@ -266,7 +266,7 @@ Any handler makes `eventsUrl` required in the manifest. `buildManifests` sets it
 Vector registers your manifest URL in Vector Space. After that:
 
 - The app page shows in the navigation of the space, for members who hold the page's capability.
-- A member holds the declared capabilities through a share. A member cannot hold a capability that the manifest does not declare.
+- A member holds the declared capabilities through access to the app, as [One access model](../vector-space/one-access-model.md) describes. A member cannot hold a capability that the manifest does not declare.
 - A [space admin](../vector-space/glossary.md#space-admin) picks a model for each model slot and attaches one connector to each connector slot. If no one sets a slot, the app cannot use it.
 - A manifest change waits as a pending review. Vector applies it before it goes live, unless auto-apply is on for the [app registration](../vector-apps/glossary.md#app-registration).
 
