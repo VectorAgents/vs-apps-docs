@@ -19,7 +19,7 @@ test('writes an empty stamp when absent and keeps an existing one', () => {
 test('writeStamp never exposes an empty or partial file to a concurrent reader, and leaves no temp file', async () => {
   const dir = mkdtempSync(join(tmpdir(), 'stamp-'));
   const file = join(dir, 'static', 'verified.json');
-  const stamp = { package: '0.4.0', verifiedAt: '2026-01-01T00:00:00.000Z', snippets: 103 };
+  const stamp = { package: '0.5.0', verifiedAt: '2026-01-01T00:00:00.000Z', snippets: 103 };
   writeStamp(file, stamp);
   const reader = `
     const { readFileSync } = require('node:fs');

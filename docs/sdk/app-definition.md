@@ -10,7 +10,7 @@ import DiagramControls from '@site/src/components/DiagramControls';
 An app definition is one TypeScript object, built with `defineApp`, that describes your app to [Vector Space](../vector-space/glossary.md#vector-space).
 You write it once: your server and client import it, and your server builds the [manifest](../vector-apps/glossary.md#manifest) that Vector Space reads from it.
 
-It declares the app `key`, its [app pages](../vector-apps/glossary.md#app-page) (one screen each, with a path), the [capabilities](../vector-apps/glossary.md#capability) it can be granted and the resources it needs. It does not read environment variables, so the server and the client import the same object.
+It declares the app `key`, its [app pages](../vector-apps/glossary.md#app-page) (one screen each, with a path), the [capabilities](../vector-apps/glossary.md#capability) a member can hold in it and the resources it needs. It does not read environment variables, so the server and the client import the same object.
 
 One page gated by one capability.
 
@@ -117,7 +117,7 @@ Vector Space turns the manifest into these:
 | Manifest field | Vector Space shows |
 | --- | --- |
 | Pages | Navigation entries |
-| Capabilities | The capabilities a [space admin](../vector-space/glossary.md#space-admin) can grant |
+| Capabilities | The capabilities a member can hold |
 | Resources | A configuration sheet |
 | Agents and [MCP](../vector-space/glossary.md#mcp) servers | Subagents and connectors |
 
@@ -178,7 +178,9 @@ export const definition = defineApp({
 | `description` | optional | String. |
 | `effect` | required | `"read"` or `"write"`. |
 
-`effect` is a label for the person who grants the capability. Access never reads it: a member holds the capabilities they are granted, whether the `effect` is `"read"` or `"write"`.
+`effect` is a label. Access never reads it: a member holds a capability the same way, whether the `effect` is `"read"` or `"write"`.
+
+A member holds every capability through [Can use](../vector-space/glossary.md#can-use) or [Can edit](../vector-space/glossary.md#can-edit) on the whole app, and only the named capabilities through a [share](../vector-space/glossary.md#share) on some capabilities. [One access model](../vector-space/one-access-model.md) shows how the inputs combine.
 
 ### Resources
 
@@ -264,8 +266,8 @@ Any handler makes `eventsUrl` required in the manifest. `buildManifests` sets it
 Vector registers your manifest URL in Vector Space. After that:
 
 - The app page shows in the navigation of the space, for members who hold the page's capability.
-- A space admin grants the declared capabilities. Only declared capabilities can be granted.
-- A space admin picks a model for each model slot and attaches one connector to each connector slot. If no one sets a slot, the app cannot use it.
+- A member holds the declared capabilities through access to the app, as [One access model](../vector-space/one-access-model.md) describes. A member cannot hold a capability that the manifest does not declare.
+- A [space admin](../vector-space/glossary.md#space-admin) picks a model for each model slot and attaches one connector to each connector slot. If no one sets a slot, the app cannot use it.
 - A manifest change waits as a pending review. Vector applies it before it goes live, unless auto-apply is on for the [app registration](../vector-apps/glossary.md#app-registration).
 
 Vector Space reads the manifest again when Vector asks it to and when the app announces that it started.

@@ -99,10 +99,10 @@ interface AppSessionState {
 | `claims.spaceId` | The id of the space. |
 | `claims.organizationId` | The id of the organization. |
 | `claims.appKey` | The key of the app. |
-| `claims.capabilities` | The keys of the capabilities granted to the member. |
+| `claims.capabilities` | The keys of the capabilities the member holds. |
 | `claims.name` | The display name of the member, when the host has one. |
 | `claims.picture` | The picture URL of the member, when the host has one. |
-| `capabilities` | The [capabilities granted](../../vector-apps/glossary.md#capability-grant) to the current member, empty before the handshake. |
+| `capabilities` | The capabilities the current member holds, empty before the handshake. |
 | `hasCapability` | `true` when `capabilities` holds the given name. |
 | `requestRefresh` | Asks Vector Space to send a fresh token, and does nothing before the bridge starts. |
 | `directory` | The member directory, or `null` before the first token or without `spaceApiUrl`. |
@@ -253,7 +253,7 @@ export function LeadsPage() {
   return (
     <RequireCapability
       capability="leads:read"
-      fallback={(capability) => <p>Ask a space admin to grant {capability}.</p>}
+      fallback={(capability) => <p>Ask the owner of the app to share {capability}.</p>}
     >
       <h1>Leads</h1>
     </RequireCapability>
