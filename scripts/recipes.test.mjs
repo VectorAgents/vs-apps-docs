@@ -578,8 +578,8 @@ const keyUse = (text) => {
 };
 // The starter's own `home` page and `hello:view` capability, kept where a page extends the starter definition.
 const starterOwned = {
-  home: ['add-page-and-capability', 'gate-by-capability', 'filter-navigation-by-capability'],
-  'hello:view': ['add-page-and-capability', 'gate-by-capability', 'filter-navigation-by-capability', 'call-a-model-from-your-server', 'handle-connector-events'],
+  home: ['add-page-and-capability', 'filter-navigation-by-capability'],
+  'hello:view': ['add-page-and-capability', 'filter-navigation-by-capability', 'call-a-model-from-your-server', 'handle-connector-events'],
 };
 
 test('every recipe and guide snippet uses only the shared app, page and capability keys', () => {
