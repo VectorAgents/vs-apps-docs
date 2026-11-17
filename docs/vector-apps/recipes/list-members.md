@@ -1,16 +1,16 @@
 ---
 title: List and pick members
-description: Show lead owners by name, search members for an owner picker and list the members of each group from the space directory.
+description: Show lead owners by name, search members for an owner picker and list the members of each group from the member directory.
 start: leads-app
 ---
 
 <!-- flavour react -->
-Show the owners of leads by name, let a [member](../../vector-space/glossary.md#member) pick an owner and list the people in each group. When you finish, the leads app page reads all three from the directory of the [space](../../vector-space/glossary.md#space).
+Show the owners of leads by name, let a [member](../../vector-space/glossary.md#member) pick an owner and list the people in each group. The leads app page reads all three from the [member directory](../glossary.md#member-directory) of the [space](../../vector-space/glossary.md#space).
 
 ## Prerequisites
 
 - A GitHub package token in `GITHUB_PACKAGES_TOKEN`, as in [step 0 of the quickstart](../quickstart.md#0-set-up-access-to-the-package-registry). The scaffold command reads it.
-- The `leads-app` start, added to a space and run with `npm run dev:space`. The harness has no directory, because `npm run dev` clears `SPACE_API_URL`. Scaffold the start and work inside the new folder. For a Nest.js server, use `--server nest`.
+- The `leads-app` start, added to a space and run with `npm run dev:space`. The harness has no member directory, because `npm run dev` clears `SPACE_API_URL`. Scaffold the start and work inside the new folder. For a Nest.js server, use `--server nest`.
 
 ```bash
 npm create @vectoragents/app leads-app -- --client react --server node --start leads-app
@@ -52,7 +52,7 @@ export function LeadOwners({ ownerIds }: { ownerIds: readonly string[] }) {
 
 ### 2. Search members for a picker
 
-`useApp().directory` is `null` without a directory. `search` returns `DirectoryUser` entries and rejects when Vector Space answers with an error, so the snippet catches the rejection and shows an error line.
+`useApp().directory` is `null` without a member directory. `search` returns `DirectoryUser` entries and rejects when Vector Space answers with an error, so the snippet catches the rejection and shows an error line.
 
 Search runs from an effect that waits 300 ms after the last keystroke. The cleanup cancels the timer when the query changes, so only the last pause sends a call. The same cleanup drops a reply that arrives after the query changed.
 
