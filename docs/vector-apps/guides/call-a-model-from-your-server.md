@@ -268,7 +268,7 @@ A change to the manifest reaches Vector Space through [`pingManifests`](../../sd
 The module pings Vector Space with the new manifest at start.
 <!-- /flavour -->
 
-A manifest change waits as a pending review until Vector applies it. If **Lead summary** is missing, ask Vector to select **Check for updates** on your [app registration](../glossary.md#app-registration).
+A manifest change waits until staff apply it, as [how a Vector app works](../how-a-vector-app-works.md#update) describes. If **Lead summary** is missing, ask [staff](../../vector-space/glossary.md#staff) to select **Check for updates** on your [app registration](../glossary.md#app-registration).
 
 The list of models holds a model only when the organization has an Anthropic provider. An [organization admin](../../vector-space/glossary.md#organization-admin) adds one in **Settings**, **Organization**, **Providers**, **AI**, **Add provider**, with an API key. Choose **Set** to save the model. Vector Space shows the toast `Model saved`.
 

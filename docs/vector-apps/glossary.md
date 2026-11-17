@@ -86,7 +86,7 @@ The token that Vector Space issues for one member in one space. It names the mem
 
 ### app token
 
-A short-lived token that Vector Space issues in exchange for the [service secret](#service-secret). The SDK calls it a service token. It is limited to what the app may do or, when the exchange names a `userId`, to that member's own access, and then carries `viaServer: true`.
+A short-lived token that Vector Space issues in exchange for the [service secret](#service-secret). The SDK calls it a service token. Without a `userId` it acts as the app, and an exchange that names one gives that member a user token with `viaServer: true`, refused unless the space admits that user.
 
 - Maps to: `createSpaceS2s` and `SpaceS2sService`.
 - Owner: Vector Space issues it. The SDK requests it.
