@@ -6,7 +6,7 @@ description: The parts of an app, the six steps from build to removal, who does 
 import StructureFigure from '@site/src/components/StructureFigure';
 import { appsOverview } from '@site/src/diagrams/figures/apps-overview.ts';
 
-An [app](./glossary.md#app) is a web app that runs on its own origin and that a [space](../vector-space/glossary.md#space) shows inside [Vector Space](../vector-space/glossary.md#vector-space), the Vector platform. This page shows the parts of an app, the six steps from build to removal, and the tokens that Vector Space signs for it.
+An [app](./glossary.md#app) is a web app that runs on its own origin and that a [space](../vector-space/glossary.md#space) shows inside [Vector Space](../vector-space/glossary.md#vector-space), the Vector platform.
 
 ## The parts of an app
 
@@ -14,21 +14,21 @@ You write three parts: a client, a server and a [manifest](./glossary.md#manifes
 
 <StructureFigure data={appsOverview} figure={1} />
 
-The three dashed lines are calls. Your client calls your server and your server calls Vector Space each time someone uses the app. Vector Space reads the manifest when Vector registers the app and when you change it. [The token kinds](#the-six-token-kinds) say which token each call carries.
+The three dashed lines are calls. Your client calls your server and your server calls Vector Space each time someone uses the app. Vector Space reads the manifest when [staff](../vector-space/glossary.md#staff) register the app and when you change it. [The token kinds](#the-six-token-kinds) say which token each call carries.
 
 Your server decides who may do what. A check in your client is for display only.
 
 ## The lifecycle
 
-An app goes through six steps. Each step has one owner. [Staff](../vector-space/glossary.md#staff), the Vector employees who run Vector Space, own the register step. A [space admin](../vector-space/glossary.md#space-admin) owns three steps.
+An app goes through six steps. Staff, the Vector employees who run Vector Space, own the register step. A [space admin](../vector-space/glossary.md#space-admin) owns three steps.
 
 | Step | Who | What happens |
 | --- | --- | --- |
 | Build | You | You write the client, the server and the [app definition](../sdk/glossary.md#app-definition). |
-| Register | Vector staff | Staff add the app from its manifest URL. |
+| Register | Staff | Staff add the app from its manifest URL. |
 | Activate | A space admin | The space admin adds the app to a space. |
 | Configure | A space admin | The space admin shares the app and sets what it may use. |
-| Update | You, then Vector staff | You deploy a new manifest and staff apply it. |
+| Update | You, then staff | You deploy a new manifest and staff apply it. |
 | Deprovision | A space admin | The space admin removes the app from a space. |
 
 ### Build
@@ -57,11 +57,11 @@ The space admin also sets each model slot and [connector slot](./glossary.md#con
 
 You deploy a new manifest. Your server tells Vector Space at start, and staff can also choose **Check for updates**.
 
-If the manifest has not changed, nothing happens. If it has, Vector Space holds it until staff apply it, unless auto-apply is on for that app registration. Auto-apply is off by default.
+If the manifest changed, Vector Space holds it for staff to apply, unless [auto-apply](./glossary.md#auto-apply) is on for that app registration. If it did not change, nothing happens. Auto-apply is off by default.
 
 A change that reaches past your app always waits for staff, even with auto-apply on. A new [approval](./glossary.md#approvals) key is one example.
 
-After staff apply a manifest, Vector Space brings every space that has the app in line with it. A capability that you removed is no longer granted. Vector Space has no rollback. To go back, serve the previous manifest and ask staff to apply it.
+After staff apply a manifest, Vector Space brings every space that has the app in line with it. A capability that you removed is no longer granted. Vector Space has no rollback, so to go back, serve the previous manifest and ask staff to apply it.
 
 ### Deprovision
 
@@ -71,22 +71,20 @@ The call is best effort. If your server does not answer, Vector Space still remo
 
 ## The six token kinds
 
-Vector Space signs six kinds of token with one key set. Your app only verifies them. Each token carries the app it is for, and each one expires.
+Vector Space signs six kinds of token with one key set. Your app verifies five of them and requests the sixth, the app token, by trading its service secret. It never verifies the app token. Each token carries the app it is for, and each one expires.
 
 Two kinds go with interfaces that your app can offer: an [A2A](../vector-space/glossary.md#a2a) agent that other agents call, and an MCP server of tools that agents call.
 
 | Token | How it travels | Default lifetime |
 | --- | --- | --- |
-| User token | Vector Space posts it to your client, which sends it to your server. | 5 minutes |
+| [User token](./glossary.md#user-token) | Vector Space posts it to your client, which sends it to your server. | 5 minutes |
 | Provisioning token | Sent when Vector Space reads the manifest, pushes the secret or removes the app. | 2 minutes |
-| A2A token | Sent with each call to an agent your app offers and can identify the member. | 5 minutes |
+| A2A token | Sent with each call to an agent your app offers; it can identify the member. | 5 minutes |
 | MCP token | Sent with each call to a tool server your app offers. | 5 minutes |
 | [App token](./glossary.md#app-token) | Your server trades the service secret for it, then calls Vector Space with it. | 10 minutes |
 | Events token | Sent with a connector event or with the decision on an approval. | 5 minutes |
 
-The user token identifies the member and the space. It lists the capabilities that the member holds in your app.
-
-Only the user token that Vector Space posts to your client carries the name and picture of the member. The user token for an agent's call to your endpoint, and the one your server gets for a `userId`, carry neither.
+Only the user token that Vector Space posts to your client carries the name and picture of the member. Two other user tokens carry neither. One goes with an agent's call to an endpoint, a route that the manifest lists under `endpoints` and that an agent can call (`aud: app-user`). The other has `viaServer: true`: your server gets it when it trades the service secret for a `userId`.
 
 ## Where to go next
 
