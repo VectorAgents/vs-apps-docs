@@ -436,11 +436,8 @@ test('each call-a-model tree links the glossary at the first model slot and says
   }
 });
 
-test('each call-a-model tree says a production Vector Space refuses the call with status 503 and a local stack answers it', () => {
-  for (const text of Object.values(modelTrees)) {
-    assert.match(text, /A production Vector Space publishes no gateway address to apps, so it refuses the call with status `503`/);
-    assert.match(text, /A local stack runs the gateway/);
-  }
+test('the call-a-model trees name no 503 gateway refusal and no local stack', () => {
+  for (const text of Object.values(modelTrees)) assert.doesNotMatch(text, /\b503\b|local stack/);
 });
 
 test('the Nest.js call-a-model tree injects SpaceAiService and passes the model slot key', () => {
@@ -473,13 +470,26 @@ test('the call-a-model trees call the model with the returned config, never a fi
   }
 });
 
-test('the call-a-model trees keep the in-memory credential store warning', () => {
-  const warning = modelTrees.nest.split('\n').filter((line) => /in memory/.test(line) && /loses (them|it) on restart/.test(line));
-  assert.ok(warning.length >= 1);
-  assert.match(warning.join('\n'), /`AppCredentialStore`/);
-  const nodeWarning = modelTrees.node.split('\n').filter((line) => /in memory/.test(line) && /loses them on restart/.test(line));
-  assert.ok(nodeWarning.length >= 1);
-  assert.match(nodeWarning.join('\n'), /`AppCredentialStore`/);
+test('the call-a-model trees keep the in-memory credential store warning and link the quickstart recovery', () => {
+  for (const text of Object.values(modelTrees)) {
+    const warning = text.split('\n').filter((line) => /`MemoryCredentialStore` loses the secrets on restart/.test(line));
+    assert.equal(warning.length, 1);
+    assert.match(warning[0], /\[implement `AppCredentialStore` over your own storage\]\(\.\.\/quickstart\.md#4-verify-the-token-on-the-server\)/);
+    assert.match(warning[0], /\]\(\.\.\/quickstart\.md#4-verify-the-token-on-the-server\)\.$/);
+  }
+});
+
+test('the call-a-model trees check the route in the app page with fetchSummary and show both results', () => {
+  for (const text of Object.values(modelTrees)) {
+    const body = titledSnippets(text).filter((c) => c.title.startsWith('client/')).map((c) => c.body).join('\n');
+    assert.match(body, /export async function fetchSummary\(\): Promise<string>/);
+    assert.match(body, /<p>Summary route: \{summary\}<\/p>/);
+    assert.match(text, /`409`/);
+    assert.match(text, /No model is set for the "lead-summary" slot on this space/);
+    assert.match(text, /`200` followed by `\{"summary":"\.\.\."\}`/);
+    assert.match(text, /\*\*Role\*\*: developer\.[\s\S]*\*\*Role\*\*: space admin\./);
+    assert.doesNotMatch(text, /add it again|Keep the service secret/);
+  }
 });
 
 const a2aName = 'expose-app-as-a2a-agent';
