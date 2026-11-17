@@ -74,3 +74,16 @@ A page with no flavour block. The picker does not change it.
 - Maps to: a page that `scripts/generate.mjs` copies to `docs-gen/site/` as written, with no pair copy.
 - Owner: docs.
 
+### gateway ticket
+
+The short-lived key that the AI gateway accepts for one model slot. Published pages say "key", as in the model-key step of `guides/call-a-model-from-your-server.md`, and never "ticket".
+
+- Maps to: the `apiKey` field of the result of `getClientConfig` and `platform.ai`.
+- Owner: Vector Space.
+
+### organization license
+
+The record that allows an app in one organization. Staff edit it. The quickstart step that asks staff to register the app says "allow it for your organization" in its place.
+
+- Maps to: no SDK symbol.
+- Owner: docs.
