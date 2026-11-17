@@ -4,12 +4,12 @@ description: Declare an agent action on the leads app page, bind a handler to it
 start: leads-app
 ---
 
-Declare an [agent action](../../sdk/glossary.md#agent-action) on the `leads` [app page](../glossary.md#app-page), bind a handler to it and write it into the [agent catalog](../../sdk/glossary.md#agent-catalog). When you finish, `leads.open_lead_list` is in the [manifest](../glossary.md#manifest), and the space [agent](../../vector-space/glossary.md#agent) can call it while the app page is mounted.
+Declare an [agent action](../../sdk/glossary.md#agent-action) on the `leads` [app page](../glossary.md#app-page), bind a handler to it and write it into the [agent catalog](../../sdk/glossary.md#agent-catalog). `leads.open_lead_list` is in the [manifest](../glossary.md#manifest), and the space [agent](../../vector-space/glossary.md#agent) can call it while the app page is mounted.
 
 ## Prerequisites
 
 - A GitHub package token in `GITHUB_PACKAGES_TOKEN`, as in step 0 of the [quickstart](../quickstart.md). The scaffold command reads it.
-- The `leads-app` start. Scaffold it and work inside the new folder. For a Nest.js server, use `--server nest`.
+- The `leads-app` start, added to a space and run with `npm run dev:space`, as in [Part 2 of the quickstart](../quickstart.md#part-2-add-the-app-to-a-space). Step 5 needs a [space](../../vector-space/glossary.md#space) that holds the app and a manifest that [staff](../../vector-space/glossary.md#staff) have applied. Scaffold the start and work inside the new folder. For a Nest.js server, use `--server nest`.
 
 ```bash
 npm create @vectoragents/app leads-app -- --client react --server node --start leads-app

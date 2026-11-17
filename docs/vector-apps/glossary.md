@@ -17,7 +17,7 @@ A product you ship into spaces: a React client, a server and one [app definition
 
 ### app registration
 
-The record Vector creates in Vector Space from your [manifest](#manifest) URL, one per app. Vector Space fetches the manifest again when [staff](../vector-space/glossary.md#staff) ask or when the app starts.
+The record [staff](../vector-space/glossary.md#staff) create in Vector Space from your [manifest](#manifest) URL, one per app. Vector Space fetches the manifest again when staff ask or when the app starts.
 
 - Owner: Vector Space.
 
@@ -30,42 +30,42 @@ The JSON the server builds from the [app definitions](../sdk/glossary.md#app-def
 
 ### app page
 
-One screen of the app. It becomes a navigation entry in Vector Space, shown only to members who hold the page's [capability](#capability).
+One screen of the app. It becomes a navigation entry in Vector Space, shown only to [members](../vector-space/glossary.md#member) who hold the page's [capability](#capability).
 
 - Maps to: `pages[]` in the definition (`key`, `label`, `path`, optional `capability`). `appPages(...)` lists them on the client.
 - Owner: SDK declares it. Vector Space renders the navigation entry.
 
 ### capability
 
-A named permission of the form `<group>:<action>` with an `effect` of `read` or `write`. An app page and server routes reference it.
+A named permission of the form `<group>:<action>` with an `effect` of `read` or `write`. An app page and server routes reference it. Vector Space shows a capability as a permission.
 
 - Maps to: `capabilities[]` in the definition. `RequireCapability` and `useApp().hasCapability` check it on the client.
 - Owner: SDK declares it. Vector Space grants it.
 
 ### capability grant
 
-A [share](../vector-space/glossary.md#share) on named capabilities, at Can use, for users or groups. A space admin makes it. Only declared capabilities can be shared.
+A [share](../vector-space/glossary.md#share) of an app that gives a member its capabilities. Can use, Can edit and Can manage each give every capability the app declares, while a [custom role](../vector-space/glossary.md#custom-role) gives only the capabilities it names. A [space admin](../vector-space/glossary.md#space-admin) makes it.
 
 - Maps to: `useApp().capabilities` holds the capabilities granted to the current member.
 - Owner: Vector Space.
 
 ### model slot
 
-A named [AI](../vector-space/glossary.md#ai) model requirement. The app declares the slot and the space admin picks the model. No slot is inherited, and an unset slot runs nothing.
+A named [AI](../vector-space/glossary.md#ai) model requirement. The app declares the slot and the space admin picks the model. If no one sets a slot, the app cannot use that model.
 
 - Maps to: `resources.models[]` in the definition.
 - Owner: SDK declares it. Vector Space stores the choice.
 
 ### connector slot
 
-A named requirement for one external connector, such as ClickUp or a REST API. A slot takes one context, which may be a connector. It can declare event handlers for incoming webhooks.
+A named requirement for one external connector, such as ClickUp or a REST API. It can declare event handlers for incoming webhooks.
 
 - Maps to: `resources.connectors[]` in the definition, with optional `eventHandlers`.
 - Owner: SDK declares it. Vector Space attaches the connector.
 
 ### acts
 
-Declared records of what the app did, such as an import, each with a `kind` of `activity` or `audit`. Vector Space refuses an undeclared act key. An act is what [Human Time Return](../vector-space/glossary.md#human-time-return) values.
+Declared records of what the app did, such as an import, each with a `kind` of `activity` or `audit`. Vector Space refuses an undeclared act key. Vector Space values a successful act as [Human Time Return](../vector-space/glossary.md#human-time-return) when staff approved a baseline for it.
 
 - Maps to: `acts[]` in the definition.
 - Owner: SDK declares them. Vector Space bounds and records them.
@@ -77,11 +77,18 @@ Declared points where a person must confirm an action. Each one raises an [ask](
 - Maps to: `approvals[]` in the definition.
 - Owner: SDK declares them. Vector Space asks the approver.
 
+### user token
+
+The token that Vector Space issues for one member in one space. It names the member and the space and lists the capabilities that the member holds in your app. Your server verifies it on each request.
+
+- Maps to: `verifyUserToken` in `@vectoragents/vs-apps/server`.
+- Owner: Vector Space issues it. The SDK verifies it.
+
 ### app token
 
-A short-lived token that Vector Space issues in exchange for the [service secret](#service-secret). The SDK calls it a service token. It is limited to what the app may do or, when the exchange names a `userId`, to that member's own access.
+A short-lived token that Vector Space issues in exchange for the [service secret](#service-secret). The SDK calls it a service token. It is limited to what the app may do or, when the exchange names a `userId`, to that member's own access, and then carries `viaServer: true`.
 
-- Maps to: `createSpaceS2s` and `SpaceS2sService`. An exchange that names a `userId` gives a token with `viaServer: true`, which Vector Space refuses unless the space admits that user.
+- Maps to: `createSpaceS2s` and `SpaceS2sService`.
 - Owner: Vector Space issues it. The SDK requests it.
 
 ### service secret
@@ -95,7 +102,19 @@ The secret Vector Space creates for each pair of app and space and pushes to the
 
 An app attached to one space. It keeps a copy of the [capabilities](#capability), [acts](#acts) and [approvals](#approvals) that the manifest declares, and the model, connector and resource choices of that space. Vector Space updates the copy each time it reads the manifest.
 
-- Maps to: `loadAppClientConfig` and the verified token, through which the app sees the effect of a binding.
+- Owner: Vector Space.
+
+### member directory
+
+The list of a space's members and groups that an app page searches through `useApp().directory`. It is unavailable when `SPACE_API_URL` is not set.
+
+- Maps to: `useApp().directory`.
+- Owner: Vector Space serves it. The SDK reads it.
+
+### auto-apply
+
+A setting on an app registration. When it is on, Vector Space applies a manifest change at once. It is off by default and never applies a change that reaches past your app.
+
 - Owner: Vector Space.
 
 ### allowed resources
