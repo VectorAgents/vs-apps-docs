@@ -14,8 +14,8 @@
     "pretest": "node scripts/generate.mjs",
     "test": "node --test scripts/*.test.mjs",
     "test:build": "node --test scripts/build-check/*.test.mjs",
-    "pretypecheck": "node scripts/ensure-stamp.mjs",
-    "typecheck": "tsc --noEmit"
+    "pretypecheck": "node scripts/ensure-stamp.mjs && wrangler types worker/worker-configuration.d.ts",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p worker"
   },
   "dependencies": {
     "@docusaurus/core": "^3.10.2",
@@ -45,6 +45,7 @@
     "rxjs": "^7.8.2",
     "typescript": "^5.9.3",
     "vite": "^8.3.5",
+    "wrangler": "^4.160.0",
     "zod": "3.25.76"
   },
   "engines": {

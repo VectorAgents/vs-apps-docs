@@ -8,3 +8,6 @@ static/verified.json
 .playwright-cli
 .claude
 docs-gen
+.wrangler
+.dev.vars
+worker/worker-configuration.d.ts
