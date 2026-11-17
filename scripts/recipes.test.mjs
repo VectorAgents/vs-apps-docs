@@ -308,13 +308,18 @@ test('Call Space from your server has a Node.js and a Nest.js tree, ', () => {
   assert.deepEqual(Object.keys(callSpace), ['node', 'nest']);
 });
 
-test('the Nest.js Call Space tree shows SpaceActionsService, SpaceS2sService and AppActionsService in labelled server files', () => {
+test('the Nest.js Call Space tree shows SpaceActionsService, SpaceS2sService and AppActionsService in labelled server files and checks the routes from labelled client files', () => {
   const code = snippetsOf(callSpace.nest);
   for (const symbol of ['SpaceActionsService', 'SpaceS2sService', 'AppActionsService']) {
     assert.match(code, new RegExp(`\\b${symbol}\\b`));
   }
   assert.match(code, /from '@vectoragents\/vs-apps\/nest'/);
-  for (const [, title] of callSpace.nest.matchAll(/^```tsx?[^\n]*title="([^"]+)"/gm)) assert.match(title, /^server\//);
+  const titles = [...callSpace.nest.matchAll(/^```tsx?[^\n]*title="([^"]+)"/gm)].map(([, title]) => title);
+  for (const title of titles.filter((title) => !title.startsWith('client/'))) assert.match(title, /^server\//);
+  assert.deepEqual(
+    titles.filter((title) => title.startsWith('client/')),
+    ['client/src/token.ts', 'client/src/HelloPage.tsx', 'client/src/HelloPage.tsx', 'client/src/HelloPage.tsx'],
+  );
 });
 
 test('the Node.js Call Space tree calls Space through the platform clients of the server subpath', () => {
@@ -325,12 +330,12 @@ test('the Node.js Call Space tree calls Space through the platform clients of th
   assert.doesNotMatch(callSpace.node, /\bNest(\.js|JS)?\b|@nestjs\/|@Injectable|AppActionsService|SpaceActionsService|SpaceS2sService/);
 });
 
-test('the Nest.js Call Space tree warns that the credential store is in memory and is the one interface to implement', () => {
-  const warning = callSpace.nest.split('\n').filter((line) => /in memory/.test(line) && /loses them on restart/.test(line));
-  assert.equal(warning.length, 1);
-  assert.match(warning[0], /`AppCredentialStore`/);
-  assert.match(warning[0], /your own storage/);
-  assert.match(warning[0], /persistent store before production/);
+test('the Nest.js Call Space tree says the starter store loses the secrets on restart and links the one interface to implement', () => {
+  const note = callSpace.nest.split('\n').filter((line) => /loses the secrets on restart/.test(line));
+  assert.equal(note.length, 1);
+  assert.match(note[0], /\[implement `AppCredentialStore` over your own storage\]\(\.\.\/quickstart\.md#4-verify-the-token-on-the-server\)/);
+  assert.match(note[0], /`getToken` \[fails until you recover the secret\]\(\.\.\/quickstart\.md#4-verify-the-token-on-the-server\)/);
+  assert.doesNotMatch(callSpace.nest, /rotated in Vector Space/);
 });
 
 test('the Nest.js Call Space tree adds its controller to AppModule and keeps type-only constructor injection', () => {
