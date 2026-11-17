@@ -5,7 +5,7 @@ start: leads-app
 ---
 
 <!-- flavour react -->
-Read the signed-in [member](../../vector-space/glossary.md#member), the [space](../../vector-space/glossary.md#space) and the [capabilities](../glossary.md#capability) from `useApp`, and show them in a header. When you finish, the header names the member and the space, and shows a line only to members who hold `lead:manage`.
+Read the signed-in [member](../../vector-space/glossary.md#member), the [space](../../vector-space/glossary.md#space) and the [capabilities](../glossary.md#capability) from `useApp`, and show them in a header. The header names the member and the space, and shows a line only to members who hold `lead:manage`.
 
 ## Prerequisites
 
@@ -48,7 +48,7 @@ export function AppHeader() {
 Call `requestRefresh` after a space admin changes a capability. Vector Space sends a fresh token, and `capabilities` updates.
 
 :::warning
-`hasCapability` changes what the member sees and nothing more. A member can still call your server, so enforce the capability there, as in [gate an app page and an endpoint](./gate-by-capability.md).
+`hasCapability` changes what the member sees. A member can still call your server, so enforce the capability there, as in [gate an app page and an endpoint](./gate-by-capability.md).
 :::
 
 ### 2. Mount the header under the gate
