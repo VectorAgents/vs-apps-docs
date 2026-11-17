@@ -45,8 +45,10 @@ for (const name of ['open-route-and-read-caller', 'handle-connector-events']) {
     assert.doesNotMatch(nest, /@Inject\(/);
   });
 
-  test(`${name}: Next steps is one link to the quickstart`, () => {
-    assert.deepEqual(nextLinks(nest).map((l) => l.replace(/^(\.\.\/)+/, '')), ['quickstart.md#part-2-add-the-app-to-a-space']);
+  // The connector guide starts from an app that Part 2 already added to a space, so it links the slot fields instead.
+  const nextLink = name === 'handle-connector-events' ? 'sdk/app-definition.md#resourcesconnectors' : 'quickstart.md#part-2-add-the-app-to-a-space';
+  test(`${name}: Next steps is one link to ${nextLink}`, () => {
+    assert.deepEqual(nextLinks(nest).map((l) => l.replace(/^(\.\.\/)+/, '')), [nextLink]);
   });
 }
 
