@@ -33,7 +33,7 @@ A Restricted resource reaches only its owner and the users and groups that a sha
 
 Four rules say what wins:
 
-- General access and shares add up, so a user gets what either one gives, including the shares of the user's groups.
+- General access and shares add up, so a member gets what either one gives, including the shares of the member's groups.
 - A block wins, and it removes access whatever gave it, so no share and no General access brings it back.
 - A condition narrows what is left after the other inputs, and nothing widens past it.
 - Conditions apply to datasources and contexts only. On a datasource a condition limits the rows of every query. On a [context](./glossary.md#context) it limits the arguments of a call, so the response is not filtered afterwards.

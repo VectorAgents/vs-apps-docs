@@ -59,6 +59,9 @@ test('each entry has a definition and an owner, and a mapping only when a symbol
   for (const { name, body } of entries) {
     assert.match(body, /^[^\s-].*$/m, `${name}: definition`);
     assert.match(body, /^- Owner: (SDK|Vector Space|SDK and Vector Space|docs)\b/m, `${name}: owner`);
+    const ownerSentences = /^- Owner: (.*)$/m.exec(body)?.[1].split(/(?<=\.)\s+/) ?? [];
+    assert.ok(ownerSentences.length <= 2, `${name}: owner is 2 sentences at most`);
+    for (const sentence of ownerSentences) assert.ok(sentence.split(/\s+/).length <= 15, `${name}: owner sentence over 15 words`);
     assert.doesNotMatch(body, /^- Maps to: (no SDK symbol)?\.?$/m, `${name}: empty mapping`);
     assert.doesNotMatch(body, /no SDK symbol/i, `${name}: states a missing symbol`);
   }

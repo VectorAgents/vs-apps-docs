@@ -47,6 +47,6 @@ Read [Agents in a space](./agents-in-a-space.md) next to see how the orchestrato
 
 Related:
 
-- [Extending a space](./extending-a-space.md): how a Vector App, an A2A agent and an MCP server compare as ways to extend a space.
+- [Extending a space](./extending-a-space.md): how a Vector App, an [A2A](./glossary.md#a2a) agent and an [MCP](./glossary.md#mcp) server compare as ways to extend a space.
 - [One access model](./one-access-model.md): the centralized check that decides what a person, an agent or an app may do on a resource.
 - [Vector Space glossary](./glossary.md): every term of Vector Space, each defined in a sentence.
