@@ -4,7 +4,7 @@ description: Gate an app page in the browser and an endpoint on the server by ca
 start: leads-app
 ---
 
-Gate the `leads` [app page](../glossary.md#app-page) in the browser and `GET /api/leads` on the server with the `lead:manage` [capability](../glossary.md#capability). When you finish, a [member](../../vector-space/glossary.md#member) without the capability sees a fallback message, and the server answers `403` to a token without it.
+Gate the `leads` [app page](../glossary.md#app-page) in the browser and `GET /api/leads` on the server with the `lead:manage` [capability](../glossary.md#capability). A [member](../../vector-space/glossary.md#member) without the capability sees a fallback message, and the server answers `403` to a token without it.
 
 ## Prerequisites
 
@@ -28,28 +28,13 @@ cd leads-app
 
 ## Steps
 
-### 1. Gate the app pages in the definition
+### 1. Gate the `leads` app page in the definition
 
 An app page names its capability in `capability`. `defineApp` does not check that the name exists in `capabilities`, so keep the two keys identical.
 
-The `leads` app page in the start has no `capability`. Add it, and add an `icp` app page gated by `icp:manage`, which step 4 uses as the second app page.
+The `leads` app page in the start has no `capability`. Add it.
 
-```ts title="shared/src/index.ts"
-import { defineApp } from '@vectoragents/vs-apps';
-
-export const CAPABILITY = 'hello:view';
-
-export const definition = defineApp({
-  key: 'hello-app',
-  name: 'Hello app',
-  version: '0.1.0',
-  pages: [
-    {
-      key: 'home',
-      label: 'Home',
-      path: '/',
-      capability: CAPABILITY,
-    },
+```ts title="shared/src/index.ts" showLineNumbers=16 excerpt
     {
       key: 'leads',
       label: 'Leads',
@@ -57,21 +42,6 @@ export const definition = defineApp({
       // added-next-line
       capability: 'lead:manage',
     },
-    // added-start
-    {
-      key: 'icp',
-      label: 'ICP',
-      path: '/icp',
-      capability: 'icp:manage',
-    },
-    // added-end
-  ],
-  capabilities: [
-    { key: CAPABILITY, label: 'View hello', effect: 'read' },
-    { key: 'lead:manage', label: 'Manage Leads', effect: 'write' },
-    { key: 'icp:manage', label: 'Manage ICP', effect: 'write' },
-  ],
-});
 ```
 
 <!-- flavour react -->
@@ -109,7 +79,7 @@ export function LeadsPage() {
 ```
 
 :::warning
-This check shapes the UI only. A member can still call the endpoint directly, so step 3 enforces the capability on the server.
+A member can still call the endpoint directly, so step 3 enforces the capability on the server.
 :::
 <!-- /flavour -->
 
@@ -243,7 +213,22 @@ export function LeadsPage() {
 }
 ```
 
-The `icp` app page uses the same wrapper with its own capability.
+The `icp` app page uses the same wrapper with its own capability. Add its entry to `pages` in `shared/src/index.ts`, after `leads`.
+
+```ts title="shared/src/index.ts" showLineNumbers=21 excerpt
+    },
+    // added-start
+    {
+      key: 'icp',
+      label: 'ICP',
+      path: '/icp',
+      capability: 'icp:manage',
+    },
+    // added-end
+  ],
+```
+
+Then add the page itself.
 
 ```tsx title="client/src/IcpPage.tsx"
 import { GatedPage } from './GatedPage';
@@ -298,10 +283,10 @@ To change the message of both app pages, edit `GatedPage.tsx`.
 
 Run `npm run dev` and open `http://localhost:5173/harness.html`. Select **Leads** in the sidebar. In the dev panel, remove `lead:manage` from the capability set. The app page shows `Ask a space admin to grant lead:manage.` Add `lead:manage` back, and the app page shows the heading `Leads`.
 
-For the server, call the route with no token. `SERVER_PORT` is the value in `.env`.
+For the server, call the route with no token.
 
 ```bash
-curl -s -o /dev/null -w '%{http_code}\n' http://localhost:<SERVER_PORT>/api/leads
+curl -s -o /dev/null -w '%{http_code}\n' http://localhost:3101/api/leads
 ```
 
 The command prints `401`. Then mint a development token without `lead:manage` through the [harness token route](../../sdk/reference/harness.md#post-api__devtoken) and send it as a bearer token. The server answers `403` with the body `{"error":"Missing capability: lead:manage"}`. A token that holds the capability gets `200`.
