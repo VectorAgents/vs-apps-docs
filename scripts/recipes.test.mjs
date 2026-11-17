@@ -415,6 +415,33 @@ test('add-page-and-capability links between pages without a reload through navig
   assert.match(addPage.text, /^export type PagePath = \(typeof pages\)\[number\]\['path'\];$/m);
 });
 
+test('add-page-and-capability writes plain pages, owns no filter prose and says staff apply a manifest change', () => {
+  assert.doesNotMatch(addPage.text, /RequireCapability|When you finish|pending review|Vector applies|ask Vector to/i);
+  assert.doesNotMatch(section(addPage.text, 'Prerequisites'), /SPACE_API_URL/);
+  assert.match(addPage.text, /\]\(\.\/gate-by-capability\.md\)/);
+  assert.match(section(addPage.text, 'Next steps'), /gate-by-capability\.md/);
+  assert.match(addPage.text, /waits until staff apply it/);
+  assert.match(addPage.text, /\]\(\.\.\/how-a-vector-app-works\.md#update\)/);
+  assert.match(addPage.text, /\[staff\]\(\.\.\/\.\.\/vector-space\/glossary\.md#staff\)/);
+});
+
+test('add-page-and-capability share step skips the space admin, keeps Can use and names the custom role path', () => {
+  const step = addPageSteps().find((s) => /^\d+\. Grant the capabilities\n/.test(s));
+  assert.ok(step, 'a step named "Grant the capabilities"');
+  assert.match(step, /holds every permission on the app row/);
+  assert.match(step, /quickstart\.md#5-share-the-app-with-a-member/);
+  assert.match(step, /\*\*Can use\*\*/);
+  assert.match(step, /Vector Space shows a capability as a permission\./);
+  assert.match(step, /\*\*Settings\*\*, \*\*Organization\*\*, \*\*Access\*\*, \*\*Roles\*\*, \*\*New role\*\*/);
+  assert.match(step, /\*\*Custom roles\*\*/);
+  assert.doesNotMatch(step, /requestRefresh|Reload/);
+  const check = addPageSteps().at(-1);
+  assert.match(check, /^\d+\. Check /);
+  assert.match(check, /5 minutes/);
+  assert.match(check, /`requestRefresh`/);
+  assert.match(check, /read-app-context\.md/);
+});
+
 const modelTrees = Object.fromEntries(treesOf(`vector-apps/guides/${modelGuide}.md`).map(({ tree, text }) => [tree.split('/')[0], text]));
 
 test('the Node.js call-a-model tree names no Nest term', () => {
