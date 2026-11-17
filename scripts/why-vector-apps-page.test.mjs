@@ -12,8 +12,13 @@ const text = readFileSync(file, 'utf8');
 
 const headings = [...text.matchAll(/^## (.+)$/gm)].map((m) => m[1]);
 
-test('the page runs what an app is, where it fits, what a space gives, next steps', () => {
-  assert.deepEqual(headings, ['What an app is', 'Where an app fits', 'What a space gives an app', 'Where to go next']);
+test('the page runs core components, integration methods, platform capabilities, next steps', () => {
+  assert.deepEqual(headings, ['Core components', 'Integration methods', 'Platform capabilities', 'Where to go next']);
+});
+
+test('the body holds 450 words or fewer', () => {
+  const words = unlink(bodyOf(text)).split(/\s+/).filter((w) => /[A-Za-z0-9]/.test(w)).length;
+  assert.ok(words <= 450, `${words} words`);
 });
 
 test('the page opens with the definition of an app', () => {
@@ -21,7 +26,7 @@ test('the page opens with the definition of an app', () => {
   assert.match(body, /^An \[app\]\(\.\/glossary\.md#app\) is /);
 });
 
-test('every link resolves, and the page links How a Vector App works, the quickstart and Extending a space', () => {
+test('every link resolves, and the page links How a Vector App works, the quickstart, Extending a space and the SDK overview', () => {
   const links = linksOf(text);
   for (const link of links) {
     const [path, anchor] = link.split('#');
@@ -31,31 +36,50 @@ test('every link resolves, and the page links How a Vector App works, the quicks
       assert.ok(terms.some((l) => l.slice(4).toLowerCase().replaceAll(' ', '-') === anchor), link);
     }
   }
-  for (const target of ['./how-a-vector-app-works.md', './quickstart.md', '../vector-space/extending-a-space.md']) assert.ok(links.includes(target), target);
-  assert.equal(links.filter((l) => l === '../vector-space/extending-a-space.md').length, 2, 'once in Where an app fits, once in Where to go next');
+  for (const target of ['./how-a-vector-app-works.md', './quickstart.md', '../vector-space/extending-a-space.md', '../sdk/overview.md']) assert.ok(links.includes(target), target);
+  assert.equal(links.filter((l) => l === '../vector-space/extending-a-space.md').length, 2, 'once in Integration methods, once in Where to go next');
   assert.doesNotMatch(text, /choose-your-path|Choose your path/);
 });
 
-test('Where an app fits is one sentence that links Extending a space, then the app-offered agents, with no list', () => {
-  const fits = section(text, 'Where an app fits');
-  assert.doesNotMatch(fits, /^- /m);
-  assert.match(fits, /\[Extending a space\]\(\.\.\/vector-space\/extending-a-space\.md\) compares the three ways to extend a space with your code/);
-  assert.match(fits, /\[A2A\]\(\.\.\/vector-space\/glossary\.md#a2a\)/);
-  assert.match(fits, /\[MCP\]\(\.\.\/vector-space\/glossary\.md#mcp\)/);
-  assert.match(fits, /An app can also offer an A2A agent and an MCP server of its own/);
+test('Integration methods gives three when-to-use lines, links Extending a space, then the app-offered agents', () => {
+  const methods = section(text, 'Integration methods');
+  assert.match(methods, /\[Extending a space\]\(\.\.\/vector-space\/extending-a-space\.md\) compares three extensions/);
+  const lines = methods.split('\n').filter((l) => l.startsWith('- '));
+  assert.equal(lines.length, 3);
+  assert.match(lines[0], /^- \*\*Vector App:\*\*.*screens/);
+  assert.match(lines[1], /^- \*\*\[A2A\]\(\.\.\/vector-space\/glossary\.md#a2a\) agent:\*\*.*reasoning/);
+  assert.match(lines[2], /^- \*\*\[MCP\]\(\.\.\/vector-space\/glossary\.md#mcp\) server:\*\*.*API/);
+  assert.match(methods, /An app can also offer an A2A agent and an MCP server of its own/);
+});
+
+test('Core components names the client, server and manifest with the runtimes the SDK README gives', () => {
+  const core = unlink(section(text, 'Core components'));
+  assert.match(core, /\*\*Client:\*\*.*React bindings.*framework-free browser helpers/);
+  assert.match(core, /Web-standard APIs, so it runs on Node\.js, Bun, Deno or Workers/);
+  assert.match(core, /`\.\/nest`, `\.\/extract` and `\.\/conformance` subpaths need Node\.js/);
+  assert.match(core, /React is not a server wrapper/);
+  assert.match(core, /The SDK builds the manifest from one app definition\./);
+  assert.match(core, /Staff register an app from its manifest URL, and a space admin adds it to a space\./);
+  assert.doesNotMatch(text, /redempt|seamless|governed|NextJS|Astro|vanilla/i);
 });
 
 test('the space gives an app member identity, platform data, model access and the record of work', () => {
-  const given = section(text, 'What a space gives an app').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1');
+  const given = section(text, 'Platform capabilities').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1');
   for (const term of ['identifies the member', 'allowed resources', 'model slot', 'AI gateway', 'acts', 'approvals']) assert.ok(given.includes(term), term);
 });
 
-test('the model access bullet says production publishes no gateway to apps, so it refuses with 503, and a local stack answers', () => {
-  const bullet = section(text, 'What a space gives an app').split('\n').find((l) => l.startsWith('- **Governed model access.**')) ?? '';
-  assert.match(bullet, /production Vector Space publishes no gateway address to apps/);
-  assert.match(bullet, /refuses the request with status `503`/);
-  assert.match(bullet, /local stack/);
+test('the model access bullet names the slot, the ticket and the missing key, and says nothing of a 503', () => {
+  const bullet = section(text, 'Platform capabilities').split('\n').find((l) => l.startsWith('- **Model access through a slot.**')) ?? '';
+  assert.match(bullet, /Your server asks for a model through the slot and gets a short-lived ticket/);
+  assert.match(bullet, /Your app holds no AI provider key\./);
+  assert.doesNotMatch(text, /503|gateway address|local stack/);
   assert.doesNotMatch(bullet, /the call goes through the/i);
+});
+
+test('a space gives your app four things, and the server check links How a Vector App works', () => {
+  assert.match(section(text, 'Platform capabilities'), /^A space gives your app four things\.$/m);
+  assert.doesNotMatch(text, /Each one stays inside the rules|display only|^\*[^*]/m);
+  assert.match(text, /^Your server checks every call, as \[How a Vector App works\]\(\.\/how-a-vector-app-works\.md#the-parts-of-an-app\) shows\.$/m);
 });
 
 test('the user token identifies the member and the page never says a token names them', () => {
@@ -75,9 +99,10 @@ test('the page follows the voice checks and names no master doc', () => {
   assert.doesNotMatch(text, /(PROTOCOL|BINDINGS|REGISTRY|OVERVIEW|APPS|GLOSSARY|README)\.md/);
 });
 
-test('a space admin adds the app and picks the model, and a member who can edit the app and share the resource attaches resources', () => {
-  assert.match(text, /when a \[space admin\]\(\.\.\/vector-space\/glossary\.md#space-admin\) adds the app/);
-  assert.match(unlink(text), /A member who can edit your app and share the resource attaches resources to it, such as connectors and knowledge sources\./);
+test('staff register the app, a space admin adds it and picks the model, and a member who can edit the app and share the resource attaches resources', () => {
+  assert.match(text, /\[Staff\]\(\.\.\/vector-space\/glossary\.md#staff\) register an app from its manifest URL, and a \[space admin\]\(\.\.\/vector-space\/glossary\.md#space-admin\) adds it to a space\./);
+  assert.match(text, /when a space admin adds the app/);
+  assert.match(unlink(text), /A member who can edit your app and share the resource attaches connectors and knowledge sources to it, as allowed resources\./);
   assert.match(text, /and a space admin picks the model\./);
 });
 
