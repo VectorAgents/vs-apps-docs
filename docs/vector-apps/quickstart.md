@@ -485,20 +485,20 @@ export function HelloPage() {
 
 ## Part 2: Add the app to a space
 
-Part 2 puts the app in a real space. Only Vector can register the app. You send the request in step 2 and cannot start step 4 until Vector confirms. Stop after Part 1 if you have no Vector Space access. Steps 3, 4, 5 and 6 run in the Vector Space app.
+You send the registration request in step 2 of Part 2 and cannot start step 4 of Part 2 until staff confirm. Steps 3 to 6 of Part 2 run in the Vector Space app.
 
 ### Before you start
 
-A real space needs these things in place. Check them before step 1.
+A real space needs these things in place. Check them before step 1 of Part 2.
 
-- [ ] A Vector representative, the person at Vector who registers apps, to send the registration request to.
+- [ ] Your Vector representative, one of the staff who register apps, to send the registration request to. Staff also supply the origin of the Vector Space API and the origin of the Vector Space web client.
 - [ ] A space to add the app to.
-- [ ] An [organization admin](../vector-space/glossary.md#organization-admin), a member who sees **Organization** under **Settings**, to do [step 3](#3-publish-the-space-agent). A space admin to do steps 4 and 5. The organization admin is a space admin of every space.
-- [ ] The Vector Space server can reach your server. It needs a public URL that forwards to port `3101` (`SERVER_PORT`). Keep the URL the same until Vector confirms the registration.
+- [ ] An [organization admin](../vector-space/glossary.md#organization-admin), a member who sees **Organization** under **Settings**, to do [step 3 of Part 2](#3-publish-the-space-agent). A space admin to do steps 4 and 5 of Part 2. The organization admin is a space admin of every space.
+- [ ] The Vector Space server can reach your server. It needs a public URL that forwards to port `3101` (`SERVER_PORT`). Keep the URL the same until staff confirm the registration.
 
 ### 1. Point the app at Vector Space
 
-Vector Space reaches your server over the network. The server needs real addresses instead of the harness values. Stop the harness with Ctrl-C. Copy the example file, then replace the example values with your own.
+Vector Space reaches your server over the network. The server needs real addresses instead of the harness values. Stop the harness with Ctrl-C. Copy the example file, then replace the example values with your own. `SPACE_JWKS_URL`, `SPACE_API_URL` and `ALLOWED_PARENT_ORIGIN` derive from the two origins that staff supply.
 
 ```bash
 cp .env.example .env
@@ -507,7 +507,7 @@ cp .env.example .env
 - `SPACE_JWKS_URL` is the address of the Vector Space key set. The server uses it to check that a token comes from Vector Space. It is the origin of the Vector Space API followed by `/api/.well-known/apps/jwks.json`.
 - `SPACE_API_URL` is the address of the Vector Space API. The server uses it to ping Vector Space at start, and the client configuration passes it to your app page. It is the origin of the Vector Space API followed by `/api`, for example `https://space-api.example.com/api`. Write it with no trailing slash.
 - `ALLOWED_PARENT_ORIGIN` is the origin of the Vector Space web client that embeds your app page, for example `https://space.example.com`. Write it with no trailing slash and no path: the client accepts messages from an exact match only.
-- `PUBLIC_BASE_URL` is the origin where the Vector Space server reaches your server, for example `https://hello-app.example.com`. The server writes it into each `{publicBaseUrl}` placeholder in the manifest. The Hello app has no placeholder. You reuse this origin in step 2 for the manifest URL.
+- `PUBLIC_BASE_URL` is the origin where the Vector Space server reaches your server, for example `https://hello-app.example.com`. The server writes it into each `{publicBaseUrl}` placeholder in the manifest. The Hello app has no placeholder. You reuse this origin in step 2 of Part 2 for the manifest URL.
 - `SERVER_PORT` is the port your server listens on.
 - `CLIENT_PORT` is the port Vite serves the client on.
 
@@ -532,9 +532,9 @@ node --env-file=.env -e "fetch(process.env.SPACE_JWKS_URL).then((r) => r.text().
 
 `200 <!doctype` means `SPACE_JWKS_URL` lacks the `/api` prefix. `404` means the path is wrong. `fetch failed` means nothing listens at that address.
 
-### 2. Ask Vector to register the app
+### 2. Ask staff to register the app
 
-Only Vector registers an app and allows it in an organization license. Send the request now, then do step 3 while you wait. Keep `npm run dev:space` running. Vector Space fetches the manifest when Vector registers the app. Send Vector this information:
+Send the request now, then do step 3 of Part 2 while you wait. Keep `npm run dev:space` running, because Vector Space fetches the manifest when staff register the app. Send staff this information:
 
 - The manifest URL: `PUBLIC_BASE_URL` followed by `/api/manifest/hello-app`. The Vector Space server fetches it, so it must work from the Vector Space server's network.
 - The iframe URL: `http://localhost:` followed by `CLIENT_PORT`. Your browser loads it, so `localhost` is your own machine. It is the client origin, not the server origin.
@@ -542,9 +542,9 @@ Only Vector registers an app and allows it in an organization license. Send the 
 
 Vector Space fetches the manifest with a provisioning token. Your server verifies that token before it answers.
 
-Contact your Vector representative. Vector creates the [app registration](./glossary.md#app-registration), enables it and allows it in your organization license.
+Send the request to your Vector representative. Staff create the [app registration](./glossary.md#app-registration), enable it and allow it for your organization.
 
-**Check**: wait for Vector to confirm, then continue at step 4. **Hello app** appears in the **Add an app** dialog there.
+**Check**: wait for staff to confirm, then continue at step 4 of Part 2. **Hello app** appears in the **Add an app** dialog there.
 
 ### 3. Publish the space agent
 
@@ -553,10 +553,10 @@ Contact your Vector representative. Vector creates the [app registration](./glos
 The space switcher, the menu in which a member picks a space, lists a space only when its agent has a published version. Until then Vector Space shows "No spaces yet" and you cannot reach your app. A new space holds a draft agent that you publish as it is. An organization admin opens an unpublished space from the list of spaces in the organization settings.
 
 1. Choose **Settings**, **Organization**, then **Spaces**. Choose your space.
-2. Choose **Agent Studio**, then **Canvas**. If the canvas already shows **Published** and has no **Publish All** button, skip item 3.
+2. Choose [**Agent Studio**](../vector-space/glossary.md#agent-studio), then **Canvas**. If the canvas already shows **Published** and has no **Publish All** button, skip item 3.
 3. Choose **Publish All**. In the **Review Changes Before Publishing** dialog, choose **Publish All**.
 
-**Check**: Vector Space shows the toast `All published`. The canvas shows **Published** and the date. After a reload, the space appears in the space switcher of its members.
+**Check**: Vector Space shows the toast `All published`, and the canvas shows **Published** and the date. After a reload, the space appears in the space switcher of its members.
 
 ### 4. Add the app to a space
 
@@ -564,14 +564,14 @@ The space switcher, the menu in which a member picks a space, lists a space only
 
 Adding the app makes Vector Space call your server. Your server must accept that call.
 
-1. Choose **Settings**, **Space**, **Context Hub**, then **Resources**.
+1. Choose **Settings**, **Space**, [**Context Hub**](../vector-space/glossary.md#context-hub), then **Resources**.
 2. Choose **Add resource**, then **App**. In the **Add an app** dialog, choose **Add** next to **Hello app**.
 
 The call is `POST /api/provision`. The body holds `serviceSecret`, a secret that Vector Space creates for each pair of app and space. Your server uses it to prove its identity when it calls Vector Space. Vector Space treats a status outside 200 to 299, no reply within 10 seconds, or a network error as a failure, and the add fails.
 
-**Check**: Vector Space shows the toast `App enabled`. **Resources** lists a **Hello app** row with type **App** and status **Active**. The **Configure Hello app** sheet opens. Close it.
+**Check**: Vector Space shows the toast `App enabled`. **Resources** lists a **Hello app** row with type **App** and status **Active**. Close the **Configure Hello app** sheet that opens.
 
-If the toast starts with `App secret provisioning failed`, the add failed. A number after it is the status your server sent: check that the manifest URL Vector registered is the one from step 2. No number means Vector Space did not reach your server. Check that `npm run dev:space` still runs and that the public URL still points to port `3101`.
+If the toast starts with `App secret provisioning failed`, the add failed. A number after it is the status your server sent: check that the manifest URL staff registered is the one from step 2 of Part 2. No number means Vector Space did not reach your server. Check that `npm run dev:space` still runs and that the public URL still points to port `3101`.
 
 ### 5. Share the app with a member
 
@@ -581,7 +581,7 @@ A member sees the app page only after the space admin shares the app with that m
 
 1. Choose **Settings**, **Space**, then **Access**. Under **Members**, choose **Add** and pick the member.
 2. Choose **Context Hub**, then **Resources**. On the **Hello app** row, open the row menu and choose **Access**.
-3. In **Direct access**, choose **Add people, roles or groups…** and pick the member. Keep the access level at **View**, which is enough for the app page. Choose **Save changes**.
+3. In **Direct access**, choose **Add users or groups…** and pick the member. Keep the access level at **Can use**. It gives every capability the app declares, which is enough for the app page. Vector Space shows a capability as a permission. Choose **Save changes**.
 
 **Check**: Vector Space shows the toasts `Member added` and `Access saved`. Open the row menu and choose **Access** again. **Direct access** lists the member.
 
@@ -612,9 +612,9 @@ sequenceDiagram
 
 </DiagramControls>
 
-Vector Space mints the token and posts it to your client. Your client sends it to your server, and the server verifies it against the Vector Space key set, the public keys that Vector Space publishes. Only the server check protects data. Anyone can change what runs in a browser.
+Vector Space mints the token and posts it to your client. Your client sends it to your server, and the server verifies it against the Vector Space key set, the public keys that Vector Space publishes.
 
-**Check**: the app page shows three lines, also for a member you shared the app with at the **View** level. The two user ids are equal, and the two space ids are equal.
+**Check**: the app page shows three lines, also for a member you shared the app with at the **Can use** level. The two user ids are equal, and the two space ids are equal.
 
 ```text
 Verified in the browser: user <id> in space <id>.
@@ -622,7 +622,7 @@ Capabilities: hello:view
 Verified on the server: space <id>, user <id>
 ```
 
-If the app page stays on `Waiting for Space.`, check three things. `ALLOWED_PARENT_ORIGIN` must be the exact origin of the Vector Space web client, as in step 1. The iframe URL that Vector registered must be your client origin from step 2. Open the app page from the **Apps** group in the space, not by its address. If the browser console shows `[apps] token verification failed`, check `SPACE_JWKS_URL`.
+If the app page stays on `Waiting for Space.`, check three things. `ALLOWED_PARENT_ORIGIN` must be the exact origin of the Vector Space web client, as in step 1 of Part 2. The iframe URL that staff registered must be your client origin from step 2 of Part 2. Open the app page from the **Apps** group in the space, not by its address. If the browser console shows `[apps] token verification failed`, check `SPACE_JWKS_URL`.
 
 ## Next steps
 

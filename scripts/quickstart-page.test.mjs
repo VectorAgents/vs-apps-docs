@@ -93,7 +93,7 @@ for (const { tree, text } of trees) {
     assert.match(body, /^\s+accDescr: \S/m);
     assert.equal([...body.matchAll(/^\s+participant \w+ as /gm)].length, 4);
     assert.match(body, /display only/);
-    assert.match(open.split('</DiagramControls>')[1], /Only the server check protects data\./);
+    assert.match(open.split('</DiagramControls>')[1], /the public keys that Vector Space publishes\.\n\n\*\*Check\*\*/);
   });
 
   t('each mermaid code block sits inside DiagramControls, imported right after the opening paragraph', () => {
@@ -154,7 +154,7 @@ for (const { tree, text } of trees) {
     for (const line of items) assert.match(line, /^- \[ \] /);
     assert.deepEqual(rest.map(title), [
       '1. Point the app at Vector Space',
-      '2. Ask Vector to register the app',
+      '2. Ask staff to register the app',
       '3. Publish the space agent',
       '4. Add the app to a space',
       '5. Share the app with a member',
@@ -165,8 +165,13 @@ for (const { tree, text } of trees) {
     const roled = rest.filter((step) => step.includes('**Role**: space admin.'));
     assert.deepEqual(roled.map(title), rest.slice(3, 5).map(title));
     assert.equal([...part2.matchAll(/\*\*Role\*\*: space admin\./g)].length, 2);
-    assert.match(text, /An \[organization admin\]\([^)]*\), [^.]*, to do \[step 3\]\(#3-publish-the-space-agent\)\. A space admin to do steps 4 and 5\./);
-    assert.match(text, /then continue at step 4\. \*\*Hello app\*\* appears/);
+    assert.match(text, /An \[organization admin\]\([^)]*\), [^.]*, to do \[step 3 of Part 2\]\(#3-publish-the-space-agent\)\. A space admin to do steps 4 and 5 of Part 2\./);
+    assert.match(text, /then continue at step 4 of Part 2\. \*\*Hello app\*\* appears/);
+    assert.match(intro, /^- \[ \] Your Vector representative, one of the staff who register apps, to send the registration request to\. Staff also supply the origin of the Vector Space API and the origin of the Vector Space web client\.$/m);
+    assert.equal((part2.match(/Vector representative/g) ?? []).length, 2);
+    assert.doesNotMatch(part2, /organization license|Vector staff|Ask Vector|Contact your Vector/i);
+    assert.doesNotMatch(part2, /\bstep [0-9](?! of Part [12])/);
+    assert.doesNotMatch(part2, /\bSteps [0-9](?:, [0-9])*(?: and [0-9]| to [0-9])(?! of Part [12])/);
     assert.doesNotMatch(text, /Each step names the role/);
   });
 
@@ -369,6 +374,12 @@ for (const { tree, text } of trees) {
     assert.match(addApp, /App enabled/);
     assert.match(share, /\*\*Access\*\*/);
     assert.match(share, /\*\*Direct access\*\*/);
+    assert.match(share, /choose \*\*Add users or groups…\*\*/);
+    assert.match(share, /Keep the access level at \*\*Can use\*\*\. It gives every capability the app declares/);
+    assert.equal((share.match(/Vector Space shows a capability as a permission\./g) ?? []).length, 1);
+    assert.doesNotMatch(share, /\*\*View\*\*|Add people, roles or groups/);
+    assert.match(open, /shared the app with at the \*\*Can use\*\* level/);
+    assert.doesNotMatch(open, /Only the server check protects data|Anyone can change what runs/);
     assert.match(share, /Member added/);
     assert.match(share, /Save changes/);
     assert.match(share.split(/^\*\*Check\*\*/m).at(-1), /Access saved/);
@@ -410,6 +421,8 @@ for (const { tree, text } of trees) {
       'glossary.md#capability',
       'glossary.md#manifest',
       'glossary.md#service-secret',
+      'vector-space/glossary.md#agent-studio',
+      'vector-space/glossary.md#context-hub',
       'sdk/glossary.md#agent-catalog',
       'sdk/glossary.md#app-definition',
       'sdk/glossary.md#dev-issuer',
@@ -451,7 +464,7 @@ for (const { tree, text } of trees) {
   });
 
   t('names the people who open the app members, never users', () => {
-    const plain = prose.replace(/`[^`]*`/g, 'CODE').replace(/\buser (token|ids?)\b/g, 'TERM');
+    const plain = prose.replace(/`[^`]*`/g, 'CODE').replace(/\buser (token|ids?)\b/g, 'TERM').replace('Add users or groups…', 'LABEL');
     assert.doesNotMatch(plain, /\busers?\b/i);
     assert.match(steps(part2)[4], /pick the member/);
     assert.match(steps(part2)[4], /\*\*Direct access\*\* lists the member\./);
