@@ -46,7 +46,7 @@ test('example definitions and the SDK pages name the rung that holds each act', 
   assert.match(csr, /Model slots the space admin points at a model/);
   assert.match(csr, /Handlers a space editor routes a messaging connector's event types to/);
   const react = readFileSync(join(root, 'docs/sdk/reference/react.md'), 'utf8');
-  assert.match(react, /Ask a space admin to grant \{capability\}\./);
+  assert.match(react, /Ask the owner of the app to share \{capability\}\./);
   const page = readFileSync(join(root, 'docs/sdk/examples.md'), 'utf8');
   assert.match(page, /\[model slot\]\([^)]*\) the \[space admin\]\([^)]*\) points at a model/);
   assert.match(page, /handlers a \[space editor\]\([^)]*\) routes its event types to/);
