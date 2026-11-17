@@ -5,7 +5,7 @@ start: leads-app
 ---
 
 <!-- flavour react -->
-Build your own navigation from the app definition, and show only the [app pages](../glossary.md#app-page) that a [member](../../vector-space/glossary.md#member) may open. When you finish, the navigation lists Home for every member, and lists `leads` and `icp` only for members who hold their [capabilities](../glossary.md#capability).
+Build your own navigation from the app definition. It lists each [app page](../glossary.md#app-page) only for a [member](../../vector-space/glossary.md#member) who holds its [capability](../glossary.md#capability).
 
 ## Prerequisites
 
@@ -23,17 +23,12 @@ cd leads-guide
 
 ### 1. Declare a default app page and gate each app page
 
-`defaultPageKey` must name a declared app page. An app page without `capability` is ungated. Leave `home` ungated, gate `leads` and `icp`, and mark the changes in `shared/src/index.ts`.
-
-`CAPABILITY` stays an export, because the starter server and `HelloPage.tsx` use it. It now holds `lead:manage`.
+`defaultPageKey` must name a declared app page. An app page without `capability` is ungated. Keep `CAPABILITY` and the gate on `home` as the starter has them. In `shared/src/index.ts`, gate `leads` with `lead:manage`, add `icp` with `icp:manage`, and add `defaultPageKey`.
 
 ```ts title="shared/src/index.ts"
 import { defineApp } from '@vectoragents/vs-apps';
 
-// removed-next-line
 export const CAPABILITY = 'hello:view';
-// added-next-line
-export const CAPABILITY = 'lead:manage';
 
 export const definition = defineApp({
   key: 'hello-app',
@@ -46,7 +41,6 @@ export const definition = defineApp({
       key: 'home',
       label: 'Home',
       path: '/',
-      // removed-next-line
       capability: CAPABILITY,
     },
     {
@@ -54,7 +48,7 @@ export const definition = defineApp({
       label: 'Leads',
       path: '/leads',
       // added-next-line
-      capability: CAPABILITY,
+      capability: 'lead:manage',
     },
     // added-start
     {
@@ -66,12 +60,8 @@ export const definition = defineApp({
     // added-end
   ],
   capabilities: [
-    // removed-start
     { key: CAPABILITY, label: 'View hello', effect: 'read' },
     { key: 'lead:manage', label: 'Manage Leads', effect: 'write' },
-    // removed-end
-    // added-next-line
-    { key: CAPABILITY, label: 'Manage Leads', effect: 'write' },
     { key: 'icp:manage', label: 'Manage ICP', effect: 'write' },
   ],
 });
@@ -79,12 +69,12 @@ export const definition = defineApp({
 
 ### 2. Filter the app pages
 
-`appPages` returns the app pages of the definition whose `key` equals the `appKey` claim. It does not filter by capability, so filter with `hasCapability`.
+`appPages` returns the app pages of the definition whose `key` equals the `appKey` claim. It does not filter by capability, so filter with `hasCapability`. The links are plain `<a>` elements, so each click reloads the document. For a router, see [step 3 of add an app page and a capability](../recipes/add-page-and-capability.md#react-3-link-between-app-pages-without-a-reload).
 
 ```tsx title="client/src/AppNav.tsx"
 import { appPages } from '@vectoragents/vs-apps';
 import { useApp } from '@vectoragents/vs-apps/react';
-import { definition } from '../../shared/src/index';
+import { definition } from '@hello-app/shared';
 
 export function AppNav() {
   const { claims, hasCapability } = useApp();
@@ -105,7 +95,7 @@ export function AppNav() {
 ```
 
 :::warning
-The list shapes the UI only. A member can still call your server, so enforce each capability there, as in [gate an app page and an endpoint](../recipes/gate-by-capability.md).
+A member can still call your server, so enforce each capability there, as in [gate an app page and an endpoint](../recipes/gate-by-capability.md).
 :::
 
 ### 3. Mount the navigation under the gate

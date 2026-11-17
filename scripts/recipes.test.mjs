@@ -530,14 +530,17 @@ test('agent-action-trees uses the leads page and the shared action ids', () => {
   assert.match(trees.text, /dispatch\('leads\.open_lead_list'/);
 });
 
-test('filter-navigation-by-capability ends with home ungated and leads and icp gated', () => {
+test('filter-navigation-by-capability keeps home gated by CAPABILITY and gates leads and icp with literals', () => {
   const code = removedLinesOut(snippetsOf(filterNav.text));
-  assert.doesNotMatch(code, /hello:view/);
+  assert.match(code, /CAPABILITY = 'hello:view'/);
   assert.match(code, /defaultPageKey: 'home'/);
-  assert.doesNotMatch(code, /key: 'home',[^}]*capability/);
-  assert.match(code, /key: 'leads',[^}]*capability: CAPABILITY/);
+  assert.match(code, /key: 'home',[^}]*capability: CAPABILITY/);
+  assert.match(code, /key: 'leads',[^}]*capability: 'lead:manage'/);
   assert.match(code, /key: 'icp',[^}]*capability: 'icp:manage'/);
-  assert.match(code, /CAPABILITY = 'lead:manage'/);
+  assert.doesNotMatch(code, /removed-/);
+  assert.match(code, /from '@hello-app\/shared'/);
+  assert.match(filterNav.text, /add-page-and-capability\.md#react-3-link-between-app-pages-without-a-reload/);
+  assert.doesNotMatch(filterNav.text, /shared\/src\/index'|Home for every member|When you finish/);
 });
 
 test('filter-navigation-by-capability names the leads-app start and its scaffold command, not the old folder', () => {
