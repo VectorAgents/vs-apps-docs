@@ -3,14 +3,15 @@ title: Quickstart
 description: Scaffold a Vector app, run it in the harness on your machine, then add it to a space and open its app page.
 ---
 
-Build a small app, run it in the [harness](../sdk/glossary.md#harness) on your machine, then add it to a [space](../vector-space/glossary.md#space) in [Vector Space](../vector-space/glossary.md#vector-space). The app has one [app page](./glossary.md#app-page) that only a [member](../vector-space/glossary.md#member) who holds the `hello:view` [capability](./glossary.md#capability) can open. At the end, that page shows the ids of the member and the space from a token that your server verified. A check in the browser is display only: the server check decides.
+Build a small app, run it in the [harness](../sdk/glossary.md#harness) on your machine, then add it to a [space](../vector-space/glossary.md#space) in [Vector Space](../vector-space/glossary.md#vector-space). Part 2 needs [staff](../vector-space/glossary.md#staff) to register the app, and Part 1 does not. The app has one [app page](./glossary.md#app-page) that only a [member](../vector-space/glossary.md#member) who holds the `hello:view` [capability](./glossary.md#capability) can open. At the end, that page shows the ids of the member and the space from a token that your server verified. A check in the browser is display only: the server check decides.
 
 import DiagramControls from '@site/src/components/DiagramControls';
 
 ## Prerequisites
 
-- [ ] `npm` and the current [Node.js LTS](https://nodejs.org/en/download) release, version 20.19 or later.
+- [ ] `npm` and [Node.js](https://nodejs.org/en/download) 22.12 or later.
 - [ ] A GitHub personal access token (classic) with the `read:packages` scope. [Create a classic token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic).
+- [ ] For Part 2 only: staff who register the app. Part 1 needs no staff.
 
 ## Part 1: Run the app locally
 
@@ -120,7 +121,7 @@ The run proves your app page and your server, but not your registration or Vecto
 
 ### 3. Read the app definition
 
-The project holds these files.
+Open the `hello-app` folder in your editor. It holds these files.
 
 <!-- flavour node -->
 ```text
@@ -178,7 +179,7 @@ hello-app/
 ```
 <!-- /flavour -->
 
-The [app definition](../sdk/glossary.md#app-definition) names the app and lists its app pages and capabilities. The server check and the app page both import `CAPABILITY`, so they use one capability key, `hello:view`.
+Open `shared/src/index.ts`, the [app definition](../sdk/glossary.md#app-definition). It names the app and lists its app pages and capabilities. The server check and the app page both import `CAPABILITY`, so they use one capability key, `hello:view`.
 
 ```ts title="shared/src/index.ts" starter
 import { defineApp } from '@vectoragents/vs-apps';
@@ -205,7 +206,58 @@ export const definition = defineApp({
 
 ### 4. Verify the token on the server
 
-Before any user token exists, Vector Space and your client need facts about your app. The server answers two routes for them first. `buildManifests` turns the definition into a [manifest](./glossary.md#manifest) that tells Vector Space what your app contains. The server serves it to Vector Space at `GET /api/manifest/hello-app`. Vector Space sends a provisioning token, which proves the request comes from Vector Space.
+<!-- flavour node -->
+Open `server/src/auth.ts`. It holds the check that protected routes run. `readBearer` reads the `Authorization` header. `verifyUserToken` verifies the token against `platform.verifier`, the verifier of the app platform that `platform.ts` creates, and returns its claims. `assertCapability` refuses a token that lacks the capability you name.
+
+```ts title="server/src/auth.ts" starter
+import type { IncomingMessage } from 'node:http';
+import { assertCapability, readBearer, verifyUserToken } from '@vectoragents/vs-apps/server';
+import { platform } from './platform';
+
+export async function requireCapability(req: IncomingMessage, capability: string) {
+  const claims = await verifyUserToken(platform.verifier, readBearer(req.headers));
+  assertCapability(claims, capability);
+  return claims;
+}
+```
+
+The platform answers Fetch requests, so `main.ts` bridges each `node:http` request to one and gives it to the platform first. A path that the platform does not serve falls through to your routes, and `GET /api/hello` is the only one.
+
+```ts title="server/src/main.ts" starter
+    const handled = await platform.fetch(toFetchRequest(req));
+    if (handled) return await sendFetchResponse(res, handled);
+    if (pathname !== '/api/hello') return send(res, 404, { error: 'Not found' });
+    const claims = await requireCapability(req, CAPABILITY);
+    send(res, 200, { sub: claims.sub, spaceId: claims.spaceId });
+```
+
+A check that fails throws an `AppAuthError`. The server replies with status 401 when the token is missing or invalid, and 403 when the token lacks the capability. `GET /api/hello` returns the claims of a verified user token.
+<!-- /flavour -->
+<!-- flavour nest -->
+Open `server/src/hello.controller.ts`. The `@vectoragents/vs-apps/nest` entry point wraps the same checks in a module, a guard and decorators. A global guard verifies every user token against the key set at `SPACE_JWKS_URL`, which Part 2 sets. A missing or invalid token gets status 401, and a token that lacks the capability gets status 403.
+
+The `RequireCapability` decorator refuses a token that lacks the capability, in place of `assertCapability`. `CurrentUser` hands the controller the verified claims. `GET /api/hello` returns them.
+
+```ts title="server/src/hello.controller.ts" starter
+import { Controller, Get } from '@nestjs/common';
+import { CurrentUser, RequireCapability } from '@vectoragents/vs-apps/nest';
+import type { UserTokenClaims } from '@vectoragents/vs-apps';
+import { CAPABILITY } from '@hello-app/shared';
+
+@Controller('hello')
+export class HelloController {
+  @Get()
+  @RequireCapability(CAPABILITY)
+  hello(@CurrentUser() user: UserTokenClaims) {
+    return { sub: user.sub, spaceId: user.spaceId };
+  }
+}
+```
+<!-- /flavour -->
+
+The [SDK](../sdk/glossary.md#sdk) serves four more routes, and you write none of them. Your server serves the [manifest](./glossary.md#manifest) to Vector Space at `GET /api/manifest/hello-app`, and the provisioning token that Vector Space sends proves the request comes from Vector Space. `GET /api/client-config` tells the client which parent origin and which key set to trust. Vector Space calls `POST /api/provision` and `DELETE /api/deprovision` when a [space admin](../vector-space/glossary.md#space-admin) adds or removes the app. The harness run does not call these two routes.
+
+Open `server/src/manifests.ts`. `buildManifests` turns the definition into a manifest that tells Vector Space what your app contains.
 
 ```ts title="server/src/manifests.ts" starter
 import { readExtractedAgentCatalog } from '@vectoragents/vs-apps/extract';
@@ -221,9 +273,7 @@ export const manifests = buildManifests([definition], {
 `readExtractedAgentCatalog` reads `agent-catalog.json`, the [agent catalog](../sdk/glossary.md#agent-catalog) file, and `catalog` takes its content. The Hello app has no app page descriptions or agent actions. The starter ships it empty.
 
 <!-- flavour node -->
-The server runs one app platform, built with `createAppPlatform` from `@vectoragents/vs-apps/server`. The platform is the code of the [SDK](../sdk/glossary.md#sdk) that serves the routes that Vector Space and your client call. They are the manifest, `GET /api/client-config`, the two provisioning routes and, in harness mode, the dev routes. You write none of them. It answers Fetch requests, and `main.ts` bridges each `node:http` request to one.
-
-The platform needs three things from you: the origins and key set it trusts, the manifests, and a credential store. It keeps the secret that Vector Space sends at provisioning in the store. The `MemoryCredentialStore` in the next snippet keeps the secrets in memory and loses them on restart, so implement `AppCredentialStore` over your own storage before production.
+The server runs one app platform, built with `createAppPlatform` from `@vectoragents/vs-apps/server`. In harness mode it also serves the dev routes. The platform needs three things from you: the origins and key set it trusts, the manifests, and a credential store. It keeps the secret that Vector Space sends at provisioning in the store. The `MemoryCredentialStore` in the next snippet keeps the secrets in memory and loses them on restart, so implement `AppCredentialStore` over your own storage before production.
 
 ```ts title="server/src/credential-store.ts" starter
 import type { AppCredentialStore } from '@vectoragents/vs-apps/server';
@@ -245,7 +295,41 @@ export class MemoryCredentialStore implements AppCredentialStore {
   }
 }
 ```
+<!-- /flavour -->
+<!-- flavour nest -->
+Open `server/src/credential-store.ts`. The module stores the secret that Vector Space sends in the credential store you pass to `forRoot`. The `MemoryCredentialStore` in the next snippet keeps the secrets in memory and loses them on restart, so implement `AppCredentialStore` over your own storage before production.
 
+```ts title="server/src/credential-store.ts" starter
+import { Injectable } from '@nestjs/common';
+import type { AppCredentialStore } from '@vectoragents/vs-apps/server';
+
+/** Keeps secrets in memory and loses them on restart. Implement AppCredentialStore over real storage before production. */
+@Injectable()
+export class MemoryCredentialStore implements AppCredentialStore {
+  private readonly secrets = new Map<string, string>();
+
+  async upsert(appId: string, spaceId: number, secret: string): Promise<void> {
+    this.secrets.set(`${appId}:${spaceId}`, secret);
+  }
+
+  async remove(appId: string, spaceId: number): Promise<void> {
+    this.secrets.delete(`${appId}:${spaceId}`);
+  }
+
+  async get(appId: string, spaceId: number): Promise<string | null> {
+    return this.secrets.get(`${appId}:${spaceId}`) ?? null;
+  }
+}
+```
+<!-- /flavour -->
+
+After a restart the store holds no [service secret](./glossary.md#service-secret). A call that needs it fails with status `401` and the message `No service secret stored for app <appId> space <n> — rotate the binding secret on Vector Space to re-push it`. A space admin rotates the secret of the [binding](./glossary.md#binding), and Vector Space pushes a new secret to your server. The rotation keeps the model choice and the shares. If you cannot rotate the secret, remove the app from the space and add it again in [step 4 of Part 2](#4-add-the-app-to-a-space).
+
+:::warning
+Removing the app and adding it again removes its model choice, shares and consents. Set them again after you add the app.
+:::
+
+<!-- flavour node -->
 The `devIssuer` option turns on the dev issuer: `npm run dev` sets `VA_DEV_ISSUER` to `true`, and `npm run dev:space` leaves it unset. While it is on, the platform verifies tokens against the dev issuer, serves its key set at `/api/__dev/jwks.json`, and reports that address in `GET /api/client-config`. Otherwise it verifies against the Vector Space key set at `SPACE_JWKS_URL`, which Part 2 sets. The platform needs the origin of Vector Space, so the code removes `/api` from `SPACE_API_URL`.
 
 ```ts title="server/src/platform.ts" starter
@@ -265,61 +349,13 @@ export const platform = createAppPlatform({
 
 `dev-issuer.ts` creates the issuer. It keeps the key in a file in the OS temp directory. A restart of the dev runner then keeps the tokens of the open harness valid.
 
-The auth module holds the check that protected routes run. `readBearer` reads the `Authorization` header. `verifyUserToken` verifies the token against `platform.verifier` and returns its claims. `assertCapability` refuses a token that lacks the capability you name.
-
-```ts title="server/src/auth.ts" starter
-import type { IncomingMessage } from 'node:http';
-import { assertCapability, readBearer, verifyUserToken } from '@vectoragents/vs-apps/server';
-import { platform } from './platform';
-
-export async function requireCapability(req: IncomingMessage, capability: string) {
-  const claims = await verifyUserToken(platform.verifier, readBearer(req.headers));
-  assertCapability(claims, capability);
-  return claims;
-}
-```
-
-`main.ts` gives every request to the platform first. A path that the platform does not serve falls through to your routes, and `GET /api/hello` is the only one.
-
-```ts title="server/src/main.ts" starter
-    const handled = await platform.fetch(toFetchRequest(req));
-    if (handled) return await sendFetchResponse(res, handled);
-    if (pathname !== '/api/hello') return send(res, 404, { error: 'Not found' });
-    const claims = await requireCapability(req, CAPABILITY);
-    send(res, 200, { sub: claims.sub, spaceId: claims.spaceId });
-```
-
-A check that fails throws an `AppAuthError`. The server replies with status 401 when the token is missing or invalid, and 403 when the token lacks the capability. `GET /api/hello` returns the claims of a verified user token.
-
-`GET /api/client-config` tells the client which parent origin and which key set to trust. Vector Space calls `POST /api/provision` and `DELETE /api/deprovision` when a [space admin](../vector-space/glossary.md#space-admin) adds or removes the app. The harness run does not call them.
-
-The client configuration also returns `SPACE_API_URL` as `spaceApiUrl`, the Vector Space API address that your app page can use. When the server starts, it also tells Vector Space which manifests it holds. `platform.pingManifests` sends the hash of each manifest to Vector Space. Vector Space reads again a manifest that changed, so a restart refreshes the manifest in Vector Space. The platform skips the ping while it holds a dev issuer, so the harness run sends no ping.
+The client configuration also returns `SPACE_API_URL` as `spaceApiUrl`, the Vector Space API address that your app page can use. When the server starts, `platform.pingManifests` sends the hash of each manifest it holds to Vector Space, which reads again a manifest that changed, so a restart refreshes the manifest in Vector Space. The platform skips the ping while it holds a dev issuer, so the harness run sends no ping.
 
 ```ts title="server/src/main.ts" starter
 void platform.pingManifests();
 ```
 <!-- /flavour -->
 <!-- flavour nest -->
-The `@vectoragents/vs-apps/nest` entry point wraps the same checks in a module, a guard and decorators. `AppPlatformModule` serves `GET /api/client-config`, the manifest route and the two provisioning routes, so you write none of them. A global guard verifies every user token against the key set at `SPACE_JWKS_URL`, which Part 2 sets. A missing or invalid token gets status 401, and a token that lacks the capability gets status 403.
-
-The `RequireCapability` decorator refuses a token that lacks the capability, in place of `assertCapability`. `CurrentUser` hands the controller the verified claims. `GET /api/hello` returns them.
-
-```ts title="server/src/hello.controller.ts" starter
-import { Controller, Get } from '@nestjs/common';
-import { CurrentUser, RequireCapability } from '@vectoragents/vs-apps/nest';
-import type { UserTokenClaims } from '@vectoragents/vs-apps';
-import { CAPABILITY } from '@hello-app/shared';
-
-@Controller('hello')
-export class HelloController {
-  @Get()
-  @RequireCapability(CAPABILITY)
-  hello(@CurrentUser() user: UserTokenClaims) {
-    return { sub: user.sub, spaceId: user.spaceId };
-  }
-}
-```
-
 The module takes its settings from the environment. The `devIssuer` option turns on the dev issuer: `npm run dev` sets `VA_DEV_ISSUER` to `true`, and `npm run dev:space` leaves it unset. The module needs the origin of Vector Space, so the code removes `/api` from `SPACE_API_URL`. When the server starts, the module also tells Vector Space which manifests it holds, so a restart refreshes the manifest in Vector Space.
 
 ```ts title="server/src/app.module.ts" starter
@@ -349,31 +385,6 @@ import { manifests } from './manifests';
 export class AppModule {}
 ```
 
-Vector Space calls `POST /api/provision` and `DELETE /api/deprovision` when a [space admin](../vector-space/glossary.md#space-admin) adds or removes the app. The module stores the secret that Vector Space sends in the credential store you pass to `forRoot`. The `MemoryCredentialStore` in the next snippet keeps the secrets in memory and loses them on restart, so implement `AppCredentialStore` over your own storage before production. The harness run does not call these routes.
-
-```ts title="server/src/credential-store.ts" starter
-import { Injectable } from '@nestjs/common';
-import type { AppCredentialStore } from '@vectoragents/vs-apps/server';
-
-/** Keeps secrets in memory and loses them on restart. Implement AppCredentialStore over real storage before production. */
-@Injectable()
-export class MemoryCredentialStore implements AppCredentialStore {
-  private readonly secrets = new Map<string, string>();
-
-  async upsert(appId: string, spaceId: number, secret: string): Promise<void> {
-    this.secrets.set(`${appId}:${spaceId}`, secret);
-  }
-
-  async remove(appId: string, spaceId: number): Promise<void> {
-    this.secrets.delete(`${appId}:${spaceId}`);
-  }
-
-  async get(appId: string, spaceId: number): Promise<string | null> {
-    return this.secrets.get(`${appId}:${spaceId}`) ?? null;
-  }
-}
-```
-
 `main.ts` starts the server. The `api` prefix gives every route its `/api` path, and `SERVER_PORT` sets the port.
 
 ```ts title="server/src/main.ts" starter
@@ -394,7 +405,7 @@ bootstrap();
 <!-- flavour react -->
 ### 5. Read the token in the app page
 
-The app page needs the token to call your server. It also reads the claims from that token to show the browser lines. `loadAppClientConfig` fetches `GET /api/client-config`. `AppProvider` starts the iframe bridge, the channel on which Vector Space sends tokens, verifies each token Vector Space sends and exposes the claims. `BootGate` shows `fallback` and does not show the app page until the first verified token arrives.
+Open `client/src/App.tsx`. The app page needs the token to call your server, and it reads the claims from that token to show the browser lines. `loadAppClientConfig` fetches `GET /api/client-config`. `AppProvider` starts the iframe bridge, the channel on which Vector Space sends tokens, verifies each token Vector Space sends and exposes the claims. `BootGate` shows `fallback` and does not show the app page until the first verified token arrives.
 
 ```tsx title="client/src/App.tsx" starter
 import { loadAppClientConfig } from '@vectoragents/vs-apps/browser';
@@ -422,7 +433,7 @@ export function App() {
 }
 ```
 
-`onToken` is the only way to read the raw token. `token.ts` holds it in a module variable, as the package README does.
+`onToken` is the only way to read the raw token. `token.ts` holds it in a module variable.
 
 ```ts title="client/src/token.ts" starter
 let appToken: string | null = null;
@@ -440,7 +451,7 @@ export async function fetchHello(): Promise<{ sub?: string; spaceId: number }> {
 }
 ```
 
-The app page reads the claims with `useApp`. `RequireCapability` hides the content from a member who lacks `hello:view`. This client check is display only. The server check from step 4 decides.
+The app page reads the claims with `useApp`. `RequireCapability` hides the content from a member who lacks `hello:view`. This client check is display only. The server check from step 4 of Part 1 decides.
 
 ```tsx title="client/src/HelloPage.tsx" starter
 import { useEffect, useState } from 'react';
