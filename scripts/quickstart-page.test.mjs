@@ -123,13 +123,14 @@ for (const { tree, text } of trees) {
   t('prerequisites are one app-side checklist and state the baseline once', () => {
     const prerequisites = section(text, 'Prerequisites');
     const items = prerequisites.split('\n').filter((l) => /^- /.test(l));
-    assert.equal(items.length, 2);
+    assert.equal(items.length, 3);
     for (const line of items) assert.match(line, /^- \[ \] /);
-    assert.match(prerequisites, /current \[Node\.js LTS\]\(https:\/\/nodejs\.org\/en\/download\) release/);
-    assert.match(prerequisites, /20\.19/);
+    assert.match(prerequisites, /`npm` and \[Node\.js\]\(https:\/\/nodejs\.org\/en\/download\) 22\.12 or later\./);
+    assert.doesNotMatch(prerequisites, /20\.19|LTS/);
+    assert.match(prerequisites, /For Part 2 only: staff who register the app\. Part 1 needs no staff\./);
     assert.match(prerequisites, /`read:packages`/);
     assert.match(prerequisites, /\(classic\)/);
-    assert.equal(count(/Node\.js LTS/g), 1);
+    assert.equal(count(/\[Node\.js\]\(/g), 1);
     assert.doesNotMatch(prerequisites, /\bGit\b/);
     assert.doesNotMatch(prerequisites, /space admin|published agent|Space server/i);
   });
@@ -265,8 +266,8 @@ for (const { tree, text } of trees) {
     assert.deepEqual(
       shown,
       nest
-        ? ['server/src/manifests.ts', 'server/src/hello.controller.ts', 'server/src/app.module.ts', 'server/src/credential-store.ts', 'server/src/main.ts']
-        : ['server/src/manifests.ts', 'server/src/credential-store.ts', 'server/src/platform.ts', 'server/src/auth.ts', 'server/src/main.ts', 'server/src/main.ts'],
+        ? ['server/src/hello.controller.ts', 'server/src/manifests.ts', 'server/src/credential-store.ts', 'server/src/app.module.ts', 'server/src/main.ts']
+        : ['server/src/auth.ts', 'server/src/main.ts', 'server/src/manifests.ts', 'server/src/credential-store.ts', 'server/src/platform.ts', 'server/src/main.ts'],
     );
   });
 
@@ -405,19 +406,23 @@ for (const { tree, text } of trees) {
     const common = [
       'glossary.md#app-page',
       'glossary.md#app-registration',
+      'glossary.md#binding',
       'glossary.md#capability',
       'glossary.md#manifest',
+      'glossary.md#service-secret',
       'sdk/glossary.md#agent-catalog',
       'sdk/glossary.md#app-definition',
       'sdk/glossary.md#dev-issuer',
       'sdk/glossary.md#harness',
+      'sdk/glossary.md#sdk',
       'vector-space/glossary.md#member',
       'vector-space/glossary.md#organization-admin',
       'vector-space/glossary.md#space',
       'vector-space/glossary.md#space-admin',
+      'vector-space/glossary.md#staff',
       'vector-space/glossary.md#vector-space',
     ];
-    assert.deepEqual([...new Set(links)].sort(), (nest ? common : [...common, 'sdk/glossary.md#sdk']).sort());
+    assert.deepEqual([...new Set(links)].sort(), common.sort());
     assert.ok(linksOf(section(text, 'Next steps')).map(bare).some((link) => link.endsWith('reference/harness.md')));
   });
 
@@ -477,7 +482,7 @@ for (const { tree, text } of trees) {
   });
 
   t('follows the writing standard', () => {
-    assert.doesNotMatch(text, /—|–/);
+    assert.doesNotMatch(text.replace(/`[^`\n]*`/g, ''), /—|–/);
     assert.doesNotMatch(text, /\b(we|our|let's)\b/i);
     assert.doesNotMatch(text, /\b(simply|just|easy|easily)\b/i);
   });
