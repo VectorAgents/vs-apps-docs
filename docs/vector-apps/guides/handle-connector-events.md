@@ -1,26 +1,23 @@
 ---
 title: Handle connector events
+description: Receive an inbound event from a connector on your server and reply through the same connector.
 ---
 
-Receive an inbound event from a connector in your server, and answer it through the same connector.
+Receive an inbound event from a connector on your server and answer it through the same connector. When you finish, a handler for one [connector slot](../glossary.md#connector-slot) replies through the connector, checks the `ConnectorExecuteResult` and lets [Vector Space](../../vector-space/glossary.md#vector-space) send the event again when the reply fails.
+
+This guide covers a Nest.js server.
 
 <!-- flavour nest -->
-The guide uses `ConnectorEventsService` and the `ConnectorExecuteResult` type from the `@vectoragents/vs-apps/nest` subpath of the [SDK](../../sdk/glossary.md#sdk).
-
-A [connector slot](../glossary.md#connector-slot) can declare event handlers. When a [space editor](../../vector-space/glossary.md#space-editor) routes an event type of the attached connector to a handler, [Vector Space](../../vector-space/glossary.md#vector-space) sends each event to your server. `ConnectorEventsService` holds the function that runs for each handler. `ConnectorExecuteResult` is what a call back to the connector returns.
-
-## Goal
-
-End with a handler for the inbound events of one connector slot. The handler replies through the connector, checks the `ConnectorExecuteResult`, and lets Vector Space send the event again when the reply fails.
-
 ## Prerequisites
 
-- The Nest.js app from Part 1 of the [quickstart](../quickstart.md), running with `npm run dev:space`. Part 2, step 1 of the quickstart sets up the `.env` file that command reads.
-- Background: the [server primitives](../../sdk/reference/root.md) and the [connector slot fields](../../sdk/app-definition.md#resourcesconnectors) of the app definition. The framework-free `/server` subpath serves the events route and holds the handler registry, `platform.connectorEvents`, but this guide has no Node.js version yet.
+- The Nest.js app from Part 1 of the [quickstart](../quickstart.md#part-1-run-the-app-locally), running with `npm run dev:space`. Step 1 of [Part 2](../quickstart.md#part-2-add-the-app-to-a-space) sets up the `.env` file that command reads.
+- Background: the [server primitives](../../sdk/reference/root.md) and the [connector slot fields](../../sdk/app-definition.md#resourcesconnectors) of the app definition.
 
 ## Steps
 
 ### 1. Declare the slot and its handler
+
+This guide uses `ConnectorEventsService` and the `ConnectorExecuteResult` type from the `@vectoragents/vs-apps/nest` subpath of the [SDK](../../sdk/glossary.md#sdk). A connector slot can declare event handlers. A [space admin](../../vector-space/glossary.md#space-admin) attaches a connector to the slot. When a [space editor](../../vector-space/glossary.md#space-editor) routes an event type of that connector to a handler, Vector Space sends each event to your server.
 
 Vector Space routes events only to a handler that the manifest declares. Put the slot in its own file, so that `shared/src/index.ts` changes by two lines.
 
@@ -42,13 +39,32 @@ export const supportSlot: AppConnectorRequirement = {
 };
 ```
 
-In `shared/src/index.ts`, import `supportSlot` from `./support-slot`. Add `resources: { connectors: [supportSlot] }` to the object that `defineApp` takes.
+In `shared/src/index.ts`, import `supportSlot` from `./support-slot`.
+
+```ts title="shared/src/index.ts" showLineNumbers=1 excerpt
+import { defineApp } from '@vectoragents/vs-apps';
+// added-next-line
+import { supportSlot } from './support-slot';
+
+export const CAPABILITY = 'hello:view';
+```
+
+Then add `resources` to the object that `defineApp` takes.
+
+```ts title="shared/src/index.ts" showLineNumbers=25 excerpt
+    { key: 'lead:manage', label: 'Manage Leads', effect: 'write' },
+    { key: 'icp:manage', label: 'Manage ICP', effect: 'write' },
+  ],
+  // added-next-line
+  resources: { connectors: [supportSlot] },
+});
+```
 
 A handler makes `eventsUrl` required in the manifest. `buildManifests` builds it as `<PUBLIC_BASE_URL>/api/events/hello-app`, so set `PUBLIC_BASE_URL` in `.env` to an address that Vector Space can reach.
 
 ### 2. Reply through the connector
 
-A handler gets the event and no user token. To call the connector back, ask `SpaceS2sService` for a service-to-service token, then call `connectorExecute`. The call runs with the permissions of the app alone, not those of a member.
+A handler gets the event and no user token. To call the connector back, ask `SpaceS2sService` for an [app token](../glossary.md#app-token), then call `connectorExecute`. The call runs with the permissions of the app alone, not those of a member.
 
 `connectorExecute` returns a `ConnectorExecuteResult`: `status` (a number), `data`, and on failure `errorCode` and `retryAfterSeconds`. A failed call comes back as a result with `status` 400 or higher. It does not throw, so the caller must read `status`.
 
@@ -80,7 +96,7 @@ export class SupportReplyService {
 
 ### 3. Register the handler
 
-`ConnectorEventsService.on` takes a target and a handler function. The target is the `appKey`, the slot key and the handler key from step 1. It throws if you register the same target twice. Register in `onModuleInit`, so that every handler exists before the server takes requests.
+`ConnectorEventsService` holds the function that runs for each handler. `.on` takes a target and a handler function. The target is the `appKey`, the slot key and the handler key from step 1. It throws if you register the same target twice. Register in `onModuleInit`, so that every handler exists before the server takes requests.
 
 The function gets the event and a context with the verified `claims` of the events token and the `traceparent` header. It returns nothing. The SDK answers `{ handled: true }` when the function returns, and answers `500` when it throws.
 
@@ -137,7 +153,27 @@ import { SupportReplyService } from './support-reply.service';
 export class SupportEventsModule {}
 ```
 
-Import `SupportEventsModule` in `server/src/app.module.ts`: add it to the `imports` array, after `AppPlatformModule.forRoot(...)`.
+In `server/src/app.module.ts`, import `SupportEventsModule`.
+
+```ts title="server/src/app.module.ts" showLineNumbers=3 excerpt
+import { MemoryCredentialStore } from './credential-store';
+import { HelloController } from './hello.controller';
+import { manifests } from './manifests';
+// added-next-line
+import { SupportEventsModule } from './support-events.module';
+
+@Module({
+```
+
+Then add it to the `imports` array, after `AppPlatformModule.forRoot(...)`.
+
+```ts title="server/src/app.module.ts" showLineNumbers=21 excerpt
+    }),
+    // added-next-line
+    SupportEventsModule,
+  ],
+  controllers: [HelloController],
+```
 
 ### 5. Check the events route
 
@@ -147,15 +183,11 @@ Restart `npm run dev:space`. In a second terminal, post an event with no token. 
 curl -s -o /dev/null -w '%{http_code}\n' -X POST -H 'Content-Type: application/json' -d '{"eventId":1,"slot":"support","handler":"inbound-message","provider":"REST","connectorId":1,"connectorName":"Support inbox","eventType":"message-received","spaceId":1,"occurredAt":"2026-01-01T00:00:00Z","payload":{}}' http://localhost:<SERVER_PORT>/api/events/hello-app
 ```
 
-**Check**: the command prints `401`, because the route accepts only an events token that Vector Space signs. A body that fails the event schema prints `400` first.
+The command prints `401`, because the route accepts only an events token that Vector Space signs. A body that fails the event schema prints `400` first.
 
-## Result
+## Next steps
 
-The server mounts `POST /api/events/hello-app`, verifies the events token of each delivery and runs `inbound-message` for the events that Vector Space routes to it. The handler replies through the connector and reads the `ConnectorExecuteResult`. A failed reply makes Vector Space send the event again. A [space admin](../../vector-space/glossary.md#space-admin) attaches a connector to the `support` slot and routes its event types after the app is registered in Vector Space.
-
-## Next step
-
-Register the app in Vector Space with Part 2 of the [quickstart](../quickstart.md), so that a space admin can attach a connector to the `support` slot and route its events.
+- [Add the app to a space](../quickstart.md#part-2-add-the-app-to-a-space): register the app so that a connector can attach to the `support` slot.
 <!-- /flavour -->
 <!-- flavour node todo -->
 <!-- /flavour -->

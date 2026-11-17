@@ -6,11 +6,11 @@ description: The tenant boundary, and the space as the unit of work.
 import StructureFigure from '@site/src/components/StructureFigure';
 import { organizationStructure } from '@site/src/diagrams/figures/organization-structure.ts';
 
-An [organization](./glossary.md#organization) is the company account in Vector Space, and it is the tenant: every user, API key, resource and space sits inside one organization. A [space](./glossary.md#space) is the unit of work, one team's place for its members, its agents and its data. One organization holds many spaces, and each space belongs to one organization.
+An [organization](./glossary.md#organization) is the company account in [Vector Space](./glossary.md#vector-space), and it is the tenant: every user, API key, resource and [space](./glossary.md#space) sits inside one organization. A space is the unit of work, one team's place for its people, its [agents](./glossary.md#agent) and its data. One organization holds many spaces, and each space belongs to one organization.
 
 ## Two teams in one organization
 
-Acme has one organization, and its sales team has a space of its own. Maya, a [member](./glossary.md#member) of Acme's sales team, asks the [orchestrator agent](./glossary.md#orchestrator-agent) to find leads and send an outreach email, and the leads live in a resource of that space. Priya, a member of Acme's marketing team, works in another space and cannot reach those leads, and neither can the agents of that space, although both spaces belong to one organization.
+Acme has one organization, and its sales team has a space of its own. Maya, a [member](./glossary.md#member) of Acme's sales team, asks the [orchestrator agent](./glossary.md#orchestrator-agent) to find leads and send an outreach email. The leads live in a resource of that space. Priya, a member of Acme's marketing team, works in another space. Priya cannot reach those leads, and neither can the agents of that space, although both spaces belong to one organization.
 
 ## The organization as the tenant
 
@@ -26,12 +26,12 @@ Each organization has one [organization admin](./glossary.md#organization-admin)
 
 A space is where one team works. It is made of these parts:
 
-- **Members**: the users of the space, which include [service accounts](./glossary.md#service-account), users that are not people, such as the identity behind an API key or a schedule. Only users of the organization can join its spaces. Membership alone reaches what each resource's [General access](./glossary.md#general-access) gives every member, and a [share](./glossary.md#share) gives a user, a [group](./glossary.md#group) or an app more.
+- **Members**: the users of the space, which include [service accounts](./glossary.md#service-account), users that are not people, such as the identity behind an API key or a [schedule](./glossary.md#schedule). Only users of the organization can join its spaces. Membership alone reaches what each resource's [General access](./glossary.md#general-access) gives every member, and a [share](./glossary.md#share) gives a user, a [group](./glossary.md#group) or an app more.
 - **Orchestrator agent**: the one agent that each space starts with, which takes a request and delegates parts of it to other agents.
 - **[Context Hub](./glossary.md#context-hub)**: the area where the space lists what it can reach, including its [Vector Apps](../vector-apps/glossary.md#app) and [Vector Modules](./glossary.md#vector-module).
 - **Pages**: the [pages](./glossary.md#page) of the space, each a grid of [widgets](./glossary.md#widget) that show data, with filters that apply to the whole page. Any member can create one, and a page belongs to this space only.
 
-A [space admin](./glossary.md#space-admin) runs the space: its members, groups, shares, resources, agent and apps. The organization admin is a space admin of every space of the organization, and access is worked out inside a space, for each member and each operation.
+A [space admin](./glossary.md#space-admin) runs the space: its members, groups, shares, resources, agent and apps. The organization admin is a space admin of every space of the organization. Access is worked out inside a space, for each member and each operation.
 
 ## Resources that belong to one space
 
@@ -45,7 +45,12 @@ That is why the leads stay with the sales team.
 
 ## Where to go next
 
-- [Inside a space](./what-a-space-holds.md): what the team of a space works with, which is where its data connects, how the data is shown, and which apps and tools run inside the space.
-- [Identity and roles](./who-can-do-what.md): the four kinds of people and callers in Vector Space, and how each stands in an organization and its spaces.
-- [One access model](./one-access-model.md): the centralized check that every operation on a resource passes through, and the rules that say which of its inputs wins.
-- [Glossary](./glossary.md): every term of Vector Space, each defined in a sentence.
+You now know that an organization is the tenant and that a space is the unit of work for one team.
+
+Read [Inside a space](./what-a-space-holds.md) next to see what the team of a space works with.
+
+Related:
+
+- [Identity and roles](./who-can-do-what.md): the four kinds of people and callers, and how each stands in an organization and its spaces.
+- [One access model](./one-access-model.md): the centralized check that every operation on a resource passes through, and the rules that say which input wins.
+- [Vector Space glossary](./glossary.md): every term of Vector Space, each defined in a sentence.

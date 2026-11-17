@@ -10,7 +10,7 @@ An [agent](./glossary.md#agent) is a model that is set up with instructions, too
 
 ## A lead search handed to two agents
 
-Maya, a [member](./glossary.md#member) of Acme's sales team, asks the orchestrator agent to find leads and send an outreach email. The orchestrator agent hands the lead search to an agent for that job and the email draft to another, and each of them sees only what Maya may see. Maya does not choose which agent does what, and gets one reply that is built from the answers of both.
+Maya, a [member](./glossary.md#member) of Acme's sales team, asks the orchestrator agent to find leads and send an outreach email. The orchestrator agent hands the lead search to an agent for that job and the email draft to another. Each of them sees only what Maya may see. Maya does not choose which agent does what, and gets one reply that is built from the answers of both.
 
 ## Agents and the orchestrator agent
 
@@ -20,9 +20,9 @@ An agent has three parts:
 - **Tools**: let the agent act.
 - **Resources**: what the agent may read, such as a mailbox or a database.
 
-Agents are set up in [Agent Studio](./agent-studio.md), which holds the instructions and the evaluations of each agent.
+Agents are set up in [Agent Studio](./agent-studio.md), which holds the instructions and the [evaluations](./glossary.md#evaluation) of each agent.
 
-Each space starts with one orchestrator agent, created with the space. An organization has none of its own. The request of a member goes to the orchestrator agent first.
+Each space starts with one orchestrator agent, created with the space. An [organization](./glossary.md#organization) has none of its own. The request of a member goes to the orchestrator agent first.
 
 The orchestrator agent manages the agents below it. It decides which agent gets which part of the request, and it gives the member one reply.
 
@@ -33,21 +33,26 @@ The orchestrator agent manages the agents below it. It decides which agent gets 
 The agents of a space form a tree with three kinds of position:
 
 - **Orchestrator agent**: the root of the tree.
-- **Agents for jobs**: sit below the orchestrator agent and take specific jobs, such as searching leads or drafting email. Each of them can have child agents of its own, which take parts of its job, so an agent that searches leads can hand each source to its own child agent. Only agents built into the space have child agents.
+- **Agents for jobs**: sit below the orchestrator agent and take specific jobs, such as searching leads or drafting email. Each of them can have child agents of its own, which take parts of its job. An agent that searches leads can hand each source to its own child agent. Only agents built into the space have child agents.
 - **Leaves**: have no child agents of their own, and there are two kinds:
-  - **[A2A](./glossary.md#a2a) agent**: a remote agent that its owner runs outside the space. The owner controls its prompt and model, and the orchestrator agent reaches it with an [agent card](./glossary.md#agent-card). A [Vector App](../vector-apps/glossary.md#app), a web app that a space shows in an iframe, can offer an agent of this kind. [Extending a space](./extending-a-space.md) says how.
+  - **[A2A](./glossary.md#a2a) agent**: a remote agent that its owner runs outside the space. The owner controls its prompt and model, and the orchestrator agent reaches it with an [agent card](./glossary.md#agent-card). A [Vector App](../vector-apps/glossary.md#app), a web app that a space shows in an iframe, can offer an agent of this kind.
   - **Short-lived helper**: started by an agent for one task, and retired when the task ends.
 
-An agent belongs to the space of the orchestrator agent at its root. A [context](./glossary.md#context) is something an agent uses, and work is not handed to it.
+An agent belongs to the space of the orchestrator agent at its root. A [context](./glossary.md#context) is a resource that an agent uses.
 
 ## Threads and runs
 
-- **[Thread](./glossary.md#thread)**: one conversation with one agent. Only its owner reads it, and anyone else who asks for it gets "not found", an organization admin included.
+- **[Thread](./glossary.md#thread)**: one conversation with one agent. Only its owner reads it, and anyone else who asks for it gets "not found", an [organization admin](./glossary.md#organization-admin) included.
 - **[Run](./glossary.md#run)**: one execution of one agent in a thread. It closes when it ends, and when the orchestrator agent hands work to another agent, that agent has a run of its own.
 
 ## Where to go next
 
-- [How work moves through a space](./how-work-moves-through-a-space.md): one request followed from the member to the sent email.
-- [One access model](./one-access-model.md): the check that decides what a user, an agent or an app may do in a space.
+You now know how the orchestrator agent hands work to other agents, and how threads and runs keep that work apart.
+
+Read [How work moves through a space](./how-work-moves-through-a-space.md) next to follow one request from a member to a sent email.
+
+Related:
+
+- [One access model](./one-access-model.md): the check that decides what a member, an agent or an app may do in a space.
 - [Agent Studio](./agent-studio.md): how the agents of a space are set up, tested and published.
-- [Glossary](./glossary.md): every term of Vector Space, each defined in a sentence.
+- [Vector Space glossary](./glossary.md): every term of Vector Space, each defined in a sentence.

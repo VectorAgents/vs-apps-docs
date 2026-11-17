@@ -1,5 +1,6 @@
 ---
 title: App definition
+description: The fields of an app definition, where the SDK and Vector Space use each one, and how Vector Space shows the app.
 ---
 
 import DiagramControls from '@site/src/components/DiagramControls';
@@ -44,9 +45,9 @@ The definition and the manifest are two different things.
 
 Vector Space never sees the definition. It reads only the manifest the server builds from it.
 
-## What an app definition does
+## Where the app definition is used
 
-One definition is used in ten places, in three groups: on import and in the client, in your server and in Vector Space.
+The SDK and Vector Space use one definition on import and in the client, in your server and in Vector Space.
 
 <DiagramControls>
 
@@ -69,35 +70,60 @@ flowchart TB
 
 ### On import and in the client
 
-1. **Validate on import.** `defineApp` checks the fields when the file is imported. If a field breaks a rule, the import throws and the server does not start. It returns the input unchanged.
-2. **Type navigation and routes.** The client lists app pages with `appPages(...)` and derives a path type from the declared paths. No route is generated or guarded from the definition.
+#### Validate on import
+
+`defineApp` checks the fields when the file is imported. If a field breaks a rule, the import throws and the server does not start. It returns the input unchanged.
+
+#### Type navigation and routes
+
+The client lists app pages with `appPages(...)` and derives a path type from the declared paths. No route is generated or guarded from the definition.
 
 ### In your server
 
-3. **Generate and serve the manifest.** `buildManifests` turns each definition into a manifest at boot. The server serves it each time Vector Space reads the manifest.
-4. **List agent-callable routes.** The server lists the routes it marks as agent-callable, with `buildEndpoints` from `@vectoragents/vs-apps/orpc`, and passes them to `buildManifests` as `endpoints`. They are listed in the manifest at boot.
-5. **Merge the [agent catalog](./glossary.md#agent-catalog).** At boot, the build-time agent catalog is merged into the manifest, joined on page keys.
-6. **Keep the server's app registry.** The registry is the list of definitions you pass to `buildManifests`. A duplicate `key` throws at boot.
-7. **Check the token.** `verifyS2sToken` and `verifyEventsToken` compare the `appKey` in a Vector Space token with the app key of the route that was called. They refuse a token for another app. The user token check does not read `appKey`.
-8. **Receive connector events.** A [connector slot](../vector-apps/glossary.md#connector-slot) can declare handler keys in the definition. If it does, the manifest gets an `eventsUrl`, and Vector Space sends events to that address. Your server must answer at that address.
-9. **Look up a model slot.** Code asks Vector Space for a model by [model slot](../vector-apps/glossary.md#model-slot) key. The [software development kit (SDK)](./glossary.md#sdk) passes the slot key to Vector Space. Vector Space refuses a slot that the manifest does not declare. Vector Space also refuses a slot that no one set. The SDK passes each refusal on as a `SpaceActionError`.
+#### Generate and serve the manifest
+
+`buildManifests` turns each definition into a manifest at boot. The server serves it each time Vector Space reads the manifest.
+
+#### List agent-callable routes
+
+The server lists the routes it marks as agent-callable, with `buildEndpoints` from `@vectoragents/vs-apps/orpc`, and passes them to `buildManifests` as `endpoints`. They are listed in the manifest at boot.
+
+#### Merge the agent catalog
+
+At boot, the build-time [agent catalog](./glossary.md#agent-catalog) is merged into the manifest, joined on page keys.
+
+#### Keep the app registry of the server
+
+The registry is the list of definitions you pass to `buildManifests`. A duplicate `key` throws `duplicate appKey "<key>" in the app registry` at boot.
+
+#### Check the token
+
+`verifyS2sToken` and `verifyEventsToken` compare the `appKey` in a Vector Space token with the app key of the route that was called. They refuse a token for another app. The user token check does not read `appKey`.
+
+#### Receive connector events
+
+A [connector slot](../vector-apps/glossary.md#connector-slot) can declare handler keys in the definition. If it does, the manifest gets an `eventsUrl`, and Vector Space sends events to that address. Your server must answer at that address.
+
+#### Look up a model slot
+
+Code asks Vector Space for a model by [model slot](../vector-apps/glossary.md#model-slot) key. The [SDK](./glossary.md#sdk) passes the slot key to Vector Space. Vector Space refuses a slot that the manifest does not declare. Vector Space also refuses a slot that no one set. The SDK passes each refusal on as a `SpaceActionError`.
 
 ### In Vector Space
 
-10. **Read the manifest in Vector Space.** Vector Space turns the manifest into these:
+#### Read the manifest in Vector Space
 
-    | Manifest field | Vector Space shows |
-    | --- | --- |
-    | Pages | Navigation entries |
-    | Capabilities | The capabilities a [space admin](../vector-space/glossary.md#space-admin) can grant |
-    | Resources | A configuration sheet |
-    | Agents and [Model Context Protocol (MCP)](../vector-space/glossary.md#mcp) servers | Subagents and connectors |
+Vector Space turns the manifest into these:
+
+| Manifest field | Vector Space shows |
+| --- | --- |
+| Pages | Navigation entries |
+| Capabilities | The capabilities a [space admin](../vector-space/glossary.md#space-admin) can grant |
+| Resources | A configuration sheet |
+| Agents and [MCP](../vector-space/glossary.md#mcp) servers | Subagents and connectors |
 
 See [How it reflects in Vector Space](#how-it-reflects-in-vector-space).
 
-## How to write one
-
-Prerequisites: `@vectoragents/vs-apps` 0.4.0 installed.
+## Write an app definition
 
 To fill in a definition from a form instead, use the [definition builder](/sdk/builder).
 
@@ -109,23 +135,23 @@ To fill in a definition from a form instead, use the [definition builder](/sdk/b
 | --- | --- | --- |
 | `key` | required | Lower kebab-case, 2-63 characters, starts with a letter. |
 | `name` | optional | Display name, 1-80 characters. |
-| `version` | required | Non-empty string. Not checked as semver. |
-| `pages` | required | At least one page. Array order is navigation order. |
+| `version` | required | Non-empty string, not checked as semver. |
+| `pages` | required | At least one page, listed in navigation order. |
 | `defaultPageKey` | optional | When set, must equal a declared page key. |
-| `capabilities` | required | Array of capabilities. `capabilities: []` is valid. |
-| `resources` | optional | Object. Declares what the app needs from each space. |
+| `capabilities` | required | An array of capabilities, where `capabilities: []` is valid. |
+| `resources` | optional | An object that declares what the app needs from each space. |
 
 ### `pages[]`
 
 | Field | Required | Rule |
 | --- | --- | --- |
-| `key` | required | Lower kebab-case. Unique within the app. Uniqueness is checked by `buildManifests`, not at import. |
+| `key` | required | Lower kebab-case and unique within the app, checked by `buildManifests` and not at import. |
 | `label` | required | Non-empty string. |
 | `path` | required | String that starts with `/`. |
-| `capability` | optional | One capability key. A page without a capability has no gate. |
+| `capability` | optional | One capability key, and a page without one has no gate. |
 
 :::warning
-`defineApp` does not check `pages[].capability` against `capabilities`. A typo such as `hello:veiw` passes import and fails only when a user holds no matching capability. Define each key once and reuse it, as in the example below. Then TypeScript reports a typo.
+`defineApp` does not check `pages[].capability` against `capabilities`. A typo such as `hello:veiw` passes import and fails only when a member holds no matching capability. Define each key once and reuse it, as in the next snippet, so that TypeScript reports a typo.
 :::
 
 One key, used in the page and in the capability.
@@ -147,7 +173,7 @@ export const definition = defineApp({
 
 | Field | Required | Rule |
 | --- | --- | --- |
-| `key` | required | Form `<group>:<action>`, lower kebab-case segments. Two or more segments are valid. |
+| `key` | required | Form `<group>:<action>` in lower kebab-case, with two or more segments. |
 | `label` | required | Non-empty string. |
 | `description` | optional | String. |
 | `effect` | required | `"read"` or `"write"`. |
@@ -192,7 +218,7 @@ export const definition = defineApp({
 
 | Field | Required | Rule |
 | --- | --- | --- |
-| `key` | required | Non-empty string. Unique within modules. |
+| `key` | required | Non-empty string, unique within modules. |
 | `required` | required | Boolean. |
 | `label` | optional | Display label. |
 
@@ -203,9 +229,9 @@ export const definition = defineApp({
 | `key` | required | Lower kebab-case slot key. |
 | `modality` | required | One of the [modalities](./reference/platform-limits.md#modalities). |
 | `providers` | required | At least one of the [model providers](./reference/platform-limits.md#model-providers). |
-| `label` | optional | Display label. Falls back to the slot key. |
+| `label` | optional | Display label, the slot key by default. |
 | `description` | optional | String. |
-| `models` | optional | Exact model identifiers, as the provider names them. At least one when set. |
+| `models` | optional | Exact model identifiers as the provider names them, at least one when set. |
 | `capabilities` | optional | Each one of the [capability filters](./reference/platform-limits.md#capability-filters). |
 | `required` | required | Boolean. |
 
@@ -217,9 +243,9 @@ A slot takes one connector.
 | --- | --- | --- |
 | `key` | required | Lower kebab-case slot key. |
 | `provider` | required | One of the [connector providers](./reference/platform-limits.md#connector-providers). |
-| `label` | optional | Display label. Falls back to the slot key. |
+| `label` | optional | Display label, the slot key by default. |
 | `required` | required | Boolean. |
-| `eventHandlers` | optional | At least one handler when set. See the next table. |
+| `eventHandlers` | optional | At least one handler when set, with the fields of `eventHandlers[]`. |
 
 Any handler makes `eventsUrl` required in the manifest. `buildManifests` sets it to `<publicBaseUrl>/api/events/<appKey>` unless the definition sets `eventsUrl`.
 
@@ -227,17 +253,17 @@ Any handler makes `eventsUrl` required in the manifest. `buildManifests` sets it
 
 | Field | Required | Rule |
 | --- | --- | --- |
-| `key` | required | Lower kebab-case handler key. Unique within the connector slot. |
+| `key` | required | Lower kebab-case handler key, unique within the connector slot. |
 | `label` | required | Non-empty string. |
 | `description` | optional | String. |
-| `defaultEventTypes` | optional | At least one lower-case slug when set. A type is the default of one handler only. |
-| `singleEventType` | optional | Boolean. When `true`, `defaultEventTypes` holds at most one type. |
+| `defaultEventTypes` | optional | At least one lower-case slug when set, each the default of one handler only. |
+| `singleEventType` | optional | `defaultEventTypes` must hold at most one type when `singleEventType` is `true`. |
 
 ## How it reflects in Vector Space
 
 Vector registers your manifest URL in Vector Space. After that:
 
-- The app page shows in the navigation of the space, for users who hold the page's capability.
+- The app page shows in the navigation of the space, for members who hold the page's capability.
 - A space admin grants the declared capabilities. Only declared capabilities can be granted.
 - A space admin picks a model for each model slot and attaches one connector to each connector slot. If no one sets a slot, the app cannot use it.
 - A manifest change waits as a pending review. Vector applies it before it goes live, unless auto-apply is on for the [app registration](../vector-apps/glossary.md#app-registration).
@@ -246,15 +272,15 @@ Vector Space reads the manifest again when Vector asks it to and when the app an
 
 ### SDK guarantees
 
-- Import check: [use 1](#on-import-and-in-the-client).
-- Manifest build and serving: [use 3](#in-your-server).
+- [Import check](#validate-on-import): `defineApp` throws on a field that breaks a rule.
+- [Manifest build and serving](#generate-and-serve-the-manifest): `buildManifests` builds the manifest and the server serves it.
 
 ### Vector Space side
 
 - Registration, the pending review and auto-apply.
 - Navigation entries and the capability filter on them.
 - [Capability grants](../vector-apps/glossary.md#capability-grant), model choices and connector attachment.
-- Model slot lookup: [use 9](#in-your-server). Vector Space refuses an undeclared or unset slot.
+- [Model slot lookup](#look-up-a-model-slot): Vector Space refuses an undeclared or unset slot.
 
 ## Next steps
 

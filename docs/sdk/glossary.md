@@ -1,9 +1,10 @@
 ---
 title: SDK glossary
 sidebar_label: Glossary
+description: Terms of the SDK, each with its definition, the export it maps to and its owner.
 ---
 
-Each term has one name in these docs. Pages link a term at first use. Each entry gives the definition, the code symbol or field it maps to, and who owns it. The terms of building an app are in the [Vector Apps glossary](../vector-apps/glossary.md), and the terms of the platform are in the [Vector Space glossary](../vector-space/glossary.md).
+Each term has one name in these docs. Each entry gives the definition, the export or field it maps to, and who owns it. The terms of building an app are in the [Vector Apps glossary](../vector-apps/glossary.md), and the terms of the platform are in the [Vector Space glossary](../vector-space/glossary.md).
 
 ## Terms
 
@@ -16,7 +17,7 @@ The one object that describes an [app](../vector-apps/glossary.md#app): pages, c
 
 ### SDK
 
-The software development kit: the `@vectoragents/vs-apps` package, version 0.4.0.
+The software development kit: the `@vectoragents/vs-apps` package.
 
 - Maps to: `@vectoragents/vs-apps` and its subpaths.
 - Owner: SDK.
@@ -60,7 +61,6 @@ One repository that holds the client, the server and the shared package, each as
 
 The package `@hello-app/shared`. It holds the app definition and the capability key. The client and the server both import it.
 
-- Maps to: no SDK symbol.
 - Owner: docs. It is a package of the quickstart app, not part of the SDK.
 
 ### app platform
@@ -72,7 +72,7 @@ The server runtime of the SDK. It serves the routes that Vector Space calls on y
 
 ### app session
 
-The browser runtime of an app page. It runs the app side of the embed protocol: it gets the token from Vector Space through the iframe bridge and exposes the state of the page.
+The browser runtime of an app page. It runs the app side of the embed protocol. It gets the token from Vector Space through the iframe bridge and exposes the state of the page.
 
 - Maps to: `startAppSession` in `@vectoragents/vs-apps/browser`. `AppProvider` in `@vectoragents/vs-apps/react` calls it.
 - Owner: SDK.

@@ -1,16 +1,14 @@
 ---
 title: Conformance reference
+description: Signature, behaviour and example of each `@vectoragents/vs-apps/conformance` export.
 ---
 
-Reference for `@vectoragents/vs-apps/conformance` 0.4.0. The subpath is a test kit for your server. A fake [Vector Space](../../vector-space/glossary.md#vector-space) signs every kind of token, and a list of cases drives the routes that Vector Space calls on your server and checks each answer. The cases hold one rule each, such as refusing a token that Vector Space did not sign.
-
-Every symbol below follows one layout: signature, behaviour, example. Each example is a complete file and is typechecked against the installed package.
+The `@vectoragents/vs-apps/conformance` subpath is the [conformance kit](../glossary.md#conformance-kit), a test kit for your server. A fake [Vector Space](../../vector-space/glossary.md#vector-space) signs every kind of token. A list of cases drives the routes that Vector Space calls on your server and checks each answer. Each case holds one rule, such as refusing a token that Vector Space did not sign.
 
 ## Prerequisites
 
-- `@vectoragents/vs-apps` installed with a registry token.
-- Node.js and a test runner. The fake Vector Space listens on a local port, so the subpath does not run in a browser.
-- A server that serves the routes of the app platform, from `createAppPlatform` or from the Nest module.
+- Node.js 20.19 or later and a test runner. The fake Vector Space listens on a local port, so the subpath does not run in a browser.
+- A server that serves the routes of the [app platform](../glossary.md#app-platform), from `createAppPlatform` or from the Nest.js module.
 
 ## `startFakeVectorSpace`
 
@@ -32,21 +30,49 @@ interface FakeVectorSpace {
 }
 ```
 
-| Field | Meaning |
+| Property | Meaning |
 | --- | --- |
-| `baseUrl` | The origin of the fake Vector Space. Use it as the `spaceBaseUrl` of your server. |
-| `jwksUrl` | The key set that your server verifies tokens against. Use it as the `spaceJwksUrl`. |
-| `issuer` | The `iss` claim of every token. Use it as the `tokenIssuer`. |
+| `baseUrl` | The origin of the fake Vector Space, for the `spaceBaseUrl` of your server. |
+| `jwksUrl` | The key set that your server verifies tokens against, for its `spaceJwksUrl`. |
+| `issuer` | The `iss` claim of every token, for the `tokenIssuer` of your server. |
 | `sign` | Signs a token with the key that `jwksUrl` publishes. |
-| `signForeign` | Signs a token with a key that `jwksUrl` does not publish, for a test that expects a refusal. |
+| `signForeign` | Signs a token with a key that `jwksUrl` does not publish, to test a refusal. |
 | `pings` | The manifest pings that your server sent, oldest first. |
+| `dispose` | Closes the port. |
 
 ### Behaviour
 
 - Listens on an ephemeral port of `127.0.0.1`.
 - Publishes the key set, signs the six token kinds with the claims and lifetimes that Vector Space uses, and records manifest pings.
 - Answers `404` to every other path, so a server that calls Vector Space for anything else fails in the test.
-- `dispose` closes the port. Call it after the last case.
+- Call `dispose` after the last case.
+
+### Example
+
+```ts title="test/fake-space.ts"
+import { DEV_APP_ID } from '@vectoragents/vs-apps';
+import { startFakeVectorSpace } from '@vectoragents/vs-apps/conformance';
+
+export async function signTokens(): Promise<{ signed: string; foreign: string }> {
+  const space = await startFakeVectorSpace();
+  const request = {
+    kind: 'user' as const,
+    sub: 'member-1',
+    appId: DEV_APP_ID,
+    appKey: 'hello-app',
+    spaceId: 1,
+    organizationId: 1,
+    capabilities: ['hello:view'],
+  };
+  try {
+    return { signed: await space.sign(request), foreign: await space.signForeign(request) };
+  } finally {
+    await space.dispose();
+  }
+}
+```
+
+A server that verifies against `space.jwksUrl` accepts `signed` and refuses `foreign`.
 
 ## `appPlatformConformance`
 
@@ -75,19 +101,21 @@ interface ConformanceCase {
 }
 ```
 
-| Field | Meaning |
-| --- | --- |
-| `baseUrl` | The origin of your server plus the prefix of the platform routes, for example `http://127.0.0.1:4000/api`. |
-| `appKey` | An app key that your server hosts. |
-| `storedSecret` | Reads the secret that your credential store holds for an app and a space. |
-| `handlers` | The handlers that your server registered for the kit. A case that needs one runs only when you name it. |
+| Field | Required | Meaning |
+| --- | --- | --- |
+| `baseUrl` | required | The origin of your server plus the prefix of the platform routes, such as `http://127.0.0.1:4000/api`. |
+| `space` | required | The fake Vector Space that `startFakeVectorSpace` returned. |
+| `appKey` | required | An app key that your server hosts. |
+| `storedSecret` | required | Reads the secret that your credential store holds for an app and a space. |
+| `handlers` | optional | The handlers that your server registered, named only for cases that need them. |
 
 ### Behaviour
 
 - Each case is a protocol rule. `run` throws when your server breaks it, and needs no test runner of its own.
-- The cases cover the manifest route, provisioning, the client config, connector events and ask decisions. They check the status for a missing token, a token that Vector Space did not sign, a token of the wrong kind, and a token for another space or app.
+- The cases cover the manifest route, provisioning, the client configuration, connector events and ask decisions.
+- A case checks the status of each refusal: `401` for a missing token, a token that Vector Space did not sign and a token of the wrong kind. It expects `403` for a token minted for another space or app, `400` for a malformed body and `404` for an app the server does not host.
 - Read `target.space.baseUrl` and `target.space.jwksUrl` into the settings of your server before you boot it. The list exists before the server is up, so `baseUrl` may be set later.
-- Pass `handlers.event` when your server registers an event handler that resolves, and `handlers.failingEvent` for one that throws. The kit then checks that the first is acknowledged as handled and that the second answers `500`, so Vector Space retries.
+- Pass `handlers.event` when your server registers an event handler that resolves, and `handlers.failingEvent` for one that throws. The kit then checks that the first is acknowledged as handled and that the second answers `500`, so Vector Space tries again.
 - Run one test for each case, so a failure names the rule.
 
 ### Example
@@ -157,10 +185,6 @@ after(async () => {
 for (const { name, run } of appPlatformConformance(target)) it(name, run);
 ```
 
-## Result
+## Next steps
 
-A test file that boots your platform against a fake Vector Space and runs one test for each protocol rule.
-
-## Next step
-
-Return to the [root reference](./root.md).
+- [Platform limits](./platform-limits.md): look up the closed lists that an app definition accepts.

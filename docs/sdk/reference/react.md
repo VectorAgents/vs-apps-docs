@@ -1,23 +1,21 @@
 ---
 title: React reference
+description: Signature, behaviour and example of each `@vectoragents/vs-apps/react` export.
 ---
 
 <!-- flavour react -->
-Reference for `@vectoragents/vs-apps/react` 0.4.0. The subpath binds the [browser runtime](./browser.md) of an [app](../../vector-apps/glossary.md#app) to React: the provider that completes the handshake with [Vector Space](../../vector-space/glossary.md#vector-space), the hooks that read the result, two gates, and the bindings that let the space agent drive an [app page](../../vector-apps/glossary.md#app-page) through [agent actions](../glossary.md#agent-action). The [harness](./harness.md) is the `@vectoragents/vs-apps/react/harness` subpath.
-
-Every symbol below follows one layout: signature, behaviour, example. Each example is a complete file and is typechecked against the installed package.
+The `@vectoragents/vs-apps/react` subpath binds the [browser runtime](./browser.md) of an [app](../../vector-apps/glossary.md#app) to React. It holds the provider that completes the handshake with [Vector Space](../../vector-space/glossary.md#vector-space), the hooks that read the result and two gates. It also holds the bindings that let the space agent drive an [app page](../../vector-apps/glossary.md#app-page) through [agent actions](../glossary.md#agent-action). The [harness](./harness.md) is the `@vectoragents/vs-apps/react/harness` subpath.
 
 ## Prerequisites
 
-- `@vectoragents/vs-apps` installed with a registry token.
-- React 19 with TypeScript.
+- React 18 or later with TypeScript.
 - An [app definition](../glossary.md#app-definition) that declares the [capability](../../vector-apps/glossary.md#capability) the examples check, `leads:read`.
 - An action declared with `defineAgentPage`, covered in the [root reference](./root.md), for the agent action examples.
 - `zod` version 3, installed with `npm install zod@3`, for the parameter schema of an action. Zod 4 gives an empty `paramsJsonSchema`, so the agent sees no parameters.
 
 ## `AppProvider`
 
-Owns the verified user token and exposes it to the tree. Mount it once, above every component that calls `useApp`.
+Owns the verified user token and exposes it to the tree. Mount it once, higher in the tree than every component that calls `useApp`.
 
 ### Signature
 
@@ -33,22 +31,24 @@ interface AppProviderProps {
 }
 ```
 
-| Prop | Meaning |
-| --- | --- |
-| `config` | Boot config, or a promise of it. `loadAppClientConfig()` from [`/browser`](./browser.md) returns it. |
-| `navigate` | Called when Vector Space asks the app to open a path. |
-| `onToken` | Called with each verified token, and with `null` on unmount. Use it to attach the token to your own API client. |
-| `onTheme` | Called with `'light'` or `'dark'` when Vector Space changes theme. |
+| Prop | Required | Meaning |
+| --- | --- | --- |
+| `config` | required | The boot configuration, or a promise of it, as `loadAppClientConfig()` returns it. |
+| `navigate` | required | Called when Vector Space asks the app to open a path. |
+| `onToken` | optional | Called with each verified token, and with `null` on unmount. |
+| `onTheme` | optional | Called with `'light'` or `'dark'` when Vector Space changes theme. |
+| `children` | optional | The tree that reads the session. |
 
 ### Behaviour
 
-- Starts the app session of [`/browser`](./browser.md), `startAppSession`, once the config resolves. The session starts the iframe bridge to the parent window. The bridge accepts messages only from `allowedParentOrigin`.
+- Starts the [app session](../glossary.md#app-session) of [`/browser`](./browser.md#startappsession), `startAppSession`, once the configuration resolves. The session starts the iframe bridge to the parent window. The bridge accepts messages only from `allowedParentOrigin`.
 - Verifies each token Vector Space sends against its signing keys. A token that fails verification is logged to the console and ignored, so `useApp().claims` stays `null`.
-- Opens the user directory on the first verified token, when the config sets `spaceApiUrl`.
+- Opens the member directory on the first verified token, when the configuration sets `spaceApiUrl`.
+- Passes each verified token to `onToken`, so you can attach it to your own API client.
 - Reports the document height to Vector Space through a `ResizeObserver`.
-- Registers [agent actions](../glossary.md#agent-action) by wrapping the tree in `AgentActionRegistryProvider`. Do not add a second one.
+- Registers agent actions by wrapping the tree in `AgentActionRegistryProvider`. Do not add a second one.
 - Restarts the session when `config` changes, so create `config` once.
-- A config promise that rejects is logged to the console. No token ever arrives, so a `BootGate` stays on its fallback.
+- Logs a `config` promise that rejects to the console. No token arrives, so a `BootGate` stays on its fallback.
 
 ### Example
 
@@ -76,7 +76,7 @@ Create `config` once at module scope. A new promise on every render restarts the
 
 ## `useApp`
 
-Reads the verified user context. `AppSessionState` comes from [`/browser`](./browser.md).
+Reads the context of the verified member. `AppSessionState` comes from [`/browser`](./browser.md#startappsession).
 
 ### Signature
 
@@ -92,13 +92,20 @@ interface AppSessionState {
 }
 ```
 
-| Field | Meaning |
+| Property | Meaning |
 | --- | --- |
-| `claims` | The verified token claims, or `null` before the handshake completes. Includes `sub` (user id), `spaceId`, `organizationId`, `appKey` and `capabilities`. |
-| `capabilities` | The capabilities [granted](../../vector-apps/glossary.md#capability-grant) to the current user. Empty before the handshake. |
+| `claims` | The verified token claims, or `null` before the handshake completes. |
+| `claims.sub` | The id of the member. |
+| `claims.spaceId` | The id of the space. |
+| `claims.organizationId` | The id of the organization. |
+| `claims.appKey` | The key of the app. |
+| `claims.capabilities` | The keys of the capabilities granted to the member. |
+| `claims.name` | The display name of the member, when the host has one. |
+| `claims.picture` | The picture URL of the member, when the host has one. |
+| `capabilities` | The [capabilities granted](../../vector-apps/glossary.md#capability-grant) to the current member, empty before the handshake. |
 | `hasCapability` | `true` when `capabilities` holds the given name. |
-| `requestRefresh` | Asks Vector Space to send a fresh token. A no-op before the bridge starts. |
-| `directory` | The user directory, or `null` before the first token or when the config has no `spaceApiUrl`. |
+| `requestRefresh` | Asks Vector Space to send a fresh token, and does nothing before the bridge starts. |
+| `directory` | The member directory, or `null` before the first token or without `spaceApiUrl`. |
 
 ### Behaviour
 
@@ -128,7 +135,7 @@ export function Greeting() {
 
 ## `useUsers`
 
-Resolves user ids to names and avatars through the space directory.
+Resolves member ids to names and avatars through the space directory.
 
 ### Signature
 
@@ -151,11 +158,11 @@ interface DirectoryUser {
 ### Behaviour
 
 - Returns `loading: true` and an empty map while the lookup runs.
-- Without a directory, returns a placeholder map at once with `loading: false`. Each `displayName` is the id itself.
-- Calls made in the same tick share one request. A repeat within a minute is served from the directory cache.
-- A failed lookup is retried up to three times with back-off. After the last failure the map is empty, so read each entry with a fallback to the id.
-- An identifier that Vector Space cannot show stays in the map with `deleted: true`.
-- The hook compares the set of identifiers. The order of the identifiers and a new array on each render do not trigger a fetch.
+- Without a directory, returns a placeholder map at once with `loading: false`. Each `displayName` is the id.
+- Calls made in the same tick share one request. A repeat within 60 seconds is served from the directory cache.
+- Tries a failed lookup up to 3 times, with 1 second, then 2 seconds, between tries. After the last failure the map is empty, so read each entry with a fallback to the id.
+- An id that Vector Space cannot show stays in the map with `deleted: true`.
+- The hook compares the set of ids. The order of the ids and a new array on each render do not trigger a fetch.
 
 ### Example
 
@@ -201,8 +208,8 @@ function BootGate(props: {
 
 - Renders `fallback` while `useApp().claims` is `null`, and `children` after the first verified token.
 - Renders nothing when `fallback` is omitted and the handshake is pending.
-- Needs an `AppProvider` above it.
-- Place it above every page. Capability checks below it then read a settled `capabilities` set.
+- Needs an `AppProvider` higher in the tree.
+- Place it higher in the tree than every page. Capability checks inside it then read a settled `capabilities` set.
 
 ### Example
 
@@ -217,7 +224,7 @@ export function Shell({ children }: { children: ReactNode }) {
 
 ## `RequireCapability`
 
-Renders its children only when the current user holds a capability.
+Renders its children only when the current member holds a capability.
 
 ### Signature
 
@@ -234,7 +241,7 @@ function RequireCapability(props: {
 - Renders `children` when `useApp().hasCapability(capability)` is `true`.
 - Otherwise renders `fallback`. A function `fallback` receives the missing capability name.
 - Renders nothing when the check fails and `fallback` is omitted.
-- Gives a UI gate only. The server must enforce the same capability.
+- Gates the UI only. The server must enforce the same capability.
 - Wrap it in a `BootGate`. Before the handshake every check fails.
 
 ### Example
@@ -276,16 +283,16 @@ interface AgentActionContext {
 }
 ```
 
-| Parameter | Meaning |
-| --- | --- |
-| `def` | The handle returned by `page.action(...)` or `action.child(...)`. |
-| `handler` | Runs when the agent calls the action. Receives the params parsed by the action's schema. |
+| Parameter | Required | Meaning |
+| --- | --- | --- |
+| `def` | required | The handle returned by `page.action(...)` or `action.child(...)`. |
+| `handler` | required | Runs when the agent calls the action, with the params parsed by the action's schema. |
 
 ### Behaviour
 
 - Registers the handler on mount and removes it on unmount. An action is available to the agent only while a component that binds it is mounted.
 - Passes the dispatch `context` to the handler as its second argument. `context.parentSpanId` links the work of the handler to the agent run that called the action.
-- Keeps the latest `handler` in a ref. A new closure on each render does not re-register the action.
+- Keeps the latest `handler` in a ref, so a new closure on each render does not register the action again.
 - Re-registers when `def` changes, so pass a module-level handle.
 - A child action is available only while its parent is mounted. Calling it without the parent returns `UNAVAILABLE_ACTION` with `missingParent`.
 - Parses the params with the action's schema before the handler runs. A failure returns `INVALID_PARAMS` and the handler is not called.
@@ -339,7 +346,7 @@ function AgentActionRegistryProvider(props: {
 ### Behaviour
 
 - Creates one [`AgentActionRegistry`](./root.md#createagentactionregistry) per mount and keeps it for the life of the provider.
-- `AppProvider` already wraps its tree in this provider. A second one splits the registry, so actions bound below it are invisible to Vector Space.
+- `AppProvider` already wraps its tree in this provider. A second one splits the registry, so actions bound inside it are invisible to Vector Space.
 - Mount it directly only in a test or a story that renders a page without `AppProvider`.
 
 ### Example
@@ -411,11 +418,7 @@ export function MountedActions() {
 }
 ```
 
-## Result
+## Next steps
 
-A root component that mounts `AppProvider`, waits on `BootGate`, reads the user with `useApp` and `useUsers`, and gates content with `RequireCapability`. A page component that binds `leads.open_lead_list` with `useAgentAction`, and a debugging component that lists and dispatches mounted actions through the registry.
-
-## Next step
-
-Continue with the [harness reference](./harness.md).
+- [Harness reference](./harness.md): run the app in a local stand-in for Vector Space.
 <!-- /flavour -->

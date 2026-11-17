@@ -2,6 +2,9 @@ import assert from 'node:assert/strict';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { test } from 'node:test';
+import { glossaryLinkProblems } from './concept-link-rules.mjs';
+import { plain as plainOf, slugOf } from './glossary-index.mjs';
+import { treesOf } from './page-helpers.mjs';
 
 const sections = {
   'vector-space': [
@@ -52,11 +55,72 @@ test('no glossary has a space manager entry, mention or link', () => {
   for (const [section, body] of Object.entries(texts)) assert.doesNotMatch(body, /space[ -]managers?/i, section);
 });
 
-test('each entry has definition, mapping and owner', () => {
+test('each entry has a definition and an owner, and a mapping only when a symbol exists', () => {
   for (const { name, body } of entries) {
     assert.match(body, /^[^\s-].*$/m, `${name}: definition`);
-    assert.match(body, /^- Maps to: .+/m, `${name}: mapping`);
     assert.match(body, /^- Owner: (SDK|Vector Space|SDK and Vector Space|docs)\b/m, `${name}: owner`);
+    const ownerSentences = /^- Owner: (.*)$/m.exec(body)?.[1].split(/(?<=\.)\s+/) ?? [];
+    assert.ok(ownerSentences.length <= 2, `${name}: owner is 2 sentences at most`);
+    for (const sentence of ownerSentences) assert.ok(sentence.split(/\s+/).length <= 15, `${name}: owner sentence over 15 words`);
+    assert.doesNotMatch(body, /^- Maps to: (no SDK symbol)?\.?$/m, `${name}: empty mapping`);
+    assert.doesNotMatch(body, /no SDK symbol/i, `${name}: states a missing symbol`);
+  }
+  const lines = (body) => body.trim().split('\n').filter((l) => l.startsWith('- '));
+  for (const { name, body } of entries) {
+    const list = lines(body);
+    assert.ok(/^- Owner: /.test(list.at(-1)), `${name}: Owner is the last line`);
+    assert.ok(list.length <= 2, `${name}: only Maps to and Owner follow the definition`);
+    if (list.length === 2) assert.match(list[0], /^- Maps to: /, `${name}: Maps to comes first`);
+  }
+});
+
+const definitionOf = (body) => body.trim().split(/\n\s*\n/)[0];
+
+test('each definition is 3 sentences and 50 words or fewer', () => {
+  for (const { name, body } of entries) {
+    const plain = plainOf(definitionOf(body));
+    const sentences = plain.split(/(?<=[.!?])\s+/);
+    assert.ok(sentences.length <= 3, `${name}: ${sentences.length} sentences`);
+    const words = plain.split(/\s+/).length;
+    assert.ok(words <= 50, `${name}: ${words} words`);
+  }
+});
+
+test('each definition links glossary entries only, each once, 3 at most and never its own term', () => {
+  const home = Object.fromEntries(all.map((e) => [`${e.section}/${slugOf(e.name)}`, true]));
+  for (const { name, body, section } of entries) {
+    const links = [...definitionOf(body).matchAll(/\]\(([^)]+)\)/g)].map((m) => m[1]);
+    assert.ok(links.length <= 3, `${name}: ${links.length} links`);
+    assert.equal(new Set(links).size, links.length, `${name}: links a target twice`);
+    for (const link of links) {
+      const [path, anchor] = link.split('#');
+      const target = path === '' ? section : join(dirname(join('/docs', section, 'glossary.md')), path).replace(/^\/docs\//, '').split('/')[0];
+      assert.ok(path === '' || path.endsWith('glossary.md'), `${name}: ${link} is not a glossary link`);
+      assert.ok(home[`${target}/${anchor}`], `${name}: ${link} has no entry`);
+      assert.notEqual(`${target}/${anchor}`, `${section}/${slugOf(name)}`, `${name}: links itself`);
+    }
+  }
+});
+
+test('manifest links app definition', () => {
+  assert.match(entries.find((e) => e.name === 'manifest').body, /\[app definitions?\]\(\.\.\/sdk\/glossary\.md#app-definition\)/);
+});
+
+test('app registration uses no private word for how Vector Space reads the manifest', () => {
+  const { body } = entries.find((e) => e.name === 'app registration');
+  assert.doesNotMatch(body, /\bpull\b|boot ping|re-pull/i);
+});
+
+test('the SDK glossary text names no SDK version', () => {
+  assert.doesNotMatch(texts.sdk, /\b\d+\.\d+\.\d+\b/);
+});
+
+test('each glossary has a one-paragraph intro that links the other two glossaries', () => {
+  for (const [section, source] of Object.entries(texts)) {
+    const intro = source.replace(/^---\n[\s\S]*?\n---\n/, '').split('## Terms')[0].trim();
+    assert.ok(!intro.includes('\n\n'), `${section}: intro is one paragraph`);
+    for (const other of Object.keys(texts).filter((s) => s !== section)) assert.ok(intro.includes(`/${other}/glossary.md`), `${section}: links ${other}`);
+    assert.doesNotMatch(intro, /first use/i, `${section}: restates T1`);
   }
 });
 
@@ -214,7 +278,6 @@ test('app token maps the SDK name service token', () => {
 });
 
 test('every link to a glossary term resolves to a page and an anchor that exist', () => {
-  const slugOf = (name) => name.toLowerCase().replaceAll(' ', '-');
   const anchors = Object.fromEntries(Object.entries(texts).map(([section, t]) => [section, parse(t).map((e) => slugOf(e.name))]));
   let count = 0;
   const pages = readdirSync(docsDir, { recursive: true }).filter((f) => /\.mdx?$/.test(f));
@@ -241,4 +304,11 @@ test('each term links to the glossary that defines it', () => {
       assert.equal(file.split('/')[0], home[anchor], `${page}: ${anchor} is defined in the ${home[anchor]} glossary`);
     }
   }
+});
+
+test('every page links a glossary entry once per tree, at most 3 in a sentence', () => {
+  const pages = readdirSync(docsDir, { recursive: true }).filter((f) => /\.mdx?$/.test(f) && !/(^|\/)glossary\.md$/.test(f));
+  assert.ok(pages.length > 40);
+  const found = pages.flatMap((page) => treesOf(page).flatMap(({ tree, text }) => glossaryLinkProblems(text).map((p) => `${page} ${tree}: ${p}`)));
+  assert.deepEqual(found, []);
 });

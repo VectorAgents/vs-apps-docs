@@ -7,7 +7,18 @@ export const section = (text, title) => text.split(/^## /m).find((s) => s.starts
 
 export const linksOf = (text) => [...text.matchAll(/\]\(([^)]+)\)/g)].map((m) => m[1]);
 
-export const nextLinks = (text) => linksOf(section(text, 'Next step'));
+/**
+ * The links of the Next step or Next steps section. A section of bullets gives the first link of each bullet, so a link
+ * inside the reason does not count. Any other section gives every link.
+ */
+export const nextLinks = (text) => {
+  const next = section(text, 'Next step');
+  const bullets = next.split('\n').filter((line) => /^[-*] /.test(line));
+  return bullets.length > 0 ? bullets.flatMap((line) => linksOf(line).slice(0, 1)) : linksOf(next);
+};
+
+/** The last `###` step of the Steps section, heading included. */
+export const lastStep = (text) => section(text, 'Steps').split(/^### /m).at(-1);
 
 export const snippetsOf = (text, langs = 'tsx?') =>
   [...text.matchAll(new RegExp(`^\`\`\`(?:${langs})[^\\n]*\\n([\\s\\S]*?)^\`\`\``, 'gm'))].map(([, body]) => body).join('\n');
@@ -80,7 +91,7 @@ const BANNED_TERMS = [
 /** The role terms `Space member`, `Space editor` and `Space admin` stand in capitals at the start of a heading, list item or ladder label. */
 export const ROLE_TERMS = 'member|editor|admin';
 
-/** The shared banned terms found in `text`, as pattern strings. "Capability grant" is a term of the platform, so it is allowed, and so are the role terms "Space member", "Space editor", "Space admin" and "Space roles" at the start of a heading or list item. */
+/** The banned terms found in `text`, as pattern strings. "Capability grant" and the role terms at the start of a heading or list item are allowed. */
 export const bannedTermsIn = (text) => {
   const prose = text.replace(/capability grants?/gi, '').replace(new RegExp(`^(#{2,6} |\\s*[-*] (?:\\*\\*)?)Space (${ROLE_TERMS}|roles)\\b`, 'gm'), '$1$2');
   return BANNED_TERMS.filter((pattern) => pattern.test(prose)).map(String);

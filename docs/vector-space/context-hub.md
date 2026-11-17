@@ -3,32 +3,32 @@ title: The Context Hub
 description: What the Context Hub holds, how a space connects databases, APIs and mailboxes, and whose credential each one runs on.
 ---
 
-The [Context Hub](./glossary.md#context-hub) is the area of a [space](./glossary.md#space) that lists what the space can reach. It gives a team one place to connect its data and services, so that people and [agents](./glossary.md#agent) read data, call APIs and read mail through the space and nobody hands out a login.
+The [Context Hub](./glossary.md#context-hub) is the area of a [space](./glossary.md#space) that lists what the space can reach. It gives a team one place to connect its data and services. People and [agents](./glossary.md#agent) read data, call APIs and read mail through the space, and nobody hands out a login.
 
-## A sales team connects its data
+## A sales team's data in the Context Hub
 
 Maya, a [member](./glossary.md#member) of Acme's sales team, works in a space where Omar, another member of the team, connects the team's data in the Context Hub. Omar connects the database of leads and describes its tables, adds the REST API of the team's customer system, and connects the team's shared sales mailbox. Maya then asks the [orchestrator agent](./glossary.md#orchestrator-agent) to find leads and send an outreach email.
 
-The agent reads the lead database, calls the customer system through its API and sends the email from the shared mailbox. The thread appears in the Omnibox, a [Vector Module](./glossary.md#vector-module) that shows the mail threads of a space. Maya never held a password for any of the three, because each one runs on Omar's credential.
+The agent reads the lead database, calls the customer system through its API and sends the email from the shared mailbox. The [thread](./glossary.md#thread) appears in the Omnibox, a [Vector Module](./glossary.md#vector-module) that shows the mail threads of a space. Maya never held a password for any of the three, because each one runs on Omar's credential.
 
 ## What the Context Hub holds
 
-The Context Hub holds six kinds of resource, and a resource is a thing that a space holds and that access rules cover. Vector Space shows the list of them as **Resources**:
+The Context Hub holds six kinds of resource, and a resource is a thing that a space holds and that access rules cover. [Vector Space](./glossary.md#vector-space) shows the list of them as **Resources**:
 
 - **[Context](./glossary.md#context)**: links the space to one outside account or endpoint, such as a mailbox, a REST API or an [MCP](./glossary.md#mcp) server.
 - **[Knowledge source](./glossary.md#knowledge-source)**: a body of documents that Vector Space indexes, so that agents can search it, and it can be narrowed to chosen folders or documents.
 - **[Datasource](./glossary.md#datasource)**: a database that agents and [widgets](./glossary.md#widget) query, where each query only reads data and never changes it.
 - **[Skill](./glossary.md#skill)**: a set of named instructions with their tools, which an agent gets as a resource.
 - **[Vector App](../vector-apps/glossary.md#app)**: a web app that the space shows in an iframe.
-- **[Vector Module](./glossary.md#vector-module)**: a first-party product of Vector Space, such as the Omnibox, that sits in the Context Hub.
+- **Vector Module**: a first-party product of Vector Space, such as the Omnibox, that sits in the Context Hub.
 
-A context is the general kind, and a [connector](./glossary.md#connector) is a context made from a pre-built provider. Files and documents are not a kind of resource. They are the content of a knowledge source that a context syncs.
+A context is the general kind, and a [connector](./glossary.md#connector) is a context made from a pre-built provider. The files and documents of a space are the content of a knowledge source that a context syncs.
 
 ## Datasources
 
 A datasource lets members and agents ask a database questions in plain language. A member connects one of four types of database: PostgreSQL, MySQL, SQL Server or Snowflake.
 
-The member who connects it imports the schema, which lists the tables and columns of the database, and writes a description for each one, so that an agent knows what the data means. Comments that a PostgreSQL database already holds on its tables and columns become the first descriptions, and that member can edit them.
+The member who connects it imports the schema, which lists the tables and columns of the database. The member then writes a description for each one, so that an agent knows what the data means. Comments that a PostgreSQL database already holds on its tables and columns become the first descriptions, and that member can edit them.
 
 The Knowledge tab of a datasource holds what else an agent needs to know:
 
@@ -48,7 +48,7 @@ A member who creates a context connects an outside service in the way that the s
 
 A context uses one of five types of authentication: a bearer token, an API key, OAuth, basic authentication or a custom header. An API key travels in a header by default, or in the query or in the body. The member who connects it sets the header name. Only OAuth tokens refresh on their own.
 
-A connector skips the import, because its operations are already defined. The member who connects it gives an API key or consents with an account, and nothing else is needed. [Extending a space](./extending-a-space.md) compares an MCP server with the other ways to add logic to a space.
+A connector skips the import, because its operations are already defined. The member who connects it gives an API key or consents with an account, and nothing else is needed.
 
 ## Mailboxes and the Omnibox
 
@@ -62,15 +62,17 @@ Every resource has [General access](./glossary.md#general-access), the [role](./
 
 A credential is the login that a context or datasource uses to reach its outside system. It belongs to the person who created it and is never given to anyone, and not even an [organization admin](./glossary.md#organization-admin) can use it.
 
-When a context or datasource is shared, the people it is shared with run on the credential of its owner. They never get the credential or its target, the database or endpoint behind it. A share gives a role, Can use, Can edit or Can manage, to a user or a group, and attaching a context or datasource to a Vector App shares it with that app.
+When a context or datasource is shared, the people it is shared with run on the credential of its owner. They never get the credential or its target, the database or endpoint behind it. A share gives a user or a group one role: Can use, Can edit or [Can manage](./glossary.md#can-manage). Attaching a context or datasource to a Vector App shares it with that app.
 
 ## Where to go next
 
-A member can now connect a database, an API and a mailbox, and knows whose credential each one runs on. The next page to read is the one on access:
+You now know what the Context Hub holds and whose credential each resource runs on.
 
-- [One access model](./one-access-model.md): the check that decides what a user, an agent or an app may do on a resource, including who each run is made as.
+Read [One access model](./one-access-model.md) next: it shows the check that decides what a member, an agent or an app may do on a resource.
+
+Related:
+
 - [Identity and roles](./who-can-do-what.md): the four kinds of people and callers in Vector Space, and the space roles and share levels that say what each may do.
 - [Extending a space](./extending-a-space.md): how a Vector App, an A2A agent and an MCP server compare as ways to extend a space.
-- [Agents in a space](./agents-in-a-space.md): how the orchestrator agent and the agents below it use what the Context Hub lists.
-- [Glossary](./glossary.md): every term of Vector Space, each defined in a sentence.
-
+- [Agents in a space](./agents-in-a-space.md): how the orchestrator agent and the agents it manages use what the Context Hub lists.
+- [Vector Space glossary](./glossary.md): every term of Vector Space, each defined in a sentence.

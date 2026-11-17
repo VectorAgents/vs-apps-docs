@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { after, test } from 'node:test';
 import { generate } from './generate.mjs';
-import { bannedTermsIn, bodyOf, brokenLinks, longSentences, rowsOf, treesOf, unlink } from './page-helpers.mjs';
+import { bannedTermsIn, bodyOf, brokenLinks, lastStep, longSentences, nextLinks, rowsOf, treesOf, unlink } from './page-helpers.mjs';
 
 const config = {
   docsRoot: 'docs',
@@ -56,6 +56,13 @@ test('bodyOf drops the front matter and unlink keeps the label of a link', () =>
   assert.equal(unlink('Text [a](./b.md) and [c](d.md#e).'), 'Text a and c.');
 });
 
+test('nextLinks gives the first link of each Next steps bullet, and every link of an old Next step', () => {
+  const steps = '## Steps\n\nSee [x](./x.md).\n\n## Next steps\n\n- [A](./a.md): one reason with [b](./b.md).\n- [C](./c.md#d): another reason.\n';
+  assert.deepEqual(nextLinks(steps), ['./a.md', './c.md#d']);
+  assert.deepEqual(nextLinks('## Next step\n\nGo to [A](./a.md).\n'), ['./a.md']);
+  assert.deepEqual(nextLinks('## Steps\n\nText.\n'), []);
+});
+
 test('rowsOf returns the cells of every table row, the header included, and skips the rule line', () => {
   assert.deepEqual(rowsOf('Intro\n\n| A | B |\n| --- | --- |\n| 1 | 2 |\n'), [['A', 'B'], ['1', '2']]);
 });
@@ -81,4 +88,10 @@ test('bannedTermsIn finds a shared banned term, lets capability grant and Vector
   assert.deepEqual(bannedTermsIn('A capability grant lets the Vector Space app read.'), []);
   assert.deepEqual(bannedTermsIn('The operating system plane.'), ['/operating system/i', '/\\bplane\\b/i']);
   assert.deepEqual(bannedTermsIn('Each Space has a grant.'), ['/\\bgrants?\\b/i', '/(?<!Vector )\\bSpace\\b/']);
+});
+
+test('lastStep gives the last ### step of the Steps section', () => {
+  const page = '## Steps\n\n### 1. Add it\n\nText.\n\n### 2. Check it\n\nOutput.\n\n## Next steps\n\n- [A](./a.md): reason.\n';
+  assert.match(lastStep(page), /^2\. Check it\n\nOutput\./);
+  assert.equal(lastStep('## Prerequisites\n\nNone.\n'), '');
 });

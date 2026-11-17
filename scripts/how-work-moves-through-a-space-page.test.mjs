@@ -3,7 +3,8 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { assertPersonaScene, bannedTermsIn, bodyOf, brokenLinks, linksOf, section, unlink } from './page-helpers.mjs';
+import { assertPersonaScene, bannedTermsIn, bodyOf, brokenLinks, longSentences, section, unlink } from './page-helpers.mjs';
+import { assertWhereNext, glossaryLinkProblems } from './concept-link-rules.mjs';
 import { voiceViolations } from './voice.mjs';
 
 const docs = resolve(dirname(fileURLToPath(import.meta.url)), '../docs');
@@ -22,7 +23,7 @@ test('the page runs the scene, the six steps, Where to go next', () => {
 
 test('the lead defines the six steps and what each records, and does not announce the page', () => {
   const lead = body.split(/^## /m)[0].replace(/^import .*$/gm, '').trim();
-  assert.equal(lead, "A request in a space moves in six steps that the platform checks and records, from a question to a sent email. Each step runs as one actor, so the record shows who did what.");
+  assert.equal(lead, "A request in a [space](./glossary.md#space) moves in six steps that the platform checks and records, from a question to a sent email. Each step runs as one [actor](./glossary.md#actor), so the record shows who did what.");
 });
 
 test('the slot worked-example-flow appears once, in the scene', () => {
@@ -49,7 +50,7 @@ const steps = section(text, 'The six steps');
 const items = [...steps.matchAll(/^(\d)\. \*\*(.+?)\*\*: (.+)$/gm)].map((m) => ({ n: Number(m[1]), term: unlink(m[2]), body: m[3] }));
 
 test('the six steps are one numbered list of bold terms, each ending with its actor: member for 1, 4, 5 and 6, app for 2 and 3', () => {
-  assert.match(steps, /\n\nEach step ends with its \[actor\]\(\.\/glossary\.md#actor\), the identity that it ran as\. The orchestrator agent is not an actor: its steps run as the member\.\n\n1\. /);
+  assert.match(steps, /\n\nEach step ends with its actor, the identity that it ran as\. The orchestrator agent is not an actor: its steps run as the member\.\n\n1\. /);
   assert.deepEqual(items.map((i) => i.n), [1, 2, 3, 4, 5, 6]);
   assert.deepEqual(items.map((i) => i.term), ['Request', 'Find and qualify', 'Save', 'Draft', 'Approve', 'Send']);
   assert.deepEqual(items.map((i) => i.body.match(/ Actor: (\w+)\.$/)?.[1]), ['member', 'app', 'app', 'member', 'member', 'member']);
@@ -85,7 +86,7 @@ test('step 4: the model call goes through the AI gateway', () => {
 test('step 5: sending raises an ask in the Command Center and the asking member decides, then the run resumes as that member', () => {
   const step = items[4].body;
   assert.match(step, /Omnibox is a Vector Module for the space's mail and LinkedIn conversations/);
-  assert.match(step, /sends through the Omnibox need approval by default/);
+  assert.match(step, /Sends through the Omnibox need approval by default/);
   assert.match(step, /write/);
   assert.match(step, /an ask appears in the \[Command Center\]\(\.\/glossary\.md#command-center\)/);
   assert.match(step, /member who asked decides/);
@@ -111,12 +112,26 @@ test('Connectors is the box name, and the three vendors appear on no other page 
   }
 });
 
-test('Where to go next links the approvals, extending and record pages, then the glossary, each with a noun phrase', () => {
-  assert.deepEqual(linksOf(section(text, 'Where to go next')), ['./approvals-and-the-command-center.md', './extending-a-space.md', './the-record-of-work.md', './glossary.md']);
+test('Where to go next gives a result sentence, one primary step and Related, with a noun phrase for each link', () => {
+  assertWhereNext(text, { primary: './approvals-and-the-command-center.md', related: ['./extending-a-space.md', './the-record-of-work.md'] });
   for (const [, line] of section(text, 'Where to go next').matchAll(/^- \[.+?\]\(.+?\): (.+)$/gm)) assert.doesNotMatch(line, /^(read|see|look|learn|find)\b/i, line);
 });
 
-test('Where to go next calls the three things a space can call extensions, not kinds', () => {
+test('the page links each glossary entry once, at most 3 in a sentence', () => assert.deepEqual(glossaryLinkProblems(text), []));
+
+test('the description is one noun-phrase sentence of 160 characters or fewer', () => {
+  const description = text.match(/^description: (.+)$/m)[1];
+  assert.ok(description.length <= 160);
+  assert.doesNotMatch(description, /^(This page|Learn|How to)\b/);
+  assert.equal(description.match(/[.?!]/g).length, 1);
+});
+
+test('a sentence of the page never passes 35 words and the step sentences stay short', () => {
+  assert.deepEqual(longSentences(plain, { max: 35 }), []);
+  assert.deepEqual(longSentences(items.map((i) => unlink(i.body)).join('\n'), { max: 30 }), []);
+});
+
+test('Related calls the three things a space can call extensions, not kinds', () => {
   assert.match(section(text, 'Where to go next'), /the three extensions that a space can call/);
   assert.doesNotMatch(plain, /kinds? of extension/i);
 });

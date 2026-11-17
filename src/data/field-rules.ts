@@ -37,14 +37,14 @@ export const coreFieldRules: FieldRule[] = [
     pattern: '^[a-z][a-z0-9-]{1,62}$',
   },
   { path: 'name', required: false, rule: 'Display name, 1-80 characters.' },
-  { path: 'version', required: true, rule: 'Non-empty string. Not checked as semver.' },
-  { path: 'pages', required: true, rule: 'At least one page. Array order is navigation order.' },
+  { path: 'version', required: true, rule: 'Non-empty string, not checked as semver.' },
+  { path: 'pages', required: true, rule: 'At least one page, listed in navigation order.' },
   { path: 'defaultPageKey', required: false, rule: 'When set, must equal a declared page key.' },
-  { path: 'capabilities', required: true, rule: 'Array of capabilities. `capabilities: []` is valid.' },
+  { path: 'capabilities', required: true, rule: 'An array of capabilities, where `capabilities: []` is valid.' },
   {
     path: 'pages[].key',
     required: true,
-    rule: 'Lower kebab-case. Unique within the app. Uniqueness is checked by `buildManifests`, not at import.',
+    rule: 'Lower kebab-case and unique within the app, checked by `buildManifests` and not at import.',
     pattern: kebab,
   },
   { path: 'pages[].label', required: true, rule: 'Non-empty string.' },
@@ -52,13 +52,13 @@ export const coreFieldRules: FieldRule[] = [
   {
     path: 'pages[].capability',
     required: false,
-    rule: 'One capability key. A page without a capability has no gate.',
+    rule: 'One capability key, and a page without one has no gate.',
     pattern: '^[a-z][a-z0-9-]*(:[a-z][a-z0-9-]*)+$',
   },
   {
     path: 'capabilities[].key',
     required: true,
-    rule: 'Form `<group>:<action>`, lower kebab-case segments. Two or more segments are valid.',
+    rule: 'Form `<group>:<action>` in lower kebab-case, with two or more segments.',
     pattern: '^[a-z][a-z0-9-]*(:[a-z][a-z0-9-]*)+$',
   },
   { path: 'capabilities[].label', required: true, rule: 'Non-empty string.' },
@@ -67,8 +67,8 @@ export const coreFieldRules: FieldRule[] = [
 ];
 
 export const resourceFieldRules: FieldRule[] = [
-  { path: 'resources', required: false, rule: 'Object. Declares what the app needs from each space.' },
-  { path: 'resources.modules[].key', required: true, rule: 'Non-empty string. Unique within modules.' },
+  { path: 'resources', required: false, rule: 'An object that declares what the app needs from each space.' },
+  { path: 'resources.modules[].key', required: true, rule: 'Non-empty string, unique within modules.' },
   { path: 'resources.modules[].required', required: true, rule: 'Boolean.' },
   { path: 'resources.modules[].label', required: false, rule: 'Display label.' },
   { path: 'resources.models[].key', required: true, rule: 'Lower kebab-case slot key.', pattern: kebab },
@@ -82,12 +82,12 @@ export const resourceFieldRules: FieldRule[] = [
     required: true,
     rule: `At least one of the ${limits('model-providers', 'model providers')}.`,
   },
-  { path: 'resources.models[].label', required: false, rule: 'Display label. Falls back to the slot key.' },
+  { path: 'resources.models[].label', required: false, rule: 'Display label, the slot key by default.' },
   { path: 'resources.models[].description', required: false, rule: 'String.' },
   {
     path: 'resources.models[].models',
     required: false,
-    rule: 'Exact model identifiers, as the provider names them. At least one when set.',
+    rule: 'Exact model identifiers as the provider names them, at least one when set.',
   },
   {
     path: 'resources.models[].capabilities',
@@ -101,17 +101,17 @@ export const resourceFieldRules: FieldRule[] = [
     required: true,
     rule: `One of the ${limits('connector-providers', 'connector providers')}.`,
   },
-  { path: 'resources.connectors[].label', required: false, rule: 'Display label. Falls back to the slot key.' },
+  { path: 'resources.connectors[].label', required: false, rule: 'Display label, the slot key by default.' },
   { path: 'resources.connectors[].required', required: true, rule: 'Boolean.' },
   {
     path: 'resources.connectors[].eventHandlers',
     required: false,
-    rule: 'At least one handler when set. See the next table.',
+    rule: 'At least one handler when set, with the fields of `eventHandlers[]`.',
   },
   {
     path: 'resources.connectors[].eventHandlers[].key',
     required: true,
-    rule: 'Lower kebab-case handler key. Unique within the connector slot.',
+    rule: 'Lower kebab-case handler key, unique within the connector slot.',
     pattern: kebab,
   },
   { path: 'resources.connectors[].eventHandlers[].label', required: true, rule: 'Non-empty string.' },
@@ -119,11 +119,11 @@ export const resourceFieldRules: FieldRule[] = [
   {
     path: 'resources.connectors[].eventHandlers[].defaultEventTypes',
     required: false,
-    rule: 'At least one lower-case slug when set. A type is the default of one handler only.',
+    rule: 'At least one lower-case slug when set, each the default of one handler only.',
   },
   {
     path: 'resources.connectors[].eventHandlers[].singleEventType',
     required: false,
-    rule: 'Boolean. When `true`, `defaultEventTypes` holds at most one type.',
+    rule: '`defaultEventTypes` must hold at most one type when `singleEventType` is `true`.',
   },
 ];

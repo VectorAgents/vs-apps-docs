@@ -3,7 +3,8 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { assertPersonaScene, bannedTermsIn, bodyOf, brokenLinks, linksOf, section, unlink } from './page-helpers.mjs';
+import { assertPersonaScene, bannedTermsIn, bodyOf, brokenLinks, linksOf, longSentences, section, unlink } from './page-helpers.mjs';
+import { assertWhereNext, glossaryLinkProblems } from './concept-link-rules.mjs';
 import { voiceViolations } from './voice.mjs';
 
 const docs = resolve(dirname(fileURLToPath(import.meta.url)), '../docs');
@@ -32,10 +33,12 @@ test('the page runs lead, the scene, four detail sections, Where to go next', ()
 
 test('the lead defines a Vector App, an A2A agent and an MCP server, each with a glossary link', () => {
   const lead = body.split(/^## /m)[0];
-  assert.match(lead, /\[Vector App\]\(\.\.\/vector-apps\/glossary\.md#app\) is a web app that a space shows in an iframe/);
-  assert.match(lead, /\[A2A\]\(\.\/glossary\.md#a2a\) agent/);
-  assert.match(lead, /\[MCP\]\(\.\/glossary\.md#mcp\) server/);
-  assert.match(lead, /All three run outside the space, on their own origins\./);
+  assert.match(lead, /It is a \[Vector App\]\(\.\.\/vector-apps\/glossary\.md#app\), an \[A2A\]\(\.\/glossary\.md#a2a\) agent or an \[MCP\]\(\.\/glossary\.md#mcp\) server\./);
+  assert.match(lead, /A Vector App is a web app that a space shows in an iframe/);
+  assert.match(lead, /An A2A agent is a remote \[agent\]\(\.\/glossary\.md#agent\) that an agent of the space hands work to/);
+  assert.match(lead, /An MCP server is a remote set of tools that agents call/);
+  assert.match(lead, /All three run outside the space, on servers of their own\./);
+  assert.doesNotMatch(plain, /\borigins?\b/);
 });
 
 test('the lead opens with the definition of an extension and no text on this page says kind for one', () => {
@@ -57,7 +60,7 @@ test('the scene is the first H2, with no Example heading and Acme wording, and o
 
 test('the scene names Erik in place of "a member"', () => {
   const scene = section(text, 'A question about open tickets');
-  assert.match(scene, /Each call starts in Erik's run\./);
+  assert.match(scene, /Each call starts in Erik's \[run\]\(\.\/glossary\.md#run\)\./);
   assert.doesNotMatch(scene, /a member of it|this member|that member|the member's/);
   for (const paragraph of scene.split('\n\n')) assert.ok((unlink(paragraph).match(/[.?!](?:\s|$)/g) ?? []).length <= 5, paragraph);
 });
@@ -82,6 +85,10 @@ test('the paths section says how each extension gets in and that a standalone on
   assert.match(paths, /agent card/);
   assert.match(paths, /stored credential/);
   assert.match(paths, /added by a member as a context in the Context Hub/);
+  assert.match(adding, /as a \[context\]\(\.\/glossary\.md#context\) in the \[Context Hub\]\(\.\/glossary\.md#context-hub\)/);
+  assert.match(adding, /If the \[organization\]\(\.\/glossary\.md#organization\) saved a stored credential/);
+  assert.match(paths, /The context starts with General access set to Restricted, so only that member reaches it until they share it\./);
+  assert.doesNotMatch(paths, /explains Restricted/);
   assert.match(paths, /standalone A2A agent or MCP server needs no vs-apps SDK/);
   assert.match(paths, /Vector App can offer an A2A agent and an MCP server of its own/);
   assert.match(paths, /app definition/);
@@ -105,20 +112,20 @@ test('the comparison opens with its lead, then one table of the 4 rows, with cel
   const cells = data.map((r) => r.slice(1).map(unlink));
   assert.deepEqual(cells[0], [
     'The app sees the member by name, with the capabilities they hold.',
-    'Only an agent that an app offers sees the member. Others get a stored credential.',
+    'Only an agent that an app offers sees the member; others get a stored credential.',
     'The server never sees the member.',
   ]);
   assert.deepEqual(cells[1], [
     'The app reaches what is attached to it and the member can reach.',
     'The agent gets no token, so it cannot call the space.',
-    'The server gets no token. It sees only the arguments of each call.',
+    'The server gets no token and sees only the arguments of each call.',
   ]);
   assert.deepEqual(cells[2], [
     'A space admin sets the model slot the app uses.',
     'The remote agent runs on its own model.',
-    'None. The model call of the calling agent goes through the AI gateway.',
+    'None: the model call of the calling agent goes through the AI gateway.',
   ]);
-  assert.deepEqual(cells[3], ['Yes, from the server of the app.', 'No. An app that offers it can record acts for it.', 'No.']);
+  assert.deepEqual(cells[3], ['Yes, from the server of the app.', 'No, but an app that offers it can record acts for it.', 'No.']);
   assert.match(data[2][1], /\[model slot\]\(\.\.\/vector-apps\/glossary\.md#model-slot\)/);
   assert.match(data[2][3], /\[AI gateway\]\(\.\/glossary\.md#ai-gateway\)/);
 });
@@ -134,7 +141,9 @@ test('the shared call path says each call starts in a run, is gated first and is
   assert.match(shared, /works as the member/);
   assert.match(shared, /before the call/i);
   assert.doesNotMatch(shared, /never learns who/, 'the table owns it');
-  assert.match(shared, /records/);
+  assert.match(shared, /The space records each call: a call to an MCP server is a record with its actor, and a call to an A2A agent is a run\./);
+  assert.match(shared, /The record of work covers the views that read these records\./);
+  assert.doesNotMatch(shared, /says what each record holds/);
   assert.doesNotMatch(shared, /inherit/i, 'no "A2A inherits the space access"');
 });
 
@@ -161,20 +170,31 @@ test('every link resolves and every glossary anchor exists', () => {
   assert.deepEqual(brokenLinks(text, file), []);
 });
 
-test('Where to go next links the Apps quickstart, the SDK overview and the glossary, and no page links /a2a/ or /mcp/', () => {
-  assert.deepEqual(linksOf(section(text, 'Where to go next')), ['../vector-apps/quickstart.md', '../sdk/overview.md', './glossary.md']);
+test('Where to go next gives a result sentence, one primary step and Related, and no page links /a2a/ or /mcp/', () => {
+  assertWhereNext(text, { primary: '../vector-apps/quickstart.md', related: ['../sdk/overview.md'] });
   for (const link of linksOf(text)) assert.doesNotMatch(link, /(^|\/)(a2a|mcp)(\/|\.md|$)/, link);
   assert.doesNotMatch(text, /\]\(\/(a2a|mcp)/);
 });
+
+test('the page links each glossary entry once, at most 3 in a sentence', () => assert.deepEqual(glossaryLinkProblems(text), []));
+
+test('the description is one noun-phrase sentence of 160 characters or fewer', () => {
+  const description = text.match(/^description: (.+)$/m)[1];
+  assert.ok(description.length <= 160);
+  assert.doesNotMatch(description, /^(This page|Learn|How to)\b/);
+  assert.equal(description.match(/[.?!]/g).length, 1);
+});
+
+test('no sentence of the page passes 35 words', () => assert.deepEqual(longSentences(plain, { max: 35 }), []));
 
 test('the page names A2A and MCP in text, each linked to the glossary', () => {
   assert.match(text, /\[A2A\]\(\.\/glossary\.md#a2a\)/);
   assert.match(text, /\[MCP\]\(\.\/glossary\.md#mcp\)/);
 });
 
-test('the page holds 500 to 800 words', () => {
+test('the page holds 500 to 850 words', () => {
   const words = plain.replace(/^#.*$/gm, '').split(/\s+/).filter(Boolean).length;
-  assert.ok(words >= 500 && words <= 800, `${words} words`);
+  assert.ok(words >= 500 && words <= 850, `${words} words`);
 });
 
 test('the page names no master doc, implementation name, banned term, vendor or use case', () => {

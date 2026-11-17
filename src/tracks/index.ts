@@ -23,7 +23,7 @@ export const tracks: Track[] = [
   {
     id: 'gate-by-capability',
     title: 'Gate by capability',
-    goal: 'Limit app pages, navigation and server routes to users who hold a capability.',
+    goal: 'Limit app pages, navigation and server routes to members who hold a capability.',
     to: '/vector-apps/quickstart',
   },
   {

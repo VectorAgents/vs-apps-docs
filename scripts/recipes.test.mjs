@@ -3,7 +3,9 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { codeOf, linksOf, nextLinks, section, snippetsOf, titledSnippets, treesOf } from './page-helpers.mjs';
+import { removedLinesOut } from './check-snippets.mjs';
+import { slugOf } from './glossary-index.mjs';
+import { bodyOf, codeOf, lastStep, linksOf, nextLinks, section, snippetsOf, titledSnippets, treesOf } from './page-helpers.mjs';
 
 const docs = join(dirname(fileURLToPath(import.meta.url)), '..', 'docs');
 const site = join(dirname(fileURLToPath(import.meta.url)), '..', 'docs-gen', 'site');
@@ -15,7 +17,7 @@ const connectorGuide = 'handle-connector-events';
 const pagesIn = (dir) =>
   readdirSync(join(docs, dir))
     .filter((name) => name.endsWith('.md'))
-    .map((name) => ({ path: join(docs, dir, name), name: name.replace(/\.md$/, ''), text: readFileSync(join(docs, dir, name), 'utf8') }));
+    .map((name) => ({ dir, path: join(docs, dir, name), name: name.replace(/\.md$/, ''), text: readFileSync(join(docs, dir, name), 'utf8') }));
 
 const recipes = existsSync(join(docs, 'vector-apps', 'recipes')) ? pagesIn('vector-apps/recipes') : [];
 const guideFiles = existsSync(join(docs, 'vector-apps', 'guides')) ? pagesIn('vector-apps/guides') : [];
@@ -31,12 +33,109 @@ test('has one recipe per ranked task, the two guides with a Nest block and the c
   assert.ok(guides.some((page) => page.name === modelGuide));
 });
 
-test('every page follows the template and ends with a result and a next step', () => {
+const withoutFences = (text) => text.replace(/^```[\s\S]*?^```/gm, '');
+const withoutCode = (text) => withoutFences(text).replace(/`[^`\n]*`/g, '');
+const proseOf = (text) => withoutCode(bodyOf(text)).replace(/\]\([^)]*\)/g, ']').replace(/<!--.*?-->/g, '');
+
+// Recipes and guides share one template. A tree is one generated copy of a page: the todo copy of a Nest-only guide is a notice, not a page.
+const templateTrees = all.flatMap((page) =>
+  treesOf(`${page.dir}/${page.name}.md`)
+    .filter(({ text }) => !/Not yet written/.test(text))
+    .map(({ tree, text }) => ({ ...page, tree, text })),
+);
+const label = ({ name, tree }) => (tree ? `${name} (${tree})` : name);
+
+test('every recipe and guide has a one-sentence description that starts with a verb', () => {
   for (const { name, text } of all) {
-    const titles = text.split(/^## /m).slice(1).map((s) => s.split('\n')[0]);
-    assert.deepEqual([titles[0], titles[1], titles[2]], ['Goal', 'Prerequisites', 'Steps'], name);
-    assert.deepEqual(titles.slice(-2), ['Result', 'Next step'], name);
-    assert.match(text, /^---\ntitle: .+\n(start: leads-app\n)?---\n/, name);
+    assert.match(text, /^---\ntitle: .+\ndescription: .+\n(start: leads-app\n)?---\n/, name);
+    const description = text.match(/^description: (.+)$/m)[1];
+    assert.ok(description.length <= 160, `${name}: ${description.length} characters`);
+    assert.match(description, /^[A-Z][a-z]+ [^:]+\.$/, name);
+    assert.doesNotMatch(description, /^(This|Learn|The|An?)\b/, name);
+    assert.equal(description.match(/[.!?](\s|$)/g).length, 1, name);
+  }
+});
+
+const FLAVOUR_NOTE = /^This guide covers a (Node|Nest)\.js server\.$/;
+
+test('every recipe and guide holds an opening paragraph of one or two sentences, then Prerequisites, Steps and Next steps', () => {
+  for (const page of templateTrees) {
+    const { text } = page;
+    const titles = [...withoutFences(text).matchAll(/^## (.+)$/gm)].map(([, title]) => title);
+    assert.deepEqual(titles, ['Prerequisites', 'Steps', 'Next steps'], label(page));
+    const opening = bodyOf(text).split(/^## Prerequisites/m)[0].replace(/<!--.*?-->/g, '').trim();
+    const [first, ...notes] = opening.split(/\n\s*\n/);
+    assert.ok(first.length > 0 && !/^#|```/m.test(first), `${label(page)}: one paragraph`);
+    assert.ok(first.split(/(?<=[.!?])\s+/).length <= 2, `${label(page)}: the opening paragraph holds more than 2 sentences`);
+    for (const note of notes) assert.match(note, FLAVOUR_NOTE, `${label(page)}: only the flavour note may follow the opening paragraph`);
+  }
+});
+
+test('every recipe and guide prerequisite names its start state and ends with a Background line', () => {
+  for (const page of templateTrees) {
+    const { text } = page;
+    const prerequisites = section(text, 'Prerequisites');
+    const lines = prerequisites.trim().split('\n').filter((line) => /^- /.test(line));
+    assert.match(lines.at(-1), /^- Background: .*\]\(/, label(page));
+    if (/^start: leads-app$/m.test(text)) {
+      const server = page.tree.includes('nest') ? 'nest' : 'node';
+      assert.match(prerequisites, new RegExp(`^npm create @vectoragents/app leads-(app|guide) -- --client react --server ${server} --start leads-app$`, 'm'), label(page));
+    } else {
+      assert.match(prerequisites, /\]\(\.\.\/(quickstart\.md|recipes\/[\w-]+\.md)[^)]*\)/, label(page));
+    }
+  }
+});
+
+test('every recipe and guide step is numbered with a verb phrase and the last step is a check', () => {
+  for (const page of templateTrees) {
+    const headings = [...withoutFences(section(page.text, 'Steps')).matchAll(/^### (.+)$/gm)].map(([, heading]) => heading);
+    assert.ok(headings.length >= 3, label(page));
+    headings.forEach((heading, index) => assert.match(heading, new RegExp(`^${index + 1}\\. [A-Z][a-z]+ `), `${label(page)}: ${heading}`));
+    assert.match(headings.at(-1), /^\d+\. Check /, label(page));
+  }
+});
+
+test('every recipe and guide Next steps holds 1 to 3 bullets, each a link with a short reason, and every link resolves', () => {
+  for (const page of templateTrees) {
+    const bullets = section(page.text, 'Next steps').split('\n').filter((line) => /^- /.test(line));
+    assert.ok(bullets.length >= 1 && bullets.length <= 3, label(page));
+    for (const bullet of bullets) assert.match(bullet, /^- \[[^\]]+\]\([^)\s]+\): [^.]+\.$/, `${label(page)}: ${bullet}`);
+    for (const link of nextLinks(page.text)) assert.ok(existsSync(join(dirname(page.path), link.split('#')[0])), `${label(page)}: ${link}`);
+  }
+});
+
+test('a recipe or guide snippet marks changed lines with magic comments, shows a removed line in the page and never uses a diff codeblock', () => {
+  const marked = all.map(({ text }) => text).join('\n');
+  assert.match(marked, /(?:\/\/|\/\*) ?added-(?:next-line|start)/);
+  assert.match(marked, /(?:\/\/|\/\*) ?removed-(?:next-line|start)/);
+  for (const { name, text } of all) {
+    assert.doesNotMatch(text, /^```diff/m, name);
+    for (const word of ['added', 'removed']) {
+      assert.equal(text.match(new RegExp(`${word}-start`, 'g'))?.length ?? 0, text.match(new RegExp(`${word}-end`, 'g'))?.length ?? 0, `${name}: ${word} blocks`);
+    }
+  }
+});
+
+test('an excerpt starts at a real line number and a whole file shows none', () => {
+  for (const { name, text } of all) {
+    for (const [, meta] of text.matchAll(/^```tsx?([^\n]*)\n/gm)) {
+      if (/\bexcerpt\b/.test(meta)) assert.match(meta, /showLineNumbers=[1-9]\d*\b/, `${name}: ${meta}`);
+      else assert.doesNotMatch(meta, /showLineNumbers/, `${name}: ${meta}`);
+    }
+  }
+});
+
+test('recipe and guide prose names the project by its start, says member for user and expands ICP once', () => {
+  for (const { name, text } of all) {
+    const prose = proseOf(text);
+    assert.doesNotMatch(prose, /hello-app/, name);
+    // The events route path ends in the app key, so a command or a code span may hold it there.
+    assert.doesNotMatch(text.replace(/\/api\/events\/hello-app/g, '').replace(/^```[^\n]*\n([\s\S]*?)^```/gm, (block, body) => (/^```(bash|sh)/.test(block) ? body : '')), /hello-app/, name);
+    assert.doesNotMatch(prose, /\busers?\b(?! token)/i, name);
+    assert.doesNotMatch(prose, /\b(above|below|earlier|as shown)\b/i, name);
+    assert.doesNotMatch(prose, /\b\w+n't\b|\b(?:it|that|there|here|what|let)'s\b|'(?:re|ve|ll|d|m)\b/i, name);
+    const icp = prose.search(/\bICP\b/);
+    if (icp >= 0) assert.equal(prose.indexOf('ideal customer profile (ICP)') + 'ideal customer profile ('.length, icp, `${name}: expand ICP at its first use`);
   }
 });
 
@@ -68,14 +167,10 @@ test('never uses the csr-agents page', () => {
   }
 });
 
-// Docusaurus slug of a heading: lowercase, drop punctuation, spaces to hyphens, or the explicit {#id}.
-const slugOf = (heading) => {
-  const explicit = heading.match(/\{#([\w-]+)\}\s*$/);
-  if (explicit) return explicit[1];
-  return heading.trim().toLowerCase().replace(/[^\p{L}\p{N}\s-]/gu, '').replace(/\s/g, '-');
-};
+// An explicit `{#id}` wins over the generated slug.
+const headingSlug = (heading) => heading.match(/\{#([\w-]+)\}\s*$/)?.[1] ?? slugOf(heading.trim());
 const anchorsOf = (text) =>
-  new Set([...text.replace(/^```[\s\S]*?^```/gm, '').matchAll(/^#{1,6} (.+)$/gm)].map(([, heading]) => slugOf(heading)));
+  new Set([...text.replace(/^```[\s\S]*?^```/gm, '').matchAll(/^#{1,6} (.+)$/gm)].map(([, heading]) => headingSlug(heading)));
 
 test('every #anchor link from a recipe or guide targets a heading that exists', () => {
   let checked = 0;
@@ -153,16 +248,23 @@ test('gate-by-capability enforces lead:manage on GET /api/leads in each flavour'
 
 test('gate-by-capability Nest block registers the controller in AppModule and uses no @Inject', () => {
   const nestText = gateTrees[1].text;
-  assert.match(nestText, /`server\/src\/app\.module\.ts`[^\n]*`controllers`/);
+  const module = titledSnippets(nestText).filter(({ title }) => title === 'server/src/app.module.ts');
+  assert.ok(module.length >= 1);
+  assert.match(module.map(({ body }) => body).join('\n'), /controllers: \[HelloController, LeadsController\]/);
+  assert.match(nestText, /`controllers`/);
   assert.doesNotMatch(nestText, /@Inject\(/);
 });
 
-test('gate-by-capability closes by sharing one fallback across at least two pages', () => {
+test('gate-by-capability shares one fallback across at least two pages and ends with a check of both gates', () => {
   const steps = section(gate.text, 'Steps').split(/^### /m).slice(1);
-  assert.match(steps.at(-1), /^\d+\. Share one fallback across app pages\n/);
-  assert.equal([...steps.at(-1).matchAll(/^```tsx title="client\/src\/\w+\.tsx"/gm)].length >= 2, true);
+  const share = steps.find((step) => /^\d+\. Share one fallback across app pages\n/.test(step));
+  assert.ok(share, 'a step named "Share one fallback across app pages"');
+  assert.equal([...share.matchAll(/^```tsx title="client\/src\/\w+\.tsx"/gm)].length >= 2, true);
   assert.ok([...gate.text.matchAll(/<GatedPage\b/g)].length >= 2);
-  assert.equal([...gate.text.matchAll(/fallback=/g)].length, 2);
+  assert.equal([...gate.text.matchAll(/fallback=\{\((?:capability|missing)\) =>/g)].length, 3);
+  assert.match(steps.at(-1), /^\d+\. Check both gates\n/);
+  assert.match(steps.at(-1), /`403`/);
+  assert.match(steps.at(-1), /Missing capability: lead:manage/);
 });
 
 const readContext = recipes.find((r) => r.name === 'read-app-context');
@@ -239,9 +341,9 @@ test('the Nest.js Call Space tree adds its controller to AppModule and keeps typ
 
 test('both Call Space trees check that the two routes answer 401 with no token', () => {
   for (const text of Object.values(callSpace)) {
-    const steps = section(text, 'Steps');
-    assert.equal([...steps.matchAll(/^curl .*localhost:<SERVER_PORT>\/api\/space\/(?:agent|connectors)$/gm)].length, 2);
-    assert.match(steps, /\*\*Check\*\*:[^\n]*`401`/);
+    const check = lastStep(text);
+    assert.equal([...check.matchAll(/^curl .*localhost:<SERVER_PORT>\/api\/space\/(?:agent|connectors)$/gm)].length, 2);
+    assert.match(check, /`401`/);
   }
 });
 
@@ -280,12 +382,13 @@ test('list-members states the deleted flag as Space sends it and groups as the s
   assert.match(members.text, /cannot show/);
 });
 
-test('list-members mounts every component it builds in the leads page', () => {
+test('list-members mounts every component it builds in the leads page and ends with a check', () => {
   const steps = section(members.text, 'Steps').split(/^### /m).slice(1);
-  const mount = steps.at(-1);
-  assert.match(mount, /^5\. Mount the components\n/);
-  assert.match(mount, /`client\/src\/LeadsPage\.tsx`/);
+  const mount = steps.find((step) => /^\d+\. Mount the components\n/.test(step));
+  assert.ok(mount, 'a step named "Mount the components"');
+  assert.match(mount, /```tsx title="client\/src\/LeadsPage\.tsx"/);
   for (const component of ['LeadOwners', 'OwnerPicker', 'TeamGroups']) assert.match(mount, new RegExp(`<${component}\\b`), component);
+  assert.match(steps.at(-1), /^\d+\. Check /);
 });
 
 const addPage = recipes.find((r) => r.name === 'add-page-and-capability');
@@ -412,9 +515,9 @@ test('the A2A guide has a Node.js tree with the steps and a Nest.js tree with th
 });
 
 test('the A2A guide checks the card and a refused call', () => {
-  const steps = section(a2a, 'Steps');
-  assert.equal([...steps.matchAll(/^curl .*localhost:<SERVER_PORT>\/api\/a2a\/1(?:\/\.well-known\/agent-card\.json)?$/gm)].length, 2);
-  assert.match(steps, /\*\*Check\*\*:[^\n]*`401`/);
+  const check = lastStep(a2a);
+  assert.equal([...check.matchAll(/^curl .*localhost:<SERVER_PORT>\/api\/a2a\/1(?:\/\.well-known\/agent-card\.json)?$/gm)].length, 2);
+  assert.match(check, /`401`/);
 });
 
 const trees = guides.find((r) => r.name === 'agent-action-trees');
@@ -427,30 +530,27 @@ test('agent-action-trees uses the leads page and the shared action ids', () => {
   assert.match(trees.text, /dispatch\('leads\.open_lead_list'/);
 });
 
-test('filter-navigation-by-capability gates leads and icp and leaves home ungated', () => {
-  assert.doesNotMatch(filterNav.text, /hello:view/);
-  for (const key of ['leads', 'icp', 'lead:manage', 'icp:manage']) assert.ok(snippetsOf(filterNav.text).includes(`'${key}'`), key);
+test('filter-navigation-by-capability ends with home ungated and leads and icp gated', () => {
+  const code = removedLinesOut(snippetsOf(filterNav.text));
+  assert.doesNotMatch(code, /hello:view/);
+  assert.match(code, /defaultPageKey: 'home'/);
+  assert.doesNotMatch(code, /key: 'home',[^}]*capability/);
+  assert.match(code, /key: 'leads',[^}]*capability: CAPABILITY/);
+  assert.match(code, /key: 'icp',[^}]*capability: 'icp:manage'/);
+  assert.match(code, /CAPABILITY = 'lead:manage'/);
 });
 
 test('filter-navigation-by-capability names the leads-app start and its scaffold command, not the old folder', () => {
   assert.match(filterNav.text, /^---\n[\s\S]*?^start: leads-app$[\s\S]*?\n---\n/m);
   const [{ text }] = treesOf('vector-apps/guides/filter-navigation-by-capability.md');
-  assert.match(section(text, 'Prerequisites'), /`npm create @vectoragents\/app leads-app -- --client react --server node --start leads-app`/);
+  assert.match(section(text, 'Prerequisites'), /^npm create @vectoragents\/app leads-guide -- --client react --server node --start leads-app$/m);
   assert.doesNotMatch(text, /recipes\/leads-app|git clone/);
 });
 
-test('each guide Next step has one link that resolves', () => {
-  for (const page of [...guides, ...nestBlockGuides]) {
-    const links = nextLinks(page.text);
-    assert.equal(links.length, 1, page.path);
-    assert.ok(existsSync(join(dirname(page.path), links[0].split('#')[0])), `${page.path}: ${links[0]}`);
-  }
-});
-
-test('each recipe Next step links the next recipe in the chain, and the last links agent-action-trees', () => {
+test('each recipe Next steps links the next recipe in the chain first, and the last links agent-action-trees', () => {
   const targets = [...recipeNames.slice(1).map((name) => `./${name}.md`), '../guides/agent-action-trees.md'];
   recipeNames.forEach((name, index) => {
-    assert.deepEqual(nextLinks(recipes.find((r) => r.name === name).text), [targets[index]], name);
+    assert.equal(nextLinks(recipes.find((r) => r.name === name).text)[0], targets[index], name);
   });
 });
 
@@ -478,8 +578,8 @@ const keyUse = (text) => {
 };
 // The starter's own `home` page and `hello:view` capability, kept where a page extends the starter definition.
 const starterOwned = {
-  home: ['add-page-and-capability', 'gate-by-capability', 'filter-navigation-by-capability', 'expose-app-as-a2a-agent'],
-  'hello:view': ['add-page-and-capability', 'gate-by-capability', 'expose-app-as-a2a-agent'],
+  home: ['add-page-and-capability', 'gate-by-capability', 'filter-navigation-by-capability'],
+  'hello:view': ['add-page-and-capability', 'gate-by-capability', 'filter-navigation-by-capability', 'call-a-model-from-your-server', 'handle-connector-events'],
 };
 
 test('every recipe and guide snippet uses only the shared app, page and capability keys', () => {
@@ -505,8 +605,8 @@ test('a starter-owned key is allowed only on a page whose snippets still use it'
   }
 });
 
-test('no recipe or guide except read-app-context names an SDR key', () => {
-  for (const { name, text } of all.filter((page) => page.name !== 'read-app-context')) assert.doesNotMatch(text, /sdr/i, name);
+test('no recipe or guide names an SDR key', () => {
+  for (const { name, text } of all) assert.doesNotMatch(text, /sdr/i, name);
 });
 
 test('the guides that moved start from the leads-app overlay and scaffold it into a new folder for the pair of each tree', () => {
@@ -528,9 +628,8 @@ test('no page links into the deleted Nest folder', () => {
 
 const prerequisiteLinks = (page) => linksOf(section(page.text, 'Prerequisites'));
 
-test('every guide names expose-agent-actions as prerequisite', () => {
-  assert.ok(guides.length >= 5);
-  for (const page of guides) assert.ok(prerequisiteLinks(page).includes('../recipes/expose-agent-actions.md'), page.name);
+test('agent-action-trees names the recipe whose result it edits as its prerequisite', () => {
+  assert.ok(prerequisiteLinks(trees).includes('../recipes/expose-agent-actions.md'));
 });
 
 test('the Space origin comes from SPACE_API_URL on every page, never SPACE_BASE_URL', () => {
