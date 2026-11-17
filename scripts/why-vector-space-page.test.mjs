@@ -183,8 +183,8 @@ test('the page follows the voice checks and uses no em dash', () => {
   assert.doesNotMatch(plain, /—/);
 });
 
-test('provenance names the master docs behind the page and says the gateway is unverified for production', () => {
+test('provenance names the master docs behind the page and records the gateway address as assumed published, not verified', () => {
   const provenance = readFileSync(resolve(root, '.agents/provenance.md'), 'utf8');
   const part = provenance.split(/^## /m).find((p) => p.startsWith('Why Vector Space\n')) ?? '';
-  for (const source of ['product/OVERVIEW.md', 'domains/ai/README.md', 'domains/intelligence/README.md', 'Unverified: whether production runs the gateway']) assert.ok(part.includes(source), source);
+  for (const source of ['product/OVERVIEW.md', 'domains/ai/README.md', 'domains/intelligence/README.md', 'assumed published to apps, per the docs owner, and not verified against a live Space']) assert.ok(part.includes(source), source);
 });

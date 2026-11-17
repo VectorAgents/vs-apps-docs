@@ -68,9 +68,9 @@ test('the space gives an app member identity, platform data, model access and th
   for (const term of ['identifies the member', 'allowed resources', 'model slot', 'AI gateway', 'acts', 'approvals']) assert.ok(given.includes(term), term);
 });
 
-test('the model access bullet names the slot, the ticket and the missing key, and says nothing of a 503', () => {
+test('the model access bullet names the slot, the short-lived key and the missing provider key, and says nothing of a 503', () => {
   const bullet = section(text, 'Platform capabilities').split('\n').find((l) => l.startsWith('- **Model access through a slot.**')) ?? '';
-  assert.match(bullet, /Your server asks for a model through the slot and gets a short-lived ticket/);
+  assert.match(bullet, /Your server asks for a model through the slot and gets a short-lived key for the \[AI gateway\]/);
   assert.match(bullet, /Your app holds no AI provider key\./);
   assert.doesNotMatch(text, /503|gateway address|local stack/);
   assert.doesNotMatch(bullet, /the call goes through the/i);
@@ -137,6 +137,6 @@ test('the first use of a member, an organization and the AI gateway is a glossar
   assert.match(text, /\[AI gateway\]\(\.\.\/vector-space\/glossary\.md#ai-gateway\)/);
 });
 
-test('a sentence states one idea: the ticket and the missing provider key are two sentences', () => {
-  assert.doesNotMatch(text, /in place of a key, so your app/);
+test('a sentence states one idea: the short-lived key and the missing provider key are two sentences', () => {
+  assert.doesNotMatch(text, /in place of a key, so your app|ticket/);
 });
