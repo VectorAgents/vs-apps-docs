@@ -27,8 +27,8 @@ importers:
         specifier: ^1.0.1
         version: 1.0.1(mermaid@12.2.0)
       '@vectoragents/vs-apps':
-        specifier: 0.4.0
-        version: 0.4.0(@nestjs/common@11.2.8(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.2.8(@nestjs/common@11.2.8(reflect-metadata@0.2.2)(rxjs@7.8.2))(reflect-metadata@0.2.2)(rxjs@7.8.2))(@orpc/contract@1.16.1)(react@19.3.1)(zod@3.25.76)
+        specifier: 0.5.0
+        version: 0.5.0(@nestjs/common@11.2.8(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.2.8(@nestjs/common@11.2.8(reflect-metadata@0.2.2)(rxjs@7.8.2))(reflect-metadata@0.2.2)(rxjs@7.8.2))(@orpc/contract@1.16.1)(react@19.3.1)(zod@3.25.76)
       prism-react-renderer:
         specifier: ^2.4.1
         version: 2.4.1(react@19.3.1)
@@ -2207,8 +2207,8 @@ packages:
   '@upsetjs/venn.js@2.0.0':
     resolution: {integrity: sha512-WbBhLrooyePuQ1VZxrJjtLvTc4NVfpOyKx0sKqioq9bX1C1m7Jgykkn8gLrtwumBioXIqam8DLxp88Adbue6Hw==}
 
-  '@vectoragents/vs-apps@0.4.0':
-    resolution: {integrity: sha512-d7/cOwKYOXSIOYNMh7XI5t2IdYirEJvh3A3+/I2M7Mc75FQSyTmKmqu1i7Z93SyituOutdwIc6deU6/w6DYubQ==, tarball: https://npm.pkg.github.com/download/@vectoragents/vs-apps/0.4.0/2e4341186051d18824031a7165c02472fc13d147}
+  '@vectoragents/vs-apps@0.5.0':
+    resolution: {integrity: sha512-AJjB+Euiiw3AyV06lBZeboVXDzbyrlB/Jo6lKzyZHsH6eiogQqSo8OESYZqACrjPAB2HUhYPPb7UJ9nIozhS/g==, tarball: https://npm.pkg.github.com/download/@vectoragents/vs-apps/0.5.0/c8a73fcc800136d4733b5d8b0ed98266bf0ffdec}
     hasBin: true
     peerDependencies:
       '@nestjs/common': ^11.0.0 || ^12.0.0
@@ -9477,7 +9477,7 @@ snapshots:
       d3-selection: 3.0.0
       d3-transition: 3.0.1(d3-selection@3.0.0)
 
-  '@vectoragents/vs-apps@0.4.0(@nestjs/common@11.2.8(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.2.8(@nestjs/common@11.2.8(reflect-metadata@0.2.2)(rxjs@7.8.2))(reflect-metadata@0.2.2)(rxjs@7.8.2))(@orpc/contract@1.16.1)(react@19.3.1)(zod@3.25.76)':
+  '@vectoragents/vs-apps@0.5.0(@nestjs/common@11.2.8(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.2.8(@nestjs/common@11.2.8(reflect-metadata@0.2.2)(rxjs@7.8.2))(reflect-metadata@0.2.2)(rxjs@7.8.2))(@orpc/contract@1.16.1)(react@19.3.1)(zod@3.25.76)':
     dependencies:
       '@nestjs/common': 11.2.8(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nestjs/core': 11.2.8(@nestjs/common@11.2.8(reflect-metadata@0.2.2)(rxjs@7.8.2))(reflect-metadata@0.2.2)(rxjs@7.8.2)
