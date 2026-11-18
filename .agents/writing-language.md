@@ -30,19 +30,21 @@ Precedence: rules here win over any reference. A page-type section wins over the
 - **V7 No em or en dashes.** Use a comma, a colon, brackets, a new sentence, or "to" for a range. A hyphen joins words in a compound. It is not a dash. Applies to prose, tables, headings and code comments, not to string values in code.
 - **V8 State facts plainly.** Do not use words that only add force or ease: "bedrock", "absolute", "heavily governed", "seamless", "powerful", "robust", "simply", "just", "easily". State a guarantee as a plain fact. Bad: "Access is heavily governed." Good: "Every action needs a capability grant."
 - **V9 No contractions.** Write "do not", "it is", "cannot". A possessive "'s" is not a contraction. Applies to prose, tables, headings and code comments, not to string values in code or to starter comments the docs do not edit.
-- **V10 No page-describing sentences.** Do not write a sentence that describes the page ("This page shows...", "Below you will find..."). The first sentence defines the thing. On a quickstart, recipe or guide the opening paragraph still states the objective and the result (TU1, R2).
+- **V10 No page-describing sentences.** Do not write a sentence that describes the page ("This page shows...", "Below you will find..."). The first sentence defines the thing. On a quickstart, recipe or guide the opening paragraph still states the objective and the result (TU1, R2). On an explainer the lead follows X0.
 - **V11 No filler.** A sentence carries a fact the next sentence does not. Test: delete the sentence. If no fact is lost, delete it. If it hides a fact, state the fact. Example: "Several rules apply." before a list of the rules fails the test, because the list states every rule.
+
+- **V12 No list announcement.** Do not write a sentence that only counts or introduces the list after it ("There are three parts.", "Choose by the job:"). The reader gets the count from the list. Open with a sentence that states a fact the list does not.
 
 ### Terms
 
-- **T1 Vector and SDK terms.** Link a glossary term at its first use on each page, in the page and not in a section. The link shows the definition on hover. Role words such as "staff" and "space admin" count. A term your reader already knows (see the Reader line) needs no link. A sentence carries at most 3 glossary links. Link the rest at their next use.
+- **T1 Vector and SDK terms.** Link a glossary term once per page, at the first use where the reader needs its definition to follow the sentence. The link shows the definition on hover. Role words such as "staff" and "space admin" count. A term your reader already knows (see the Reader line), or a term in its plain meaning, needs no link. A sentence carries at most 1 glossary link. A term in a list of parts or in a lead sentence is linked at a later use that relies on it.
 - **T2 Informal words.** A word used with a private meaning ("pull", "boot ping", "ungated", "surface") is a Vector term: apply T1, or replace it with a plain phrase.
 
 ### Abbreviations
 
-- **A1 Define at first use.** Expand an abbreviation at first use only when a developer who knows TypeScript, Node, React and HTTP would not know it. Write the full form with the abbreviation in brackets: "ideal customer profile (ICP)". An abbreviation with a glossary entry (SDK, A2A, MCP) is linked at first use on each page and not expanded: "the [SDK](./glossary.md#sdk) passes the slot key". Known terms such as HTTP, JSON, SQL, UI and OS need nothing.
+- **A1 Define at first use.** Expand an abbreviation at first use only when a developer who knows TypeScript, Node, React and HTTP would not know it. Write the full form with the abbreviation in brackets: "ideal customer profile (ICP)". An abbreviation with a glossary entry (SDK, A2A, MCP) is linked as T1 says and not expanded: "the [SDK](./glossary.md#sdk) passes the slot key". Known terms such as HTTP, JSON, SQL, UI and OS need nothing.
 - **A2 Shortened words.** Write "navigation", "environment" and "configuration" in prose, not "nav", "env" and "config". Glossary terms ("app", "space admin", "dev issuer") are exempt, and so are code identifiers (A4).
-- **A3 Glossary entry.** A Vector or product abbreviation used on more than one page has a glossary entry. Link it at first use on each page. A one-page abbreviation defined inline (ICP) and a standard abbreviation need no entry.
+- **A3 Glossary entry.** A Vector or product abbreviation used on more than one page has a glossary entry. Link it as T1 says. A one-page abbreviation defined inline (ICP) and a standard abbreviation need no entry.
 - **A4 Code values.** Names in code font (`REST`, `ANTHROPIC`) are identifiers and are not abbreviations.
 
 ### Headings
@@ -61,7 +63,7 @@ Precedence: rules here win over any reference. A page-type section wins over the
 
 ## Concept page
 
-Scope: the concept pages of `docs/vector-space/`. `docs/vector-apps/why-vector-apps` and `docs/vector-apps/how-a-vector-app-works` are not concept pages: they follow the build-page reader and the shared layer only.
+Scope: the concept pages of `docs/vector-space/`. `docs/vector-apps/why-vector-apps` and `docs/vector-apps/how-a-vector-app-works` are not concept pages: they follow the build-page reader, the shared layer and the Explainer page section.
 Reader: someone who works in or judges a space and has not used Vector Space. The page assumes no TypeScript, Node or React. A page never names who it is for.
 
 - **C1 Open with the definition.** First sentence says what the thing is. Second says what it does for the reader.
@@ -73,6 +75,14 @@ Reader: someone who works in or judges a space and has not used Vector Space. Th
 - **C7 One scenario.** Each page tells one slice of the same scenario: Maya, a member of Acme's sales team, asks the orchestrator agent to find leads and send an outreach email. A scene paragraph names a persona from [the persona record](./personas.md) in place of "a member", "this member" or "that member". It introduces the persona at first use in the form the record gives, and never uses he or she. Reference sections, tables, bullets and headings keep the generic "member". `approvals-and-the-command-center` tells a status-note scene with Maya, and `extending-a-space` and `agent-studio` use their own example and persona. Vendor names appear only on the worked-example page.
 - **C8 Parts list.** Use a bold term plus a colon for a parts list.
 - **C9 Stand alone.** A page covers its topic in full and never hands part of it to another page. It restates the shared base in 1 to 2 sentences. An inline link to an owner page is allowed only if the page still gives the reader everything it promises with the link removed. Every other idea, such as a rule or a mechanism, is explained on the page.
+
+## Explainer page
+
+Scope: `docs/vector-apps/why-vector-apps.md` and `docs/vector-apps/how-a-vector-app-works.md`. Their page tests run `glossaryLinkViolations` from `scripts/voice.mjs`: at most 1 glossary link per sentence (T1).
+
+- **X0 Lead.** The lead has two sentences. The first defines an app in plain terms: a web app that you host and that a space shows to its members. The second states one fact that the page covers and the first sentence does not. The two sentences never say the same thing twice. The origin and iframe mechanics belong in the parts section and the glossary, not in the lead. Each lead sentence carries at most 1 glossary link (T1).
+- **X1 Benefit first.** A section, a list item and a paragraph open with what it gives the reader or what it lets the reader decide. The mechanism follows in the same sentence or the next. Bad: "You declare a model slot, and a space admin picks the model." Good: "Your app can call a model without holding an AI provider key. You declare a model slot, and a space admin picks the model."
+- **X2 Lead before a list.** A list in the body follows a sentence that states a fact the list does not. A heading is never followed directly by a list. "Where to go next" is exempt.
 
 ## Tutorial page
 

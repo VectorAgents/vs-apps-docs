@@ -6,7 +6,7 @@ description: The parts of an app, the six steps from build to removal, who does 
 import StructureFigure from '@site/src/components/StructureFigure';
 import { appsOverview } from '@site/src/diagrams/figures/apps-overview.ts';
 
-An [app](./glossary.md#app) is a web app that runs on its own origin and that a [space](../vector-space/glossary.md#space) shows inside [Vector Space](../vector-space/glossary.md#vector-space), the Vector platform.
+An [app](./glossary.md#app) is a web app that you host and that a space shows to its members. Vector Space signs a token for each member who opens it, and your server checks that token before it answers.
 
 ## The parts of an app
 
@@ -49,7 +49,7 @@ If any part fails, Vector Space tells your server to deprovision, and the activa
 
 ### Configure
 
-A new app is shared with no one. The space admin shares it with [members](../vector-space/glossary.md#member) and [groups](../vector-space/glossary.md#group). That decides who can open it and which [capabilities](./glossary.md#capability) they hold.
+A new app is shared with no one. The space admin shares it with members and [groups](../vector-space/glossary.md#group). That decides who can open it and which [capabilities](./glossary.md#capability) they hold.
 
 The space admin also sets each model slot and [connector slot](./glossary.md#connector-slot) and attaches the resources the app may read. Until a required slot is set, the app needs setup, but it stays in the space.
 
@@ -65,7 +65,7 @@ After staff apply a manifest, Vector Space brings every space that has the app i
 
 ### Deprovision
 
-A space admin removes the app from a space, or someone deletes the space. Vector Space calls `DELETE /api/deprovision` on your server and removes the [agents](../vector-space/glossary.md#agent) and [MCP](../vector-space/glossary.md#mcp) servers that the app added to the space.
+A space admin removes the app from a space, or someone deletes the space. Vector Space calls `DELETE /api/deprovision` on your server and removes the agents and [MCP](../vector-space/glossary.md#mcp) servers that the app added to the space.
 
 The call is best effort. If your server does not answer, Vector Space still removes the app. A space admin can add the app again later.
 

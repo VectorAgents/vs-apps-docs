@@ -7,6 +7,7 @@ import {
   contractionViolations,
   dashViolations,
   descriptionViolations,
+  glossaryLinkViolations,
   linkTextViolations,
   voiceViolations,
 } from './voice.mjs';
@@ -140,6 +141,19 @@ const docsDir = fileURLToPath(new URL('../docs/', import.meta.url));
 const pages = readdirSync(docsDir, { recursive: true })
   .filter((file) => /\.mdx?$/.test(file))
   .map((file) => ({ file, markdown: readFileSync(join(docsDir, file), 'utf8') }));
+
+test('glossary-links: two glossary links in one sentence or list item are flagged', () => {
+  const two = '[app](./glossary.md#app) runs in a [space](../vector-space/glossary.md#space).';
+  assert.deepEqual(glossaryLinkViolations(two).map((v) => v.rule), ['glossary-links']);
+  assert.equal(glossaryLinkViolations(`- ${two}`).length, 1);
+});
+
+test('glossary-links: one link per sentence, other links, tables and codeblocks pass', () => {
+  assert.deepEqual(glossaryLinkViolations('An [app](./glossary.md#app) is a web app. A [space](./glossary.md#space) shows it.'), []);
+  assert.deepEqual(glossaryLinkViolations('The [app](./glossary.md#app) calls [the quickstart](./quickstart.md).'), []);
+  assert.deepEqual(glossaryLinkViolations('| [a](./glossary.md#a) | [b](./glossary.md#b) |'), []);
+  assert.deepEqual(glossaryLinkViolations('```\n[a](./glossary.md#a) [b](./glossary.md#b)\n```'), []);
+});
 
 for (const [name, check] of [
   ['no sentence over 35 words', (md) => voiceViolations(md).filter((v) => v.rule === 'sentence-length')],

@@ -4,7 +4,7 @@ import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { bodyOf, linksOf, longSentences, section, unlink } from './page-helpers.mjs';
-import { voiceViolations } from './voice.mjs';
+import { glossaryLinkViolations, voiceViolations } from './voice.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const docs = resolve(root, 'docs');
@@ -94,6 +94,15 @@ test('a space admin owns the activate, configure and deprovision steps, linked t
 
 test('the page follows the voice checks', () => assert.deepEqual(voiceViolations(text), []));
 
+test('a sentence carries at most one glossary link', () => assert.deepEqual(glossaryLinkViolations(text), []));
+
+test('the page opens with the definition of an app, then the token that its server checks, without the origin and iframe mechanics', () => {
+  const [first, second] = bodyOf(text).replace(/^import .*\n/gm, '').trim().split('\n')[0].split(/(?<=\.)\s+/);
+  assert.match(first, /^An \[app\]\(\.\/glossary\.md#app\) is a web app that you host and that a space shows to its members\.$/);
+  assert.match(second, /^Vector Space signs a token for each member who opens it, and your server checks that token before it answers\.$/);
+  assert.doesNotMatch(first + second, /origin|iframe/);
+});
+
 test('the page names no placeholder example app and no master doc', () => {
   assert.doesNotMatch(text, /\b(Hiring|SDR|CSR)\b/);
   assert.doesNotMatch(text, /(PROTOCOL|BINDINGS|REGISTRY|OVERVIEW|APPS|GLOSSARY)\.md/);
@@ -124,12 +133,12 @@ test('the page follows the build-page frame: no scene, no result sentence, no Re
   assert.doesNotMatch(unlink(bodyOf(text)).replace(/\buser token\b/gi, ''), /\buser (id|ids)\b|\bthe user\b|\busers\b/i);
 });
 
-test('the first use of a term is its glossary link: model slots, the app definition, agents, MCP, members, groups, organization, AI gateway', () => {
+test('the first use of a term is its glossary link: model slots, the app definition, MCP, groups, organization, AI gateway', () => {
   const lifecycle = section(text, 'The lifecycle');
   assert.match(lifecycle, /such as \[model slots\]\(\.\/glossary\.md#model-slot\)/);
   assert.match(lifecycle, /\| You write the client, the server and the \[app definition\]\(\.\.\/sdk\/glossary\.md#app-definition\)\. \|/);
-  assert.match(lifecycle, /removes the \[agents\]\(\.\.\/vector-space\/glossary\.md#agent\) and \[MCP\]\(\.\.\/vector-space\/glossary\.md#mcp\) servers/);
-  assert.match(lifecycle, /\[members\]\(\.\.\/vector-space\/glossary\.md#member\) and \[groups\]\(\.\.\/vector-space\/glossary\.md#group\)/);
+  assert.match(lifecycle, /removes the agents and \[MCP\]\(\.\.\/vector-space\/glossary\.md#mcp\) servers/);
+  assert.match(lifecycle, /shares it with members and \[groups\]\(\.\.\/vector-space\/glossary\.md#group\)/);
   assert.match(lifecycle, /\[organization\]\(\.\.\/vector-space\/glossary\.md#organization\)/);
   assert.match(text, /\[AI gateway\]\(\.\.\/vector-space\/glossary\.md#ai-gateway\)/);
 });
