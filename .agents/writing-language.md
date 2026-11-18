@@ -30,7 +30,7 @@ Precedence: rules here win over any reference. A page-type section wins over the
 - **V7 No em or en dashes.** Use a comma, a colon, brackets, a new sentence, or "to" for a range. A hyphen joins words in a compound. It is not a dash. Applies to prose, tables, headings and code comments, not to string values in code.
 - **V8 State facts plainly.** Do not use words that only add force or ease: "bedrock", "absolute", "heavily governed", "seamless", "powerful", "robust", "simply", "just", "easily". State a guarantee as a plain fact. Bad: "Access is heavily governed." Good: "Every action needs a capability grant."
 - **V9 No contractions.** Write "do not", "it is", "cannot". A possessive "'s" is not a contraction. Applies to prose, tables, headings and code comments, not to string values in code or to starter comments the docs do not edit.
-- **V10 No page-describing sentences.** Do not write a sentence that describes the page ("This page shows...", "Below you will find..."). The first sentence defines the thing. On a quickstart, recipe or guide the opening paragraph still states the objective and the result (TU1, R2).
+- **V10 No page-describing sentences.** Do not write a sentence that describes the page ("This page shows...", "Below you will find..."). The first sentence defines the thing. On a quickstart, recipe or guide the opening paragraph still states the objective and the result (TU1, R2). On an explainer the lead follows X0.
 - **V11 No filler.** A sentence carries a fact the next sentence does not. Test: delete the sentence. If no fact is lost, delete it. If it hides a fact, state the fact. Example: "Several rules apply." before a list of the rules fails the test, because the list states every rule.
 
 - **V12 No list announcement.** Do not write a sentence that only counts or introduces the list after it ("There are three parts.", "Choose by the job:"). The reader gets the count from the list. Open with a sentence that states a fact the list does not.
@@ -78,8 +78,9 @@ Reader: someone who works in or judges a space and has not used Vector Space. Th
 
 ## Explainer page
 
-Scope: `docs/vector-apps/why-vector-apps.md` and `docs/vector-apps/how-a-vector-app-works.md`.
+Scope: `docs/vector-apps/why-vector-apps.md` and `docs/vector-apps/how-a-vector-app-works.md`. Their page tests run `glossaryLinkViolations` from `scripts/voice.mjs`: at most 1 glossary link per sentence (T1).
 
+- **X0 Lead.** The lead has two sentences. The first defines an app in plain terms: a web app that you host and that a space shows to its members. The second states one fact that the page covers and the first sentence does not. The two sentences never say the same thing twice. The origin and iframe mechanics belong in the parts section and the glossary, not in the lead. Each lead sentence carries at most 1 glossary link (T1).
 - **X1 Benefit first.** A section, a list item and a paragraph open with what it gives the reader or what it lets the reader decide. The mechanism follows in the same sentence or the next. Bad: "You declare a model slot, and a space admin picks the model." Good: "Your app can call a model without holding an AI provider key. You declare a model slot, and a space admin picks the model."
 - **X2 Lead before a list.** A list in the body follows a sentence that states a fact the list does not. A heading is never followed directly by a list. "Where to go next" is exempt.
 

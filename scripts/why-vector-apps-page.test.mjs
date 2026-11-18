@@ -4,7 +4,7 @@ import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { bodyOf, linksOf, longSentences, section, unlink } from './page-helpers.mjs';
-import { voiceViolations } from './voice.mjs';
+import { glossaryLinkViolations, voiceViolations } from './voice.mjs';
 
 const docs = resolve(dirname(fileURLToPath(import.meta.url)), '../docs');
 const file = resolve(docs, 'vector-apps/why-vector-apps.md');
@@ -21,9 +21,11 @@ test('the body holds 490 words or fewer', () => {
   assert.ok(words <= 490, `${words} words`);
 });
 
-test('the page opens with the definition of an app', () => {
-  const body = text.replace(/^---\n[\s\S]*?\n---\n/, '').trim();
-  assert.match(body, /^An \[app\]\(\.\/glossary\.md#app\) is /);
+test('the page opens with the definition of an app, then what the space gives it, without the origin and iframe mechanics', () => {
+  const [first, second] = bodyOf(text).trim().split('\n')[0].split(/(?<=\.)\s+/);
+  assert.match(first, /^An \[app\]\(\.\/glossary\.md#app\) is a web app that you host and that a space shows to its members, like any other page\.$/);
+  assert.match(second, /^The \[space\]\(\.\.\/vector-space\/glossary\.md#space\) gives your app member identity, platform data, model access and a record of work\.$/);
+  assert.doesNotMatch(first + second, /origin|iframe/);
 });
 
 test('every link resolves, and the page links How a Vector App works, the quickstart, Extending a space and the SDK overview', () => {
@@ -145,9 +147,7 @@ test('the page follows the build-page frame: no scene, no result sentence, no Re
 });
 
 test('a sentence carries at most one glossary link, and the AI gateway is linked where the key is explained', () => {
-  const pieces = bodyOf(text).split(/(?<=\.)\s+|\n/);
-  const over = pieces.filter((p) => (p.match(/\]\([^)]*glossary\.md#[^)]*\)/g) ?? []).length > 1);
-  assert.deepEqual(over, []);
+  assert.deepEqual(glossaryLinkViolations(text), []);
   assert.match(text, /\[AI gateway\]\(\.\.\/vector-space\/glossary\.md#ai-gateway\)/);
 });
 

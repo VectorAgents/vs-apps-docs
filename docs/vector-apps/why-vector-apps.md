@@ -3,7 +3,7 @@ title: Why Vector Apps
 description: When to build an app instead of an A2A agent or an MCP server, what a space gives an app, and the parts you write.
 ---
 
-An [app](./glossary.md#app) is a product that you build and host yourself and that a space shows in an iframe inside Vector Space, the Vector platform. Your screens and logic work inside the [space](../vector-space/glossary.md#space).
+An [app](./glossary.md#app) is a web app that you host and that a space shows to its members, like any other page. The [space](../vector-space/glossary.md#space) gives your app member identity, platform data, model access and a record of work.
 
 ## App, A2A agent or MCP server
 

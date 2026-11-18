@@ -7,6 +7,7 @@ const DESCRIPTION_MAX = 160;
 const DESCRIPTION_OPENER = /^(?:this page|learn)\b/i;
 const BANNED_LINK_TEXT = new Set(['here', 'this page', 'read more', 'learn more']);
 const BARE_URL = /^(?:https?:\/\/|www\.)\S+$/i;
+const GLOSSARY_LINK = /\]\([^)\s]*glossary\.md#[^)\s]*\)/g;
 
 /** Splits markdown into prose blocks, skipping frontmatter, code blocks (the directory tree is one), tables, headings and admonition markers. */
 function blocks(markdown) {
@@ -134,4 +135,22 @@ export function descriptionViolations(markdown) {
     return [{ rule: 'description', text: description }];
   }
   return [];
+}
+
+/**
+ * Reports a sentence in prose or a list item that carries more than one link
+ * to a glossary entry (T1). Tables and codeblocks are skipped.
+ * @returns {{ rule: string, text: string }[]}
+ */
+export function glossaryLinkViolations(markdown) {
+  const violations = [];
+  for (const block of blocks(markdown)) {
+    const text = block.text.replace(/`[^`]*`/g, 'CODE');
+    for (const sentence of text.split(/(?<=[.!?])\s+/)) {
+      if ((sentence.match(GLOSSARY_LINK) ?? []).length > 1) {
+        violations.push({ rule: 'glossary-links', text: sentence });
+      }
+    }
+  }
+  return violations;
 }
