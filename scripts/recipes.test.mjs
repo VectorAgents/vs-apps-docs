@@ -271,8 +271,6 @@ test('gate-by-capability shares one fallback across at least two pages and ends 
   assert.match(steps.at(-1), /Missing capability: lead:manage/);
 });
 
-const readContext = recipes.find((r) => r.name === 'read-app-context');
-
 const expose = recipes.find((r) => r.name === 'expose-agent-actions');
 const exposeCode = snippetsOf(expose.text);
 
