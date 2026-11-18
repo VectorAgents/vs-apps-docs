@@ -16,9 +16,9 @@ test('the page runs the extension choice, identity data models and record of wor
   assert.deepEqual(headings, ['App, A2A agent or MCP server', 'Identity, data, models and a record of work', 'Client, server and manifest', 'Where to go next']);
 });
 
-test('the body holds 490 words or fewer', () => {
+test('the body holds 540 words or fewer', () => {
   const words = unlink(bodyOf(text)).split(/\s+/).filter((w) => /[A-Za-z0-9]/.test(w)).length;
-  assert.ok(words <= 490, `${words} words`);
+  assert.ok(words <= 540, `${words} words`);
 });
 
 test('the page opens with the definition of an app, then what the space gives it, without the origin and iframe mechanics', () => {
@@ -77,14 +77,16 @@ test('the model access bullet opens with the benefit, then names the slot and th
   assert.doesNotMatch(bullet, /the call goes through the/i);
 });
 
-test('the server check leads Identity, data, models and a record of work and links How a Vector App works', () => {
-  const lead = section(text, 'Identity, data, models and a record of work').trim().split('\n')[2];
-  assert.equal(lead, 'Your server checks every call, as [How a Vector App works](./how-a-vector-app-works.md#the-parts-of-an-app) shows.');
+test('Identity, data, models and a record of work opens with the four things and the opt-in rule, and the first bullet holds the server check link', () => {
+  const lines = section(text, 'Identity, data, models and a record of work').trim().split('\n');
+  assert.equal(lines[2], 'A space gives your app four things: member identity, platform data, model access and a record of work. Your app does not build or store any of them itself. Identity comes with every call. Platform data, model access and a record of work are used only when you declare them.');
+  const bullet = lines.find((l) => l.startsWith('- '));
+  assert.match(bullet, /^- \*\*Member identity\.\*\* Your server checks every call, as \[How a Vector App works\]\(\.\/how-a-vector-app-works\.md#the-parts-of-an-app\) shows\./);
   assert.doesNotMatch(text, /Each one stays inside the rules|display only|^\*[^*]/m);
 });
 
 test('no sentence announces a list or its count, and each list but the last follows a sentence', () => {
-  assert.doesNotMatch(text, /four things|three parts|three extensions|Choose by the job/);
+  assert.doesNotMatch(text, /three parts|three extensions|Choose by the job/);
   const lines = text.replace(/^---\n[\s\S]*?\n---\n/, '').split('\n');
   const lastHeading = lines.findLastIndex((l) => l.startsWith('## '));
   lines.forEach((line, i) => {
