@@ -18,7 +18,7 @@ const sections = {
   ],
   'vector-apps': [
     'app', 'app registration', 'manifest', 'app page', 'capability', 'capability grant', 'model slot', 'connector slot',
-    'acts', 'approvals', 'app token', 'service secret', 'binding', 'allowed resources',
+    'acts', 'approvals', 'user token', 'app token', 'service secret', 'binding', 'member directory', 'auto-apply', 'allowed resources',
   ],
   sdk: [
     'app definition', 'SDK', 'harness', 'dev issuer', 'agent action', 'agent catalog', 'monorepo', 'shared package',
@@ -232,9 +232,9 @@ test('the orchestrator agent entry says one', () => {
   assert.match(body('orchestrator agent'), /one/i);
 });
 
-test('capability grant is a share on named capabilities and acts name Human Time Return', () => {
+test('capability grant is a share of an app that gives a member its capabilities and acts name Human Time Return', () => {
   const body = (name) => entries.find((e) => e.name === name).body;
-  assert.ok(body('capability grant').trim().startsWith('A [share](../vector-space/glossary.md#share) on named capabilities, at Can use, for users or groups.'));
+  assert.ok(body('capability grant').trim().startsWith('A [share](../vector-space/glossary.md#share) of an app that gives a member its capabilities.'));
   assert.match(body('share'), /capability grant/);
   assert.match(body('acts'), /Human Time Return/);
   assert.match(body('acts'), /\(\.\.\/vector-space\/glossary\.md#human-time-return\)/);
@@ -273,8 +273,8 @@ test('conformance kit, app platform and app session entries name their SDK symbo
   assert.match(body('app session'), /`startAppSession`/);
 });
 
-test('app token maps the SDK name service token', () => {
-  assert.match(entries.find((e) => e.name === 'app token').body, /The SDK calls it a service token/);
+test('app token maps the SDK name service token on its Maps to line', () => {
+  assert.match(entries.find((e) => e.name === 'app token').body, /^- Maps to: .*The SDK calls the token a service token\.$/m);
 });
 
 test('every link to a glossary term resolves to a page and an anchor that exist', () => {

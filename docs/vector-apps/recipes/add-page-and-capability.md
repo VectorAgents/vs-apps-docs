@@ -4,13 +4,12 @@ description: Add a leads and an icp app page, gate each by a capability, link th
 ---
 
 <!-- flavour react -->
-Add two [app pages](../glossary.md#app-page), `leads` and `icp`, gate each with a [capability](../glossary.md#capability) and link them without a page reload. When you finish, a [space](../../vector-space/glossary.md#space) lists both app pages to the [members](../../vector-space/glossary.md#member) who hold the capabilities.
+Add two [app pages](../glossary.md#app-page), `leads` and `icp`, gate each with a [capability](../glossary.md#capability) and link them without a page reload. A [space](../../vector-space/glossary.md#space) lists both app pages to the [members](../../vector-space/glossary.md#member) who hold the capabilities.
 
 ## Prerequisites
 
 - The app from the [quickstart](../quickstart.md), registered in a space and run with `npm run dev:space`.
-- `SPACE_API_URL` in `.env`, set to the [Vector Space](../../vector-space/glossary.md#vector-space) API origin followed by `/api`, for example `https://space-api.example.com/api`. Step 4 uses it.
-- Background: the [app definition](../../sdk/app-definition.md) page, the [`RequireCapability` reference](../../sdk/reference/react.md#react-requirecapability).
+- Background: the [app definition](../../sdk/app-definition.md) page, the [`useApp` reference](../../sdk/reference/react.md#react-useapp).
 
 ## Steps
 
@@ -69,38 +68,30 @@ export const definition = defineApp({
 
 ### 2. Write the app pages
 
-Gate each app page with the same capability as its definition entry, so the browser matches the definition.
+The capability on each app page definition already hides the app page from members who do not hold it, so each page is a plain `<main>`.
 
 ```tsx title="client/src/LeadsPage.tsx"
-import { RequireCapability } from '@vectoragents/vs-apps/react';
-
 export function LeadsPage() {
   return (
-    <RequireCapability capability="lead:manage" fallback={<p>You do not hold lead:manage.</p>}>
-      <main>
-        <h1>Leads</h1>
-        <p>No leads yet.</p>
-      </main>
-    </RequireCapability>
+    <main>
+      <h1>Leads</h1>
+      <p>No leads yet.</p>
+    </main>
   );
 }
 ```
 
 ```tsx title="client/src/IcpPage.tsx"
-import { RequireCapability } from '@vectoragents/vs-apps/react';
-
 export function IcpPage() {
   return (
-    <RequireCapability capability="icp:manage" fallback={<p>You do not hold icp:manage.</p>}>
-      <main>
-        <h1>ICP Library</h1>
-      </main>
-    </RequireCapability>
+    <main>
+      <h1>ICP Library</h1>
+    </main>
   );
 }
 ```
 
-The server enforces both capabilities on the endpoints that the app pages call. [Gate an app page and an endpoint by capability](./gate-by-capability.md) shows how.
+[Gate an app page and an endpoint by capability](./gate-by-capability.md) adds the browser gate and the server check on the endpoints that the app pages call.
 
 ### 3. Link between app pages without a reload
 
@@ -132,7 +123,7 @@ export function usePath(): string {
 }
 ```
 
-`appPages` returns the app pages of the definition, and the filter keeps the app pages the member may open, as in [filter navigation by capability](../guides/filter-navigation-by-capability.md). The link calls `navigate` and cancels the default load.
+`appPages` returns the app pages of the definition, and [filter navigation by capability](../guides/filter-navigation-by-capability.md) explains the filter. The link calls `navigate` and cancels the default load.
 
 ```tsx title="client/src/Nav.tsx"
 import { definition } from '@hello-app/shared';
@@ -232,17 +223,23 @@ Run `npm run dev` and open `http://localhost:5173/harness.html`. Select **Leads*
 
 The server must tell Vector Space that the manifest changed. Stop `npm run dev:space` and start it again. The starter calls `platform.pingManifests` at start, and Vector Space reads the new manifest. `npm run dev` clears `SPACE_API_URL` and turns the dev issuer on, and the platform skips the ping while it holds a dev issuer, so the harness never tells Vector Space.
 
-A manifest change waits as a pending review until Vector applies it. If Vector Space shows no change after the restart, ask Vector to select **Check for updates** on your [app registration](../glossary.md#app-registration). Vector Space then reads the manifest again.
+A manifest change waits until staff apply it, as [how a Vector app works](../how-a-vector-app-works.md#update) describes. If Vector Space shows no change after the restart, ask [staff](../../vector-space/glossary.md#staff) to select **Check for updates** on your [app registration](../glossary.md#app-registration). Vector Space then reads the manifest again.
 
 ### 5. Grant the capabilities
 
-A [space admin](../../vector-space/glossary.md#space-admin) grants `lead:manage` and `icp:manage` to a member in Vector Space.
+Vector Space shows a capability as a permission. The [space admin](../../vector-space/glossary.md#space-admin) who added the app skips this step, because a space admin holds every permission on the app row.
+
+For another member, open **Access** as in [step 5 of Part 2 of the quickstart](../quickstart.md#5-share-the-app-with-a-member) and keep **Can use**. **Can use** gives every capability the app declares.
+
+To give only `lead:manage`, an [organization admin](../../vector-space/glossary.md#organization-admin) makes a [custom role](../../vector-space/glossary.md#custom-role) under **Settings**, **Organization**, **Access**, **Roles**, **New role**. The space admin then picks it from **Custom roles** in the same sheet.
 
 ### 6. Check the app pages in the space
 
-Refresh the browser page as that member. The navigation of the app lists **Home**, **Leads** and **ICP Library**. Select **Leads**: the app page shows the heading `Leads` and the text `No leads yet.` Select **ICP Library**: the app page shows the heading `ICP Library`.
+The new capabilities reach the app in the next user token. The token lasts 5 minutes, and Vector Space sends a new one about 4 minutes after the last. Reload the app page as that member, or call `requestRefresh` as in [read the member and capabilities](./read-app-context.md).
+
+The navigation of the app then lists **Home**, **Leads** and **ICP Library**. Select **Leads**: the app page shows the heading `Leads` and the text `No leads yet.` Select **ICP Library**: the app page shows the heading `ICP Library`.
 
 ## Next steps
 
-- [Gate an app page and an endpoint by capability](./gate-by-capability.md): enforce the same capabilities on the server and share one fallback across app pages.
+- [Gate an app page and an endpoint by capability](./gate-by-capability.md): gate the browser and enforce the same capabilities on the server.
 <!-- /flavour -->

@@ -3,7 +3,7 @@ title: Open a route and read the caller
 description: Leave one route of your server open to anyone, and read the verified caller on another route.
 ---
 
-Leave one route of your server open to anyone, and read who is calling on another route. When you finish, `GET /api/open` answers with no token, and `GET /api/caller` answers with the claims of the caller and refuses a request with no token.
+Leave one route of your server open to anyone, and read who is calling on another route. `GET /api/open` answers with no token, and `GET /api/caller` answers with the claims of the caller and refuses a request with no token.
 
 This guide covers a Nest.js server.
 
@@ -118,7 +118,7 @@ The first command prints `200`, because `@Public` skips the guard. The second pr
 
 ## Next steps
 
-- [Add the app to a space](../quickstart.md#part-2-add-the-app-to-a-space): send a real user token to `/api/caller` from an app page.
+- [Add the app to a space](../quickstart.md#part-2-add-the-app-to-a-space): a member opens the app page, and the page sends the user token to your server in the `Authorization` header, as it does for `/api/hello`.
 <!-- /flavour -->
 <!-- flavour node todo -->
 <!-- /flavour -->

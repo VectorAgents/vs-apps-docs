@@ -1,13 +1,13 @@
 ---
 title: Agent action trees
-description: Declare a child agent action that exists only while its parent is mounted, and test the app page without Vector Space.
+description: Declare a child agent action that exists only while its parent is mounted, and write it into the agent catalog.
 ---
 
-Add a child [agent action](../../sdk/glossary.md#agent-action) that the agent can call only after it opens a Lead List, and mount the [app page](../glossary.md#app-page) in a test without [Vector Space](../../vector-space/glossary.md#vector-space). When you finish, `leads.export_leads` is in the [agent catalog](../../sdk/glossary.md#agent-catalog) and the test harness renders `LeadsPage` without `AppProvider`.
+Add a child [agent action](../../sdk/glossary.md#agent-action) to the [app page](../glossary.md#app-page) `leads` that the agent can call only after it opens a Lead List. The [agent catalog](../../sdk/glossary.md#agent-catalog) lists `leads.export_leads` as a child of `leads.open_lead_list`.
 
 ## Prerequisites
 
-- The app from [Expose agent actions on an app page](../recipes/expose-agent-actions.md), with the `leads` app page, the action `leads.open_lead_list` and the catalog that lists it. Work inside that project folder.
+- The app from [Expose agent actions on an app page](../recipes/expose-agent-actions.md), with the `leads` app page, the action `leads.open_lead_list` and the catalog that lists it. Work inside that project folder. The steps run on your machine and need no space.
 - Background: [`defineAgentPage`](../../sdk/reference/root.md#defineagentpage), [`AgentActionRegistryProvider`](../../sdk/reference/react.md#react-agentactionregistryprovider) and the [quickstart](../quickstart.md) for the app setup.
 
 ## Steps
@@ -87,7 +87,7 @@ export function LeadsPage() {
 
 ### 3. Test the app page without Vector Space
 
-`AppProvider` already mounts the registry, and a second `AgentActionRegistryProvider` splits it. Mount the provider directly only where `AppProvider` is absent, such as a test or a story.
+`AppProvider` already mounts the registry. A second `AgentActionRegistryProvider` splits it, so the actions bound inside it are invisible to [Vector Space](../../vector-space/glossary.md#vector-space). Use `LeadsPageHarness` in a test or a story, where `AppProvider` is absent.
 
 ```tsx title="client/src/LeadsPage.harness.tsx"
 import { AgentActionRegistryProvider } from '@vectoragents/vs-apps/react';

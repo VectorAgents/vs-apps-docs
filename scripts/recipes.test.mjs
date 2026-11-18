@@ -14,6 +14,10 @@ const recipeNames = ['add-page-and-capability', 'gate-by-capability', 'read-app-
 const openRouteGuide = 'open-route-and-read-caller';
 const modelGuide = 'call-a-model-from-your-server';
 const connectorGuide = 'handle-connector-events';
+const RECOVERY_LINK = '../quickstart.md#4-verify-the-token-on-the-server';
+const escapeRegExp = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const RECOVERY_URL = new RegExp(`\\]\\(${escapeRegExp(RECOVERY_LINK)}\\)`);
+const IMPLEMENT_STORE_LINK = new RegExp(`\\[implement \`AppCredentialStore\` over your own storage\\]\\(${escapeRegExp(RECOVERY_LINK)}\\)`);
 const pagesIn = (dir) =>
   readdirSync(join(docs, dir))
     .filter((name) => name.endsWith('.md'))
@@ -308,13 +312,17 @@ test('Call Space from your server has a Node.js and a Nest.js tree, ', () => {
   assert.deepEqual(Object.keys(callSpace), ['node', 'nest']);
 });
 
-test('the Nest.js Call Space tree shows SpaceActionsService, SpaceS2sService and AppActionsService in labelled server files', () => {
+test('the Nest.js Call Space tree shows SpaceActionsService, SpaceS2sService and AppActionsService in labelled server files and checks the routes from labelled client files', () => {
   const code = snippetsOf(callSpace.nest);
   for (const symbol of ['SpaceActionsService', 'SpaceS2sService', 'AppActionsService']) {
     assert.match(code, new RegExp(`\\b${symbol}\\b`));
   }
   assert.match(code, /from '@vectoragents\/vs-apps\/nest'/);
-  for (const [, title] of callSpace.nest.matchAll(/^```tsx?[^\n]*title="([^"]+)"/gm)) assert.match(title, /^server\//);
+  const titles = [...callSpace.nest.matchAll(/^```tsx?[^\n]*title="([^"]+)"/gm)].map(([, title]) => title);
+  for (const title of titles.filter((title) => !title.startsWith('client/'))) assert.match(title, /^server\//);
+  const [tokenFile, ...pageEdits] = titles.filter((title) => title.startsWith('client/'));
+  assert.equal(tokenFile, 'client/src/token.ts');
+  assert.deepEqual(pageEdits, Array(3).fill('client/src/HelloPage.tsx'));
 });
 
 test('the Node.js Call Space tree calls Space through the platform clients of the server subpath', () => {
@@ -325,12 +333,12 @@ test('the Node.js Call Space tree calls Space through the platform clients of th
   assert.doesNotMatch(callSpace.node, /\bNest(\.js|JS)?\b|@nestjs\/|@Injectable|AppActionsService|SpaceActionsService|SpaceS2sService/);
 });
 
-test('the Nest.js Call Space tree warns that the credential store is in memory and is the one interface to implement', () => {
-  const warning = callSpace.nest.split('\n').filter((line) => /in memory/.test(line) && /loses them on restart/.test(line));
-  assert.equal(warning.length, 1);
-  assert.match(warning[0], /`AppCredentialStore`/);
-  assert.match(warning[0], /your own storage/);
-  assert.match(warning[0], /persistent store before production/);
+test('the Nest.js Call Space tree says the starter store loses the secrets on restart and links the one interface to implement', () => {
+  const note = callSpace.nest.split('\n').filter((line) => /loses the secrets on restart/.test(line));
+  assert.equal(note.length, 1);
+  assert.match(note[0], IMPLEMENT_STORE_LINK);
+  assert.match(note[0], new RegExp(`\`getToken\` \\[fails until you recover the secret\\]\\(${escapeRegExp(RECOVERY_LINK)}\\)`));
+  assert.doesNotMatch(callSpace.nest, /rotated in Vector Space/);
 });
 
 test('the Nest.js Call Space tree adds its controller to AppModule and keeps type-only constructor injection', () => {
@@ -415,6 +423,39 @@ test('add-page-and-capability links between pages without a reload through navig
   assert.match(addPage.text, /^export type PagePath = \(typeof pages\)\[number\]\['path'\];$/m);
 });
 
+test('add-page-and-capability writes plain pages and keeps SPACE_API_URL out of Prerequisites', () => {
+  assert.doesNotMatch(addPage.text, /RequireCapability|When you finish|pending review|Vector applies|ask Vector to/i);
+  assert.doesNotMatch(section(addPage.text, 'Prerequisites'), /SPACE_API_URL/);
+});
+
+test('add-page-and-capability owns no filter prose and hands gating to gate-by-capability', () => {
+  assert.match(addPage.text, /\]\(\.\/gate-by-capability\.md\)/);
+  assert.match(section(addPage.text, 'Next steps'), /gate-by-capability\.md/);
+});
+
+test('add-page-and-capability says staff apply a manifest change', () => {
+  assert.match(addPage.text, /waits until staff apply it/);
+  assert.match(addPage.text, /\]\(\.\.\/how-a-vector-app-works\.md#update\)/);
+  assert.match(addPage.text, /\[staff\]\(\.\.\/\.\.\/vector-space\/glossary\.md#staff\)/);
+});
+
+test('add-page-and-capability share step skips the space admin, keeps Can use and names the custom role path', () => {
+  const step = addPageSteps().find((s) => /^\d+\. Grant the capabilities\n/.test(s));
+  assert.ok(step, 'a step named "Grant the capabilities"');
+  assert.match(step, /holds every permission on the app row/);
+  assert.match(step, /quickstart\.md#5-share-the-app-with-a-member/);
+  assert.match(step, /\*\*Can use\*\*/);
+  assert.match(step, /Vector Space shows a capability as a permission\./);
+  assert.match(step, /\*\*Settings\*\*, \*\*Organization\*\*, \*\*Access\*\*, \*\*Roles\*\*, \*\*New role\*\*/);
+  assert.match(step, /\*\*Custom roles\*\*/);
+  assert.doesNotMatch(step, /requestRefresh|Reload/);
+  const check = addPageSteps().at(-1);
+  assert.match(check, /^\d+\. Check /);
+  assert.match(check, /5 minutes/);
+  assert.match(check, /`requestRefresh`/);
+  assert.match(check, /read-app-context\.md/);
+});
+
 const modelTrees = Object.fromEntries(treesOf(`vector-apps/guides/${modelGuide}.md`).map(({ tree, text }) => [tree.split('/')[0], text]));
 
 test('the Node.js call-a-model tree names no Nest term', () => {
@@ -431,11 +472,8 @@ test('each call-a-model tree links the glossary at the first model slot and says
   }
 });
 
-test('each call-a-model tree says a production Vector Space refuses the call with status 503 and a local stack answers it', () => {
-  for (const text of Object.values(modelTrees)) {
-    assert.match(text, /A production Vector Space publishes no gateway address to apps, so it refuses the call with status `503`/);
-    assert.match(text, /A local stack runs the gateway/);
-  }
+test('the call-a-model trees name no 503 gateway refusal and no local stack', () => {
+  for (const text of Object.values(modelTrees)) assert.doesNotMatch(text, /\b503\b|local stack/);
 });
 
 test('the Nest.js call-a-model tree injects SpaceAiService and passes the model slot key', () => {
@@ -468,13 +506,27 @@ test('the call-a-model trees call the model with the returned config, never a fi
   }
 });
 
-test('the call-a-model trees keep the in-memory credential store warning', () => {
-  const warning = modelTrees.nest.split('\n').filter((line) => /in memory/.test(line) && /loses (them|it) on restart/.test(line));
-  assert.ok(warning.length >= 1);
-  assert.match(warning.join('\n'), /`AppCredentialStore`/);
-  const nodeWarning = modelTrees.node.split('\n').filter((line) => /in memory/.test(line) && /loses them on restart/.test(line));
-  assert.ok(nodeWarning.length >= 1);
-  assert.match(nodeWarning.join('\n'), /`AppCredentialStore`/);
+test('the call-a-model trees keep the in-memory credential store warning and link the quickstart recovery', () => {
+  for (const text of Object.values(modelTrees)) {
+    const warning = text.split('\n').filter((line) => /`MemoryCredentialStore` loses the secrets on restart/.test(line));
+    assert.equal(warning.length, 1);
+    assert.match(warning[0], IMPLEMENT_STORE_LINK);
+    assert.match(warning[0], new RegExp(`${RECOVERY_URL.source}\\.$`));
+  }
+});
+
+test('the call-a-model trees check the route in the app page with fetchSummary and show both results', () => {
+  for (const text of Object.values(modelTrees)) {
+    const body = titledSnippets(text).filter((c) => c.title.startsWith('client/')).map((c) => c.body).join('\n');
+    assert.match(body, /export async function fetchSummary\(\): Promise<string>/);
+    assert.match(body, /<p>Summary route: \{summary\}<\/p>/);
+    assert.match(text, /`409`/);
+    assert.match(text, /No model is set for the "lead-summary" slot on this space/);
+    assert.match(text, /`200` followed by `\{"summary":"\.\.\."\}`/);
+    assert.match(text, /\*\*Role\*\*: developer\.[\s\S]*\*\*Role\*\*: space admin\./);
+    assert.doesNotMatch(text, /add it again|Keep the service secret/);
+    assert.doesNotMatch(text, /grants it|Refresh the manifest\. Then/);
+  }
 });
 
 const a2aName = 'expose-app-as-a2a-agent';
@@ -530,14 +582,17 @@ test('agent-action-trees uses the leads page and the shared action ids', () => {
   assert.match(trees.text, /dispatch\('leads\.open_lead_list'/);
 });
 
-test('filter-navigation-by-capability ends with home ungated and leads and icp gated', () => {
+test('filter-navigation-by-capability keeps home gated by CAPABILITY and gates leads and icp with literals', () => {
   const code = removedLinesOut(snippetsOf(filterNav.text));
-  assert.doesNotMatch(code, /hello:view/);
+  assert.match(code, /CAPABILITY = 'hello:view'/);
   assert.match(code, /defaultPageKey: 'home'/);
-  assert.doesNotMatch(code, /key: 'home',[^}]*capability/);
-  assert.match(code, /key: 'leads',[^}]*capability: CAPABILITY/);
+  assert.match(code, /key: 'home',[^}]*capability: CAPABILITY/);
+  assert.match(code, /key: 'leads',[^}]*capability: 'lead:manage'/);
   assert.match(code, /key: 'icp',[^}]*capability: 'icp:manage'/);
-  assert.match(code, /CAPABILITY = 'lead:manage'/);
+  assert.doesNotMatch(code, /removed-/);
+  assert.match(code, /from '@hello-app\/shared'/);
+  assert.match(filterNav.text, /add-page-and-capability\.md#react-3-link-between-app-pages-without-a-reload/);
+  assert.doesNotMatch(filterNav.text, /shared\/src\/index'|Home for every member|When you finish/);
 });
 
 test('filter-navigation-by-capability names the leads-app start and its scaffold command, not the old folder', () => {
@@ -578,8 +633,8 @@ const keyUse = (text) => {
 };
 // The starter's own `home` page and `hello:view` capability, kept where a page extends the starter definition.
 const starterOwned = {
-  home: ['add-page-and-capability', 'gate-by-capability', 'filter-navigation-by-capability'],
-  'hello:view': ['add-page-and-capability', 'gate-by-capability', 'filter-navigation-by-capability', 'call-a-model-from-your-server', 'handle-connector-events'],
+  home: ['add-page-and-capability', 'filter-navigation-by-capability'],
+  'hello:view': ['add-page-and-capability', 'filter-navigation-by-capability', 'call-a-model-from-your-server', 'handle-connector-events'],
 };
 
 test('every recipe and guide snippet uses only the shared app, page and capability keys', () => {

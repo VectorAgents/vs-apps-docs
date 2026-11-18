@@ -6,7 +6,13 @@ import { codeOf, lastStep, nextLinks, section, titledSnippets, treesOf } from '.
 const NOTICE = /^:::warning\nNot yet written for Node\.js \+ TypeScript\.\n:::$/m;
 const FLAVOUR_NOTE = /^This guide covers a Nest\.js server\.$/m;
 
-for (const name of ['open-route-and-read-caller', 'handle-connector-events']) {
+// The connector guide starts from an app that Part 2 already added to a space, so it links the slot fields instead.
+const nextStepLinks = {
+  'open-route-and-read-caller': 'quickstart.md#part-2-add-the-app-to-a-space',
+  'handle-connector-events': 'sdk/app-definition.md#resourcesconnectors',
+};
+
+for (const [name, nextLink] of Object.entries(nextStepLinks)) {
   const trees = treesOf(`vector-apps/guides/${name}.md`);
   const nest = trees.find(({ tree }) => tree === 'nest')?.text ?? '';
   const node = trees.find(({ tree }) => tree === 'node')?.text ?? '';
@@ -45,8 +51,8 @@ for (const name of ['open-route-and-read-caller', 'handle-connector-events']) {
     assert.doesNotMatch(nest, /@Inject\(/);
   });
 
-  test(`${name}: Next steps is one link to the quickstart`, () => {
-    assert.deepEqual(nextLinks(nest).map((l) => l.replace(/^(\.\.\/)+/, '')), ['quickstart.md#part-2-add-the-app-to-a-space']);
+  test(`${name}: Next steps is one link to ${nextLink}`, () => {
+    assert.deepEqual(nextLinks(nest).map((l) => l.replace(/^(\.\.\/)+/, '')), [nextLink]);
   });
 }
 
