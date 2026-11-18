@@ -25,8 +25,8 @@ for (const { file, export: name } of examples) {
 
   test(`${file} passes defineApp with consistent keys`, async () => {
     const def = (await import(join(root, file)))[name];
-    const capabilities = new Set(def.capabilities.map((c) => c.key));
-    for (const page of def.pages) assert.ok(capabilities.has(page.capability), page.key);
+    const permissions = new Set(def.permissions.map((c) => c.key));
+    for (const page of def.pages) assert.ok(permissions.has(page.permission), page.key);
     assert.ok(def.pages.some((p) => p.key === def.defaultPageKey));
     assert.ok(def.resources.models.length > 0);
   });
@@ -35,7 +35,7 @@ for (const { file, export: name } of examples) {
 test('sdr shows several pages and csr shows connector eventHandlers', async () => {
   const sdr = (await import(join(root, examples[0].file))).sdrDefinition;
   const csr = (await import(join(root, examples[1].file))).csrDefinition;
-  assert.ok(sdr.pages.length > 1 && sdr.capabilities.length > 1);
+  assert.ok(sdr.pages.length > 1 && sdr.permissions.length > 1);
   assert.ok(csr.resources.connectors.every((c) => c.eventHandlers.length > 0));
 });
 
@@ -46,7 +46,7 @@ test('example definitions and the SDK pages name the rung that holds each act', 
   assert.match(csr, /Model slots the space admin points at a model/);
   assert.match(csr, /Handlers a space editor routes a messaging connector's event types to/);
   const react = readFileSync(join(root, 'docs/sdk/reference/react.md'), 'utf8');
-  assert.match(react, /Ask the owner of the app to share \{capability\}\./);
+  assert.match(react, /Ask the owner of the app to share \{permission\}\./);
   const page = readFileSync(join(root, 'docs/sdk/examples.md'), 'utf8');
   assert.match(page, /\[model slot\]\([^)]*\) the \[space admin\]\([^)]*\) points at a model/);
   assert.match(page, /handlers a \[space editor\]\([^)]*\) routes its event types to/);

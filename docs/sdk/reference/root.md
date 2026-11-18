@@ -99,7 +99,7 @@ interface AppPageDef {
   key: string;
   label: string;
   path: string;
-  capability?: string;
+  permission?: string;
 }
 ```
 
@@ -125,16 +125,16 @@ const sdr = defineApp({
   key: 'sdr',
   version: '0.1.0',
   pages: [
-    { key: 'leads', label: 'Leads', path: '/leads', capability: 'lead:manage' },
+    { key: 'leads', label: 'Leads', path: '/leads', permission: 'lead:manage' },
     { key: 'dashboard', label: 'Dashboard', path: '/dashboard' },
   ],
-  capabilities: [{ key: 'lead:manage', label: 'Manage leads', effect: 'write' }],
+  permissions: [{ key: 'lead:manage', label: 'Manage leads', effect: 'write' }],
 });
 
 export function AppHome() {
-  const { claims, hasCapability } = useApp();
+  const { claims, hasPermission } = useApp();
   const pages = appPages([sdr], claims?.appKey).filter(
-    (page) => !page.capability || hasCapability(page.capability),
+    (page) => !page.permission || hasPermission(page.permission),
   );
 
   return (

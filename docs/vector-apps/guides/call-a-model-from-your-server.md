@@ -53,7 +53,7 @@ import { defineApp } from '@vectoragents/vs-apps';
 // added-next-line
 import { leadSummarySlot } from './lead-summary-slot';
 
-export const CAPABILITY = 'hello:view';
+export const PERMISSION = 'hello:view';
 ```
 
 Then add `resources` to the object that `defineApp` takes.
@@ -156,7 +156,7 @@ The controller reads the caller with `appCaller`, as in [open a route and read t
 
 ```ts title="server/src/lead-summary.controller.ts"
 import { Controller, Get, HttpException, Req } from '@nestjs/common';
-import { appCaller, RequireCapability, SpaceAiService, type AppRequest } from '@vectoragents/vs-apps/nest';
+import { appCaller, RequirePermission, SpaceAiService, type AppRequest } from '@vectoragents/vs-apps/nest';
 import { SpaceActionError } from '@vectoragents/vs-apps/server';
 import { completePrompt } from './complete-prompt';
 
@@ -165,7 +165,7 @@ export class LeadSummaryController {
   constructor(private readonly ai: SpaceAiService) {}
 
   @Get()
-  @RequireCapability('lead:manage')
+  @RequirePermission('lead:manage')
   async summary(@Req() req: AppRequest) {
     const { claims } = appCaller(req);
     try {
@@ -191,12 +191,12 @@ The platform reads `SPACE_API_URL` from `.env`, which Part 2 of the quickstart s
 In `server/src/main.ts`, import `SpaceActionError` next to `AppAuthError`, and import `summarizeLead` from `./lead-summary`.
 
 ```ts title="server/src/main.ts" showLineNumbers=3 excerpt
-import { CAPABILITY } from '@hello-app/shared';
+import { PERMISSION } from '@hello-app/shared';
 // removed-next-line
 import { AppAuthError } from '@vectoragents/vs-apps/server';
 // added-next-line
 import { AppAuthError, SpaceActionError } from '@vectoragents/vs-apps/server';
-import { requireCapability } from './auth';
+import { requirePermission } from './auth';
 // added-next-line
 import { summarizeLead } from './lead-summary';
 import { platform } from './platform';
@@ -209,9 +209,9 @@ Then add the route inside the `try`, after the `platform.fetch` check and before
     const handled = await platform.fetch(toFetchRequest(req));
     if (handled) return await sendFetchResponse(res, handled);
     // added-next-line
-    if (pathname === '/api/summary') return send(res, 200, await summarizeLead(platform, await requireCapability(req, 'lead:manage')));
+    if (pathname === '/api/summary') return send(res, 200, await summarizeLead(platform, await requirePermission(req, 'lead:manage')));
     if (pathname !== '/api/hello') return send(res, 404, { error: 'Not found' });
-    const claims = await requireCapability(req, CAPABILITY);
+    const claims = await requirePermission(req, PERMISSION);
     send(res, 200, { sub: claims.sub, spaceId: claims.spaceId });
   } catch (error) {
     if (error instanceof AppAuthError) return send(res, error.status, { error: error.message });
@@ -225,14 +225,14 @@ Then add the route inside the `try`, after the `platform.fetch` check and before
 In `server/src/app.module.ts`, import `LeadSummaryController` from `./lead-summary.controller`, then add it to the `controllers` array next to `HelloController`. `AppPlatformModule` is global, so `AppModule` needs no import to inject `SpaceAiService`.
 
 ```ts title="server/src/app.module.ts" showLineNumbers=3 excerpt
-import { MemoryCredentialStore } from './credential-store';
+import type { AppSigningKeys } from '@vectoragents/vs-apps/server';
 import { HelloController } from './hello.controller';
 // added-next-line
 import { LeadSummaryController } from './lead-summary.controller';
 import { manifests } from './manifests';
 ```
 
-```ts title="server/src/app.module.ts" showLineNumbers=21 excerpt
+```ts title="server/src/app.module.ts" showLineNumbers=32 excerpt
     }),
   ],
   // removed-next-line
@@ -307,7 +307,7 @@ import { fetchHello } from './token';
 import { fetchHello, fetchSummary } from './token';
 
 export function HelloPage() {
-  const { claims, capabilities } = useApp();
+  const { claims, permissions } = useApp();
   const [serverSaw, setServerSaw] = useState<string>('waiting for the server');
   // added-next-line
   const [summary, setSummary] = useState<string>('waiting for the model');

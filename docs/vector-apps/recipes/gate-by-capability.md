@@ -40,7 +40,7 @@ The `leads` app page in the start has no `capability`. Add it.
       label: 'Leads',
       path: '/leads',
       // added-next-line
-      capability: 'lead:manage',
+      permission: 'lead:manage',
     },
 ```
 
@@ -51,14 +51,14 @@ The `leads` app page in the start has no `capability`. Add it.
 
 ```tsx title="client/src/LeadsPage.tsx"
 // added-next-line
-import { RequireCapability } from '@vectoragents/vs-apps/react';
+import { RequirePermission } from '@vectoragents/vs-apps/react';
 
 export function LeadsPage() {
   return (
     // added-start
-    <RequireCapability
-      capability="lead:manage"
-      fallback={(capability) => <p>Ask a space admin to grant {capability}.</p>}
+    <RequirePermission
+      permission="lead:manage"
+      fallback={(permission) => <p>Ask a space admin to grant {permission}.</p>}
     >
       {/* added-end */}
       {/* removed-start */}
@@ -72,7 +72,7 @@ export function LeadsPage() {
         <h1>Leads</h1>
         <p>No leads yet.</p>
       </main>
-    </RequireCapability>
+    </RequirePermission>
     // added-end
   );
 }
@@ -99,9 +99,9 @@ export function listLeads(claims: UserTokenClaims) {
 In `server/src/main.ts`, import `listLeads`.
 
 ```ts title="server/src/main.ts" showLineNumbers=3 excerpt
-import { CAPABILITY } from '@hello-app/shared';
+import { PERMISSION } from '@hello-app/shared';
 import { AppAuthError } from '@vectoragents/vs-apps/server';
-import { requireCapability } from './auth';
+import { requirePermission } from './auth';
 // added-next-line
 import { listLeads } from './leads';
 import { platform } from './platform';
@@ -114,9 +114,9 @@ Then add the route inside the `try`, after the `platform.fetch` check and before
     const handled = await platform.fetch(toFetchRequest(req));
     if (handled) return await sendFetchResponse(res, handled);
     // added-next-line
-    if (pathname === '/api/leads') return send(res, 200, listLeads(await requireCapability(req, 'lead:manage')));
+    if (pathname === '/api/leads') return send(res, 200, listLeads(await requirePermission(req, 'lead:manage')));
     if (pathname !== '/api/hello') return send(res, 404, { error: 'Not found' });
-    const claims = await requireCapability(req, CAPABILITY);
+    const claims = await requirePermission(req, PERMISSION);
     send(res, 200, { sub: claims.sub, spaceId: claims.spaceId });
 ```
 <!-- /flavour -->
@@ -125,13 +125,13 @@ The `RequireCapability` decorator refuses a token that lacks the capability, and
 
 ```ts title="server/src/leads.controller.ts"
 import { Controller, Get } from '@nestjs/common';
-import { CurrentUser, RequireCapability } from '@vectoragents/vs-apps/nest';
+import { CurrentUser, RequirePermission } from '@vectoragents/vs-apps/nest';
 import type { UserTokenClaims } from '@vectoragents/vs-apps';
 
 @Controller('leads')
 export class LeadsController {
   @Get()
-  @RequireCapability('lead:manage')
+  @RequirePermission('lead:manage')
   list(@CurrentUser() user: UserTokenClaims) {
     return { spaceId: user.spaceId, leads: [] };
   }
@@ -141,7 +141,7 @@ export class LeadsController {
 Register `LeadsController` in the `controllers` array of `AppModule`, in `server/src/app.module.ts`. First import it.
 
 ```ts title="server/src/app.module.ts" showLineNumbers=3 excerpt
-import { MemoryCredentialStore } from './credential-store';
+import type { AppSigningKeys } from '@vectoragents/vs-apps/server';
 import { HelloController } from './hello.controller';
 // added-next-line
 import { LeadsController } from './leads.controller';
@@ -150,7 +150,7 @@ import { manifests } from './manifests';
 
 Then add it next to `HelloController`.
 
-```ts title="server/src/app.module.ts" showLineNumbers=21 excerpt
+```ts title="server/src/app.module.ts" showLineNumbers=32 excerpt
     }),
   ],
   // removed-next-line
@@ -169,16 +169,16 @@ Each app page that repeats `fallback` can drift from the others. Wrap `RequireCa
 
 ```tsx title="client/src/GatedPage.tsx"
 import type { ReactNode } from 'react';
-import { RequireCapability } from '@vectoragents/vs-apps/react';
+import { RequirePermission } from '@vectoragents/vs-apps/react';
 
-export function GatedPage({ capability, children }: { capability: string; children: ReactNode }) {
+export function GatedPage({ permission, children }: { permission: string; children: ReactNode }) {
   return (
-    <RequireCapability
-      capability={capability}
+    <RequirePermission
+      permission={permission}
       fallback={(missing) => <p>Ask a space admin to grant {missing}.</p>}
     >
       {children}
-    </RequireCapability>
+    </RequirePermission>
   );
 }
 ```
@@ -187,26 +187,26 @@ In `client/src/LeadsPage.tsx`, replace the `RequireCapability` element with `Gat
 
 ```tsx title="client/src/LeadsPage.tsx" showLineNumbers=1 excerpt
 // removed-next-line
-import { RequireCapability } from '@vectoragents/vs-apps/react';
+import { RequirePermission } from '@vectoragents/vs-apps/react';
 // added-next-line
 import { GatedPage } from './GatedPage';
 
 export function LeadsPage() {
   return (
     // removed-start
-    <RequireCapability
-      capability="lead:manage"
-      fallback={(capability) => <p>Ask a space admin to grant {capability}.</p>}
+    <RequirePermission
+      permission="lead:manage"
+      fallback={(permission) => <p>Ask a space admin to grant {permission}.</p>}
     >
       {/* removed-end */}
     // added-next-line
-    <GatedPage capability="lead:manage">
+    <GatedPage permission="lead:manage">
       <main>
         <h1>Leads</h1>
         <p>No leads yet.</p>
       </main>
       {/* removed-next-line */}
-    </RequireCapability>
+    </RequirePermission>
       {/* added-next-line */}
     </GatedPage>
   );
@@ -222,7 +222,7 @@ The `icp` app page uses the same wrapper with its own capability. Add its entry 
       key: 'icp',
       label: 'ICP',
       path: '/icp',
-      capability: 'icp:manage',
+      permission: 'icp:manage',
     },
     // added-end
   ],
@@ -235,7 +235,7 @@ import { GatedPage } from './GatedPage';
 
 export function IcpPage() {
   return (
-    <GatedPage capability="icp:manage">
+    <GatedPage permission="icp:manage">
       <main>
         <h1>ICP</h1>
       </main>

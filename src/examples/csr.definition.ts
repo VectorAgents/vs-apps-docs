@@ -39,16 +39,16 @@ export const csrDefinition = defineApp({
   version: '0.1.0',
   defaultPageKey: 'csr-dashboard',
   pages: [
-    { key: 'csr-dashboard', label: 'Dashboard', path: '/csr/dashboard', capability: 'csr:read' },
+    { key: 'csr-dashboard', label: 'Dashboard', path: '/csr/dashboard', permission: 'csr:read' },
     {
       key: 'csr-conversations',
       label: 'Conversations',
       path: '/csr/conversations',
-      capability: 'csr:conversations:manage',
+      permission: 'csr:conversations:manage',
     },
-    { key: 'csr-teams', label: 'Support Teams', path: '/csr/teams', capability: 'csr:teams:manage' },
+    { key: 'csr-teams', label: 'Support Teams', path: '/csr/teams', permission: 'csr:teams:manage' },
   ],
-  capabilities: [
+  permissions: [
     { key: 'csr:read', label: 'View Customer Support', effect: 'read' },
     { key: 'csr:conversations:manage', label: 'Manage Conversations', effect: 'write' },
     { key: 'csr:teams:manage', label: 'Manage Support Teams', effect: 'write' },

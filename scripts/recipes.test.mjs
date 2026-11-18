@@ -238,15 +238,15 @@ test('gate-by-capability is a page for each pair and starts from the leads-app o
 
 test('gate-by-capability enforces lead:manage on GET /api/leads in each flavour', () => {
   const [node, nestTree] = gateTrees.map(({ text }) => snippetsOf(text));
-  assert.match(gateTrees[0].text, /requireCapability\(req, 'lead:manage'\)/);
-  assert.match(nestTree, /@RequireCapability\('lead:manage'\)/);
+  assert.match(gateTrees[0].text, /requirePermission\(req, 'lead:manage'\)/);
+  assert.match(nestTree, /@RequirePermission\('lead:manage'\)/);
   assert.match(nestTree, /@Controller\('leads'\)/);
-  assert.doesNotMatch(nestTree, /requireCapability\(req/);
-  assert.doesNotMatch(node, /@RequireCapability|@nestjs\//);
+  assert.doesNotMatch(nestTree, /requirePermission\(req/);
+  assert.doesNotMatch(node, /@RequirePermission|@nestjs\//);
   for (const { tree, text } of gateTrees) {
     assert.doesNotMatch(text, /<!--\s*\/?flavour/, tree);
     assert.match(text, /GET \/api\/leads/, tree);
-    assert.match(snippetsOf(text), /<RequireCapability\b/, tree);
+    assert.match(snippetsOf(text), /<RequirePermission\b/, tree);
   }
 });
 
@@ -265,7 +265,7 @@ test('gate-by-capability shares one fallback across at least two pages and ends 
   assert.ok(share, 'a step named "Share one fallback across app pages"');
   assert.equal([...share.matchAll(/^```tsx title="client\/src\/\w+\.tsx"/gm)].length >= 2, true);
   assert.ok([...gate.text.matchAll(/<GatedPage\b/g)].length >= 2);
-  assert.equal([...gate.text.matchAll(/fallback=\{\((?:capability|missing)\) =>/g)].length, 3);
+  assert.equal([...gate.text.matchAll(/fallback=\{\((?:permission|missing)\) =>/g)].length, 3);
   assert.match(steps.at(-1), /^\d+\. Check both gates\n/);
   assert.match(steps.at(-1), /`403`/);
   assert.match(steps.at(-1), /Missing capability: lead:manage/);
@@ -424,7 +424,7 @@ test('add-page-and-capability links between pages without a reload through navig
 });
 
 test('add-page-and-capability writes plain pages and keeps SPACE_API_URL out of Prerequisites', () => {
-  assert.doesNotMatch(addPage.text, /RequireCapability|When you finish|pending review|Vector applies|ask Vector to/i);
+  assert.doesNotMatch(addPage.text, /RequirePermission|When you finish|pending review|Vector applies|ask Vector to/i);
   assert.doesNotMatch(section(addPage.text, 'Prerequisites'), /SPACE_API_URL/);
 });
 
@@ -492,7 +492,7 @@ test('the Node.js call-a-model tree asks the platform for the slot with the call
   assert.match(body, /import type \{[^}]*\bAppPlatform\b[^}]*\} from '@vectoragents\/vs-apps\/server'/);
   assert.match(body, /\bplatform\.ai\(claims\.appId, claims\.spaceId, 'lead-summary'\)/);
   assert.match(body, /\bkey: 'lead-summary'/);
-  assert.match(modelTrees.node, /requireCapability\(req, 'lead:manage'\)/);
+  assert.match(modelTrees.node, /requirePermission\(req, 'lead:manage'\)/);
   assert.match(modelTrees.node, /`POST \/api\/provision`/);
 });
 
@@ -574,7 +574,7 @@ test('the A2A guide checks the card and a refused call', () => {
 
 const trees = guides.find((r) => r.name === 'agent-action-trees');
 const filterNav = guides.find((r) => r.name === 'filter-navigation-by-capability');
-const sharedKeys = (text) => [...snippetsOf(text).matchAll(/\b(?:key|capability|pageId): '([^']+)'/g)].map(([, key]) => key);
+const sharedKeys = (text) => [...snippetsOf(text).matchAll(/\b(?:key|permission|pageId): '([^']+)'/g)].map(([, key]) => key);
 
 test('agent-action-trees uses the leads page and the shared action ids', () => {
   assert.deepEqual(sharedKeys(trees.text), ['leads']);
@@ -584,11 +584,11 @@ test('agent-action-trees uses the leads page and the shared action ids', () => {
 
 test('filter-navigation-by-capability keeps home gated by CAPABILITY and gates leads and icp with literals', () => {
   const code = removedLinesOut(snippetsOf(filterNav.text));
-  assert.match(code, /CAPABILITY = 'hello:view'/);
+  assert.match(code, /PERMISSION = 'hello:view'/);
   assert.match(code, /defaultPageKey: 'home'/);
-  assert.match(code, /key: 'home',[^}]*capability: CAPABILITY/);
-  assert.match(code, /key: 'leads',[^}]*capability: 'lead:manage'/);
-  assert.match(code, /key: 'icp',[^}]*capability: 'icp:manage'/);
+  assert.match(code, /key: 'home',[^}]*permission: PERMISSION/);
+  assert.match(code, /key: 'leads',[^}]*permission: 'lead:manage'/);
+  assert.match(code, /key: 'icp',[^}]*permission: 'icp:manage'/);
   assert.doesNotMatch(code, /removed-/);
   assert.match(code, /from '@hello-app\/shared'/);
   assert.match(filterNav.text, /add-page-and-capability\.md#react-3-link-between-app-pages-without-a-reload/);

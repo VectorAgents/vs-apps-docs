@@ -28,7 +28,7 @@ cd leads-guide
 ```ts title="shared/src/index.ts"
 import { defineApp } from '@vectoragents/vs-apps';
 
-export const CAPABILITY = 'hello:view';
+export const PERMISSION = 'hello:view';
 
 export const definition = defineApp({
   key: 'hello-app',
@@ -41,26 +41,26 @@ export const definition = defineApp({
       key: 'home',
       label: 'Home',
       path: '/',
-      capability: CAPABILITY,
+      permission: PERMISSION,
     },
     {
       key: 'leads',
       label: 'Leads',
       path: '/leads',
       // added-next-line
-      capability: 'lead:manage',
+      permission: 'lead:manage',
     },
     // added-start
     {
       key: 'icp',
       label: 'ICP',
       path: '/icp',
-      capability: 'icp:manage',
+      permission: 'icp:manage',
     },
     // added-end
   ],
-  capabilities: [
-    { key: CAPABILITY, label: 'View hello', effect: 'read' },
+  permissions: [
+    { key: PERMISSION, label: 'View hello', effect: 'read' },
     { key: 'lead:manage', label: 'Manage Leads', effect: 'write' },
     { key: 'icp:manage', label: 'Manage ICP', effect: 'write' },
   ],
@@ -77,9 +77,9 @@ import { useApp } from '@vectoragents/vs-apps/react';
 import { definition } from '@hello-app/shared';
 
 export function AppNav() {
-  const { claims, hasCapability } = useApp();
+  const { claims, hasPermission } = useApp();
   const pages = appPages([definition], claims?.appKey).filter(
-    (page) => !page.capability || hasCapability(page.capability),
+    (page) => !page.permission || hasPermission(page.permission),
   );
 
   return (

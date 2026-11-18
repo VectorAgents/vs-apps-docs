@@ -58,7 +58,7 @@ export class CallerController {
       sub: claims.sub,
       appKey: claims.appKey,
       spaceId: claims.spaceId,
-      capabilities: claims.capabilities,
+      permissions: claims.permissions,
     };
   }
 }
@@ -86,7 +86,7 @@ export class OpenRouteModule {}
 In `server/src/app.module.ts`, import `OpenRouteModule`.
 
 ```ts title="server/src/app.module.ts" showLineNumbers=3 excerpt
-import { MemoryCredentialStore } from './credential-store';
+import type { AppSigningKeys } from '@vectoragents/vs-apps/server';
 import { HelloController } from './hello.controller';
 import { manifests } from './manifests';
 // added-next-line
@@ -97,7 +97,7 @@ import { OpenRouteModule } from './open-route.module';
 
 Then add it to the `imports` array, after `AppPlatformModule.forRoot(...)`.
 
-```ts title="server/src/app.module.ts" showLineNumbers=21 excerpt
+```ts title="server/src/app.module.ts" showLineNumbers=32 excerpt
     }),
     // added-next-line
     OpenRouteModule,

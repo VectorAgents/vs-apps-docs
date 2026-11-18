@@ -26,10 +26,10 @@ export const definition = defineApp({
       key: 'home',
       label: 'Home',
       path: '/',
-      capability: 'hello:view', // gates the page; must match a key below
+      permission: 'hello:view', // gates the page; must match a key below
     },
   ],
-  capabilities: [
+  permissions: [
     { key: 'hello:view', label: 'View hello', effect: 'read' },
   ],
 });
@@ -164,8 +164,8 @@ const cap = { view: 'hello:view' } as const;
 export const definition = defineApp({
   key: 'hello-app',
   version: '0.1.0',
-  pages: [{ key: 'home', label: 'Home', path: '/', capability: cap.view }],
-  capabilities: [{ key: cap.view, label: 'View hello', effect: 'read' }],
+  pages: [{ key: 'home', label: 'Home', path: '/', permission: cap.view }],
+  permissions: [{ key: cap.view, label: 'View hello', effect: 'read' }],
 });
 ```
 
@@ -192,8 +192,8 @@ import { defineApp } from '@vectoragents/vs-apps';
 export const definition = defineApp({
   key: 'support-app',
   version: '0.1.0',
-  pages: [{ key: 'inbox', label: 'Inbox', path: '/inbox', capability: 'support:read' }],
-  capabilities: [{ key: 'support:read', label: 'Read inbox', effect: 'read' }],
+  pages: [{ key: 'inbox', label: 'Inbox', path: '/inbox', permission: 'support:read' }],
+  permissions: [{ key: 'support:read', label: 'Read inbox', effect: 'read' }],
   resources: {
     modules: [{ key: 'knowledge', required: false }],
     models: [

@@ -75,7 +75,7 @@ interface AgentEndpointDef {
   description: string;
   approvalRequired: boolean;
   paramsJsonSchema?: Record<string, unknown>;
-  capability?: string;
+  permission?: string;
 }
 ```
 
@@ -110,7 +110,7 @@ const leads = defineApp({
   key: 'leads',
   version: '0.1.0',
   pages: [{ key: 'home', label: 'Home', path: '/' }],
-  capabilities: [],
+  permissions: [],
 });
 
 export const manifests = buildManifests([leads], {

@@ -8,14 +8,14 @@ const base = {
   key: 'demo-app',
   version: '0.1.0',
   pages: [{ key: 'home', label: 'Home', path: '/' }],
-  capabilities: [{ key: 'demo:view', label: 'View', effect: 'read' }],
+  permissions: [{ key: 'demo:view', label: 'View', effect: 'read' }],
 };
 
 const place = {
   key: (v) => ({ ...base, key: v }),
   'pages[].key': (v) => ({ ...base, pages: [{ key: v, label: 'Home', path: '/' }] }),
-  'pages[].capability': (v) => ({ ...base, pages: [{ key: 'home', label: 'Home', path: '/', capability: v }] }),
-  'capabilities[].key': (v) => ({ ...base, capabilities: [{ key: v, label: 'View', effect: 'read' }] }),
+  'pages[].capability': (v) => ({ ...base, pages: [{ key: 'home', label: 'Home', path: '/', permission: v }] }),
+  'capabilities[].key': (v) => ({ ...base, permissions: [{ key: v, label: 'View', effect: 'read' }] }),
   'resources.connectors[].key': (v) => ({
     ...base,
     resources: { connectors: [{ key: v, provider: 'REST', required: false }] },

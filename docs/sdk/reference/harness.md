@@ -91,7 +91,7 @@ A `user` request has these fields:
 | `appKey` | string | required | The app key. |
 | `spaceId` | number | required | The space id. |
 | `organizationId` | number | required | The organization id. |
-| `capabilities` | string array | required | The capability keys the token holds. |
+| `permissions` | string array | required | The capability keys the token holds. |
 | `name` | string | optional | The display name. |
 | `picture` | string | optional | The picture URL. |
 | `ttlSeconds` | number | optional | The lifetime in seconds, 300 by default for a user token. |
@@ -117,24 +117,10 @@ Returns status `200` and the public key set of the dev issuer. The set verifies 
 
 `createAppPlatform` serves the three dev routes, the manifest route and the other routes that Vector Space calls. It serves the dev routes once it holds a dev issuer. `createDevIssuer` signs and verifies tokens, so one object does both. It stores nothing and makes a new key on each call, so a restart makes the tokens of the open harness invalid. To keep them valid, save the `privateKey` of the issuer and pass it back to `createDevIssuer`.
 
-The platform also needs an `AppCredentialStore`, where it keeps the secret that Vector Space pushes when it adds the app. The store in the next snippet keeps the secrets in memory. The platform answers Fetch requests, so `handlePlatformRoute` bridges a `node:http` request to one. It returns `true` when the platform answered the request, and `false` for every other request.
+The platform answers Fetch requests, so `handlePlatformRoute` bridges a `node:http` request to one. It returns `true` when the platform answered the request, and `false` for every other request.
 
 ```ts title="server/src/platform.ts"
-import { createAppPlatform, createDevIssuer, type AppCredentialStore, type AppManifests } from '@vectoragents/vs-apps/server';
-
-const secrets = new Map<string, string>();
-
-const credentialStore: AppCredentialStore = {
-  async upsert(appId, spaceId, secret) {
-    secrets.set(`${appId}:${spaceId}`, secret);
-  },
-  async remove(appId, spaceId) {
-    secrets.delete(`${appId}:${spaceId}`);
-  },
-  async get(appId, spaceId) {
-    return secrets.get(`${appId}:${spaceId}`) ?? null;
-  },
-};
+import { createAppPlatform, createDevIssuer, type AppManifests } from '@vectoragents/vs-apps/server';
 
 export async function createPlatform(manifests: AppManifests) {
   return createAppPlatform({
@@ -145,7 +131,6 @@ export async function createPlatform(manifests: AppManifests) {
       allowedParentOrigin: process.env.ALLOWED_PARENT_ORIGIN ?? '',
     },
     manifests,
-    credentialStore,
     devIssuer: process.env.VA_DEV_ISSUER === 'true' ? await createDevIssuer() : undefined,
   });
 }

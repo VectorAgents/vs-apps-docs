@@ -101,7 +101,7 @@ sequenceDiagram
   C->>D: (3) GET /api/__dev/jwks.json, verify (display only)
   C->>S: (4) Authorization: Bearer token
   S->>D: (5) verify
-  S->>S: (6) assertCapability
+  S->>S: (6) assertPermission
   S-->>C: response
 ```
 
@@ -113,7 +113,7 @@ Step (3) of the harness diagram produces `Verified in the browser`. Steps (5) an
 
 ```text
 Verified in the browser: user dev-user in space 1.
-Capabilities: hello:view
+Permissions: hello:view
 Verified on the server: space 1, user dev-user
 ```
 
@@ -141,7 +141,6 @@ hello-app/
 ├── server/
 │   └── src/
 │       ├── auth.ts
-│       ├── credential-store.ts
 │       ├── dev-issuer.ts
 │       ├── main.ts
 │       ├── manifests.ts
@@ -169,7 +168,6 @@ hello-app/
 ├── server/
 │   └── src/
 │       ├── app.module.ts
-│       ├── credential-store.ts
 │       ├── hello.controller.ts
 │       ├── main.ts
 │       └── manifests.ts
@@ -184,7 +182,7 @@ Open `shared/src/index.ts`, the [app definition](../sdk/glossary.md#app-definiti
 ```ts title="shared/src/index.ts" starter
 import { defineApp } from '@vectoragents/vs-apps';
 
-export const CAPABILITY = 'hello:view';
+export const PERMISSION = 'hello:view';
 
 export const definition = defineApp({
   key: 'hello-app',
@@ -195,10 +193,10 @@ export const definition = defineApp({
       key: 'home',
       label: 'Home',
       path: '/',
-      capability: CAPABILITY,
+      permission: PERMISSION,
     },
   ],
-  capabilities: [{ key: CAPABILITY, label: 'View hello', effect: 'read' }],
+  permissions: [{ key: PERMISSION, label: 'View hello', effect: 'read' }],
 });
 ```
 
@@ -211,12 +209,12 @@ Open `server/src/auth.ts`. It holds the check that protected routes run. `readBe
 
 ```ts title="server/src/auth.ts" starter
 import type { IncomingMessage } from 'node:http';
-import { assertCapability, readBearer, verifyUserToken } from '@vectoragents/vs-apps/server';
+import { assertPermission, readBearer, verifyUserToken } from '@vectoragents/vs-apps/server';
 import { platform } from './platform';
 
-export async function requireCapability(req: IncomingMessage, capability: string) {
+export async function requirePermission(req: IncomingMessage, permission: string) {
   const claims = await verifyUserToken(platform.verifier, readBearer(req.headers));
-  assertCapability(claims, capability);
+  assertPermission(claims, permission);
   return claims;
 }
 ```
@@ -227,7 +225,7 @@ The platform answers Fetch requests, so `main.ts` bridges each `node:http` reque
     const handled = await platform.fetch(toFetchRequest(req));
     if (handled) return await sendFetchResponse(res, handled);
     if (pathname !== '/api/hello') return send(res, 404, { error: 'Not found' });
-    const claims = await requireCapability(req, CAPABILITY);
+    const claims = await requirePermission(req, PERMISSION);
     send(res, 200, { sub: claims.sub, spaceId: claims.spaceId });
 ```
 
@@ -240,14 +238,14 @@ The `RequireCapability` decorator refuses a token that lacks the capability, in 
 
 ```ts title="server/src/hello.controller.ts" starter
 import { Controller, Get } from '@nestjs/common';
-import { CurrentUser, RequireCapability } from '@vectoragents/vs-apps/nest';
+import { CurrentUser, RequirePermission } from '@vectoragents/vs-apps/nest';
 import type { UserTokenClaims } from '@vectoragents/vs-apps';
-import { CAPABILITY } from '@hello-app/shared';
+import { PERMISSION } from '@hello-app/shared';
 
 @Controller('hello')
 export class HelloController {
   @Get()
-  @RequireCapability(CAPABILITY)
+  @RequirePermission(PERMISSION)
   hello(@CurrentUser() user: UserTokenClaims) {
     return { sub: user.sub, spaceId: user.spaceId };
   }
@@ -266,63 +264,25 @@ import { readExtractedAgentCatalog } from '@vectoragents/vs-apps/extract';
 import { buildManifests } from '@vectoragents/vs-apps/server';
 import { definition } from '@hello-app/shared';
 
+// Manifest URLs are public absolute URLs, so an empty base would publish broken ones.
+function requirePublicBaseUrl(): string {
+  const url = process.env.PUBLIC_BASE_URL;
+  if (!url) {
+    throw new Error('PUBLIC_BASE_URL is not set. It must be the public absolute URL of this server.');
+  }
+  return url;
+}
+
 export const manifests = buildManifests([definition], {
   catalog: readExtractedAgentCatalog('agent-catalog.json'),
-  publicBaseUrl: process.env.PUBLIC_BASE_URL ?? '',
+  publicBaseUrl: requirePublicBaseUrl(),
 });
 ```
 
 `readExtractedAgentCatalog` reads `agent-catalog.json`, the [agent catalog](../sdk/glossary.md#agent-catalog) file, and `catalog` takes its content. The Hello app has no app page descriptions or agent actions. The starter ships it empty.
 
 <!-- flavour node -->
-The server runs one app platform, built with `createAppPlatform` from `@vectoragents/vs-apps/server`. In harness mode it also serves the dev routes. The platform needs three things from you: the origins and key set it trusts, the manifests, and a credential store. It keeps the secret that Vector Space sends at provisioning in the store. The `MemoryCredentialStore` in the next snippet keeps the secrets in memory and loses them on restart, so implement `AppCredentialStore` over your own storage before production.
-
-```ts title="server/src/credential-store.ts" starter
-import type { AppCredentialStore } from '@vectoragents/vs-apps/server';
-
-/** Keeps secrets in memory and loses them on restart. Implement AppCredentialStore over real storage before production. */
-export class MemoryCredentialStore implements AppCredentialStore {
-  private readonly secrets = new Map<string, string>();
-
-  async upsert(appId: string, spaceId: number, secret: string): Promise<void> {
-    this.secrets.set(`${appId}:${spaceId}`, secret);
-  }
-
-  async remove(appId: string, spaceId: number): Promise<void> {
-    this.secrets.delete(`${appId}:${spaceId}`);
-  }
-
-  async get(appId: string, spaceId: number): Promise<string | null> {
-    return this.secrets.get(`${appId}:${spaceId}`) ?? null;
-  }
-}
-```
-<!-- /flavour -->
-<!-- flavour nest -->
-Open `server/src/credential-store.ts`. The module stores the secret that Vector Space sends in the credential store you pass to `forRoot`. The `MemoryCredentialStore` in the next snippet keeps the secrets in memory and loses them on restart, so implement `AppCredentialStore` over your own storage before production.
-
-```ts title="server/src/credential-store.ts" starter
-import { Injectable } from '@nestjs/common';
-import type { AppCredentialStore } from '@vectoragents/vs-apps/server';
-
-/** Keeps secrets in memory and loses them on restart. Implement AppCredentialStore over real storage before production. */
-@Injectable()
-export class MemoryCredentialStore implements AppCredentialStore {
-  private readonly secrets = new Map<string, string>();
-
-  async upsert(appId: string, spaceId: number, secret: string): Promise<void> {
-    this.secrets.set(`${appId}:${spaceId}`, secret);
-  }
-
-  async remove(appId: string, spaceId: number): Promise<void> {
-    this.secrets.delete(`${appId}:${spaceId}`);
-  }
-
-  async get(appId: string, spaceId: number): Promise<string | null> {
-    return this.secrets.get(`${appId}:${spaceId}`) ?? null;
-  }
-}
-```
+The server runs one app platform, built with `createAppPlatform` from `@vectoragents/vs-apps/server`. In harness mode it also serves the dev routes.
 <!-- /flavour -->
 
 After a restart the store holds no [service secret](./glossary.md#service-secret). A call that needs it fails with status `401` and the message `No service secret stored for app <appId> space <n> — rotate the binding secret on Vector Space to re-push it`. A space admin rotates the secret of the [binding](./glossary.md#binding), and Vector Space pushes a new secret to your server. The rotation keeps the model choice and the shares. If you cannot rotate the secret, remove the app from the space and add it again in [step 4 of Part 2](#4-add-the-app-to-a-space).
@@ -343,9 +303,9 @@ export const platform = createAppPlatform({
     allowedParentOrigin: process.env.ALLOWED_PARENT_ORIGIN ?? '',
   },
   manifests,
-  credentialStore: new MemoryCredentialStore(),
+  signingKeys: devIssuer ? undefined : readSigningKeys(),
   // Harness mode has no Space JWKS: the platform verifies tokens it mints itself. dev:space leaves VA_DEV_ISSUER unset.
-  devIssuer: process.env.VA_DEV_ISSUER === 'true' ? await loadDevIssuer() : undefined,
+  devIssuer: devIssuer ? await loadDevIssuer() : undefined,
 });
 ```
 
@@ -363,9 +323,21 @@ The module takes its settings from the environment. The `devIssuer` option turns
 ```ts title="server/src/app.module.ts" starter
 import { Module } from '@nestjs/common';
 import { AppPlatformModule } from '@vectoragents/vs-apps/nest';
-import { MemoryCredentialStore } from './credential-store';
+import type { AppSigningKeys } from '@vectoragents/vs-apps/server';
 import { HelloController } from './hello.controller';
 import { manifests } from './manifests';
+
+const devIssuer = process.env.VA_DEV_ISSUER === 'true';
+
+// An empty value counts as unset: `--env-file=.env` passes `APP_SIGNING_KEY=` as an empty string.
+function readSigningKeys(): AppSigningKeys {
+  const raw = process.env.APP_SIGNING_KEY?.trim();
+  if (raw) return { signing: JSON.parse(raw) };
+  throw new Error(
+    'APP_SIGNING_KEY is not set. Set it to the private key as a JWK JSON string, with a "kid". ' +
+      'Make one with the node -e command in the README, or run npm run dev:space, which makes a key for you.',
+  );
+}
 
 @Module({
   imports: [
@@ -377,9 +349,9 @@ import { manifests } from './manifests';
         allowedParentOrigin: process.env.ALLOWED_PARENT_ORIGIN ?? '',
       }),
       manifests,
-      credentialStore: MemoryCredentialStore,
+      signingKeys: devIssuer ? undefined : readSigningKeys,
       // Harness mode has no Space JWKS: the module mints its own tokens. dev:space leaves VA_DEV_ISSUER unset.
-      devIssuer: process.env.VA_DEV_ISSUER === 'true',
+      devIssuer,
     }),
   ],
   controllers: [HelloController],
@@ -457,12 +429,12 @@ The app page reads the claims with `useApp`. `RequireCapability` hides the conte
 
 ```tsx title="client/src/HelloPage.tsx" starter
 import { useEffect, useState } from 'react';
-import { CAPABILITY } from '@hello-app/shared';
-import { RequireCapability, useApp } from '@vectoragents/vs-apps/react';
+import { PERMISSION } from '@hello-app/shared';
+import { RequirePermission, useApp } from '@vectoragents/vs-apps/react';
 import { fetchHello } from './token';
 
 export function HelloPage() {
-  const { claims, capabilities } = useApp();
+  const { claims, permissions } = useApp();
   const [serverSaw, setServerSaw] = useState<string>('waiting for the server');
 
   useEffect(() => {
@@ -472,14 +444,14 @@ export function HelloPage() {
   }, []);
 
   return (
-    <RequireCapability capability={CAPABILITY} fallback={<p>You do not hold {CAPABILITY}.</p>}>
+    <RequirePermission permission={PERMISSION} fallback={<p>You do not hold {PERMISSION}.</p>}>
       <main>
         <h1>Hello from a Vector app</h1>
         <p>Verified in the browser: user {claims?.sub ?? 'unknown'} in space {claims?.spaceId}.</p>
-        <p>Capabilities: {Array.from(capabilities).join(', ')}</p>
+        <p>Permissions: {Array.from(permissions).join(', ')}</p>
         <p>Verified on the server: {serverSaw}</p>
       </main>
-    </RequireCapability>
+    </RequirePermission>
   );
 }
 ```
@@ -608,7 +580,7 @@ sequenceDiagram
   C->>K: (4) fetch keys, verify (display only)
   C->>S: (5) Authorization: Bearer token
   S->>K: (6) fetch keys, verify
-  S->>S: (7) assertCapability
+  S->>S: (7) assertPermission
   S-->>C: response
 ```
 
@@ -620,7 +592,7 @@ Vector Space mints the token and posts it to your client. Your client sends it t
 
 ```text
 Verified in the browser: user <id> in space <id>.
-Capabilities: hello:view
+Permissions: hello:view
 Verified on the server: space <id>, user <id>
 ```
 

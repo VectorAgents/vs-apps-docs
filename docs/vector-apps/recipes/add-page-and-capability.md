@@ -25,13 +25,13 @@ import { defineApp } from '@vectoragents/vs-apps';
 // added-next-line
 import { defineApp, type AppPageDef } from '@vectoragents/vs-apps';
 
-export const CAPABILITY = 'hello:view';
+export const PERMISSION = 'hello:view';
 
 // added-start
 export const pages = [
-  { key: 'home', label: 'Home', path: '/', capability: CAPABILITY },
-  { key: 'leads', label: 'Leads', path: '/leads', capability: 'lead:manage' },
-  { key: 'icp', label: 'ICP Library', path: '/icp', capability: 'icp:manage' },
+  { key: 'home', label: 'Home', path: '/', permission: PERMISSION },
+  { key: 'leads', label: 'Leads', path: '/leads', permission: 'lead:manage' },
+  { key: 'icp', label: 'ICP Library', path: '/icp', permission: 'icp:manage' },
 ] as const satisfies readonly AppPageDef[];
 
 export type PagePath = (typeof pages)[number]['path'];
@@ -50,15 +50,15 @@ export const definition = defineApp({
       key: 'home',
       label: 'Home',
       path: '/',
-      capability: CAPABILITY,
+      permission: PERMISSION,
     },
   ],
-  capabilities: [{ key: CAPABILITY, label: 'View hello', effect: 'read' }],
+  permissions: [{ key: PERMISSION, label: 'View hello', effect: 'read' }],
   // removed-end
   // added-start
   pages: pages.slice(),
-  capabilities: [
-    { key: CAPABILITY, label: 'View hello', effect: 'read' },
+  permissions: [
+    { key: PERMISSION, label: 'View hello', effect: 'read' },
     { key: 'lead:manage', label: 'Manage Leads', effect: 'write' },
     { key: 'icp:manage', label: 'Manage ICPs', effect: 'write' },
   ],
@@ -132,9 +132,9 @@ import { useApp } from '@vectoragents/vs-apps/react';
 import { navigate } from './router';
 
 export function Nav() {
-  const { claims, hasCapability } = useApp();
+  const { claims, hasPermission } = useApp();
   const pages = appPages([definition], claims?.appKey).filter(
-    (page) => !page.capability || hasCapability(page.capability),
+    (page) => !page.permission || hasPermission(page.permission),
   );
 
   return (

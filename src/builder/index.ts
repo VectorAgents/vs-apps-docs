@@ -164,7 +164,7 @@ export function validateDraft(draft: Draft): { errors: Issue[]; warnings: Issue[
 const nonEmpty = <T>(value: T[] | undefined): T[] | undefined => (value && value.length > 0 ? value : undefined);
 const blank = (value: string | undefined): string | undefined => (value ? value : undefined);
 
-/** Drops empty optional fields and nests `resources` only when a slot exists. */
+/** Drops empty optional fields and nests `resources` only when a slot exists. The draft keeps the field names of the field-rules table; the output uses the SDK names. */
 export function toDefinition(draft: Draft): Record<string, unknown> {
   const { modules, models, connectors } = draft.resources;
   const resources = {
@@ -186,8 +186,8 @@ export function toDefinition(draft: Draft): Record<string, unknown> {
     name: blank(draft.name),
     version: draft.version,
     defaultPageKey: blank(draft.defaultPageKey),
-    pages: draft.pages.map((p) => ({ ...p, capability: blank(p.capability) })),
-    capabilities: draft.capabilities.map((c) => ({ ...c, description: blank(c.description) })),
+    pages: draft.pages.map(({ capability, ...p }) => ({ ...p, permission: blank(capability) })),
+    permissions: draft.capabilities.map((c) => ({ ...c, description: blank(c.description) })),
     resources: hasResources ? resources : undefined,
   }) as Record<string, unknown>;
 }
