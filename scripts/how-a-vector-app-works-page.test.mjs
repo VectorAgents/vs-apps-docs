@@ -96,11 +96,15 @@ test('the page follows the voice checks', () => assert.deepEqual(voiceViolations
 
 test('a sentence carries at most one glossary link', () => assert.deepEqual(glossaryLinkViolations(text), []));
 
-test('the page opens with the definition of an app, then the token that its server checks, without the origin and iframe mechanics', () => {
-  const [first, second] = bodyOf(text).replace(/^import .*\n/gm, '').trim().split('\n')[0].split(/(?<=\.)\s+/);
+test('the page opens with the definition of an app, the token that its server checks and who does each step, without the origin and iframe mechanics', () => {
+  const sentences = bodyOf(text).replace(/^import .*\n/gm, '').trim().split('\n')[0].split(/(?<=\.)\s+/);
+  const [first, second, third, fourth] = sentences;
+  assert.equal(sentences.length, 4);
   assert.match(first, /^An \[app\]\(\.\/glossary\.md#app\) is a web app that you host and that a space shows to its members\.$/);
-  assert.match(second, /^Vector Space signs a token for each member who opens it, and your server checks that token before it answers\.$/);
-  assert.doesNotMatch(first + second, /origin|iframe/);
+  assert.match(second, /^Vector Space signs a token for each member who opens it\.$/);
+  assert.match(third, /^Your server checks that token before it answers\.$/);
+  assert.match(fourth, /^You build and update the app, staff register it, and a space admin adds it to a space and shares it\.$/);
+  assert.doesNotMatch(sentences.join(' '), /origin|iframe/);
 });
 
 test('the page names no placeholder example app and no master doc', () => {

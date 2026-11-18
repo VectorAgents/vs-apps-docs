@@ -80,7 +80,7 @@ Reader: someone who works in or judges a space and has not used Vector Space. Th
 
 Scope: `docs/vector-apps/why-vector-apps.md` and `docs/vector-apps/how-a-vector-app-works.md`. Their page tests run `glossaryLinkViolations` from `scripts/voice.mjs`: at most 1 glossary link per sentence (T1).
 
-- **X0 Lead.** The lead has two sentences. The first defines an app in plain terms: a web app that you host and that a space shows to its members. The second states one fact that the page covers and the first sentence does not. The two sentences never say the same thing twice. The origin and iframe mechanics belong in the parts section and the glossary, not in the lead. Each lead sentence carries at most 1 glossary link (T1).
+- **X0 Lead.** The lead has 2 to 4 sentences. The first defines an app in plain terms: a web app that you host and that a space shows to its members. Each later sentence states one fact that the page covers and no earlier sentence states. No two sentences say the same thing twice. The origin and iframe mechanics belong in the parts section and the glossary, not in the lead. Each lead sentence carries at most 1 glossary link (T1).
 - **X1 Benefit first.** A section, a list item and a paragraph open with what it gives the reader or what it lets the reader decide. The mechanism follows in the same sentence or the next. Bad: "You declare a model slot, and a space admin picks the model." Good: "Your app can call a model without holding an AI provider key. You declare a model slot, and a space admin picks the model."
 - **X2 Lead before a list.** A list in the body follows a sentence that states a fact the list does not. A heading is never followed directly by a list. "Where to go next" is exempt.
 
