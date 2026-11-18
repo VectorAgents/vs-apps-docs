@@ -259,8 +259,6 @@ Vector Space pushes the service secret to `POST /api/provision` when it adds the
 The starter's `MemoryCredentialStore` loses the secrets on restart. Before production, [implement `AppCredentialStore` over your own storage](../quickstart.md#4-verify-the-token-on-the-server). Until Vector Space pushes the secret again, `getClientConfig` fails with status `401`. The quickstart shows [how to recover after a restart](../quickstart.md#4-verify-the-token-on-the-server).
 <!-- /flavour -->
 
-**Role**: space admin. Refresh the manifest. Then open the configuration of the app in Vector Space and choose a model for **Lead summary**.
-
 <!-- flavour node -->
 A change to the manifest reaches Vector Space through [`pingManifests`](../../sdk/reference/server.md#pingmanifests) or a manual refresh in Vector Space.
 <!-- /flavour -->
@@ -268,7 +266,9 @@ A change to the manifest reaches Vector Space through [`pingManifests`](../../sd
 The module pings Vector Space with the new manifest at start.
 <!-- /flavour -->
 
-A manifest change waits until staff apply it, as [how a Vector app works](../how-a-vector-app-works.md#update) describes. If **Lead summary** is missing, ask [staff](../../vector-space/glossary.md#staff) to select **Check for updates** on your [app registration](../glossary.md#app-registration).
+A manifest change waits until staff apply it, as [how a Vector app works](../how-a-vector-app-works.md#update) describes. If **Lead summary** is missing, ask [staff](../../vector-space/glossary.md#staff) to select **Check for updates** on your [app registration](../glossary.md#app-registration), then **Review update** and **Apply**.
+
+**Role**: space admin. Open the configuration of the app in Vector Space and choose a model for **Lead summary**.
 
 The list of models holds a model only when the organization has an Anthropic provider. An [organization admin](../../vector-space/glossary.md#organization-admin) adds one in **Settings**, **Organization**, **Providers**, **AI**, **Add provider**, with an API key. Choose **Set** to save the model. Vector Space shows the toast `Model saved`.
 
@@ -325,7 +325,7 @@ export function HelloPage() {
       </main>
 ```
 
-Open the app page in the space as a member who holds `lead:manage`. A space admin grants it. The summary line reads `waiting for the model` for a few seconds. With no model set, it then reads `409` followed by a JSON body that holds the message `No model is set for the "lead-summary" slot on this space`. With a model set, it reads `200` followed by `{"summary":"..."}`.
+Open the app page in the space as a member whose [share](../../vector-space/glossary.md#share) gives `lead:manage`. **Can use** gives every capability the app declares. The summary line reads `waiting for the model` for a few seconds. With no model set, it then reads `409` followed by a JSON body that holds the message `No model is set for the "lead-summary" slot on this space`. With a model set, it reads `200` followed by `{"summary":"..."}`.
 
 ## Next steps
 

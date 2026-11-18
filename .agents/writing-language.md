@@ -31,7 +31,7 @@ Precedence: rules here win over any reference. A page-type section wins over the
 - **V8 State facts plainly.** Do not use words that only add force or ease: "bedrock", "absolute", "heavily governed", "seamless", "powerful", "robust", "simply", "just", "easily". State a guarantee as a plain fact. Bad: "Access is heavily governed." Good: "Every action needs a capability grant."
 - **V9 No contractions.** Write "do not", "it is", "cannot". A possessive "'s" is not a contraction. Applies to prose, tables, headings and code comments, not to string values in code or to starter comments the docs do not edit.
 - **V10 No page-describing sentences.** Do not write a sentence that describes the page ("This page shows...", "Below you will find..."). The first sentence defines the thing. On a quickstart, recipe or guide the opening paragraph still states the objective and the result (TU1, R2).
-- **V11 No filler.** A sentence carries a fact the next sentence does not. Test: delete the sentence. If no fact is lost, delete it. If it hides a fact, state the fact. Example: "Each one stays inside the rules of the space" on `why-vector-apps` is deleted because the four bullets after it state each rule.
+- **V11 No filler.** A sentence carries a fact the next sentence does not. Test: delete the sentence. If no fact is lost, delete it. If it hides a fact, state the fact. Example: "Several rules apply." before a list of the rules fails the test, because the list states every rule.
 
 ### Terms
 

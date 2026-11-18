@@ -273,8 +273,8 @@ test('conformance kit, app platform and app session entries name their SDK symbo
   assert.match(body('app session'), /`startAppSession`/);
 });
 
-test('app token maps the SDK name service token', () => {
-  assert.match(entries.find((e) => e.name === 'app token').body, /The SDK calls it a service token/);
+test('app token maps the SDK name service token on its Maps to line', () => {
+  assert.match(entries.find((e) => e.name === 'app token').body, /^- Maps to: .*The SDK calls the token a service token\.$/m);
 });
 
 test('every link to a glossary term resolves to a page and an anchor that exist', () => {

@@ -11,7 +11,7 @@ import DiagramControls from '@site/src/components/DiagramControls';
 
 - [ ] `npm` and [Node.js](https://nodejs.org/en/download) 22.12 or later.
 - [ ] A GitHub personal access token (classic) with the `read:packages` scope. [Create a classic token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic).
-- [ ] For Part 2 only: staff who register the app. Part 1 needs no staff.
+- [ ] For Part 2 only: staff who register the app.
 
 ## Part 1: Run the app locally
 
@@ -255,7 +255,9 @@ export class HelloController {
 ```
 <!-- /flavour -->
 
-The [SDK](../sdk/glossary.md#sdk) serves four more routes, and you write none of them. Your server serves the [manifest](./glossary.md#manifest) to Vector Space at `GET /api/manifest/hello-app`, and the provisioning token that Vector Space sends proves the request comes from Vector Space. `GET /api/client-config` tells the client which parent origin and which key set to trust. Vector Space calls `POST /api/provision` and `DELETE /api/deprovision` when a [space admin](../vector-space/glossary.md#space-admin) adds or removes the app. The harness run does not call these two routes.
+The [SDK](../sdk/glossary.md#sdk) serves four more routes that you do not write. Your server serves the [manifest](./glossary.md#manifest) to Vector Space at `GET /api/manifest/hello-app`. The provisioning token that Vector Space sends proves the request comes from Vector Space.
+
+`GET /api/client-config` tells the client which parent origin and which key set to trust. Vector Space calls `POST /api/provision` and `DELETE /api/deprovision` when a [space admin](../vector-space/glossary.md#space-admin) adds or removes the app. The harness run does not call these two routes.
 
 Open `server/src/manifests.ts`. `buildManifests` turns the definition into a manifest that tells Vector Space what your app contains.
 
@@ -349,7 +351,7 @@ export const platform = createAppPlatform({
 
 `dev-issuer.ts` creates the issuer. It keeps the key in a file in the OS temp directory. A restart of the dev runner then keeps the tokens of the open harness valid.
 
-The client configuration also returns `SPACE_API_URL` as `spaceApiUrl`, the Vector Space API address that your app page can use. When the server starts, `platform.pingManifests` sends the hash of each manifest it holds to Vector Space, which reads again a manifest that changed, so a restart refreshes the manifest in Vector Space. The platform skips the ping while it holds a dev issuer, so the harness run sends no ping.
+The client configuration also returns `SPACE_API_URL` as `spaceApiUrl`, the Vector Space API address that your app page can use. When the server starts, `platform.pingManifests` sends the hash of each manifest it holds to Vector Space. Vector Space reads again a manifest that changed, so a restart refreshes the manifest in Vector Space. The platform skips the ping while it holds a dev issuer, so the harness run sends no ping.
 
 ```ts title="server/src/main.ts" starter
 void platform.pingManifests();

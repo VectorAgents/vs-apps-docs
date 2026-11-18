@@ -127,7 +127,7 @@ for (const { tree, text } of trees) {
     for (const line of items) assert.match(line, /^- \[ \] /);
     assert.match(prerequisites, /`npm` and \[Node\.js\]\(https:\/\/nodejs\.org\/en\/download\) 22\.12 or later\./);
     assert.doesNotMatch(prerequisites, /20\.19|LTS/);
-    assert.match(prerequisites, /For Part 2 only: staff who register the app\. Part 1 needs no staff\./);
+    assert.match(prerequisites, /For Part 2 only: staff who register the app\./);
     assert.match(prerequisites, /`read:packages`/);
     assert.match(prerequisites, /\(classic\)/);
     assert.equal(count(/\[Node\.js\]\(/g), 1);

@@ -227,7 +227,7 @@ A manifest change waits until staff apply it, as [how a Vector app works](../how
 
 ### 5. Grant the capabilities
 
-The [space admin](../../vector-space/glossary.md#space-admin) who added the app skips this step, because a space admin holds every permission on the app row. Vector Space shows a capability as a permission.
+Vector Space shows a capability as a permission. The [space admin](../../vector-space/glossary.md#space-admin) who added the app skips this step, because a space admin holds every permission on the app row.
 
 For another member, open **Access** as in [step 5 of Part 2 of the quickstart](../quickstart.md#5-share-the-app-with-a-member) and keep **Can use**. **Can use** gives every capability the app declares.
 

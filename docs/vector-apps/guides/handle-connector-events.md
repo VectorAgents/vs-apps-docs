@@ -12,14 +12,13 @@ This guide covers a Nest.js server.
 ## Prerequisites
 
 - A GitHub package token in `GITHUB_PACKAGES_TOKEN`, as in [step 0 of the quickstart](../quickstart.md#0-set-up-access-to-the-package-registry). The scaffold command reads it.
-- The `leads-app` start. Scaffold it into a new folder, `leads-guide`, so it does not clash with the `leads-app` folder of a recipe. Work inside the new folder.
+- The `leads-app` start, added to a space and run with `npm run dev:space`, as in [Part 2 of the quickstart](../quickstart.md#part-2-add-the-app-to-a-space). Scaffold it into a new folder, `leads-guide`, so it does not clash with the `leads-app` folder of a recipe. Work inside the new folder.
 
 ```bash
 npm create @vectoragents/app leads-guide -- --client react --server nest --start leads-app
 cd leads-guide
 ```
 
-- The `leads-app` start, added to a space and run with `npm run dev:space`, as in [Part 2 of the quickstart](../quickstart.md#part-2-add-the-app-to-a-space).
 - A [space admin](../../vector-space/glossary.md#space-admin) of that space, and a key for an Apollo connector. Any text works as the key for the check in step 6.
 - Background: the [server primitives](../../sdk/reference/root.md) and the [connector slot fields](../../sdk/app-definition.md#resourcesconnectors) of the app definition.
 
@@ -78,7 +77,7 @@ A handler makes `eventsUrl` required in the manifest. `buildManifests` builds it
 
 A handler gets the event and no user token. To call the connector back, ask `SpaceS2sService` for an [app token](../glossary.md#app-token), then call `connectorExecute`. The call runs with the permissions of the app alone, not those of a member.
 
-`connectorExecute` returns a `ConnectorExecuteResult`: `status` (a number), `data`, and on failure `errorCode` and `retryAfterSeconds`. Read `status`: a result with `status` 400 or higher is a failed call. Vector Space refuses an unknown `operationId` with `404`, a connector that is not attached to the app with `403`, and a server error with `500`. For each refusal, `connectorExecute` throws a `SpaceActionError` that carries the status.
+`connectorExecute` returns a `ConnectorExecuteResult`: `status` (a number), `data`, and on failure `errorCode` and `retryAfterSeconds`. Read `status`: a result with `status` 400 or higher is a failed call. An unknown `operationId` is refused with `404`, and a connector that is not attached to the app is refused with `403`. Vector Space answers a server error with `500`. For each of these, `connectorExecute` throws a `SpaceActionError` that carries the status.
 
 ```ts title="server/src/support-reply.service.ts"
 import { Injectable } from '@nestjs/common';

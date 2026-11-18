@@ -14,6 +14,10 @@ const recipeNames = ['add-page-and-capability', 'gate-by-capability', 'read-app-
 const openRouteGuide = 'open-route-and-read-caller';
 const modelGuide = 'call-a-model-from-your-server';
 const connectorGuide = 'handle-connector-events';
+const RECOVERY_LINK = '../quickstart.md#4-verify-the-token-on-the-server';
+const escapeRegExp = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const RECOVERY_URL = new RegExp(`\\]\\(${escapeRegExp(RECOVERY_LINK)}\\)`);
+const IMPLEMENT_STORE_LINK = new RegExp(`\\[implement \`AppCredentialStore\` over your own storage\\]\\(${escapeRegExp(RECOVERY_LINK)}\\)`);
 const pagesIn = (dir) =>
   readdirSync(join(docs, dir))
     .filter((name) => name.endsWith('.md'))
@@ -316,10 +320,9 @@ test('the Nest.js Call Space tree shows SpaceActionsService, SpaceS2sService and
   assert.match(code, /from '@vectoragents\/vs-apps\/nest'/);
   const titles = [...callSpace.nest.matchAll(/^```tsx?[^\n]*title="([^"]+)"/gm)].map(([, title]) => title);
   for (const title of titles.filter((title) => !title.startsWith('client/'))) assert.match(title, /^server\//);
-  assert.deepEqual(
-    titles.filter((title) => title.startsWith('client/')),
-    ['client/src/token.ts', 'client/src/HelloPage.tsx', 'client/src/HelloPage.tsx', 'client/src/HelloPage.tsx'],
-  );
+  const [tokenFile, ...pageEdits] = titles.filter((title) => title.startsWith('client/'));
+  assert.equal(tokenFile, 'client/src/token.ts');
+  assert.deepEqual(pageEdits, Array(3).fill('client/src/HelloPage.tsx'));
 });
 
 test('the Node.js Call Space tree calls Space through the platform clients of the server subpath', () => {
@@ -333,8 +336,8 @@ test('the Node.js Call Space tree calls Space through the platform clients of th
 test('the Nest.js Call Space tree says the starter store loses the secrets on restart and links the one interface to implement', () => {
   const note = callSpace.nest.split('\n').filter((line) => /loses the secrets on restart/.test(line));
   assert.equal(note.length, 1);
-  assert.match(note[0], /\[implement `AppCredentialStore` over your own storage\]\(\.\.\/quickstart\.md#4-verify-the-token-on-the-server\)/);
-  assert.match(note[0], /`getToken` \[fails until you recover the secret\]\(\.\.\/quickstart\.md#4-verify-the-token-on-the-server\)/);
+  assert.match(note[0], IMPLEMENT_STORE_LINK);
+  assert.match(note[0], new RegExp(`\`getToken\` \\[fails until you recover the secret\\]\\(${escapeRegExp(RECOVERY_LINK)}\\)`));
   assert.doesNotMatch(callSpace.nest, /rotated in Vector Space/);
 });
 
@@ -420,11 +423,17 @@ test('add-page-and-capability links between pages without a reload through navig
   assert.match(addPage.text, /^export type PagePath = \(typeof pages\)\[number\]\['path'\];$/m);
 });
 
-test('add-page-and-capability writes plain pages, owns no filter prose and says staff apply a manifest change', () => {
+test('add-page-and-capability writes plain pages and keeps SPACE_API_URL out of Prerequisites', () => {
   assert.doesNotMatch(addPage.text, /RequireCapability|When you finish|pending review|Vector applies|ask Vector to/i);
   assert.doesNotMatch(section(addPage.text, 'Prerequisites'), /SPACE_API_URL/);
+});
+
+test('add-page-and-capability owns no filter prose and hands gating to gate-by-capability', () => {
   assert.match(addPage.text, /\]\(\.\/gate-by-capability\.md\)/);
   assert.match(section(addPage.text, 'Next steps'), /gate-by-capability\.md/);
+});
+
+test('add-page-and-capability says staff apply a manifest change', () => {
   assert.match(addPage.text, /waits until staff apply it/);
   assert.match(addPage.text, /\]\(\.\.\/how-a-vector-app-works\.md#update\)/);
   assert.match(addPage.text, /\[staff\]\(\.\.\/\.\.\/vector-space\/glossary\.md#staff\)/);
@@ -501,8 +510,8 @@ test('the call-a-model trees keep the in-memory credential store warning and lin
   for (const text of Object.values(modelTrees)) {
     const warning = text.split('\n').filter((line) => /`MemoryCredentialStore` loses the secrets on restart/.test(line));
     assert.equal(warning.length, 1);
-    assert.match(warning[0], /\[implement `AppCredentialStore` over your own storage\]\(\.\.\/quickstart\.md#4-verify-the-token-on-the-server\)/);
-    assert.match(warning[0], /\]\(\.\.\/quickstart\.md#4-verify-the-token-on-the-server\)\.$/);
+    assert.match(warning[0], IMPLEMENT_STORE_LINK);
+    assert.match(warning[0], new RegExp(`${RECOVERY_URL.source}\\.$`));
   }
 });
 
@@ -516,6 +525,7 @@ test('the call-a-model trees check the route in the app page with fetchSummary a
     assert.match(text, /`200` followed by `\{"summary":"\.\.\."\}`/);
     assert.match(text, /\*\*Role\*\*: developer\.[\s\S]*\*\*Role\*\*: space admin\./);
     assert.doesNotMatch(text, /add it again|Keep the service secret/);
+    assert.doesNotMatch(text, /grants it|Refresh the manifest\. Then/);
   }
 });
 
