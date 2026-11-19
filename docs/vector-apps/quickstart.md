@@ -13,6 +13,8 @@ import DiagramControls from '@site/src/components/DiagramControls';
 - [ ] A GitHub personal access token (classic) with the `read:packages` scope. [Create a classic token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic).
 - [ ] For Part 2 only: staff who register the app.
 
+These pages describe `@vectoragents/vs-apps` 0.7.0 and later. An app on 0.6.0 or an older version cannot sign in to a current Vector Space: upgrade the package.
+
 ## Part 1: Run the app locally
 
 ### 0. Set up access to the package registry
@@ -255,7 +257,7 @@ export class HelloController {
 
 The [SDK](../sdk/glossary.md#sdk) serves four more routes that you do not write. Your server serves the [manifest](./glossary.md#manifest) to Vector Space at `GET /api/manifest/hello-app`. The provisioning token that Vector Space sends proves the request comes from Vector Space.
 
-`GET /api/client-config` tells the client which parent origin and which key set to trust. Vector Space calls `POST /api/provision` and `DELETE /api/deprovision` when a [space admin](../vector-space/glossary.md#space-admin) adds or removes the app. The harness run does not call these two routes.
+`GET /api/jwks.json` serves the public half of your [signing key](./glossary.md#signing-key), at the address that the `jwksUrl` of the manifest names. `GET /api/client-config` tells the client which parent origin and which key set to trust. `POST /api/events/hello-app` receives connector events from Vector Space.
 
 Open `server/src/manifests.ts`. `buildManifests` turns the definition into a manifest that tells Vector Space what your app contains.
 
@@ -284,12 +286,6 @@ export const manifests = buildManifests([definition], {
 <!-- flavour node -->
 The server runs one app platform, built with `createAppPlatform` from `@vectoragents/vs-apps/server`. In harness mode it also serves the dev routes.
 <!-- /flavour -->
-
-After a restart the store holds no [service secret](./glossary.md#service-secret). A call that needs it fails with status `401` and the message `No service secret stored for app <appId> space <n> — rotate the binding secret on Vector Space to re-push it`. A space admin rotates the secret of the [binding](./glossary.md#binding), and Vector Space pushes a new secret to your server. The rotation keeps the model choice and the shares. If you cannot rotate the secret, remove the app from the space and add it again in [step 4 of Part 2](#4-add-the-app-to-a-space).
-
-:::warning
-Removing the app and adding it again removes its model choice, shares and consents. Set them again after you add the app.
-:::
 
 <!-- flavour node -->
 The `devIssuer` option turns on the dev issuer: `npm run dev` sets `VA_DEV_ISSUER` to `true`, and `npm run dev:space` leaves it unset. While it is on, the platform verifies tokens against the dev issuer, serves its key set at `/api/__dev/jwks.json`, and reports that address in `GET /api/client-config`. Otherwise it verifies against the Vector Space key set at `SPACE_JWKS_URL`, which Part 2 sets. The platform needs the origin of Vector Space, so the code removes `/api` from `SPACE_API_URL`.
@@ -383,6 +379,16 @@ bootstrap();
 ```
 <!-- /flavour -->
 
+`APP_SIGNING_KEY` holds the signing key of your server, a private key as a JWK JSON string with a `kid`. The platform signs a proof with it each time it asks Vector Space for an actions token. `npm run dev:space` makes a key on the first run and saves it to `.dev-signing-key.json`, which Git ignores. `npm run dev` needs no key. Vector Space reads the public half at `GET /api/jwks.json`, through the `jwksUrl` of the manifest.
+
+In production, set `APP_SIGNING_KEY` from a secret manager and never commit it. This command prints a key:
+
+```bash
+node -e "const{generateKeyPairSync:g,randomUUID:u}=require('node:crypto');console.log(JSON.stringify({...g('ec',{namedCurve:'P-256'}).privateKey.export({format:'jwk'}),kid:u()}))"
+```
+
+To rotate the key, set a new key and restart the server. After the restart, Vector Space picks up the new key set only after a 30 second cooldown, so exchanges fail with `Invalid app assertion` for up to 30 seconds.
+
 <!-- flavour react -->
 ### 5. Read the token in the app page
 
@@ -474,7 +480,7 @@ A real space needs these things in place. Check them before step 1 of Part 2.
 
 - [ ] Your Vector representative, one of the staff who register apps, to send the registration request to. Staff also supply the origin of the Vector Space API and the origin of the Vector Space web client.
 - [ ] A space to add the app to.
-- [ ] An [organization admin](../vector-space/glossary.md#organization-admin), a member who sees **Organization** under **Settings**, to do [step 3 of Part 2](#3-publish-the-space-agent). A space admin to do steps 4 and 5 of Part 2. The organization admin is a space admin of every space.
+- [ ] An [organization admin](../vector-space/glossary.md#organization-admin), a member who sees **Organization** under **Settings**, to do [step 3 of Part 2](#3-publish-the-space-agent). A [space admin](../vector-space/glossary.md#space-admin) to do steps 4 and 5 of Part 2. The organization admin is a space admin of every space.
 - [ ] The Vector Space server can reach your server. It needs a public URL that forwards to port `3101` (`SERVER_PORT`). Keep the URL the same until staff confirm the registration.
 
 ### 1. Point the app at Vector Space
@@ -525,7 +531,7 @@ Vector Space fetches the manifest with a provisioning token. Your server verifie
 
 Send the request to your Vector representative. Staff create the [app registration](./glossary.md#app-registration), enable it and allow it for your organization.
 
-**Check**: wait for staff to confirm, then continue at step 4 of Part 2. **Hello app** appears in the **Add an app** dialog there.
+**Check**: wait for staff to confirm. Then turn the app on in step 3 of Part 2 and continue at step 4 of Part 2. **Hello app** appears in the **Add an app** dialog there.
 
 ### 3. Publish the space agent
 
@@ -539,20 +545,25 @@ The space switcher, the menu in which a member picks a space, lists a space only
 
 **Check**: Vector Space shows the toast `All published`, and the canvas shows **Published** and the date. After a reload, the space appears in the space switcher of its members.
 
+After staff confirm step 2 of Part 2, turn the app on for the organization. A space admin can add the app only after this switch is on.
+
+1. Choose **Settings**, **Organization**, then **App catalog**.
+2. Switch on **Hello app**.
+
+**Check**: Vector Space shows the toast `Saved`, and the **Hello app** switch is on.
+
 ### 4. Add the app to a space
 
 **Role**: space admin.
 
-Adding the app makes Vector Space call your server. Your server must accept that call.
+Adding the app makes no request to your server. Vector Space checks that your organization may use the app and has turned it on. Then it adds the app to the space from the manifest it already holds.
 
-1. Choose **Settings**, **Space**, [**Context Hub**](../vector-space/glossary.md#context-hub), then **Resources**.
-2. Choose **Add resource**, then **App**. In the **Add an app** dialog, choose **Add** next to **Hello app**.
+1. Choose **Settings**, **Space**, then **Installed apps**.
+2. Choose **Install app**, then **App**. In the **Add an app** dialog, choose **Add** next to **Hello app**.
 
-The call is `POST /api/provision`. The body holds `serviceSecret`, a secret that Vector Space creates for each pair of app and space. Your server uses it to prove its identity when it calls Vector Space. Vector Space treats a status outside 200 to 299, no reply within 10 seconds, or a network error as a failure, and the add fails.
+**Check**: Vector Space shows the toast `App added`. **Installed apps** lists a **Hello app** row with type **App** and status **Active**. Close the **Configure Hello app** sheet that opens.
 
-**Check**: Vector Space shows the toast `App enabled`. **Resources** lists a **Hello app** row with type **App** and status **Active**. Close the **Configure Hello app** sheet that opens.
-
-If the toast starts with `App secret provisioning failed`, the add failed. A number after it is the status your server sent: check that the manifest URL staff registered is the one from step 2 of Part 2. No number means Vector Space did not reach your server. Check that `npm run dev:space` still runs and that the public URL still points to port `3101`.
+If the add fails, the toast gives the reason. A stopped server does not fail the add, because Vector Space does not call it. Check that staff enabled the registration in step 2 of Part 2 and that you turned the app on in step 3 of Part 2.
 
 ### 5. Share the app with a member
 
@@ -561,7 +572,7 @@ If the toast starts with `App secret provisioning failed`, the add failed. A num
 A member sees the app page only after the space admin shares the app with that member. **Direct access** lists only members of the space, so add the member to the space first. Skip this step if you are the space admin who added the app: you already have access.
 
 1. Choose **Settings**, **Space**, then **Access**. Under **Members**, choose **Add** and pick the member.
-2. Choose **Context Hub**, then **Resources**. On the **Hello app** row, open the row menu and choose **Access**.
+2. Choose **Installed apps**. On the **Hello app** row, open the row menu and choose **Access**.
 3. In **Direct access**, choose **Add users or groups…** and pick the member. Keep the access level at **Can use**. It gives every permission the app declares, which is enough for the app page.Choose **Save changes**.
 
 **Check**: Vector Space shows the toasts `Member added` and `Access saved`. Open the row menu and choose **Access** again. **Direct access** lists the member.

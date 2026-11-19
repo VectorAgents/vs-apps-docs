@@ -57,7 +57,7 @@ test('the lifecycle runs build, register, activate, configure, update, deprovisi
 test('the six token kinds are named in the table', () => {
   assert.deepEqual(
     tableRows(section(text, 'The six token kinds')).map(([kind]) => plain(kind)),
-    ['User token', 'Provisioning token', 'A2A token', 'MCP token', 'App token', 'Events token'],
+    ['User token', 'Provisioning token', 'A2A token', 'MCP token', 'Actions token', 'Events token'],
   );
 });
 

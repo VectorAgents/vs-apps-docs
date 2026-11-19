@@ -43,9 +43,9 @@ Registering does not add the app to any space.
 
 ### Activate
 
-A space admin adds the app to a space. Vector Space first checks that the [organization](../vector-space/glossary.md#organization) may use the app. Then it calls `POST /api/provision` on your server to push a [service secret](./glossary.md#service-secret).
+A space admin adds the app to a space. Vector Space checks that the [organization](../vector-space/glossary.md#organization) may use the app and has turned it on. Then it adds the app to the space from the manifest it already holds. It makes no request to your server.
 
-If any part fails, Vector Space tells your server to deprovision, and the activation fails. The space admin can try again.
+If a check fails, the activation fails. The space admin can try again.
 
 ### Configure
 
@@ -65,26 +65,28 @@ After staff apply a manifest, Vector Space brings every space that has the app i
 
 ### Deprovision
 
-A space admin removes the app from a space, or someone deletes the space. Vector Space calls `DELETE /api/deprovision` on your server and removes the agents and [MCP](../vector-space/glossary.md#mcp) servers that the app added to the space.
+A space admin removes the app from a space, or someone deletes the space. Vector Space removes the app from the space, and removes the agents and [MCP](../vector-space/glossary.md#mcp) servers that the app added to it.
 
-The call is best effort. If your server does not answer, Vector Space still removes the app. A space admin can add the app again later.
+Vector Space does not call your server, so your server keeps no state for each space that it has to clean up. A space admin can add the app again later.
 
 ## The six token kinds
 
-Vector Space signs six kinds of token with one key set. Your app verifies five of them and requests the sixth, the app token, by trading its service secret. It never verifies the app token. Each token carries the app it is for, and each one expires.
+Vector Space signs six kinds of token with one key set. Your app verifies five of them. It requests the sixth, the actions token, by sending a short proof that it signs with its [signing key](./glossary.md#signing-key). It never verifies the actions token. Each token carries the app it is for, and each one expires.
+
+These pages describe `@vectoragents/vs-apps` 0.7.0 and later. An app on 0.6.0 or an older version cannot sign in to a current Vector Space: upgrade the package.
 
 Two kinds go with interfaces that your app can offer: an [A2A](../vector-space/glossary.md#a2a) agent that other agents call, and an MCP server of tools that agents call.
 
 | Token | How it travels | Default lifetime |
 | --- | --- | --- |
 | [User token](./glossary.md#user-token) | Vector Space posts it to your client, which sends it to your server. | 5 minutes |
-| Provisioning token | Sent when Vector Space reads the manifest, pushes the secret or removes the app. | 2 minutes |
+| Provisioning token | Sent when Vector Space reads the manifest. | 2 minutes |
 | A2A token | Sent with each call to an agent your app offers; it can identify the member. | 5 minutes |
 | MCP token | Sent with each call to a tool server your app offers. | 5 minutes |
-| [App token](./glossary.md#app-token) | Your server trades the service secret for it, then calls Vector Space with it. | 10 minutes |
+| [Actions token](./glossary.md#actions-token) | Your server trades a signed proof for it, then calls Vector Space with it. | 10 minutes |
 | Events token | Sent with a connector event or with the decision on an approval. | 5 minutes |
 
-Only the user token that Vector Space posts to your client carries the name and picture of the member. Two other user tokens carry neither. One goes with an agent's call to an endpoint, a route that the manifest lists under `endpoints` and that an agent can call (`aud: app-user`). The other has `viaServer: true`: your server gets it when it trades the service secret for a `userId`.
+Only the user token that Vector Space posts to your client carries the name and picture of the member. Two other user tokens carry neither. One goes with an agent's call to an endpoint, a route that the manifest lists under `endpoints` and that an agent can call (`aud: app-user`). The other comes from your server's exchange for a member. It carries an `act` claim that names your app.
 
 ## Where to go next
 

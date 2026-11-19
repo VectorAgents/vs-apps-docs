@@ -165,8 +165,8 @@ for (const { tree, text } of trees) {
     const roled = rest.filter((step) => step.includes('**Role**: space admin.'));
     assert.deepEqual(roled.map(title), rest.slice(3, 5).map(title));
     assert.equal([...part2.matchAll(/\*\*Role\*\*: space admin\./g)].length, 2);
-    assert.match(text, /An \[organization admin\]\([^)]*\), [^.]*, to do \[step 3 of Part 2\]\(#3-publish-the-space-agent\)\. A space admin to do steps 4 and 5 of Part 2\./);
-    assert.match(text, /then continue at step 4 of Part 2\. \*\*Hello app\*\* appears/);
+    assert.match(text, /An \[organization admin\]\([^)]*\), [^.]*, to do \[step 3 of Part 2\]\(#3-publish-the-space-agent\)\. A \[space admin\]\([^)]*\) to do steps 4 and 5 of Part 2\./);
+    assert.match(text, /continue at step 4 of Part 2\. \*\*Hello app\*\* appears/);
     assert.match(intro, /^- \[ \] Your Vector representative, one of the staff who register apps, to send the registration request to\. Staff also supply the origin of the Vector Space API and the origin of the Vector Space web client\.$/m);
     assert.equal((part2.match(/Vector representative/g) ?? []).length, 2);
     assert.doesNotMatch(part2, /organization license|Vector staff|Ask Vector|Contact your Vector/i);
@@ -330,7 +330,7 @@ for (const { tree, text } of trees) {
     for (const f of shell) {
       for (const line of f.body.trim().split('\n')) {
         assert.doesNotMatch(line, /^\$ /);
-        assert.doesNotMatch(line, /&&|;\s*\w|\\$/);
+        assert.doesNotMatch(line.replace(/"[^"]*"/g, '""'), /&&|;\s*\w|\\$/);
       }
     }
   });
@@ -371,7 +371,7 @@ for (const { tree, text } of trees) {
     assert.match(publish, /\*\*Publish All\*\*/);
     assert.match(publish, /All published/);
     assert.match(addApp, /\*\*Add an app\*\*/);
-    assert.match(addApp, /App enabled/);
+    assert.match(addApp, /App added/);
     assert.match(share, /\*\*Access\*\*/);
     assert.match(share, /\*\*Direct access\*\*/);
     assert.match(share, /choose \*\*Add users or groups…\*\*/);
@@ -389,14 +389,12 @@ for (const { tree, text } of trees) {
     assert.doesNotMatch(steps(part2)[1], /Auto-apply/);
   });
 
-  t('Part 2 says each provisioning fact once, where the reader meets it, and makes no 404 claim in steps 2 and 4', () => {
+  t('Part 2 says adding the app makes no request to the server, in step 4 only, and makes no 404 claim in steps 2 and 4', () => {
     const [, register, , addApp] = steps(part2);
-    const once = (re) => assert.equal((part2.match(re) ?? []).length, 1, String(re));
-    once(/`serviceSecret`/g);
-    once(/a status outside 200 to 299/g);
+    assert.equal((part2.match(/makes no request to your server/g) ?? []).length, 1);
+    assert.match(addApp, /makes no request to your server/);
     assert.match(register, /verifies that token/);
-    assert.match(addApp, /`serviceSecret`/);
-    assert.match(addApp, /a status outside 200 to 299/);
+    assert.doesNotMatch(part2, /serviceSecret|POST \/api\/provision|status outside 200 to 299/);
     assert.doesNotMatch(register, /\b404\b/);
     assert.doesNotMatch(addApp, /\b404\b/);
   });
@@ -416,12 +414,10 @@ for (const { tree, text } of trees) {
     const common = [
       'glossary.md#app-page',
       'glossary.md#app-registration',
-      'glossary.md#binding',
       'glossary.md#permission',
       'glossary.md#manifest',
-      'glossary.md#service-secret',
+      'glossary.md#signing-key',
       'vector-space/glossary.md#agent-studio',
-      'vector-space/glossary.md#context-hub',
       'sdk/glossary.md#agent-catalog',
       'sdk/glossary.md#app-definition',
       'sdk/glossary.md#dev-issuer',
@@ -454,12 +450,6 @@ for (const { tree, text } of trees) {
     for (const sentence of prose.split(/(?<=[.!?])\s+/)) {
       assert.ok((sentence.match(/\]\([^)]*glossary\.md#/g) ?? []).length <= 3, sentence);
     }
-  });
-
-  t('provision and deprovision calls come when a space admin adds or removes the app', () => {
-    const lines = prose.split('\n').filter((l) => l.includes('DELETE /api/deprovision') && l.includes('when a '));
-    assert.ok(lines.length >= 1);
-    for (const line of lines) assert.match(line, /when a \[?space admin\]?(\([^)]*\))? adds or removes the app/);
   });
 
   t('names the people who open the app members, never users', () => {

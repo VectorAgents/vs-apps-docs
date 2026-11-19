@@ -76,7 +76,7 @@ A handler makes `eventsUrl` required in the manifest. `buildManifests` builds it
 
 ### 2. Reply through the connector
 
-A handler gets the event and no user token. To call the connector back, ask `SpaceS2sService` for an [app token](../glossary.md#app-token), then call `connectorExecute`. The call runs with the permissions of the app alone, not those of a member.
+A handler gets the event and no user token. To call the connector back, ask `SpaceS2sService` for an [actions token](../glossary.md#actions-token), then call `connectorExecute`. The call runs with the permissions of the app alone, not those of a member.
 
 `connectorExecute` returns a `ConnectorExecuteResult`: `status` (a number), `data`, and on failure `errorCode` and `retryAfterSeconds`. Read `status`: a result with `status` 400 or higher is a failed call. An unknown `operationId` is refused with `404`, and a connector that is not attached to the app is refused with `403`. Vector Space answers a server error with `500`. For each of these, `connectorExecute` throws a `SpaceActionError` that carries the status.
 
@@ -208,10 +208,10 @@ Then add it to the `imports` array, after `AppPlatformModule.forRoot(...)`.
 In a second terminal, post an event with no token. `SERVER_PORT` is the value in `.env`.
 
 ```bash
-curl -s -o /dev/null -w '%{http_code}\n' -X POST -H 'Content-Type: application/json' -d '{"eventId":1,"slot":"support","handler":"inbound-message","provider":"APOLLO","connectorId":1,"connectorName":"Support inbox","eventType":"message-received","spaceId":1,"occurredAt":"2026-01-01T00:00:00Z","payload":{}}' http://localhost:<SERVER_PORT>/api/events/hello-app
+curl -s -o /dev/null -w '%{http_code}\n' -X POST -H 'Content-Type: application/json' -d '{"specversion":"1.0","id":"evt-1","type":"vs.connector.event","source":"space","time":"2026-01-01T00:00:00Z","datacontenttype":"application/json","appid":"hello-app","spaceid":1,"bindingid":1,"data":{"slot":"support","handler":"inbound-message","provider":"APOLLO","connectorId":1,"connectorName":"Support inbox","eventType":"message-received","payload":{}}}' http://localhost:<SERVER_PORT>/api/events/hello-app
 ```
 
-The command prints `401`, because the route accepts only an events token that Vector Space signs. A body that fails the event schema prints `400` first.
+The command prints `401`, because the route accepts only an events token that Vector Space signs. A request with no body prints `400` first.
 
 Then post an event to the webhook of the connector, with the secret from step 5 and the event name `message-received`.
 

@@ -18,7 +18,7 @@ const sections = {
   ],
   'vector-apps': [
     'app', 'app registration', 'manifest', 'app page', 'permission', 'permission grant', 'model slot', 'connector slot',
-    'acts', 'approvals', 'user token', 'app token', 'service secret', 'binding', 'member directory', 'auto-apply', 'allowed resources',
+    'acts', 'approvals', 'user token', 'actions token', 'signing key', 'binding', 'member directory', 'auto-apply', 'allowed resources',
   ],
   sdk: [
     'app definition', 'SDK', 'harness', 'dev issuer', 'agent action', 'agent catalog', 'monorepo', 'shared package',
@@ -58,7 +58,7 @@ test('no glossary has a space manager entry, mention or link', () => {
 test('each entry has a definition and an owner, and a mapping only when a symbol exists', () => {
   for (const { name, body } of entries) {
     assert.match(body, /^[^\s-].*$/m, `${name}: definition`);
-    assert.match(body, /^- Owner: (SDK|Vector Space|SDK and Vector Space|docs)\b/m, `${name}: owner`);
+    assert.match(body, /^- Owner: (SDK|Vector Space|SDK and Vector Space|docs|The app)\b/m, `${name}: owner`);
     const ownerSentences = /^- Owner: (.*)$/m.exec(body)?.[1].split(/(?<=\.)\s+/) ?? [];
     assert.ok(ownerSentences.length <= 2, `${name}: owner is 2 sentences at most`);
     for (const sentence of ownerSentences) assert.ok(sentence.split(/\s+/).length <= 15, `${name}: owner sentence over 15 words`);
@@ -273,8 +273,9 @@ test('conformance kit, app platform and app session entries name their SDK symbo
   assert.match(body('app session'), /`startAppSession`/);
 });
 
-test('app token maps the SDK name service token on its Maps to line', () => {
-  assert.match(entries.find((e) => e.name === 'app token').body, /^- Maps to: .*The SDK calls the token a service token\.$/m);
+test('actions token maps the SDK symbols and signing key maps its option', () => {
+  assert.match(entries.find((e) => e.name === 'actions token').body, /^- Maps to: `createSpaceS2s`, `SpaceS2sService` and `kind: "actions"`\.$/m);
+  assert.match(entries.find((e) => e.name === 'signing key').body, /^- Maps to: .*`signingKeys`/m);
 });
 
 test('every link to a glossary term resolves to a page and an anchor that exist', () => {

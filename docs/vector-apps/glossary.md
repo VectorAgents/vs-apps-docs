@@ -84,19 +84,21 @@ The token that Vector Space issues for one member in one space. It names the mem
 - Maps to: `verifyUserToken` in `@vectoragents/vs-apps/server`.
 - Owner: Vector Space issues it. The SDK verifies it.
 
-### app token
+### actions token
 
-A short-lived token that Vector Space issues in exchange for the [service secret](#service-secret). Without a `userId` it acts as the app. An exchange that names a `userId` gives that member a user token with `viaServer: true`, and Vector Space refuses it unless the space admits that user.
+A short-lived token that Vector Space issues when it accepts the signed proof of your server. Without a `userId` it acts as the app. With a `userId`, the exchange gives that member a user token with an `act` claim that names the app.
 
-- Maps to: `createSpaceS2s` and `SpaceS2sService`. The SDK calls the token a service token.
+Vector Space refuses a `userId` exchange unless the space admits that user. The actions token goes with the `/app/actions` routes of Vector Space, not with the actions of an agent.
+
+- Maps to: `createSpaceS2s`, `SpaceS2sService` and `kind: "actions"`.
 - Owner: Vector Space issues it. The SDK requests it.
 
-### service secret
+### signing key
 
-The secret Vector Space creates for each pair of app and space and pushes to the app at `POST /api/provision`. The app trades it for an app token.
+The private key that your server keeps in its own environment. It signs the proof that your server sends to get an actions token. Vector Space reads the public half at the `jwksUrl` of the manifest.
 
-- Maps to: `AppCredentialStore` in `@vectoragents/vs-apps/server`, the credential store that `createAppPlatform` and the `/nest` adapter keep it in.
-- Owner: Vector Space creates it. The SDK stores and exchanges it.
+- Maps to: the `signingKeys` option of `createAppPlatform` and of the `/nest` module.
+- Owner: The app holds it. Vector Space reads the public half.
 
 ### binding
 
