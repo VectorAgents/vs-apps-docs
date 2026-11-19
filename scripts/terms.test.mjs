@@ -43,6 +43,18 @@ export function termViolations(markdown) {
     hit('redemptai', /RedemptAI/g);
     hit('space page', /\bspace pages?\b/gi);
     hit('space manager', /\bspace managers?\b/gi);
+    hit('retired term', /\b(?:service secrets?|app tokens?|credential stores?)\b/gi);
+  });
+  return found;
+}
+
+const RETIRED_CODE = /\bviaServer\b|\b(?:Memory|App)CredentialStore\b|\/api\/(?:provision|deprovision)\b|#(?:app-token|service-secret)\b/g;
+
+/** SDK 0.7.0 removed these identifiers and routes, so no page shows them, in prose, code or link targets. */
+export function retiredCodeViolations(markdown) {
+  const found = [];
+  markdown.split('\n').forEach((line, i) => {
+    for (const m of line.matchAll(RETIRED_CODE)) found.push({ rule: 'retired code', line: i + 1, text: m[0] });
   });
   return found;
 }
@@ -100,6 +112,23 @@ test('grant: the bare noun is flagged, the verb and "permission grant" are not',
   assert.deepEqual(rules('Use `the grant` here.'), []);
 });
 
+test('retired terms: the service secret, the app token and the credential store are flagged in prose only', () => {
+  assert.deepEqual(rules('The service secret is pushed.'), ['retired term']);
+  assert.deepEqual(rules('Trade it for an app token.'), ['retired term']);
+  assert.deepEqual(rules('Keep it in the credential store.'), ['retired term']);
+  assert.deepEqual(rules('Trade a proof for an actions token.'), []);
+  assert.deepEqual(rules('Use `service secret` here.'), []);
+});
+
+test('retired code: removed identifiers, routes and anchors are flagged everywhere', () => {
+  const found = (md) => retiredCodeViolations(md).map((v) => v.text);
+  assert.deepEqual(found('The claim `viaServer: true` is gone.'), ['viaServer']);
+  assert.deepEqual(found('```ts\nnew MemoryCredentialStore();\n```'), ['MemoryCredentialStore']);
+  assert.deepEqual(found('Call `POST /api/provision`.'), ['/api/provision']);
+  assert.deepEqual(found('See [it](./glossary.md#app-token).'), ['#app-token']);
+  assert.deepEqual(found('A `kind: "actions"` token.'), []);
+});
+
 test('RedemptAI is flagged', () => {
   assert.deepEqual(rules('RedemptAI staff add apps.'), ['redemptai']);
   assert.deepEqual(rules('Vector Space staff add apps.'), []);
@@ -153,6 +182,14 @@ test('published pages use the current terms', () => {
   for (const page of pages) {
     const violations = termViolations(readFileSync(new URL(page, docs), 'utf8'));
     assert.deepEqual(violations, [], `${page}: ${violations.map((v) => `${v.line} ${v.rule} "${v.text}"`).join(', ')}`);
+  }
+});
+
+test('published pages show no retired identifier, route or anchor', () => {
+  const docs = new URL('../docs/', import.meta.url);
+  for (const page of readdirSync(docs, { recursive: true }).filter((f) => /\.mdx?$/.test(f))) {
+    const violations = retiredCodeViolations(readFileSync(new URL(page, docs), 'utf8'));
+    assert.deepEqual(violations, [], `${page}: ${violations.map((v) => `${v.line} "${v.text}"`).join(', ')}`);
   }
 });
 

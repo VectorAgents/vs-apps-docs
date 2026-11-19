@@ -6,4 +6,12 @@ if ! git -c core.quotePath=false diff --cached --name-only --no-renames | grep -
 fi
 # Each ticket branch passes the gate before it merges; the end gate covers the merged result.
 git rev-parse -q --verify MERGE_HEAD >/dev/null && exit 0
-exec pnpm check
+# Prints the tail of the output on failure only; the full log stays in the file named below.
+log=$(mktemp)
+if pnpm check >"$log" 2>&1; then
+  rm -f "$log"
+  exit 0
+fi
+tail -n 60 "$log"
+echo "pre-commit: pnpm check failed. Full output: $log"
+exit 1
