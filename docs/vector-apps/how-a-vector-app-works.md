@@ -6,7 +6,7 @@ description: The parts of an app, the six steps from build to removal, who does 
 import StructureFigure from '@site/src/components/StructureFigure';
 import { appsOverview } from '@site/src/diagrams/figures/apps-overview.ts';
 
-An [app](./glossary.md#app) is a web app that you host and that a space shows to its members. Vector Space signs a token for each member who opens it, and your server checks that token before it answers.
+An [app](./glossary.md#app) is a web app that you host and that a space shows to its members. Vector Space signs a token for each member who opens it. Your server checks that token before it answers. You build and update the app, staff register it, and a space admin adds it to a space and shares it.
 
 ## The parts of an app
 
