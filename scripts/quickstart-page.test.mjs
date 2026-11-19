@@ -320,7 +320,7 @@ for (const { tree, text } of trees) {
       assert.match(f.meta, /title="[\w./-]+"/);
       assert.match(f.meta.replace(/title="[^"]*"/, ''), /(^|\s)starter(\s|$)/);
       assert.doesNotMatch(f.meta, /\badd\b/);
-      assert.doesNotMatch(f.body, /\.\.\.|…/);
+      assert.doesNotMatch(f.body, /\.\.\.(?!\w)|…/);
     }
   });
 

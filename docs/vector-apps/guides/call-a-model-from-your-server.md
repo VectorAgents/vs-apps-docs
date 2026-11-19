@@ -232,7 +232,7 @@ import { LeadSummaryController } from './lead-summary.controller';
 import { manifests } from './manifests';
 ```
 
-```ts title="server/src/app.module.ts" showLineNumbers=32 excerpt
+```ts title="server/src/app.module.ts" showLineNumbers=39 excerpt
     }),
   ],
   // removed-next-line

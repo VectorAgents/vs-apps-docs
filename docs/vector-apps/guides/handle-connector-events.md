@@ -184,7 +184,7 @@ import { SupportEventsModule } from './support-events.module';
 
 Then add it to the `imports` array, after `AppPlatformModule.forRoot(...)`.
 
-```ts title="server/src/app.module.ts" showLineNumbers=32 excerpt
+```ts title="server/src/app.module.ts" showLineNumbers=39 excerpt
     }),
     // added-next-line
     SupportEventsModule,

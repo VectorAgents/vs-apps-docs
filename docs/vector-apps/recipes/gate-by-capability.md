@@ -150,7 +150,7 @@ import { manifests } from './manifests';
 
 Then add it next to `HelloController`.
 
-```ts title="server/src/app.module.ts" showLineNumbers=32 excerpt
+```ts title="server/src/app.module.ts" showLineNumbers=39 excerpt
     }),
   ],
   // removed-next-line

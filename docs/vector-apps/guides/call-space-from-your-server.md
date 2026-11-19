@@ -168,7 +168,7 @@ import { SpaceCallsController } from './space-calls.controller';
 @Module({
 ```
 
-```ts title="server/src/app.module.ts" showLineNumbers=32 excerpt
+```ts title="server/src/app.module.ts" showLineNumbers=39 excerpt
     }),
   ],
   // removed-next-line
