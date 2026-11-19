@@ -47,8 +47,8 @@ const sidebars: SidebarsConfig = {
         description: 'Step-by-step tasks that add one feature to the example app, from simplest to most advanced.',
       },
       items: [
-        'vector-apps/recipes/add-page-and-capability',
-        'vector-apps/recipes/gate-by-capability',
+        'vector-apps/recipes/add-page-and-permission',
+        'vector-apps/recipes/gate-by-permission',
         'vector-apps/recipes/read-app-context',
         'vector-apps/recipes/list-members',
         'vector-apps/recipes/expose-agent-actions',
@@ -64,7 +64,7 @@ const sidebars: SidebarsConfig = {
       },
       items: [
         'vector-apps/guides/agent-action-trees',
-        'vector-apps/guides/filter-navigation-by-capability',
+        'vector-apps/guides/filter-navigation-by-permission',
         'vector-apps/guides/call-space-from-your-server',
         'vector-apps/guides/call-a-model-from-your-server',
         'vector-apps/guides/expose-app-as-a2a-agent',

@@ -1,10 +1,10 @@
 ---
-title: Gate an app page and an endpoint by capability
-description: Gate an app page in the browser and an endpoint on the server by capability, and share one fallback across app pages.
+title: Gate an app page and an endpoint by permission
+description: Gate an app page in the browser and an endpoint on the server by permission, and share one fallback across app pages.
 start: leads-app
 ---
 
-Gate the `leads` [app page](../glossary.md#app-page) in the browser and `GET /api/leads` on the server with the `lead:manage` [capability](../glossary.md#capability). A [member](../../vector-space/glossary.md#member) without the capability sees a fallback message, and the server answers `403` to a token without it.
+Gate the `leads` [app page](../glossary.md#app-page) in the browser and `GET /api/leads` on the server with the `lead:manage` [permission](../glossary.md#permission). A [member](../../vector-space/glossary.md#member) without the permission sees a fallback message, and the server answers `403` to a token without it.
 
 ## Prerequisites
 
@@ -24,15 +24,15 @@ cd leads-app
 ```
 <!-- /flavour -->
 
-- Background: [`RequireCapability` on the client](../../sdk/reference/react.md#react-requirecapability).
+- Background: [`RequirePermission` on the client](../../sdk/reference/react.md#react-requirepermission).
 
 ## Steps
 
 ### 1. Gate the `leads` app page in the definition
 
-An app page names its capability in `capability`. `defineApp` does not check that the name exists in `capabilities`, so keep the two keys identical.
+An app page names its permission in `permission`. `defineApp` does not check that the name exists in `permissions`, so keep the two keys identical.
 
-The `leads` app page in the start has no `capability`. Add it.
+The `leads` app page in the start has no `permission`. Add it.
 
 ```ts title="shared/src/index.ts" showLineNumbers=16 excerpt
     {
@@ -47,7 +47,7 @@ The `leads` app page in the start has no `capability`. Add it.
 <!-- flavour react -->
 ### 2. Gate the app page in the browser
 
-`RequireCapability` renders its children only when the token holds the capability. A function `fallback` receives the missing capability name.
+`RequirePermission` renders its children only when the token holds the permission. A function `fallback` receives the missing permission name.
 
 ```tsx title="client/src/LeadsPage.tsx"
 // added-next-line
@@ -79,14 +79,14 @@ export function LeadsPage() {
 ```
 
 :::warning
-A member can still call the endpoint directly, so step 3 enforces the capability on the server.
+A member can still call the endpoint directly, so step 3 enforces the permission on the server.
 :::
 <!-- /flavour -->
 
-### 3. Enforce the capability on the server
+### 3. Enforce the permission on the server
 
 <!-- flavour node -->
-`requireCapability` in `server/src/auth.ts` verifies the token. It throws `AppAuthError` with status `403` when the claims lack the named capability. Add the leads handler in a new file. It receives the verified claims.
+`requirePermission` in `server/src/auth.ts` verifies the token. It throws `AppAuthError` with status `403` when the claims lack the named permission. Add the leads handler in a new file. It receives the verified claims.
 
 ```ts title="server/src/leads.ts"
 import type { UserTokenClaims } from '@vectoragents/vs-apps';
@@ -121,7 +121,7 @@ Then add the route inside the `try`, after the `platform.fetch` check and before
 ```
 <!-- /flavour -->
 <!-- flavour nest -->
-The `RequireCapability` decorator refuses a token that lacks the capability, and the global guard of `AppPlatformModule` answers `403`. `CurrentUser` hands the controller the verified claims. Add the leads handler in a new controller.
+The `RequirePermission` decorator refuses a token that lacks the permission, and the global guard of `AppPlatformModule` answers `403`. `CurrentUser` hands the controller the verified claims. Add the leads handler in a new controller.
 
 ```ts title="server/src/leads.controller.ts"
 import { Controller, Get } from '@nestjs/common';
@@ -165,7 +165,7 @@ export class AppModule {}
 <!-- flavour react -->
 ### 4. Share one fallback across app pages
 
-Each app page that repeats `fallback` can drift from the others. Wrap `RequireCapability` once, and every gated app page shows the same message.
+Each app page that repeats `fallback` can drift from the others. Wrap `RequirePermission` once, and every gated app page shows the same message.
 
 ```tsx title="client/src/GatedPage.tsx"
 import type { ReactNode } from 'react';
@@ -183,7 +183,7 @@ export function GatedPage({ permission, children }: { permission: string; childr
 }
 ```
 
-In `client/src/LeadsPage.tsx`, replace the `RequireCapability` element with `GatedPage` and drop the import. Keep the `main` element inside it.
+In `client/src/LeadsPage.tsx`, replace the `RequirePermission` element with `GatedPage` and drop the import. Keep the `main` element inside it.
 
 ```tsx title="client/src/LeadsPage.tsx" showLineNumbers=1 excerpt
 // removed-next-line
@@ -213,7 +213,7 @@ export function LeadsPage() {
 }
 ```
 
-The `icp` app page uses the same wrapper with its own capability. Add its entry to `pages` in `shared/src/index.ts`, after `leads`.
+The `icp` app page uses the same wrapper with its own permission. Add its entry to `pages` in `shared/src/index.ts`, after `leads`.
 
 ```ts title="shared/src/index.ts" showLineNumbers=21 excerpt
     },
@@ -281,7 +281,7 @@ To change the message of both app pages, edit `GatedPage.tsx`.
 
 ### 5. Check both gates
 
-Run `npm run dev` and open `http://localhost:5173/harness.html`. Select **Leads** in the sidebar. In the dev panel, remove `lead:manage` from the capability set. The app page shows `Ask a space admin to grant lead:manage.` Add `lead:manage` back, and the app page shows the heading `Leads`.
+Run `npm run dev` and open `http://localhost:5173/harness.html`. Select **Leads** in the sidebar. In the dev panel, remove `lead:manage` from the permission set. The app page shows `Ask a space admin to grant lead:manage.` Add `lead:manage` back, and the app page shows the heading `Leads`.
 
 For the server, call the route with no token.
 
@@ -289,8 +289,8 @@ For the server, call the route with no token.
 curl -s -o /dev/null -w '%{http_code}\n' http://localhost:3101/api/leads
 ```
 
-The command prints `401`. Then mint a development token without `lead:manage` through the [harness token route](../../sdk/reference/harness.md#post-api__devtoken) and send it as a bearer token. The server answers `403` with the body `{"error":"Missing capability: lead:manage"}`. A token that holds the capability gets `200`.
+The command prints `401`. Then mint a development token without `lead:manage` through the [harness token route](../../sdk/reference/harness.md#post-api__devtoken) and send it as a bearer token. The server answers `403` with the body `{"error":"Missing permission: lead:manage"}`. A token that holds the permission gets `200`.
 
 ## Next steps
 
-- [Read the app context](./read-app-context.md): read the member and the capabilities in other components.
+- [Read the app context](./read-app-context.md): read the member and the permissions in other components.

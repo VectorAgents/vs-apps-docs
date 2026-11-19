@@ -1,11 +1,11 @@
 ---
-title: Filter navigation by capability
+title: Filter navigation by permission
 description: Build an app navigation from the app definition and show only the app pages that the signed-in member may open.
 start: leads-app
 ---
 
 <!-- flavour react -->
-Build your own navigation from the app definition. It lists each [app page](../glossary.md#app-page) only for a [member](../../vector-space/glossary.md#member) who holds its [capability](../glossary.md#capability).
+Build your own navigation from the app definition. It lists each [app page](../glossary.md#app-page) only for a [member](../../vector-space/glossary.md#member) who holds its [permission](../glossary.md#permission).
 
 ## Prerequisites
 
@@ -23,7 +23,7 @@ cd leads-guide
 
 ### 1. Declare a default app page and gate each app page
 
-`defaultPageKey` must name a declared app page. An app page without `capability` is ungated. Keep `CAPABILITY` and the gate on `home` as the starter has them. In `shared/src/index.ts`, gate `leads` with `lead:manage`, add `icp` with `icp:manage`, and add `defaultPageKey`.
+`defaultPageKey` must name a declared app page. An app page without `permission` is ungated. Keep `PERMISSION` and the gate on `home` as the starter has them. In `shared/src/index.ts`, gate `leads` with `lead:manage`, add `icp` with `icp:manage`, and add `defaultPageKey`.
 
 ```ts title="shared/src/index.ts"
 import { defineApp } from '@vectoragents/vs-apps';
@@ -69,7 +69,7 @@ export const definition = defineApp({
 
 ### 2. Filter the app pages
 
-`appPages` returns the app pages of the definition whose `key` equals the `appKey` claim. It does not filter by capability, so filter with `hasCapability`. The links are plain `<a>` elements, so each click reloads the document. For a router, see [step 3 of add an app page and a capability](../recipes/add-page-and-capability.md#react-3-link-between-app-pages-without-a-reload).
+`appPages` returns the app pages of the definition whose `key` equals the `appKey` claim. It does not filter by permission, so filter with `hasPermission`. The links are plain `<a>` elements, so each click reloads the document. For a router, see [step 3 of add an app page and a permission](../recipes/add-page-and-permission.md#react-3-link-between-app-pages-without-a-reload).
 
 ```tsx title="client/src/AppNav.tsx"
 import { appPages } from '@vectoragents/vs-apps';
@@ -95,7 +95,7 @@ export function AppNav() {
 ```
 
 :::warning
-A member can still call your server, so enforce each capability there, as in [gate an app page and an endpoint](../recipes/gate-by-capability.md).
+A member can still call your server, so enforce each permission there, as in [gate an app page and an endpoint](../recipes/gate-by-permission.md).
 :::
 
 ### 3. Mount the navigation under the gate
@@ -126,9 +126,9 @@ Then render it as the first child of `BootGate`.
 
 ### 4. Check the navigation
 
-Run `npm run dev` and open `http://localhost:5173/harness.html`. The navigation shows the links `Home`, `Leads` and `ICP`. In the dev panel, remove `icp:manage` from the capability set. The `ICP` link disappears.
+Run `npm run dev` and open `http://localhost:5173/harness.html`. The navigation shows the links `Home`, `Leads` and `ICP`. In the dev panel, remove `icp:manage` from the permission set. The `ICP` link disappears.
 
 ## Next steps
 
-- [Gate an app page and an endpoint by capability](../recipes/gate-by-capability.md): enforce each capability on the server.
+- [Gate an app page and an endpoint by permission](../recipes/gate-by-permission.md): enforce each permission on the server.
 <!-- /flavour -->

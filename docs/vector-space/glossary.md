@@ -150,7 +150,7 @@ The [role](#role) that lets a user share a resource and manage who reaches it, a
 
 ### share
 
-One subject's role on one object: the space, a resource or a child resource of it. The subject is a user, a [group](#group) or an app. A share on named capabilities of an app is a [capability grant](../vector-apps/glossary.md#capability-grant).
+One subject's role on one object: the space, a resource or a child resource of it. The subject is a user, a [group](#group) or an app. A share on named permissions of an app is a [permission grant](../vector-apps/glossary.md#permission-grant).
 
 - Owner: Vector Space.
 

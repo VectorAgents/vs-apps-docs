@@ -3,16 +3,8 @@ import { sdrDefinition } from '../examples/sdr.definition.ts';
 import type { Draft } from './index.ts';
 
 const fromDefinition = (def: unknown): Draft => {
-  const { permissions, pages, ...copy } = structuredClone(def) as Omit<Partial<Draft>, 'pages'> & {
-    permissions: Draft['capabilities'];
-    pages: { permission?: string }[];
-  };
-  return {
-    ...copy,
-    pages: pages.map(({ permission, ...page }) => ({ ...page, capability: permission })),
-    capabilities: permissions,
-    resources: { modules: [], models: [], connectors: [], ...copy.resources },
-  } as Draft;
+  const copy = structuredClone(def) as Partial<Draft>;
+  return { ...copy, resources: { modules: [], models: [], connectors: [], ...copy.resources } } as Draft;
 };
 
 export type PresetName = 'minimal' | 'sdr' | 'csr';
@@ -23,8 +15,8 @@ export const presets: Record<PresetName, Draft> = {
     name: 'My App',
     version: '0.1.0',
     defaultPageKey: 'home',
-    pages: [{ key: 'home', label: 'Home', path: '/home', capability: 'my-app:read' }],
-    capabilities: [{ key: 'my-app:read', label: 'View My App', effect: 'read' }],
+    pages: [{ key: 'home', label: 'Home', path: '/home', permission: 'my-app:read' }],
+    permissions: [{ key: 'my-app:read', label: 'View My App', effect: 'read' }],
     resources: { modules: [], models: [], connectors: [] },
   },
   sdr: fromDefinition(sdrDefinition),

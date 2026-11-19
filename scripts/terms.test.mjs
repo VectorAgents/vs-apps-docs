@@ -28,7 +28,7 @@ const proseLines = (markdown) => {
 
 /**
  * Old vocabulary in prose: capital-S "Space" outside "Vector Space", the bare noun
- * "grant" (the term is "capability grant"; the verb is fine), "RedemptAI", "space page"
+ * "grant" (the term is "permission grant"; the verb is fine), "RedemptAI", "space page"
  * (the term is "page") and "space manager" (the roles are space editor and space admin).
  * @returns {{ rule: string, line: number, text: string }[]}
  */
@@ -87,13 +87,13 @@ test('Space: code spans, fences, link targets and menu labels are excluded', () 
   assert.deepEqual(rules('```\nSpace\n```\nSpace reads it.'), ['space']);
 });
 
-test('grant: the bare noun is flagged, the verb and "capability grant" are not', () => {
-  assert.deepEqual(rules('A space admin can grant a capability.'), []);
-  assert.deepEqual(rules('A space admin grants the capability.'), []);
-  assert.deepEqual(rules('Grant the capabilities.'), []);
-  assert.deepEqual(rules('The capability grant is stored.'), []);
-  assert.deepEqual(rules('Two capability grants exist.'), []);
-  assert.deepEqual(rules('The capability was granted.'), []);
+test('grant: the bare noun is flagged, the verb and "permission grant" are not', () => {
+  assert.deepEqual(rules('A space admin can grant a permission.'), []);
+  assert.deepEqual(rules('A space admin grants the permission.'), []);
+  assert.deepEqual(rules('Grant the permissions.'), []);
+  assert.deepEqual(rules('The permission grant is stored.'), []);
+  assert.deepEqual(rules('Two permission grants exist.'), []);
+  assert.deepEqual(rules('The permission was granted.'), []);
   assert.deepEqual(rules('The grant is stored.'), ['grant']);
   assert.deepEqual(rules('Each member has a grant.'), ['grant']);
   assert.deepEqual(rules('Remove all grants.'), ['grant']);

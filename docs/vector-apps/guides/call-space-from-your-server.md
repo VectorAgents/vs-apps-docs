@@ -41,7 +41,7 @@ This guide uses the `@vectoragents/vs-apps/server` subpath of the [SDK](../../sd
 
 The starter's `MemoryCredentialStore` loses the secrets on restart. Before production, [implement `AppCredentialStore` over your own storage](../quickstart.md#4-verify-the-token-on-the-server). After a restart, `platform.s2s` [fails until you recover the secret](../quickstart.md#4-verify-the-token-on-the-server).
 
-The agent handler passes the caller's own token to `agentInvoke`. The connectors handler passes an app token to `connectorsList`. Each handler takes the platform, and the verified claims that `requireCapability` returns, as in step 3 of [gate an app page and an endpoint](../recipes/gate-by-capability.md).
+The agent handler passes the caller's own token to `agentInvoke`. The connectors handler passes an app token to `connectorsList`. Each handler takes the platform, and the verified claims that `requirePermission` returns, as in step 3 of [gate an app page and an endpoint](../recipes/gate-by-permission.md).
 
 ```ts title="server/src/space-calls.ts"
 import type { IncomingMessage } from 'node:http';
@@ -62,7 +62,7 @@ export async function listConnectors(platform: AppPlatform, claims: UserTokenCla
 ```
 
 :::warning
-An app token carries no member, so Vector Space does not limit `connectorsList` to what the caller may do. Check the capability on the route before you call the handler, as step 2 does.
+An app token carries no member, so Vector Space does not limit `connectorsList` to what the caller may do. Check the permission on the route before you call the handler, as step 2 does.
 :::
 
 ### 2. Register the routes
@@ -81,7 +81,7 @@ import { platform } from './platform';
 import { listConnectors, startConversation } from './space-calls';
 ```
 
-Then add the two routes inside the `try`, before the `platform.fetch` call. The agent route reads the request body, so it must run before `platform.fetch`. Each route verifies the capability first and then calls the handler. A failed call throws `SpaceActionError`, which has a `status` and an optional `code`. The new `catch` line answers with the status that Vector Space sent.
+Then add the two routes inside the `try`, before the `platform.fetch` call. The agent route reads the request body, so it must run before `platform.fetch`. Each route verifies the permission first and then calls the handler. A failed call throws `SpaceActionError`, which has a `status` and an optional `code`. The new `catch` line answers with the status that Vector Space sent.
 
 ```ts title="server/src/main.ts" showLineNumbers=33 excerpt
   try {
@@ -151,7 +151,7 @@ export class SpaceCallsController {
 ```
 
 :::warning
-An app token carries no member, so Vector Space does not limit `connectorsList` to what the caller may do. The `@RequireCapability` check on the route decides who may use it.
+An app token carries no member, so Vector Space does not limit `connectorsList` to what the caller may do. The `@RequirePermission` check on the route decides who may use it.
 :::
 
 ### 2. Register the controller

@@ -41,7 +41,7 @@ export const coreFieldRules: FieldRule[] = [
   { path: 'version', required: true, rule: 'Non-empty string, not checked as semver.' },
   { path: 'pages', required: true, rule: 'At least one page, listed in navigation order.' },
   { path: 'defaultPageKey', required: false, rule: 'When set, must equal a declared page key.' },
-  { path: 'capabilities', required: true, rule: 'An array of capabilities, where `capabilities: []` is valid.' },
+  { path: 'permissions', required: true, rule: 'An array of permissions, where `permissions: []` is valid.' },
   {
     path: 'pages[].key',
     required: true,
@@ -51,20 +51,20 @@ export const coreFieldRules: FieldRule[] = [
   { path: 'pages[].label', required: true, rule: 'Non-empty string.' },
   { path: 'pages[].path', required: true, rule: 'String that starts with `/`.' },
   {
-    path: 'pages[].capability',
+    path: 'pages[].permission',
     required: false,
-    rule: 'One capability key, and a page without one has no gate.',
+    rule: 'One permission key, and a page without one has no gate.',
     pattern: '^[a-z][a-z0-9-]*(:[a-z][a-z0-9-]*)+$',
   },
   {
-    path: 'capabilities[].key',
+    path: 'permissions[].key',
     required: true,
     rule: 'Form `<group>:<action>` in lower kebab-case, with two or more segments.',
     pattern: '^[a-z][a-z0-9-]*(:[a-z][a-z0-9-]*)+$',
   },
-  { path: 'capabilities[].label', required: true, rule: 'Non-empty string.' },
-  { path: 'capabilities[].description', required: false, rule: 'String.' },
-  { path: 'capabilities[].effect', required: true, rule: '`"read"` or `"write"`.' },
+  { path: 'permissions[].label', required: true, rule: 'Non-empty string.' },
+  { path: 'permissions[].description', required: false, rule: 'String.' },
+  { path: 'permissions[].effect', required: true, rule: '`"read"` or `"write"`.' },
 ];
 
 export const resourceFieldRules: FieldRule[] = [

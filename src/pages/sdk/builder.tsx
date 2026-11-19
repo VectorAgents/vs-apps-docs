@@ -4,7 +4,7 @@ import Layout from '@theme/Layout';
 import { buildOutput } from '../../builder/index.ts';
 import { connectorProviders, modalities, modelCapabilities, modelProviders } from '../../data/field-rules.ts';
 import type {
-  CapabilityDraft,
+  PermissionDraft,
   ConnectorDraft,
   Draft,
   EventHandlerDraft,
@@ -162,12 +162,12 @@ export default function Builder(): ReactElement {
                 <Field label="Path" path={`pages[${i}].path`} {...fieldProps}>
                   {(id) => <input id={id} value={page.path} onChange={(e) => set({ pages: replace<PageDraft>(draft.pages, i, { path: e.target.value }) })} />}
                 </Field>
-                <Field label="Capability (optional)" path={`pages[${i}].capability`} {...fieldProps}>
+                <Field label="Permission (optional)" path={`pages[${i}].permission`} {...fieldProps}>
                   {(id) => (
                     <input
                       id={id}
-                      value={page.capability ?? ''}
-                      onChange={(e) => set({ pages: replace<PageDraft>(draft.pages, i, { capability: e.target.value || undefined }) })}
+                      value={page.permission ?? ''}
+                      onChange={(e) => set({ pages: replace<PageDraft>(draft.pages, i, { permission: e.target.value || undefined }) })}
                     />
                   )}
                 </Field>
@@ -180,26 +180,26 @@ export default function Builder(): ReactElement {
               Add app page
             </button>
 
-            <h2>Capabilities</h2>
-            {draft.capabilities.map((cap, i) => (
+            <h2>Permissions</h2>
+            {draft.permissions.map((cap, i) => (
               <fieldset key={i}>
-                <legend>Capability {i + 1}</legend>
-                <Field label="Key" path={`capabilities[${i}].key`} {...fieldProps}>
-                  {(id) => <input id={id} value={cap.key} onChange={(e) => set({ capabilities: replace<CapabilityDraft>(draft.capabilities, i, { key: e.target.value }) })} />}
+                <legend>Permission {i + 1}</legend>
+                <Field label="Key" path={`permissions[${i}].key`} {...fieldProps}>
+                  {(id) => <input id={id} value={cap.key} onChange={(e) => set({ permissions: replace<PermissionDraft>(draft.permissions, i, { key: e.target.value }) })} />}
                 </Field>
-                <Field label="Label" path={`capabilities[${i}].label`} {...fieldProps}>
-                  {(id) => <input id={id} value={cap.label} onChange={(e) => set({ capabilities: replace<CapabilityDraft>(draft.capabilities, i, { label: e.target.value }) })} />}
+                <Field label="Label" path={`permissions[${i}].label`} {...fieldProps}>
+                  {(id) => <input id={id} value={cap.label} onChange={(e) => set({ permissions: replace<PermissionDraft>(draft.permissions, i, { label: e.target.value }) })} />}
                 </Field>
-                <Field label="Effect" path={`capabilities[${i}].effect`} {...fieldProps}>
-                  {(id) => <Select id={id} value={cap.effect} options={['read', 'write']} onChange={(v) => set({ capabilities: replace<CapabilityDraft>(draft.capabilities, i, { effect: v }) })} />}
+                <Field label="Effect" path={`permissions[${i}].effect`} {...fieldProps}>
+                  {(id) => <Select id={id} value={cap.effect} options={['read', 'write']} onChange={(v) => set({ permissions: replace<PermissionDraft>(draft.permissions, i, { effect: v }) })} />}
                 </Field>
-                <button type="button" onClick={() => set({ capabilities: remove(draft.capabilities, i) })}>
-                  Remove capability
+                <button type="button" onClick={() => set({ permissions: remove(draft.permissions, i) })}>
+                  Remove permission
                 </button>
               </fieldset>
             ))}
-            <button type="button" onClick={() => set({ capabilities: [...draft.capabilities, { key: '', label: '', effect: 'read' }] })}>
-              Add capability
+            <button type="button" onClick={() => set({ permissions: [...draft.permissions, { key: '', label: '', effect: 'read' }] })}>
+              Add permission
             </button>
 
             <h2>Modules</h2>

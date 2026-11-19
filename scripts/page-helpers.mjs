@@ -91,9 +91,9 @@ const BANNED_TERMS = [
 /** The role terms `Space member`, `Space editor` and `Space admin` stand in capitals at the start of a heading, list item or ladder label. */
 export const ROLE_TERMS = 'member|editor|admin';
 
-/** The banned terms found in `text`, as pattern strings. "Capability grant" and the role terms at the start of a heading or list item are allowed. */
+/** The banned terms found in `text`, as pattern strings. "Permission grant" and the role terms at the start of a heading or list item are allowed. */
 export const bannedTermsIn = (text) => {
-  const prose = text.replace(/capability grants?/gi, '').replace(new RegExp(`^(#{2,6} |\\s*[-*] (?:\\*\\*)?)Space (${ROLE_TERMS}|roles)\\b`, 'gm'), '$1$2');
+  const prose = text.replace(/permission grants?/gi, '').replace(new RegExp(`^(#{2,6} |\\s*[-*] (?:\\*\\*)?)Space (${ROLE_TERMS}|roles)\\b`, 'gm'), '$1$2');
   return BANNED_TERMS.filter((pattern) => pattern.test(prose)).map(String);
 };
 

@@ -3,7 +3,7 @@ title: Quickstart
 description: Scaffold a Vector app, run it in the harness on your machine, then add it to a space and open its app page.
 ---
 
-Build a small app, run it in the [harness](../sdk/glossary.md#harness) on your machine, then add it to a [space](../vector-space/glossary.md#space) in [Vector Space](../vector-space/glossary.md#vector-space). Part 2 needs [staff](../vector-space/glossary.md#staff) to register the app, and Part 1 does not. The app has one [app page](./glossary.md#app-page) that only a [member](../vector-space/glossary.md#member) who holds the `hello:view` [capability](./glossary.md#capability) can open. At the end, that page shows the ids of the member and the space from a token that your server verified. A check in the browser is display only: the server check decides.
+Build a small app, run it in the [harness](../sdk/glossary.md#harness) on your machine, then add it to a [space](../vector-space/glossary.md#space) in [Vector Space](../vector-space/glossary.md#vector-space). Part 2 needs [staff](../vector-space/glossary.md#staff) to register the app, and Part 1 does not. The app has one [app page](./glossary.md#app-page) that only a [member](../vector-space/glossary.md#member) who holds the `hello:view` [permission](./glossary.md#permission) can open. At the end, that page shows the ids of the member and the space from a token that your server verified. A check in the browser is display only: the server check decides.
 
 import DiagramControls from '@site/src/components/DiagramControls';
 
@@ -177,7 +177,7 @@ hello-app/
 ```
 <!-- /flavour -->
 
-Open `shared/src/index.ts`, the [app definition](../sdk/glossary.md#app-definition). It names the app and lists its app pages and capabilities. The server check and the app page both import `CAPABILITY`, so they use one capability key, `hello:view`.
+Open `shared/src/index.ts`, the [app definition](../sdk/glossary.md#app-definition). It names the app and lists its app pages and permissions. The server check and the app page both import `PERMISSION`, so they use one permission key, `hello:view`.
 
 ```ts title="shared/src/index.ts" starter
 import { defineApp } from '@vectoragents/vs-apps';
@@ -200,12 +200,12 @@ export const definition = defineApp({
 });
 ```
 
-`capability` on the app page must match a capability `key` exactly.
+`permission` on the app page must match a permission `key` exactly.
 
 ### 4. Verify the token on the server
 
 <!-- flavour node -->
-Open `server/src/auth.ts`. It holds the check that protected routes run. `readBearer` reads the `Authorization` header. `verifyUserToken` verifies the token against `platform.verifier`, the verifier of the app platform that `platform.ts` creates, and returns its claims. `assertCapability` refuses a token that lacks the capability you name.
+Open `server/src/auth.ts`. It holds the check that protected routes run. `readBearer` reads the `Authorization` header. `verifyUserToken` verifies the token against `platform.verifier`, the verifier of the app platform that `platform.ts` creates, and returns its claims. `assertPermission` refuses a token that lacks the permission you name.
 
 ```ts title="server/src/auth.ts" starter
 import type { IncomingMessage } from 'node:http';
@@ -229,12 +229,12 @@ The platform answers Fetch requests, so `main.ts` bridges each `node:http` reque
     send(res, 200, { sub: claims.sub, spaceId: claims.spaceId });
 ```
 
-A check that fails throws an `AppAuthError`. The server replies with status 401 when the token is missing or invalid, and 403 when the token lacks the capability. `GET /api/hello` returns the claims of a verified user token.
+A check that fails throws an `AppAuthError`. The server replies with status 401 when the token is missing or invalid, and 403 when the token lacks the permission. `GET /api/hello` returns the claims of a verified user token.
 <!-- /flavour -->
 <!-- flavour nest -->
-Open `server/src/hello.controller.ts`. The `@vectoragents/vs-apps/nest` entry point wraps the same checks in a module, a guard and decorators. A global guard verifies every user token against the key set at `SPACE_JWKS_URL`, which Part 2 sets. A missing or invalid token gets status 401, and a token that lacks the capability gets status 403.
+Open `server/src/hello.controller.ts`. The `@vectoragents/vs-apps/nest` entry point wraps the same checks in a module, a guard and decorators. A global guard verifies every user token against the key set at `SPACE_JWKS_URL`, which Part 2 sets. A missing or invalid token gets status 401, and a token that lacks the permission gets status 403.
 
-The `RequireCapability` decorator refuses a token that lacks the capability, in place of `assertCapability`. `CurrentUser` hands the controller the verified claims. `GET /api/hello` returns them.
+The `RequirePermission` decorator refuses a token that lacks the permission, in place of `assertPermission`. `CurrentUser` hands the controller the verified claims. `GET /api/hello` returns them.
 
 ```ts title="server/src/hello.controller.ts" starter
 import { Controller, Get } from '@nestjs/common';
@@ -432,7 +432,7 @@ export async function fetchHello(): Promise<{ sub?: string; spaceId: number }> {
 }
 ```
 
-The app page reads the claims with `useApp`. `RequireCapability` hides the content from a member who lacks `hello:view`. This client check is display only. The server check from step 4 of Part 1 decides.
+The app page reads the claims with `useApp`. `RequirePermission` hides the content from a member who lacks `hello:view`. This client check is display only. The server check from step 4 of Part 1 decides.
 
 ```tsx title="client/src/HelloPage.tsx" starter
 import { useEffect, useState } from 'react';
@@ -562,7 +562,7 @@ A member sees the app page only after the space admin shares the app with that m
 
 1. Choose **Settings**, **Space**, then **Access**. Under **Members**, choose **Add** and pick the member.
 2. Choose **Context Hub**, then **Resources**. On the **Hello app** row, open the row menu and choose **Access**.
-3. In **Direct access**, choose **Add users or groups…** and pick the member. Keep the access level at **Can use**. It gives every capability the app declares, which is enough for the app page. Vector Space shows a capability as a permission. Choose **Save changes**.
+3. In **Direct access**, choose **Add users or groups…** and pick the member. Keep the access level at **Can use**. It gives every permission the app declares, which is enough for the app page.Choose **Save changes**.
 
 **Check**: Vector Space shows the toasts `Member added` and `Access saved`. Open the row menu and choose **Access** again. **Direct access** lists the member.
 
@@ -608,5 +608,5 @@ If the app page stays on `Waiting for Space.`, check three things. `ALLOWED_PARE
 ## Next steps
 
 - [App definition](../sdk/app-definition.md): learn what each definition field does.
-- [Recipes](/vector-apps/category/recipes): add an app page, a capability or an agent action to this app.
+- [Recipes](/vector-apps/category/recipes): add an app page, a permission or an agent action to this app.
 - [Harness reference](../sdk/reference/harness.md): wire the harness into an app that is not built from the starter.

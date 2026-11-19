@@ -325,7 +325,7 @@ export function HelloPage() {
       </main>
 ```
 
-Open the app page in the space as a member whose [share](../../vector-space/glossary.md#share) gives `lead:manage`. **Can use** gives every capability the app declares. The summary line reads `waiting for the model` for a few seconds. With no model set, it then reads `409` followed by a JSON body that holds the message `No model is set for the "lead-summary" slot on this space`. With a model set, it reads `200` followed by `{"summary":"..."}`.
+Open the app page in the space as a member whose [share](../../vector-space/glossary.md#share) gives `lead:manage`. **Can use** gives every permission the app declares. The summary line reads `waiting for the model` for a few seconds. With no model set, it then reads `409` followed by a JSON body that holds the message `No model is set for the "lead-summary" slot on this space`. With a model set, it reads `200` followed by `{"summary":"..."}`.
 
 ## Next steps
 

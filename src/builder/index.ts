@@ -10,10 +10,10 @@ export interface PageDraft {
   key: string;
   label: string;
   path: string;
-  capability?: string;
+  permission?: string;
 }
 
-export interface CapabilityDraft {
+export interface PermissionDraft {
   key: string;
   label: string;
   description?: string;
@@ -58,7 +58,7 @@ export interface Draft {
   version: string;
   defaultPageKey?: string;
   pages: PageDraft[];
-  capabilities: CapabilityDraft[];
+  permissions: PermissionDraft[];
   resources: { modules: ModuleDraft[]; models: ModelDraft[]; connectors: ConnectorDraft[] };
 }
 
@@ -96,18 +96,18 @@ export function validateDraft(draft: Draft): { errors: Issue[]; warnings: Issue[
   if (!draft.version) fail('version', ruleText('version'));
 
   if (draft.pages.length === 0) fail('pages', ruleText('pages'));
-  const capabilityKeys = draft.capabilities.map((c) => c.key);
+  const permissionKeys = draft.permissions.map((c) => c.key);
   draft.pages.forEach((page, i) => {
     if (!matches('pages[].key', page.key)) fail(`pages[${i}].key`, 'Lower kebab-case. Unique within the app.');
     if (!page.label) fail(`pages[${i}].label`, ruleText('pages[].label'));
     if (!page.path.startsWith('/')) fail(`pages[${i}].path`, ruleText('pages[].path'));
-    if (page.capability === undefined) return;
-    if (!matches('pages[].capability', page.capability)) {
-      fail(`pages[${i}].capability`, ruleText('capabilities[].key'));
-    } else if (!capabilityKeys.includes(page.capability)) {
+    if (page.permission === undefined) return;
+    if (!matches('pages[].permission', page.permission)) {
+      fail(`pages[${i}].permission`, ruleText('permissions[].key'));
+    } else if (!permissionKeys.includes(page.permission)) {
       warnings.push({
-        path: `pages[${i}].capability`,
-        message: `Capability "${page.capability}" is not declared. defineApp accepts it, and the app page stays ungated by any real capability.`,
+        path: `pages[${i}].permission`,
+        message: `Permission "${page.permission}" is not declared. defineApp accepts it, and the app page stays ungated by any real permission.`,
       });
     }
   });
@@ -116,12 +116,12 @@ export function validateDraft(draft: Draft): { errors: Issue[]; warnings: Issue[
     fail('defaultPageKey', ruleText('defaultPageKey'));
   }
 
-  draft.capabilities.forEach((cap, i) => {
-    if (!matches('capabilities[].key', cap.key)) fail(`capabilities[${i}].key`, ruleText('capabilities[].key'));
-    if (!cap.label) fail(`capabilities[${i}].label`, ruleText('capabilities[].label'));
-    if (!oneOf(cap.effect, ['read', 'write'])) fail(`capabilities[${i}].effect`, ruleText('capabilities[].effect'));
+  draft.permissions.forEach((cap, i) => {
+    if (!matches('permissions[].key', cap.key)) fail(`permissions[${i}].key`, ruleText('permissions[].key'));
+    if (!cap.label) fail(`permissions[${i}].label`, ruleText('permissions[].label'));
+    if (!oneOf(cap.effect, ['read', 'write'])) fail(`permissions[${i}].effect`, ruleText('permissions[].effect'));
   });
-  checkUnique(capabilityKeys, 'capabilities', 'capability key', errors);
+  checkUnique(permissionKeys, 'permissions', 'permission key', errors);
 
   const { modules, models, connectors } = draft.resources;
   modules.forEach((m, i) => {
@@ -164,7 +164,7 @@ export function validateDraft(draft: Draft): { errors: Issue[]; warnings: Issue[
 const nonEmpty = <T>(value: T[] | undefined): T[] | undefined => (value && value.length > 0 ? value : undefined);
 const blank = (value: string | undefined): string | undefined => (value ? value : undefined);
 
-/** Drops empty optional fields and nests `resources` only when a slot exists. The draft keeps the field names of the field-rules table; the output uses the SDK names. */
+/** Drops empty optional fields and nests `resources` only when a slot exists. */
 export function toDefinition(draft: Draft): Record<string, unknown> {
   const { modules, models, connectors } = draft.resources;
   const resources = {
@@ -186,8 +186,8 @@ export function toDefinition(draft: Draft): Record<string, unknown> {
     name: blank(draft.name),
     version: draft.version,
     defaultPageKey: blank(draft.defaultPageKey),
-    pages: draft.pages.map(({ capability, ...p }) => ({ ...p, permission: blank(capability) })),
-    permissions: draft.capabilities.map((c) => ({ ...c, description: blank(c.description) })),
+    pages: draft.pages.map((p) => ({ ...p, permission: blank(p.permission) })),
+    permissions: draft.permissions.map((c) => ({ ...c, description: blank(c.description) })),
     resources: hasResources ? resources : undefined,
   }) as Record<string, unknown>;
 }

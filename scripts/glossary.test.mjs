@@ -17,7 +17,7 @@ const sections = {
     'Overview', 'Health', 'spend cap', 'rate card', 'agent card', 'evaluation', 'linked chat', 'web interface',
   ],
   'vector-apps': [
-    'app', 'app registration', 'manifest', 'app page', 'capability', 'capability grant', 'model slot', 'connector slot',
+    'app', 'app registration', 'manifest', 'app page', 'permission', 'permission grant', 'model slot', 'connector slot',
     'acts', 'approvals', 'user token', 'app token', 'service secret', 'binding', 'member directory', 'auto-apply', 'allowed resources',
   ],
   sdk: [
@@ -232,10 +232,10 @@ test('the orchestrator agent entry says one', () => {
   assert.match(body('orchestrator agent'), /one/i);
 });
 
-test('capability grant is a share of an app that gives a member its capabilities and acts name Human Time Return', () => {
+test('permission grant is a share of an app that gives a member its permissions and acts name Human Time Return', () => {
   const body = (name) => entries.find((e) => e.name === name).body;
-  assert.ok(body('capability grant').trim().startsWith('A [share](../vector-space/glossary.md#share) of an app that gives a member its capabilities.'));
-  assert.match(body('share'), /capability grant/);
+  assert.ok(body('permission grant').trim().startsWith('A [share](../vector-space/glossary.md#share) of an app that gives a member its permissions.'));
+  assert.match(body('share'), /permission grant/);
   assert.match(body('acts'), /Human Time Return/);
   assert.match(body('acts'), /\(\.\.\/vector-space\/glossary\.md#human-time-return\)/);
 });

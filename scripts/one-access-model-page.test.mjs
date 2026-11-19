@@ -104,9 +104,9 @@ test('conditions apply to datasources and contexts only', () => {
   assert.match(section(text, 'How the inputs combine'), /[Cc]onditions apply to datasources and contexts only/);
 });
 
-test('a capability grant is a share on named capabilities of a Vector App at Can use, linked to the Apps glossary', () => {
+test('a permission grant is a share on named permissions of a Vector App at Can use, linked to the Apps glossary', () => {
   const every = section(text, 'A centralized check for every way in');
-  assert.match(every, /\[capability grant\]\(\.\.\/vector-apps\/glossary\.md#capability-grant\) is a share on named capabilities of a Vector App at Can use/);
+  assert.match(every, /\[permission grant\]\(\.\.\/vector-apps\/glossary\.md#permission-grant\) is a share on named permissions of a Vector App at Can use/);
 });
 
 test('one sentence says an approval is a second check', () => {

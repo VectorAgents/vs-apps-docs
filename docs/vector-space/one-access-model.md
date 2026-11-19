@@ -45,7 +45,7 @@ The rules are the same for every way in, and what differs is who the work runs a
 - **Web interface**: the work runs as the member.
 - **API key**: runs as the identity it stands for. A personal token acts as its owner, and a key of a [service account](./glossary.md#service-account) acts as that account.
 - **Agent**: reaches what the member it works for reaches, and the settings of an agent can narrow this and never widen it.
-- **Vector App**: reaches only the overlap of its own shares and the access of the member. A [capability grant](../vector-apps/glossary.md#capability-grant) is a share on named capabilities of a Vector App at Can use, so the app reaches those capabilities only.
+- **Vector App**: reaches only the overlap of its own shares and the access of the member. A [permission grant](../vector-apps/glossary.md#permission-grant) is a share on named permissions of a Vector App at Can use, so the app reaches those permissions only.
 
 An [approval](./approvals-and-the-command-center.md) is a second check on top of access, and it never gives access.
 
