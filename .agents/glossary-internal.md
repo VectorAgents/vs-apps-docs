@@ -55,7 +55,7 @@ One value of an axis: client `react`; server `node` (Node.js + TypeScript) or `n
 
 ### pair
 
-One client flavour and one server flavour together, such as `react+node`. It names the unit that the picker saves, that gets a copy of each flavoured page under `docs-gen/pairs/` and that the quickstart scaffolds. It has no link to the pair of app and space in "service secret".
+One client flavour and one server flavour together, such as `react+node`. It names the unit that the picker saves, that gets a copy of each flavoured page under `docs-gen/pairs/` and that the quickstart scaffolds.
 
 - Maps to: one value combination of both axes, the directory `docs-gen/pairs/<client>/<server>/`.
 - Owner: docs.

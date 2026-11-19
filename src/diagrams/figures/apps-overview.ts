@@ -13,7 +13,7 @@ export const appsOverview: StructureData = {
   parts: [
     { id: 'client', label: 'Your client', text: 'Runs in an iframe and shows your app pages. Vector Space gives it a user token.', icon: 'app', tone: 'plug', on: 'space', c: 6, r: 1.6, w: 3.2, d: 2.8 },
     { id: 'gateway', label: 'AI gateway', text: "Every model call goes through it, on the organization's own AI provider accounts.", icon: 'gateway', tone: 'core', on: 'space', c: 1.6, r: 5.8, w: 3.2, d: 2.8 },
-    { id: 'data', label: 'Platform data', text: 'The members and resources of the space that your app may read. Your server reads them with an app token.', icon: 'contextHub', tone: 'core', on: 'space', c: 6, r: 5.8, w: 3.2, d: 2.8 },
+    { id: 'data', label: 'Platform data', text: 'The members and resources of the space that your app may read. Your server reads them with an actions token.', icon: 'contextHub', tone: 'core', on: 'space', c: 6, r: 5.8, w: 3.2, d: 2.8 },
     { id: 'server', label: 'Your server', text: 'Checks each token, serves your endpoints and serves the manifest. Your client calls it with the user token.', icon: 'mcp', tone: 'plug', on: 'origin', c: 14.4, r: 1.6, w: 3.2, d: 2.8 },
     { id: 'manifest', label: 'Manifest', text: 'JSON that your server serves. Vector Space reads it with a provisioning token to register the app.', icon: 'audit', tone: 'plug', on: 'origin', c: 14.4, r: 5.8, w: 3.2, d: 2.8 },
   ],

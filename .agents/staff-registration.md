@@ -21,14 +21,15 @@ Registration is staff-only: the controller is the cross-organization staff app r
 
 Check: toast `App saved`. The row shows **Enabled**. The Space server must reach the manifest URL.
 
-## 2. Allow the app in the license
+## 2. Allow the app for the organization
 
-**Add an app** lists the registration only after the organization license allows it.
+**Add an app** lists the app only after the organization license includes Apps and an organization owner turned the app on.
 
 1. Choose **Admin**, **Tenancy**, then **Organizations**. Choose **Edit license** on the organization.
-2. Under **Allowed apps**, select the app chip. Choose **Save**.
+2. Switch on **Includes Apps**. Choose **Save**.
+3. Ask an organization owner to choose **Settings**, **Organization**, **App catalog**, then switch on the app.
 
-Check: toast `License saved`. Tell the developer to continue at quickstart Part 2 step 4.
+Check: toasts `License saved` and `Saved`. The dialog under **Settings**, **Space**, **Installed apps**, **Install app**, **App** lists the app. Tell the developer to continue at quickstart Part 2 step 4.
 
 ## Replace an existing registration
 

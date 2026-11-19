@@ -65,7 +65,7 @@ The package `@hello-app/shared`. It holds the app definition and the permission 
 
 ### app platform
 
-The server runtime of the SDK. It serves the routes that Vector Space calls on your server, such as the manifest and provisioning routes. It also verifies tokens and keeps the service secret in your credential store.
+The server runtime of the SDK. It serves the routes that Vector Space calls on your server, such as the manifest and key set routes. It also verifies tokens and signs the proof that your server sends to Vector Space.
 
 - Maps to: `createAppPlatform` in `@vectoragents/vs-apps/server`, and the `/nest` module that binds it.
 - Owner: SDK.

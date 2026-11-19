@@ -76,7 +76,7 @@ This guide uses `platform.ai` from the `@vectoragents/vs-apps/server` subpath of
 This guide uses `SpaceAiService` from the `@vectoragents/vs-apps/nest` subpath of the [SDK](../../sdk/glossary.md#sdk) on a Nest.js server.
 <!-- /flavour -->
 
-Your server never holds a model key. The SDK trades the [service secret](../glossary.md#service-secret) for `apiKey`, a short-lived key for one model slot, and returns it in a client configuration. The configuration also holds the `baseUrl` of the model gateway of Vector Space and the `model` name to send.
+Your server never holds a model key. The SDK trades a signed proof for `apiKey`, a short-lived key for one model slot, and returns it in a client configuration. The configuration also holds the `baseUrl` of the model gateway of Vector Space and the `model` name to send.
 
 <!-- flavour node -->
 `platform.ai(appId, spaceId, slot)` resolves to `{ provider, baseUrl, apiKey, model, expiresAt }`. `expiresAt` is Unix time in seconds. Do not store the configuration: call `platform.ai` on each request. The platform reuses a key until one minute before it expires, for the same space, slot, run and trace only.
@@ -249,14 +249,10 @@ export class AppModule {}
 **Role**: developer. Restart `npm run dev:space`.
 
 <!-- flavour node -->
-Vector Space pushes the service secret to `POST /api/provision` when it adds the app. The [app platform](../../sdk/glossary.md#app-platform) of the starter, `platform` in `server/src/platform.ts`, serves that route. It stores the secret in its credential store, `MemoryCredentialStore` in `server/src/credential-store.ts`, so you write no code for it.
-
-The starter's `MemoryCredentialStore` loses the secrets on restart. Before production, [implement `AppCredentialStore` over your own storage](../quickstart.md#4-verify-the-token-on-the-server). Until Vector Space pushes the secret again, `platform.ai` fails with status `401`. The quickstart shows [how to recover after a restart](../quickstart.md#4-verify-the-token-on-the-server).
+The [app platform](../../sdk/glossary.md#app-platform) of the starter, `platform` in `server/src/platform.ts`, signs the proof with the [signing key](../glossary.md#signing-key) from `APP_SIGNING_KEY`, so you write no code for it.
 <!-- /flavour -->
 <!-- flavour nest -->
-Vector Space pushes the service secret to `POST /api/provision` when it adds the app. `AppPlatformModule` stores it in the credential store of `AppModule`, `MemoryCredentialStore` in `server/src/credential-store.ts`, so you write no code for it.
-
-The starter's `MemoryCredentialStore` loses the secrets on restart. Before production, [implement `AppCredentialStore` over your own storage](../quickstart.md#4-verify-the-token-on-the-server). Until Vector Space pushes the secret again, `getClientConfig` fails with status `401`. The quickstart shows [how to recover after a restart](../quickstart.md#4-verify-the-token-on-the-server).
+`AppPlatformModule` signs the proof with the [signing key](../glossary.md#signing-key) from `APP_SIGNING_KEY`, so you write no code for it.
 <!-- /flavour -->
 
 <!-- flavour node -->

@@ -29,19 +29,17 @@ cd leads-guide
 
 ## Steps
 
-A call as the member carries the member's token, so Vector Space limits it to what that member may do. A call as the app carries a short-lived [app token](../glossary.md#app-token) that Vector Space issues in exchange for a [service secret](../glossary.md#service-secret). Vector Space limits that call to what the app may do, with no member present.
+A call as the member carries the member's token, so Vector Space limits it to what that member may do. A call as the app carries a short-lived [actions token](../glossary.md#actions-token) that Vector Space issues when it accepts the signed proof of your server. Vector Space limits that call to what the app may do, with no member present.
 
 <!-- flavour node -->
 ### 1. Add the handlers
 
-This guide uses the `@vectoragents/vs-apps/server` subpath of the [SDK](../../sdk/glossary.md#sdk) on a plain `node:http` server. The [app platform](../../sdk/glossary.md#app-platform) of the starter, `platform` in `server/src/platform.ts`, holds the clients that call Vector Space. Vector Space creates a service secret for each pair of app and space. It pushes the secret to `POST /api/provision`, as in [step 4 of Part 2 of the quickstart](../quickstart.md#4-add-the-app-to-a-space). The platform serves that route and keeps the secret in its credential store.
+This guide uses the `@vectoragents/vs-apps/server` subpath of the [SDK](../../sdk/glossary.md#sdk) on a plain `node:http` server. The [app platform](../../sdk/glossary.md#app-platform) of the starter, `platform` in `server/src/platform.ts`, holds the clients that call Vector Space.
 
 - `platform.spaceActions` has one method for each Vector Space action. Each method takes a bearer token as its first argument.
-- `platform.s2s(appId, spaceId)` exchanges the service secret for an app token. It asks the store for the secret on every exchange and caches only the token.
+- `platform.s2s(appId, spaceId)` signs a proof with the [signing key](../glossary.md#signing-key) and trades it for an actions token. It caches only the token.
 
-The starter's `MemoryCredentialStore` loses the secrets on restart. Before production, [implement `AppCredentialStore` over your own storage](../quickstart.md#4-verify-the-token-on-the-server). After a restart, `platform.s2s` [fails until you recover the secret](../quickstart.md#4-verify-the-token-on-the-server).
-
-The agent handler passes the caller's own token to `agentInvoke`. The connectors handler passes an app token to `connectorsList`. Each handler takes the platform, and the verified claims that `requirePermission` returns, as in step 3 of [gate an app page and an endpoint](../recipes/gate-by-permission.md).
+The agent handler passes the caller's own token to `agentInvoke`. The connectors handler passes an actions token to `connectorsList`. Each handler takes the platform, and the verified claims that `requirePermission` returns, as in step 3 of [gate an app page and an endpoint](../recipes/gate-by-permission.md).
 
 ```ts title="server/src/space-calls.ts"
 import type { IncomingMessage } from 'node:http';
@@ -62,7 +60,7 @@ export async function listConnectors(platform: AppPlatform, claims: UserTokenCla
 ```
 
 :::warning
-An app token carries no member, so Vector Space does not limit `connectorsList` to what the caller may do. Check the permission on the route before you call the handler, as step 2 does.
+An actions token carries no member, so Vector Space does not limit `connectorsList` to what the caller may do. Check the permission on the route before you call the handler, as step 2 does.
 :::
 
 ### 2. Register the routes
@@ -109,11 +107,9 @@ This guide uses the `@vectoragents/vs-apps/nest` subpath of the [SDK](../../sdk/
 
 - `SpaceActionsService` has one method for each Vector Space action. Each method takes a bearer token as its first argument.
 - `AppActionsService` wraps `SpaceActionsService` for a caller. It reads the token and the `spaceId` from the request, so you pass only the request and the input.
-- `SpaceS2sService` exchanges the service secret for an app token. Vector Space creates the secret for each pair of app and space and pushes it to the credential store, `MemoryCredentialStore` in `server/src/credential-store.ts`.
+- `SpaceS2sService` signs a proof with the [signing key](../glossary.md#signing-key) and trades it for an actions token.
 
-The starter's `MemoryCredentialStore` loses the secrets on restart. Before production, [implement `AppCredentialStore` over your own storage](../quickstart.md#4-verify-the-token-on-the-server). After a restart, `getToken` [fails until you recover the secret](../quickstart.md#4-verify-the-token-on-the-server).
-
-The agent route passes the request to `AppActionsService`, which sends the caller's own token. The connectors route sends an app token. `getToken` takes the `appId` and the `spaceId` that `appCaller` reads from the verified claims, as in [open a route and read the caller](./open-route-and-read-caller.md). A failed Vector Space call reaches your caller as an HTTP error with the status that Vector Space sent.
+The agent route passes the request to `AppActionsService`, which sends the caller's own token. The connectors route sends an actions token. `getToken` takes the `appId` and the `spaceId` that `appCaller` reads from the verified claims, as in [open a route and read the caller](./open-route-and-read-caller.md). A failed Vector Space call reaches your caller as an HTTP error with the status that Vector Space sent.
 
 ```ts title="server/src/space-calls.controller.ts"
 import { Body, Controller, Get, Post, Req } from '@nestjs/common';
@@ -151,7 +147,7 @@ export class SpaceCallsController {
 ```
 
 :::warning
-An app token carries no member, so Vector Space does not limit `connectorsList` to what the caller may do. The `@RequirePermission` check on the route decides who may use it.
+An actions token carries no member, so Vector Space does not limit `connectorsList` to what the caller may do. The `@RequirePermission` check on the route decides who may use it.
 :::
 
 ### 2. Register the controller

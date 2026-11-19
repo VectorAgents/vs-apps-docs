@@ -14,10 +14,6 @@ const recipeNames = ['add-page-and-permission', 'gate-by-permission', 'read-app-
 const openRouteGuide = 'open-route-and-read-caller';
 const modelGuide = 'call-a-model-from-your-server';
 const connectorGuide = 'handle-connector-events';
-const RECOVERY_LINK = '../quickstart.md#4-verify-the-token-on-the-server';
-const escapeRegExp = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-const RECOVERY_URL = new RegExp(`\\]\\(${escapeRegExp(RECOVERY_LINK)}\\)`);
-const IMPLEMENT_STORE_LINK = new RegExp(`\\[implement \`AppCredentialStore\` over your own storage\\]\\(${escapeRegExp(RECOVERY_LINK)}\\)`);
 const pagesIn = (dir) =>
   readdirSync(join(docs, dir))
     .filter((name) => name.endsWith('.md'))
@@ -133,8 +129,8 @@ test('recipe and guide prose names the project by its start, says member for use
   for (const { name, text } of all) {
     const prose = proseOf(text);
     assert.doesNotMatch(prose, /hello-app/, name);
-    // The events route path ends in the app key, so a command or a code span may hold it there.
-    assert.doesNotMatch(text.replace(/\/api\/events\/hello-app/g, '').replace(/^```[^\n]*\n([\s\S]*?)^```/gm, (block, body) => (/^```(bash|sh)/.test(block) ? body : '')), /hello-app/, name);
+    // The events route path ends in the app key and an event body names it as `appid`, so a command may hold it there.
+    assert.doesNotMatch(text.replace(/\/api\/events\/hello-app|"appid":"hello-app"/g, '').replace(/^```[^\n]*\n([\s\S]*?)^```/gm, (block, body) => (/^```(bash|sh)/.test(block) ? body : '')), /hello-app/, name);
     assert.doesNotMatch(prose, /\busers?\b(?! token)/i, name);
     assert.doesNotMatch(prose, /\b(above|below|earlier|as shown)\b/i, name);
     assert.doesNotMatch(prose, /\b\w+n't\b|\b(?:it|that|there|here|what|let)'s\b|'(?:re|ve|ll|d|m)\b/i, name);
@@ -331,12 +327,11 @@ test('the Node.js Call Space tree calls Space through the platform clients of th
   assert.doesNotMatch(callSpace.node, /\bNest(\.js|JS)?\b|@nestjs\/|@Injectable|AppActionsService|SpaceActionsService|SpaceS2sService/);
 });
 
-test('the Nest.js Call Space tree says the starter store loses the secrets on restart and links the one interface to implement', () => {
-  const note = callSpace.nest.split('\n').filter((line) => /loses the secrets on restart/.test(line));
-  assert.equal(note.length, 1);
-  assert.match(note[0], IMPLEMENT_STORE_LINK);
-  assert.match(note[0], new RegExp(`\`getToken\` \\[fails until you recover the secret\\]\\(${escapeRegExp(RECOVERY_LINK)}\\)`));
-  assert.doesNotMatch(callSpace.nest, /rotated in Vector Space/);
+test('both Call Space trees say the signing key signs the proof and no longer name the credential store', () => {
+  for (const text of [callSpace.node, callSpace.nest]) {
+    assert.match(text, /signs a proof with the \[signing key\]\(\.\.\/glossary\.md#signing-key\) and trades it for an actions token/);
+    assert.doesNotMatch(text, /service secret|MemoryCredentialStore|AppCredentialStore|rotated in Vector Space/);
+  }
 });
 
 test('the Nest.js Call Space tree adds its controller to AppModule and keeps type-only constructor injection', () => {
@@ -490,7 +485,6 @@ test('the Node.js call-a-model tree asks the platform for the slot with the call
   assert.match(body, /\bplatform\.ai\(claims\.appId, claims\.spaceId, 'lead-summary'\)/);
   assert.match(body, /\bkey: 'lead-summary'/);
   assert.match(modelTrees.node, /requirePermission\(req, 'lead:manage'\)/);
-  assert.match(modelTrees.node, /`POST \/api\/provision`/);
 });
 
 test('the call-a-model trees call the model with the returned config, never a fixed key or model', () => {
@@ -503,12 +497,10 @@ test('the call-a-model trees call the model with the returned config, never a fi
   }
 });
 
-test('the call-a-model trees keep the in-memory credential store warning and link the quickstart recovery', () => {
+test('the call-a-model trees name APP_SIGNING_KEY and no longer name the service secret or the credential store', () => {
   for (const text of Object.values(modelTrees)) {
-    const warning = text.split('\n').filter((line) => /`MemoryCredentialStore` loses the secrets on restart/.test(line));
-    assert.equal(warning.length, 1);
-    assert.match(warning[0], IMPLEMENT_STORE_LINK);
-    assert.match(warning[0], new RegExp(`${RECOVERY_URL.source}\\.$`));
+    assert.match(text, /`APP_SIGNING_KEY`/);
+    assert.doesNotMatch(text, /service secret|MemoryCredentialStore|AppCredentialStore/);
   }
 });
 
