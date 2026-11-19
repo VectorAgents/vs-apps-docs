@@ -14,7 +14,7 @@ Registration is staff-only: the controller is the cross-organization staff app r
 
 1. Choose **Settings**, **Admin**, **Platform**, then **Apps**. Choose **Add app**.
 2. Enter the manifest URL in **Manifest URL**. Choose **Continue**.
-3. Check the key, name, version, page count and capability count against the developer's manifest.
+3. Check the key, name, version, page count and permission count against the developer's manifest.
 4. Set **Iframe URL** to the developer's iframe URL. The field starts with the manifest origin.
 5. Leave **Auto-apply manifest updates** off, Vector's default. Switch it on only when Vector decides to. Choose **Register**.
 6. On the new row, choose **Edit**. Switch on **Enabled**. Choose **Save**.

@@ -10,7 +10,7 @@ Each term has one name in these docs. Each entry gives the definition, the expor
 
 ### app definition
 
-The one object that describes an [app](../vector-apps/glossary.md#app): pages, capabilities and resources. It does not read environment variables. It feeds the server manifest and the client navigation.
+The one object that describes an [app](../vector-apps/glossary.md#app): pages, permissions and resources. It does not read environment variables. It feeds the server manifest and the client navigation.
 
 - Maps to: `defineApp(...)` in `@vectoragents/vs-apps`, typed `AppDefinition`.
 - Owner: SDK.
@@ -59,7 +59,7 @@ One repository that holds the client, the server and the shared package, each as
 
 ### shared package
 
-The package `@hello-app/shared`. It holds the app definition and the capability key. The client and the server both import it.
+The package `@hello-app/shared`. It holds the app definition and the permission key. The client and the server both import it.
 
 - Owner: docs. It is a package of the quickstart app, not part of the SDK.
 

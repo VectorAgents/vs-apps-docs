@@ -10,7 +10,7 @@ import { bodyOf, codeOf, lastStep, linksOf, nextLinks, section, snippetsOf, titl
 const docs = join(dirname(fileURLToPath(import.meta.url)), '..', 'docs');
 const site = join(dirname(fileURLToPath(import.meta.url)), '..', 'docs-gen', 'site');
 // The Next-step chain order of the five client recipes.
-const recipeNames = ['add-page-and-capability', 'gate-by-capability', 'read-app-context', 'list-members', 'expose-agent-actions'];
+const recipeNames = ['add-page-and-permission', 'gate-by-permission', 'read-app-context', 'list-members', 'expose-agent-actions'];
 const openRouteGuide = 'open-route-and-read-caller';
 const modelGuide = 'call-a-model-from-your-server';
 const connectorGuide = 'handle-connector-events';
@@ -222,10 +222,10 @@ test('no page names a script the starter lacks or the old Part 2 anchor', () => 
   }
 });
 
-const gate = recipes.find((r) => r.name === 'gate-by-capability');
-const gateTrees = treesOf('vector-apps/recipes/gate-by-capability.md');
+const gate = recipes.find((r) => r.name === 'gate-by-permission');
+const gateTrees = treesOf('vector-apps/recipes/gate-by-permission.md');
 
-test('gate-by-capability is a page for each pair and starts from the leads-app overlay', () => {
+test('gate-by-permission is a page for each pair and starts from the leads-app overlay', () => {
   assert.deepEqual(gateTrees.map(({ tree }) => tree), ['react/node', 'react/nest']);
   assert.match(gate.text, /^---\n[\s\S]*?^start: leads-app$[\s\S]*?\n---\n/m);
   for (const { tree, text } of gateTrees) {
@@ -236,7 +236,7 @@ test('gate-by-capability is a page for each pair and starts from the leads-app o
   }
 });
 
-test('gate-by-capability enforces lead:manage on GET /api/leads in each flavour', () => {
+test('gate-by-permission enforces lead:manage on GET /api/leads in each flavour', () => {
   const [node, nestTree] = gateTrees.map(({ text }) => snippetsOf(text));
   assert.match(gateTrees[0].text, /requirePermission\(req, 'lead:manage'\)/);
   assert.match(nestTree, /@RequirePermission\('lead:manage'\)/);
@@ -250,7 +250,7 @@ test('gate-by-capability enforces lead:manage on GET /api/leads in each flavour'
   }
 });
 
-test('gate-by-capability Nest block registers the controller in AppModule and uses no @Inject', () => {
+test('gate-by-permission Nest block registers the controller in AppModule and uses no @Inject', () => {
   const nestText = gateTrees[1].text;
   const module = titledSnippets(nestText).filter(({ title }) => title === 'server/src/app.module.ts');
   assert.ok(module.length >= 1);
@@ -259,7 +259,7 @@ test('gate-by-capability Nest block registers the controller in AppModule and us
   assert.doesNotMatch(nestText, /@Inject\(/);
 });
 
-test('gate-by-capability shares one fallback across at least two pages and ends with a check of both gates', () => {
+test('gate-by-permission shares one fallback across at least two pages and ends with a check of both gates', () => {
   const steps = section(gate.text, 'Steps').split(/^### /m).slice(1);
   const share = steps.find((step) => /^\d+\. Share one fallback across app pages\n/.test(step));
   assert.ok(share, 'a step named "Share one fallback across app pages"');
@@ -268,7 +268,7 @@ test('gate-by-capability shares one fallback across at least two pages and ends 
   assert.equal([...gate.text.matchAll(/fallback=\{\((?:permission|missing)\) =>/g)].length, 3);
   assert.match(steps.at(-1), /^\d+\. Check both gates\n/);
   assert.match(steps.at(-1), /`403`/);
-  assert.match(steps.at(-1), /Missing capability: lead:manage/);
+  assert.match(steps.at(-1), /Missing permission: lead:manage/);
 });
 
 const expose = recipes.find((r) => r.name === 'expose-agent-actions');
@@ -397,10 +397,10 @@ test('list-members mounts every component it builds in the leads page and ends w
   assert.match(steps.at(-1), /^\d+\. Check /);
 });
 
-const addPage = recipes.find((r) => r.name === 'add-page-and-capability');
+const addPage = recipes.find((r) => r.name === 'add-page-and-permission');
 const addPageSteps = () => section(addPage.text, 'Steps').split(/^### /m).slice(1);
 
-test('add-page-and-capability restart step says the starter tells Space and keeps Check for updates as the fallback', () => {
+test('add-page-and-permission restart step says the starter tells Space and keeps Check for updates as the fallback', () => {
   const restart = addPageSteps().find((s) => /^\d+\. .*Space/.test(s));
   assert.ok(restart, 'a step about Space reading the manifest');
   assert.match(restart, /`SPACE_API_URL`/);
@@ -409,7 +409,7 @@ test('add-page-and-capability restart step says the starter tells Space and keep
   assert.doesNotMatch(restart, /Restart the server\. A manifest change/);
 });
 
-test('add-page-and-capability links between pages without a reload through navigate and one shared pages array', () => {
+test('add-page-and-permission links between pages without a reload through navigate and one shared pages array', () => {
   const step = addPageSteps().find((s) => /^\d+\. Link between app pages without a reload\n/.test(s));
   assert.ok(step, 'a step named "Link between app pages without a reload"');
   assert.match(step, /iframe/);
@@ -421,29 +421,28 @@ test('add-page-and-capability links between pages without a reload through navig
   assert.match(addPage.text, /^export type PagePath = \(typeof pages\)\[number\]\['path'\];$/m);
 });
 
-test('add-page-and-capability writes plain pages and keeps SPACE_API_URL out of Prerequisites', () => {
+test('add-page-and-permission writes plain pages and keeps SPACE_API_URL out of Prerequisites', () => {
   assert.doesNotMatch(addPage.text, /RequirePermission|When you finish|pending review|Vector applies|ask Vector to/i);
   assert.doesNotMatch(section(addPage.text, 'Prerequisites'), /SPACE_API_URL/);
 });
 
-test('add-page-and-capability owns no filter prose and hands gating to gate-by-capability', () => {
-  assert.match(addPage.text, /\]\(\.\/gate-by-capability\.md\)/);
-  assert.match(section(addPage.text, 'Next steps'), /gate-by-capability\.md/);
+test('add-page-and-permission owns no filter prose and hands gating to gate-by-permission', () => {
+  assert.match(addPage.text, /\]\(\.\/gate-by-permission\.md\)/);
+  assert.match(section(addPage.text, 'Next steps'), /gate-by-permission\.md/);
 });
 
-test('add-page-and-capability says staff apply a manifest change', () => {
+test('add-page-and-permission says staff apply a manifest change', () => {
   assert.match(addPage.text, /waits until staff apply it/);
   assert.match(addPage.text, /\]\(\.\.\/how-a-vector-app-works\.md#update\)/);
   assert.match(addPage.text, /\[staff\]\(\.\.\/\.\.\/vector-space\/glossary\.md#staff\)/);
 });
 
-test('add-page-and-capability share step skips the space admin, keeps Can use and names the custom role path', () => {
-  const step = addPageSteps().find((s) => /^\d+\. Grant the capabilities\n/.test(s));
-  assert.ok(step, 'a step named "Grant the capabilities"');
+test('add-page-and-permission share step skips the space admin, keeps Can use and names the custom role path', () => {
+  const step = addPageSteps().find((s) => /^\d+\. Grant the permissions\n/.test(s));
+  assert.ok(step, 'a step named "Grant the permissions"');
   assert.match(step, /holds every permission on the app row/);
   assert.match(step, /quickstart\.md#5-share-the-app-with-a-member/);
   assert.match(step, /\*\*Can use\*\*/);
-  assert.match(step, /Vector Space shows a capability as a permission\./);
   assert.match(step, /\*\*Settings\*\*, \*\*Organization\*\*, \*\*Access\*\*, \*\*Roles\*\*, \*\*New role\*\*/);
   assert.match(step, /\*\*Custom roles\*\*/);
   assert.doesNotMatch(step, /requestRefresh|Reload/);
@@ -571,7 +570,7 @@ test('the A2A guide checks the card and a refused call', () => {
 });
 
 const trees = guides.find((r) => r.name === 'agent-action-trees');
-const filterNav = guides.find((r) => r.name === 'filter-navigation-by-capability');
+const filterNav = guides.find((r) => r.name === 'filter-navigation-by-permission');
 const sharedKeys = (text) => [...snippetsOf(text).matchAll(/\b(?:key|permission|pageId): '([^']+)'/g)].map(([, key]) => key);
 
 test('agent-action-trees uses the leads page and the shared action ids', () => {
@@ -580,7 +579,7 @@ test('agent-action-trees uses the leads page and the shared action ids', () => {
   assert.match(trees.text, /dispatch\('leads\.open_lead_list'/);
 });
 
-test('filter-navigation-by-capability keeps home gated by CAPABILITY and gates leads and icp with literals', () => {
+test('filter-navigation-by-permission keeps home gated by PERMISSION and gates leads and icp with literals', () => {
   const code = removedLinesOut(snippetsOf(filterNav.text));
   assert.match(code, /PERMISSION = 'hello:view'/);
   assert.match(code, /defaultPageKey: 'home'/);
@@ -589,13 +588,13 @@ test('filter-navigation-by-capability keeps home gated by CAPABILITY and gates l
   assert.match(code, /key: 'icp',[^}]*permission: 'icp:manage'/);
   assert.doesNotMatch(code, /removed-/);
   assert.match(code, /from '@hello-app\/shared'/);
-  assert.match(filterNav.text, /add-page-and-capability\.md#react-3-link-between-app-pages-without-a-reload/);
+  assert.match(filterNav.text, /add-page-and-permission\.md#react-3-link-between-app-pages-without-a-reload/);
   assert.doesNotMatch(filterNav.text, /shared\/src\/index'|Home for every member|When you finish/);
 });
 
-test('filter-navigation-by-capability names the leads-app start and its scaffold command, not the old folder', () => {
+test('filter-navigation-by-permission names the leads-app start and its scaffold command, not the old folder', () => {
   assert.match(filterNav.text, /^---\n[\s\S]*?^start: leads-app$[\s\S]*?\n---\n/m);
-  const [{ text }] = treesOf('vector-apps/guides/filter-navigation-by-capability.md');
+  const [{ text }] = treesOf('vector-apps/guides/filter-navigation-by-permission.md');
   assert.match(section(text, 'Prerequisites'), /^npm create @vectoragents\/app leads-guide -- --client react --server node --start leads-app$/m);
   assert.doesNotMatch(text, /recipes\/leads-app|git clone/);
 });
@@ -626,18 +625,18 @@ const keyUse = (text) => {
       ...first(/\b(?:pageId|defaultPageKey): '([^']+)'/g),
       ...first(/\bhref="\/([^"]*)"/g),
     ],
-    capabilities: first(/['"]([a-z]+:[a-z]+)['"]/g).filter((key) => !['node'].includes(key.split(':')[0])),
+    permissions: first(/['"]([a-z]+:[a-z]+)['"]/g).filter((key) => !['node'].includes(key.split(':')[0])),
   };
 };
-// The starter's own `home` page and `hello:view` capability, kept where a page extends the starter definition.
+// The starter's own `home` page and `hello:view` permission, kept where a page extends the starter definition.
 const starterOwned = {
-  home: ['add-page-and-capability', 'filter-navigation-by-capability'],
-  'hello:view': ['add-page-and-capability', 'filter-navigation-by-capability', 'call-a-model-from-your-server', 'handle-connector-events'],
+  home: ['add-page-and-permission', 'filter-navigation-by-permission'],
+  'hello:view': ['add-page-and-permission', 'filter-navigation-by-permission', 'call-a-model-from-your-server', 'handle-connector-events'],
 };
 
-test('every recipe and guide snippet uses only the shared app, page and capability keys', () => {
-  const shared = { app: ['hello-app'], pages: ['leads', 'icp'], capabilities: ['lead:manage', 'icp:manage'] };
-  const seen = { app: new Set(), pages: new Set(), capabilities: new Set() };
+test('every recipe and guide snippet uses only the shared app, page and permission keys', () => {
+  const shared = { app: ['hello-app'], pages: ['leads', 'icp'], permissions: ['lead:manage', 'icp:manage'] };
+  const seen = { app: new Set(), pages: new Set(), permissions: new Set() };
   for (const { name, text } of all) {
     const use = keyUse(text);
     for (const kind of Object.keys(shared)) {
@@ -653,7 +652,7 @@ test('a starter-owned key is allowed only on a page whose snippets still use it'
   for (const [key, names] of Object.entries(starterOwned)) {
     for (const name of names) {
       const use = keyUse(all.find((page) => page.name === name).text);
-      assert.ok([...use.pages, ...use.capabilities].includes(key), `${name} no longer uses ${key}`);
+      assert.ok([...use.pages, ...use.permissions].includes(key), `${name} no longer uses ${key}`);
     }
   }
 });

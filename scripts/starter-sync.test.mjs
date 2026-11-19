@@ -12,7 +12,7 @@ const page = [
   '```',
   '',
   '```ts title="shared/src/index.ts" starter',
-  'export const CAPABILITY = \'hello:view\';',
+  'export const PERMISSION = \'hello:view\';',
   '```',
   '',
   '```ts title="not-from-starter.ts"',
@@ -41,7 +41,7 @@ function starter(overrides = {}) {
     'scripts/env-preset.mjs': PRESET,
     'client/index.html': '',
     'client/src/main.tsx': '',
-    'shared/src/index.ts': "import x;\nexport const CAPABILITY = 'hello:view';\nexport const y = 1;\n",
+    'shared/src/index.ts': "import x;\nexport const PERMISSION = 'hello:view';\nexport const y = 1;\n",
     'package.json': '{}',
     'client/package.json': pin('0.2.4'),
     'server/package.json': pin('0.2.4'),
@@ -79,7 +79,7 @@ test('code blocks: passes when the excerpt is a substring of the starter file, a
 });
 
 test('code blocks: fails when the excerpt differs from the starter file', () => {
-  const root = starter({ 'shared/src/index.ts': "export const CAPABILITY = 'hello:read';\n" });
+  const root = starter({ 'shared/src/index.ts': "export const PERMISSION = 'hello:read';\n" });
   const problems = checkCodeBlocks(page, root);
   assert.equal(problems.length, 1);
   assert.match(problems[0], /shared\/src\/index\.ts/);
@@ -233,7 +233,7 @@ test('env vars: a name that the starter .npmrc reads counts as known', () => {
 });
 
 test('env vars: placeholders in code blocks, error codes and plain words are not variables', () => {
-  const pages = docPage('The call returns `UNAVAILABLE_ACTION`. Use `CAPABILITY` and `Result`.', codeBlock('bash', 'curl http://localhost:<SERVER_PORT>/api'));
+  const pages = docPage('The call returns `UNAVAILABLE_ACTION`. Use `PERMISSION` and `Result`.', codeBlock('bash', 'curl http://localhost:<SERVER_PORT>/api'));
   assert.deepEqual(checkEnvVars(pages, envStarter('')), []);
 });
 

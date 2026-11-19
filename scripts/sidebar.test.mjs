@@ -106,8 +106,8 @@ test('the Guides section lists the A2A guide', () => {
 
 test('the Recipes section lists the five client recipes in the Next-step chain order', () => {
   assert.deepEqual(docIds(categoryOf('vectorApps', 'Recipes').items), [
-    'vector-apps/recipes/add-page-and-capability',
-    'vector-apps/recipes/gate-by-capability',
+    'vector-apps/recipes/add-page-and-permission',
+    'vector-apps/recipes/gate-by-permission',
     'vector-apps/recipes/read-app-context',
     'vector-apps/recipes/list-members',
     'vector-apps/recipes/expose-agent-actions',

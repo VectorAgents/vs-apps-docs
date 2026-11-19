@@ -24,9 +24,9 @@ function VectorAppsHarness(): JSX.Element;
 ### Behaviour
 
 - Fetches `/api/__dev/manifests` from the app server to build the sidebar of apps and [app pages](../../vector-apps/glossary.md#app-page).
-- Mints a token for the chosen identity and capabilities through `POST /api/__dev/token`, and sends it to the iframe. Changing the capability set in the dev panel re-mints it.
+- Mints a token for the chosen identity and permissions through `POST /api/__dev/token`, and sends it to the iframe. Changing the permission set in the dev panel re-mints it.
 - Shows the error `The app server did not answer /api/__dev/manifests` when the manifests request fails. The error tells you to run the server with `VA_DEV_ISSUER=true`.
-- Keeps the selected app, page, capabilities, theme and identity in the page query string, so a reload restores them.
+- Keeps the selected app, page, permissions, theme and identity in the page query string, so a reload restores them.
 - Remembers the dev panel and sidebar open state in `localStorage`.
 - Takes no props.
 - Serve it only in development. Never build it into the production bundle: keep it in a separate HTML entry that the build does not list as an input.
@@ -91,7 +91,7 @@ A `user` request has these fields:
 | `appKey` | string | required | The app key. |
 | `spaceId` | number | required | The space id. |
 | `organizationId` | number | required | The organization id. |
-| `permissions` | string array | required | The capability keys the token holds. |
+| `permissions` | string array | required | The permission keys the token holds. |
 | `name` | string | optional | The display name. |
 | `picture` | string | optional | The picture URL. |
 | `ttlSeconds` | number | optional | The lifetime in seconds, 300 by default for a user token. |
@@ -183,7 +183,7 @@ export function requireUser(platform: AppPlatform, req: IncomingMessage) {
 }
 ```
 
-When the page works, the harness card shows the member, the space and the capabilities of the token, and a request to your server succeeds.
+When the page works, the harness card shows the member, the space and the permissions of the token, and a request to your server succeeds.
 <!-- /flavour -->
 <!-- flavour nest todo -->
 <!-- /flavour -->

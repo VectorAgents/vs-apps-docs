@@ -1,10 +1,10 @@
 ---
-title: Add an app page and a capability
-description: Add a leads and an icp app page, gate each by a capability, link them without a reload and open them in a space.
+title: Add an app page and a permission
+description: Add a leads and an icp app page, gate each by a permission, link them without a reload and open them in a space.
 ---
 
 <!-- flavour react -->
-Add two [app pages](../glossary.md#app-page), `leads` and `icp`, gate each with a [capability](../glossary.md#capability) and link them without a page reload. A [space](../../vector-space/glossary.md#space) lists both app pages to the [members](../../vector-space/glossary.md#member) who hold the capabilities.
+Add two [app pages](../glossary.md#app-page), `leads` and `icp`, gate each with a [permission](../glossary.md#permission) and link them without a page reload. A [space](../../vector-space/glossary.md#space) lists both app pages to the [members](../../vector-space/glossary.md#member) who hold the permissions.
 
 ## Prerequisites
 
@@ -15,9 +15,9 @@ Add two [app pages](../glossary.md#app-page), `leads` and `icp`, gate each with 
 
 ### 1. Extend the definition
 
-The `icp` app page holds the ideal customer profile (ICP) library. This step adds the `leads` and `icp` app pages and their capabilities to `shared/src/index.ts`, and moves the app pages into one exported array. Step 3 reads the same array for the path type.
+The `icp` app page holds the ideal customer profile (ICP) library. This step adds the `leads` and `icp` app pages and their permissions to `shared/src/index.ts`, and moves the app pages into one exported array. Step 3 reads the same array for the path type.
 
-An app page `capability` must match a capability `key` exactly, because `defineApp` does not check it. A capability key has the form `<group>:<action>`, and an app page `path` starts with `/`. `as const satisfies` keeps each path as a literal type, and TypeScript still checks each entry as an `AppPageDef`. `slice()` copies the read-only array into the mutable one that `defineApp` takes.
+An app page `permission` must match a permission `key` exactly, because `defineApp` does not check it. A permission key has the form `<group>:<action>`, and an app page `path` starts with `/`. `as const satisfies` keeps each path as a literal type, and TypeScript still checks each entry as an `AppPageDef`. `slice()` copies the read-only array into the mutable one that `defineApp` takes.
 
 ```ts title="shared/src/index.ts"
 // removed-next-line
@@ -68,7 +68,7 @@ export const definition = defineApp({
 
 ### 2. Write the app pages
 
-The capability on each app page definition already hides the app page from members who do not hold it, so each page is a plain `<main>`.
+The permission on each app page definition already hides the app page from members who do not hold it, so each page is a plain `<main>`.
 
 ```tsx title="client/src/LeadsPage.tsx"
 export function LeadsPage() {
@@ -91,7 +91,7 @@ export function IcpPage() {
 }
 ```
 
-[Gate an app page and an endpoint by capability](./gate-by-capability.md) adds the browser gate and the server check on the endpoints that the app pages call.
+[Gate an app page and an endpoint by permission](./gate-by-permission.md) adds the browser gate and the server check on the endpoints that the app pages call.
 
 ### 3. Link between app pages without a reload
 
@@ -123,7 +123,7 @@ export function usePath(): string {
 }
 ```
 
-`appPages` returns the app pages of the definition, and [filter navigation by capability](../guides/filter-navigation-by-capability.md) explains the filter. The link calls `navigate` and cancels the default load.
+`appPages` returns the app pages of the definition, and [filter navigation by permission](../guides/filter-navigation-by-permission.md) explains the filter. The link calls `navigate` and cancels the default load.
 
 ```tsx title="client/src/Nav.tsx"
 import { definition } from '@hello-app/shared';
@@ -225,21 +225,21 @@ The server must tell Vector Space that the manifest changed. Stop `npm run dev:s
 
 A manifest change waits until staff apply it, as [how a Vector app works](../how-a-vector-app-works.md#update) describes. If Vector Space shows no change after the restart, ask [staff](../../vector-space/glossary.md#staff) to select **Check for updates** on your [app registration](../glossary.md#app-registration). Vector Space then reads the manifest again.
 
-### 5. Grant the capabilities
+### 5. Grant the permissions
 
-Vector Space shows a capability as a permission. The [space admin](../../vector-space/glossary.md#space-admin) who added the app skips this step, because a space admin holds every permission on the app row.
+The [space admin](../../vector-space/glossary.md#space-admin) who added the app skips this step, because a space admin holds every permission on the app row.
 
-For another member, open **Access** as in [step 5 of Part 2 of the quickstart](../quickstart.md#5-share-the-app-with-a-member) and keep **Can use**. **Can use** gives every capability the app declares.
+For another member, open **Access** as in [step 5 of Part 2 of the quickstart](../quickstart.md#5-share-the-app-with-a-member) and keep **Can use**. **Can use** gives every permission the app declares.
 
 To give only `lead:manage`, an [organization admin](../../vector-space/glossary.md#organization-admin) makes a [custom role](../../vector-space/glossary.md#custom-role) under **Settings**, **Organization**, **Access**, **Roles**, **New role**. The space admin then picks it from **Custom roles** in the same sheet.
 
 ### 6. Check the app pages in the space
 
-The new capabilities reach the app in the next user token. The token lasts 5 minutes, and Vector Space sends a new one about 4 minutes after the last. Reload the app page as that member, or call `requestRefresh` as in [read the member and capabilities](./read-app-context.md).
+The new permissions reach the app in the next user token. The token lasts 5 minutes, and Vector Space sends a new one about 4 minutes after the last. Reload the app page as that member, or call `requestRefresh` as in [read the member and permissions](./read-app-context.md).
 
 The navigation of the app then lists **Home**, **Leads** and **ICP Library**. Select **Leads**: the app page shows the heading `Leads` and the text `No leads yet.` Select **ICP Library**: the app page shows the heading `ICP Library`.
 
 ## Next steps
 
-- [Gate an app page and an endpoint by capability](./gate-by-capability.md): gate the browser and enforce the same capabilities on the server.
+- [Gate an app page and an endpoint by permission](./gate-by-permission.md): gate the browser and enforce the same permissions on the server.
 <!-- /flavour -->

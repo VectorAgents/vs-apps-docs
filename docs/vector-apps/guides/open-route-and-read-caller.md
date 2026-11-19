@@ -64,9 +64,9 @@ export class CallerController {
 }
 ```
 
-`appCaller` returns `{ userToken, claims, headers }`. `userToken` is the token string the caller sent. `headers` are the headers of the request. `claims` is the verified payload, with `sub` (the member identifier), `appKey`, `spaceId` and `capabilities`.
+`appCaller` returns `{ userToken, claims, headers }`. `userToken` is the token string the caller sent. `headers` are the headers of the request. `claims` is the verified payload, with `sub` (the member identifier), `appKey`, `spaceId` and `permissions`.
 
-The guard attaches both values to every route that is not `@Public`. On a `@Public` route the guard attaches nothing, so `appCaller` throws a `401` there. To add a capability check to the caller route, use `RequireCapability`, as the quickstart controller does.
+The guard attaches both values to every route that is not `@Public`. On a `@Public` route the guard attaches nothing, so `appCaller` throws a `401` there. To add a permission check to the caller route, use `RequirePermission`, as the quickstart controller does.
 
 ### 3. Register the routes
 

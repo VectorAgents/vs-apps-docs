@@ -1,11 +1,11 @@
 ---
-title: Read the member and capabilities
-description: Read the signed-in member, the space and the capabilities with useApp, and show them in a header.
+title: Read the member and permissions
+description: Read the signed-in member, the space and the permissions with useApp, and show them in a header.
 start: leads-app
 ---
 
 <!-- flavour react -->
-Read the signed-in [member](../../vector-space/glossary.md#member), the [space](../../vector-space/glossary.md#space) and the [capabilities](../glossary.md#capability) from `useApp`, and show them in a header. The header names the member and the space, and shows a line only to members who hold `lead:manage`.
+Read the signed-in [member](../../vector-space/glossary.md#member), the [space](../../vector-space/glossary.md#space) and the [permissions](../glossary.md#permission) from `useApp`, and show them in a header. The header names the member and the space, and shows a line only to members who hold `lead:manage`.
 
 ## Prerequisites
 
@@ -23,7 +23,7 @@ cd leads-app
 
 ### 1. Read the context
 
-`useApp` returns the token claims and the capabilities that a [space admin](../../vector-space/glossary.md#space-admin) granted to the member. `claims` is `null` until the handshake completes, so step 2 mounts the component under `BootGate`.
+`useApp` returns the token claims and the permissions that a [space admin](../../vector-space/glossary.md#space-admin) granted to the member. `claims` is `null` until the handshake completes, so step 2 mounts the component under `BootGate`.
 
 ```tsx title="client/src/AppHeader.tsx"
 import { useApp } from '@vectoragents/vs-apps/react';
@@ -45,10 +45,10 @@ export function AppHeader() {
 }
 ```
 
-Call `requestRefresh` after a space admin changes a capability. Vector Space sends a fresh token, and `capabilities` updates.
+Call `requestRefresh` after a space admin changes a permission. Vector Space sends a fresh token, and `permissions` updates.
 
 :::warning
-`hasCapability` changes what the member sees. A member can still call your server, so enforce the capability there, as in [gate an app page and an endpoint](./gate-by-capability.md).
+`hasPermission` changes what the member sees. A member can still call your server, so enforce the permission there, as in [gate an app page and an endpoint](./gate-by-permission.md).
 :::
 
 ### 2. Mount the header under the gate
@@ -79,7 +79,7 @@ Then render it as the first child of `BootGate`.
 
 ### 3. Check the header
 
-Run `npm run dev` and open `http://localhost:5173/harness.html`. The header shows the member, then `in space` and the space id, and the line `You can manage leads.` In the dev panel, remove `lead:manage` from the capability set. The line `You can manage leads.` disappears.
+Run `npm run dev` and open `http://localhost:5173/harness.html`. The header shows the member, then `in space` and the space id, and the line `You can manage leads.` In the dev panel, remove `lead:manage` from the permission set. The line `You can manage leads.` disappears.
 
 ## Next steps
 

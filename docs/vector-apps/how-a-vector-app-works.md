@@ -49,7 +49,7 @@ If any part fails, Vector Space tells your server to deprovision, and the activa
 
 ### Configure
 
-A new app is shared with no one. The space admin shares it with members and [groups](../vector-space/glossary.md#group). That decides who can open it and which [capabilities](./glossary.md#capability) they hold.
+A new app is shared with no one. The space admin shares it with members and [groups](../vector-space/glossary.md#group). That decides who can open it and which [permissions](./glossary.md#permission) they hold.
 
 The space admin also sets each model slot and [connector slot](./glossary.md#connector-slot) and attaches the resources the app may read. Until a required slot is set, the app needs setup, but it stays in the space.
 
@@ -61,7 +61,7 @@ If the manifest changed, Vector Space holds it for staff to apply, unless [auto-
 
 A change that reaches past your app always waits for staff, even with auto-apply on. A new [approval](./glossary.md#approvals) key is one example.
 
-After staff apply a manifest, Vector Space brings every space that has the app in line with it. A capability that you removed is no longer granted. Vector Space has no rollback, so to go back, serve the previous manifest and ask staff to apply it.
+After staff apply a manifest, Vector Space brings every space that has the app in line with it. A permission that you removed is no longer granted. Vector Space has no rollback, so to go back, serve the previous manifest and ask staff to apply it.
 
 ### Deprovision
 
@@ -90,5 +90,5 @@ Only the user token that Vector Space posts to your client carries the name and 
 
 - [Quickstart](./quickstart.md): run a small app and see the user token checked in the browser and on your server.
 - [SDK overview](../sdk/overview.md): see what the SDK holds and which import path reaches each part.
-- [App definition](../sdk/app-definition.md): describe the pages and capabilities of your app in one object.
+- [App definition](../sdk/app-definition.md): describe the pages and permissions of your app in one object.
 - [Vector Apps glossary](./glossary.md): look up each term on this page.

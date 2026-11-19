@@ -9,7 +9,7 @@ The `@vectoragents/vs-apps/react` subpath binds the [browser runtime](./browser.
 ## Prerequisites
 
 - React 18 or later with TypeScript.
-- An [app definition](../glossary.md#app-definition) that declares the [capability](../../vector-apps/glossary.md#capability) the examples check, `leads:read`.
+- An [app definition](../glossary.md#app-definition) that declares the [permission](../../vector-apps/glossary.md#permission) the examples check, `leads:read`.
 - An action declared with `defineAgentPage`, covered in the [root reference](./root.md), for the agent action examples.
 - `zod` version 3, installed with `npm install zod@3`, for the parameter schema of an action. Zod 4 gives an empty `paramsJsonSchema`, so the agent sees no parameters.
 
@@ -99,18 +99,18 @@ interface AppSessionState {
 | `claims.spaceId` | The id of the space. |
 | `claims.organizationId` | The id of the organization. |
 | `claims.appKey` | The key of the app. |
-| `claims.capabilities` | The keys of the capabilities the member holds. |
+| `claims.permissions` | The keys of the permissions the member holds. |
 | `claims.name` | The display name of the member, when the host has one. |
 | `claims.picture` | The picture URL of the member, when the host has one. |
-| `capabilities` | The capabilities the current member holds, empty before the handshake. |
-| `hasCapability` | `true` when `capabilities` holds the given name. |
+| `permissions` | The permissions the current member holds, empty before the handshake. |
+| `hasPermission` | `true` when `permissions` holds the given name. |
 | `requestRefresh` | Asks Vector Space to send a fresh token, and does nothing before the bridge starts. |
 | `directory` | The member directory, or `null` before the first token or without `spaceApiUrl`. |
 
 ### Behaviour
 
 - Throws `useApp must be used within an AppProvider` outside the provider.
-- Capability checks run in the browser and only shape the UI. The server must enforce the same capability.
+- Permission checks run in the browser and only shape the UI. The server must enforce the same permission.
 - The value changes when a new token or directory arrives, so components that read it re-render on a token refresh.
 
 ### Example
@@ -209,7 +209,7 @@ function BootGate(props: {
 - Renders `fallback` while `useApp().claims` is `null`, and `children` after the first verified token.
 - Renders nothing when `fallback` is omitted and the handshake is pending.
 - Needs an `AppProvider` higher in the tree.
-- Place it higher in the tree than every page. Capability checks inside it then read a settled `capabilities` set.
+- Place it higher in the tree than every page. Permission checks inside it then read a settled `permissions` set.
 
 ### Example
 
@@ -222,9 +222,9 @@ export function Shell({ children }: { children: ReactNode }) {
 }
 ```
 
-## `RequireCapability`
+## `RequirePermission`
 
-Renders its children only when the current member holds a capability.
+Renders its children only when the current member holds a permission.
 
 ### Signature
 
@@ -238,10 +238,10 @@ function RequirePermission(props: {
 
 ### Behaviour
 
-- Renders `children` when `useApp().hasCapability(capability)` is `true`.
-- Otherwise renders `fallback`. A function `fallback` receives the missing capability name.
+- Renders `children` when `useApp().hasPermission(permission)` is `true`.
+- Otherwise renders `fallback`. A function `fallback` receives the missing permission name.
 - Renders nothing when the check fails and `fallback` is omitted.
-- Gates the UI only. The server must enforce the same capability.
+- Gates the UI only. The server must enforce the same permission.
 - Wrap it in a `BootGate`. Before the handshake every check fails.
 
 ### Example

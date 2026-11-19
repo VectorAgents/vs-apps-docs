@@ -58,7 +58,7 @@ The value of `modality` in each entry of `resources.models[]`. It names the kind
 
 ## Capability filters
 
-The values of `capabilities` in each entry of `resources.models[]`. Each value narrows the models that a [space admin](../../vector-space/glossary.md#space-admin) can choose for the slot. These are model abilities, not app [capabilities](../../vector-apps/glossary.md#capability). `defineApp` rejects a value outside this list.
+The values of `capabilities` in each entry of `resources.models[]`. Each value narrows the models that a [space admin](../../vector-space/glossary.md#space-admin) can choose for the slot. These are model abilities, not app [permissions](../../vector-apps/glossary.md#permission). `defineApp` rejects a value outside this list.
 
 A model passes a filter unless Vector Space records that the model lacks the ability. A model with no record for an ability passes.
 

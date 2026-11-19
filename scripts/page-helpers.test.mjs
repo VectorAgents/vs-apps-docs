@@ -84,8 +84,8 @@ test('longSentences reports a sentence over the limit, skips headings, and skips
   assert.deepEqual(longSentences('A b c d.', { max: 3 }), ['A b c d.']);
 });
 
-test('bannedTermsIn finds a shared banned term, lets capability grant and Vector Space pass, and flags a bare Space or grant', () => {
-  assert.deepEqual(bannedTermsIn('A capability grant lets the Vector Space app read.'), []);
+test('bannedTermsIn finds a shared banned term, lets permission grant and Vector Space pass, and flags a bare Space or grant', () => {
+  assert.deepEqual(bannedTermsIn('A permission grant lets the Vector Space app read.'), []);
   assert.deepEqual(bannedTermsIn('The operating system plane.'), ['/operating system/i', '/\\bplane\\b/i']);
   assert.deepEqual(bannedTermsIn('Each Space has a grant.'), ['/\\bgrants?\\b/i', '/(?<!Vector )\\bSpace\\b/']);
 });

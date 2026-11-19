@@ -122,7 +122,7 @@ export function checkEnvExamples(pageText, starterDir) {
 }
 
 const ENV_NAME = '[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)*';
-// Inline code names need an underscore, so words such as `CAPABILITY` are not read as variables.
+// Inline code names need an underscore, so words such as `PERMISSION` are not read as variables.
 const INLINE_NAME = '[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)+';
 // Inline code that is an UPPER_SNAKE name but an error code of the SDK, not an environment variable.
 const ERROR_CODES = new Set(['UNAVAILABLE_ACTION', 'INVALID_PARAMS']);

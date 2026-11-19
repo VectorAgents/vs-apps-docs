@@ -132,8 +132,8 @@ test('description: missing, empty, over 160 characters and banned openers are fl
 
 test('description: 160 characters and a plain opener pass, quoted or not', () => {
   assert.deepEqual(descriptions(page(`description: ${'a'.repeat(160)}\n`)), []);
-  assert.deepEqual(descriptions(page('description: Gate an app page by capability.\n')), []);
-  assert.deepEqual(descriptions(page('description: "Gate an app page: by capability."\n')), []);
+  assert.deepEqual(descriptions(page('description: Gate an app page by permission.\n')), []);
+  assert.deepEqual(descriptions(page('description: "Gate an app page: by permission."\n')), []);
   assert.deepEqual(descriptions(page(`description: "${'a'.repeat(160)}"\n`)), []);
 });
 

@@ -11,7 +11,7 @@ export const tracks: Track[] = [
   {
     id: 'first-app-in-space',
     title: 'Hello world app',
-    goal: 'Run hello world in a space, then add an app page that a capability gates.',
+    goal: 'Run hello world in a space, then add an app page that a permission gates.',
     to: '/vector-apps/quickstart',
   },
   {
@@ -21,9 +21,9 @@ export const tracks: Track[] = [
     to: '/sdk/app-definition',
   },
   {
-    id: 'gate-by-capability',
-    title: 'Gate by capability',
-    goal: 'Limit app pages, navigation and server routes to members who hold a capability.',
+    id: 'gate-by-permission',
+    title: 'Gate by permission',
+    goal: 'Limit app pages, navigation and server routes to members who hold a permission.',
     to: '/vector-apps/quickstart',
   },
   {

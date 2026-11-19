@@ -11,10 +11,10 @@ const { pages } = JSON.parse(readFileSync(join(gen, 'flavours.json'), 'utf8'));
 
 // Pages whose body is React-specific. sdk/reference/browser stays neutral: the /browser subpath has no React code.
 const clientOnly = [
-  'vector-apps/recipes/add-page-and-capability',
+  'vector-apps/recipes/add-page-and-permission',
   'vector-apps/recipes/read-app-context',
   'vector-apps/recipes/list-members',
-  'vector-apps/guides/filter-navigation-by-capability',
+  'vector-apps/guides/filter-navigation-by-permission',
   'sdk/reference/react',
 ];
 const neutral = ['sdk/reference/browser', 'sdk/reference/root', 'vector-space/glossary', 'vector-apps/glossary', 'sdk/glossary', 'sdk/app-definition', 'sdk/examples'];

@@ -112,8 +112,8 @@ interface AppPageDef {
 
 - Returns the `pages` of the definition whose `key` equals `appKey`.
 - Returns `[]` when `appKey` is `undefined` or matches no definition.
-- Does not filter by capability. Filter on `page.capability` with `useApp().hasCapability`, as the example does.
-- A capability check in the client only shapes the UI. The server must enforce the same [capability](../../vector-apps/glossary.md#capability).
+- Does not filter by permission. Filter on `page.permission` with `useApp().hasPermission`, as the example does.
+- A permission check in the client only shapes the UI. The server must enforce the same [permission](../../vector-apps/glossary.md#permission).
 
 ### Example
 

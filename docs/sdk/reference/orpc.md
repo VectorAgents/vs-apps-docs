@@ -87,7 +87,7 @@ interface AgentEndpointDef {
 | `description` | The description from `meta.agent`. |
 | `approvalRequired` | Whether a person must approve each call. |
 | `paramsJsonSchema` | The input schema as JSON Schema, absent for a route without an input. |
-| `capability` | Set from the auth metadata of the route, absent when the route has none. |
+| `permission` | Set from the auth metadata of the route, absent when the route has none. |
 
 ### Behaviour
 

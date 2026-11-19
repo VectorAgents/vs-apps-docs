@@ -17,7 +17,7 @@ The package has nine import paths, called subpaths. The root path holds the defi
 | `@vectoragents/vs-apps/server` | The app platform, [manifests](../vector-apps/glossary.md#manifest), token checks and the routes Vector Space calls. | [Server](./reference/server.md) |
 | `@vectoragents/vs-apps/browser` | The browser runtime: the embed session, the iframe bridge and the boot configuration loader. | [Browser](./reference/browser.md) |
 | `@vectoragents/vs-apps/nest` | A Nest.js module, guards, decorators and services for the app platform. | [Guides](/vector-apps/category/guides) |
-| `@vectoragents/vs-apps/react` | `AppProvider`, `useApp`, `BootGate`, `RequireCapability`, `useAgentAction` and `useUsers`. | [React](./reference/react.md) |
+| `@vectoragents/vs-apps/react` | `AppProvider`, `useApp`, `BootGate`, `RequirePermission`, `useAgentAction` and `useUsers`. | [React](./reference/react.md) |
 | `@vectoragents/vs-apps/react/harness` | `VectorAppsHarness`, the local stand-in for Vector Space. | [Harness](./reference/harness.md) |
 | `@vectoragents/vs-apps/orpc` | The route contract and helpers for an app server that uses oRPC. | [oRPC](./reference/orpc.md) |
 | `@vectoragents/vs-apps/extract` | Build-time extraction of the [agent catalog](../sdk/glossary.md#agent-catalog), run by the `vs-apps` command. | [Extract](./reference/extract.md) |

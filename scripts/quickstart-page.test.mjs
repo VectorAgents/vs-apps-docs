@@ -335,7 +335,7 @@ for (const { tree, text } of trees) {
     }
   });
 
-  t('covers the client symbols and the server symbols of the flavour, and gates one page with one capability', () => {
+  t('covers the client symbols and the server symbols of the flavour, and gates one page with one permission', () => {
     for (const s of ['defineApp', 'buildManifests', 'AppProvider', 'BootGate', 'loadAppClientConfig', 'RequirePermission']) {
       assert.match(text, new RegExp(s), s);
     }
@@ -375,8 +375,7 @@ for (const { tree, text } of trees) {
     assert.match(share, /\*\*Access\*\*/);
     assert.match(share, /\*\*Direct access\*\*/);
     assert.match(share, /choose \*\*Add users or groups…\*\*/);
-    assert.match(share, /Keep the access level at \*\*Can use\*\*\. It gives every capability the app declares/);
-    assert.equal((share.match(/Vector Space shows a capability as a permission\./g) ?? []).length, 1);
+    assert.match(share, /Keep the access level at \*\*Can use\*\*\. It gives every permission the app declares/);
     assert.doesNotMatch(share, /\*\*View\*\*|Add people, roles or groups/);
     assert.match(open, /shared the app with at the \*\*Can use\*\* level/);
     assert.doesNotMatch(open, /Only the server check protects data|Anyone can change what runs/);
@@ -418,7 +417,7 @@ for (const { tree, text } of trees) {
       'glossary.md#app-page',
       'glossary.md#app-registration',
       'glossary.md#binding',
-      'glossary.md#capability',
+      'glossary.md#permission',
       'glossary.md#manifest',
       'glossary.md#service-secret',
       'vector-space/glossary.md#agent-studio',
@@ -442,12 +441,12 @@ for (const { tree, text } of trees) {
   t('links each glossary term at its first use and gives no appositive definition', () => {
     const plain = prose.replace(/`[^`]*`/g, 'CODE');
     const firstUse = (term) => plain.search(new RegExp(`\\b${term}\\b`, 'i'));
-    for (const term of ['capability', 'space admin', 'manifest', 'harness', 'member']) {
+    for (const term of ['permission', 'space admin', 'manifest', 'harness', 'member']) {
       const at = firstUse(term);
       assert.ok(at >= 0, term);
       assert.match(plain.slice(Math.max(0, at - 1), at + term.length + 2), new RegExp(`^\\[${term}\\]\\(`, 'i'), `${term} is linked at first use`);
     }
-    assert.doesNotMatch(prose, /capability\]\([^)]*\), a permission/);
+    assert.doesNotMatch(prose, /permission\]\([^)]*\), a permission/);
     assert.doesNotMatch(prose, /manifest\]\([^)]*\), a JSON document/);
   });
 

@@ -19,10 +19,10 @@ const invalid = {
   'bad page key': (d) => ((d.pages[0].key = 'Home Page'), d),
   'page path without slash': (d) => ((d.pages[0].path = 'home'), d),
   'empty page label': (d) => ((d.pages[0].label = ''), d),
-  'page capability not group:action': (d) => ((d.pages[0].capability = 'view'), d),
+  'page permission not group:action': (d) => ((d.pages[0].permission = 'view'), d),
   'defaultPageKey names no page': (d) => ((d.defaultPageKey = 'missing'), d),
-  'capability key without colon': (d) => ((d.capabilities[0].key = 'view'), d),
-  'bad effect': (d) => ((d.capabilities[0].effect = 'delete'), d),
+  'permission key without colon': (d) => ((d.permissions[0].key = 'view'), d),
+  'bad effect': (d) => ((d.permissions[0].effect = 'delete'), d),
   'duplicate model slot': (d) => (d.resources.models.push(clone(d.resources.models[0])), d),
   'duplicate connector slot': (d) => (d.resources.connectors.push(clone(d.resources.connectors[0])), d),
   'duplicate module': (d) => (d.resources.modules.push(clone(d.resources.modules[0])), d),
@@ -93,9 +93,9 @@ test('an error message is plain text with no Markdown link', () => {
   }
 });
 
-test('a page capability that is not declared warns but does not reject', () => {
+test('a page permission that is not declared warns but does not reject', () => {
   const draft = clone(presets.minimal);
-  draft.pages[0].capability = 'ghost:view';
+  draft.pages[0].permission = 'ghost:view';
   const out = buildOutput(draft);
   assert.equal(out.ok, true);
   assert.equal(out.warnings.length, 1);

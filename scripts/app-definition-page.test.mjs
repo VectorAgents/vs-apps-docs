@@ -103,9 +103,9 @@ test('field rows equal the field-rules table, per object, with no extra rows', (
   assert.equal(documented.length, rules.length);
 });
 
-test('states the empty capabilities and ungated page rules and the typo warning', () => {
-  assert.match(text, /`capabilities: \[\]` is valid/);
-  assert.match(text, /page without (a capability|one) has no gate/i);
+test('states the empty permissions and ungated page rules and the typo warning', () => {
+  assert.match(text, /`permissions: \[\]` is valid/);
+  assert.match(text, /page without (a permission|one) has no gate/i);
   assert.match(text, /:::warning[\s\S]*does not check[\s\S]*:::/);
   assert.equal([...text.matchAll(/^:::warning/gm)].length, 1);
 });
@@ -116,8 +116,8 @@ test('states what the SDK guarantees and what is Vector Space side, and the pend
   assert.match(text, /pending/i);
 });
 
-test('does not claim unverified nav behaviour for a page without a capability', () => {
-  assert.doesNotMatch(text, /without a capability[^.]*\b(appears|shows|listed|visible) in the (Vector Space )?nav/i);
+test('does not claim unverified nav behaviour for a page without a permission', () => {
+  assert.doesNotMatch(text, /without a permission[^.]*\b(appears|shows|listed|visible) in the (Vector Space )?nav/i);
 });
 
 test('leaves deferred fields undocumented', () => {
@@ -125,7 +125,7 @@ test('leaves deferred fields undocumented', () => {
 });
 
 test('links each glossary term at first use only', () => {
-  for (const term of ['manifest', 'Vector Space', 'capability', 'model slot', 'connector slot']) {
+  for (const term of ['manifest', 'Vector Space', 'permission', 'model slot', 'connector slot']) {
     const slug = term.toLowerCase().replaceAll(' ', '-');
     const glossary = term === 'Vector Space' ? 'vector-space' : 'vector-apps';
     const links = text.split(`](../${glossary}/glossary.md#${slug})`).length - 1;

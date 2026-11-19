@@ -111,7 +111,7 @@ test('the comparison opens with its lead, then one table of the 4 rows, with cel
   }
   const cells = data.map((r) => r.slice(1).map(unlink));
   assert.deepEqual(cells[0], [
-    'The app sees the member by name, with the capabilities they hold.',
+    'The app sees the member by name, with the permissions they hold.',
     'Only an agent that an app offers sees the member; others get a stored credential.',
     'The server never sees the member.',
   ]);

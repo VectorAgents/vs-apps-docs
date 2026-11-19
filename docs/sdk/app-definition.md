@@ -10,9 +10,9 @@ import DiagramControls from '@site/src/components/DiagramControls';
 An app definition is one TypeScript object, built with `defineApp`, that describes your app to [Vector Space](../vector-space/glossary.md#vector-space).
 You write it once: your server and client import it, and your server builds the [manifest](../vector-apps/glossary.md#manifest) that Vector Space reads from it.
 
-It declares the app `key`, its [app pages](../vector-apps/glossary.md#app-page) (one screen each, with a path), the [capabilities](../vector-apps/glossary.md#capability) a member can hold in it and the resources it needs. It does not read environment variables, so the server and the client import the same object.
+It declares the app `key`, its [app pages](../vector-apps/glossary.md#app-page) (one screen each, with a path), the [permissions](../vector-apps/glossary.md#permission) a member can hold in it and the resources it needs. It does not read environment variables, so the server and the client import the same object.
 
-One page gated by one capability.
+One page gated by one permission.
 
 ```ts title="src/app.definition.ts"
 import { defineApp } from '@vectoragents/vs-apps';
@@ -117,7 +117,7 @@ Vector Space turns the manifest into these:
 | Manifest field | Vector Space shows |
 | --- | --- |
 | Pages | Navigation entries |
-| Capabilities | The capabilities a member can hold |
+| Permissions | The permissions a member can hold |
 | Resources | A configuration sheet |
 | Agents and [MCP](../vector-space/glossary.md#mcp) servers | Subagents and connectors |
 
@@ -138,7 +138,7 @@ To fill in a definition from a form instead, use the [definition builder](/sdk/b
 | `version` | required | Non-empty string, not checked as semver. |
 | `pages` | required | At least one page, listed in navigation order. |
 | `defaultPageKey` | optional | When set, must equal a declared page key. |
-| `capabilities` | required | An array of capabilities, where `capabilities: []` is valid. |
+| `permissions` | required | An array of permissions, where `permissions: []` is valid. |
 | `resources` | optional | An object that declares what the app needs from each space. |
 
 ### `pages[]`
@@ -148,13 +148,13 @@ To fill in a definition from a form instead, use the [definition builder](/sdk/b
 | `key` | required | Lower kebab-case and unique within the app, checked by `buildManifests` and not at import. |
 | `label` | required | Non-empty string. |
 | `path` | required | String that starts with `/`. |
-| `capability` | optional | One capability key, and a page without one has no gate. |
+| `permission` | optional | One permission key, and a page without one has no gate. |
 
 :::warning
-`defineApp` does not check `pages[].capability` against `capabilities`. A typo such as `hello:veiw` passes import and fails only when a member holds no matching capability. Define each key once and reuse it, as in the next snippet, so that TypeScript reports a typo.
+`defineApp` does not check `pages[].permission` against `permissions`. A typo such as `hello:veiw` passes import and fails only when a member holds no matching permission. Define each key once and reuse it, as in the next snippet, so that TypeScript reports a typo.
 :::
 
-One key, used in the page and in the capability.
+One key, used in the page and in the permission.
 
 ```ts title="src/app.definition.ts"
 import { defineApp } from '@vectoragents/vs-apps';
@@ -169,7 +169,7 @@ export const definition = defineApp({
 });
 ```
 
-### `capabilities[]`
+### `permissions[]`
 
 | Field | Required | Rule |
 | --- | --- | --- |
@@ -178,9 +178,9 @@ export const definition = defineApp({
 | `description` | optional | String. |
 | `effect` | required | `"read"` or `"write"`. |
 
-`effect` is a label. Access never reads it: a member holds a capability the same way, whether the `effect` is `"read"` or `"write"`.
+`effect` is a label. Access never reads it: a member holds a permission the same way, whether the `effect` is `"read"` or `"write"`.
 
-A member holds every capability through [Can use](../vector-space/glossary.md#can-use) or [Can edit](../vector-space/glossary.md#can-edit) on the whole app, and only the named capabilities through a [share](../vector-space/glossary.md#share) on some capabilities. [One access model](../vector-space/one-access-model.md) shows how the inputs combine.
+A member holds every permission through [Can use](../vector-space/glossary.md#can-use) or [Can edit](../vector-space/glossary.md#can-edit) on the whole app, and only the named permissions through a [share](../vector-space/glossary.md#share) on some permissions. [One access model](../vector-space/one-access-model.md) shows how the inputs combine.
 
 ### Resources
 
@@ -265,8 +265,8 @@ Any handler makes `eventsUrl` required in the manifest. `buildManifests` sets it
 
 Vector registers your manifest URL in Vector Space. After that:
 
-- The app page shows in the navigation of the space, for members who hold the page's capability.
-- A member holds the declared capabilities through access to the app, as [One access model](../vector-space/one-access-model.md) describes. A member cannot hold a capability that the manifest does not declare.
+- The app page shows in the navigation of the space, for members who hold the page's permission.
+- A member holds the declared permissions through access to the app, as [One access model](../vector-space/one-access-model.md) describes. A member cannot hold a permission that the manifest does not declare.
 - A [space admin](../vector-space/glossary.md#space-admin) picks a model for each model slot and attaches one connector to each connector slot. If no one sets a slot, the app cannot use it.
 - A manifest change waits as a pending review. Vector applies it before it goes live, unless auto-apply is on for the [app registration](../vector-apps/glossary.md#app-registration).
 
@@ -280,8 +280,8 @@ Vector Space reads the manifest again when Vector asks it to and when the app an
 ### Vector Space side
 
 - Registration, the pending review and auto-apply.
-- Navigation entries and the capability filter on them.
-- [Capability grants](../vector-apps/glossary.md#capability-grant), model choices and connector attachment.
+- Navigation entries and the permission filter on them.
+- [Permission grants](../vector-apps/glossary.md#permission-grant), model choices and connector attachment.
 - [Model slot lookup](#look-up-a-model-slot): Vector Space refuses an undeclared or unset slot.
 
 ## Next steps
@@ -289,5 +289,5 @@ Vector Space reads the manifest again when Vector asks it to and when the app an
 You now know which behavior the SDK guarantees and which behavior Vector Space owns.
 
 - [Example app definitions](./examples.md): copy a complete definition into your project.
-- [Recipes](/vector-apps/category/recipes): add a page, a capability or an agent action to your app.
+- [Recipes](/vector-apps/category/recipes): add a page, a permission or an agent action to your app.
 - [Reference](/sdk/category/reference): look up the signature of each export, and the glossary terms.

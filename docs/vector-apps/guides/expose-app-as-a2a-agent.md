@@ -54,7 +54,7 @@ You declare the agent in the [app definition](../../sdk/glossary.md#app-definiti
 ```
 
 :::warning
-A manifest change waits until [staff](../../vector-space/glossary.md#staff) apply it, as the [update stage of how a Vector app works](../how-a-vector-app-works.md#update) explains. Until then, Vector Space does not read the new `agents` entry. Ask staff to apply it, as in [step 4 of add an app page and a capability](../recipes/add-page-and-capability.md#react-4-let-vector-space-read-the-manifest).
+A manifest change waits until [staff](../../vector-space/glossary.md#staff) apply it, as the [update stage of how a Vector app works](../how-a-vector-app-works.md#update) explains. Until then, Vector Space does not read the new `agents` entry. Ask staff to apply it, as in [step 4 of add an app page and a permission](../recipes/add-page-and-permission.md#react-4-let-vector-space-read-the-manifest).
 :::
 
 ### 2. Build the card

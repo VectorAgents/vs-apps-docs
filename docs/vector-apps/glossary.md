@@ -30,23 +30,23 @@ The JSON the server builds from the [app definitions](../sdk/glossary.md#app-def
 
 ### app page
 
-One screen of the app. It becomes a navigation entry in Vector Space, shown only to [members](../vector-space/glossary.md#member) who hold the page's [capability](#capability).
+One screen of the app. It becomes a navigation entry in Vector Space, shown only to [members](../vector-space/glossary.md#member) who hold the page's [permission](#permission).
 
-- Maps to: `pages[]` in the definition (`key`, `label`, `path`, optional `capability`). `appPages(...)` lists them on the client.
+- Maps to: `pages[]` in the definition (`key`, `label`, `path`, optional `permission`). `appPages(...)` lists them on the client.
 - Owner: SDK declares it. Vector Space renders the navigation entry.
 
-### capability
+### permission
 
-A named permission of the form `<group>:<action>` with an `effect` of `read` or `write`. An app page and server routes reference it. Vector Space shows a capability as a permission.
+A named right to use part of your app. It has the form `<group>:<action>` and an `effect` of `read` or `write`. An app page and server routes reference it.
 
-- Maps to: `capabilities[]` in the definition. `RequireCapability` and `useApp().hasCapability` check it on the client.
+- Maps to: `permissions[]` in the definition. `RequirePermission` and `useApp().hasPermission` check it on the client.
 - Owner: SDK declares it. Vector Space grants it.
 
-### capability grant
+### permission grant
 
-A [share](../vector-space/glossary.md#share) of an app that gives a member its capabilities. Can use, Can edit and Can manage each give every capability the app declares, while a [custom role](../vector-space/glossary.md#custom-role) gives only the capabilities it names. A [space admin](../vector-space/glossary.md#space-admin) makes it.
+A [share](../vector-space/glossary.md#share) of an app that gives a member its permissions. Can use, Can edit and Can manage each give every permission the app declares, while a [custom role](../vector-space/glossary.md#custom-role) gives only the permissions it names. A [space admin](../vector-space/glossary.md#space-admin) makes it.
 
-- Maps to: `useApp().capabilities` holds the capabilities granted to the current member.
+- Maps to: `useApp().permissions` holds the permissions granted to the current member.
 - Owner: Vector Space.
 
 ### model slot
@@ -79,7 +79,7 @@ Declared points where a person must confirm an action. Each one raises an [ask](
 
 ### user token
 
-The token that Vector Space issues for one member in one space. It names the member and the space and lists the capabilities that the member holds in your app. Your server verifies it on each request.
+The token that Vector Space issues for one member in one space. It names the member and the space and lists the permissions that the member holds in your app. Your server verifies it on each request.
 
 - Maps to: `verifyUserToken` in `@vectoragents/vs-apps/server`.
 - Owner: Vector Space issues it. The SDK verifies it.
@@ -100,7 +100,7 @@ The secret Vector Space creates for each pair of app and space and pushes to the
 
 ### binding
 
-An app attached to one space. It keeps a copy of the [capabilities](#capability), [acts](#acts) and [approvals](#approvals) that the manifest declares, and the model, connector and resource choices of that space. Vector Space updates the copy each time it reads the manifest.
+An app attached to one space. It keeps a copy of the [permissions](#permission), [acts](#acts) and [approvals](#approvals) that the manifest declares, and the model, connector and resource choices of that space. Vector Space updates the copy each time it reads the manifest.
 
 - Owner: Vector Space.
 
