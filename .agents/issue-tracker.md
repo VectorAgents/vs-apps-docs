@@ -10,6 +10,7 @@ Issues and specs for this repo live as markdown files in `.scratch/`.
 - Triage state is recorded as a `Status:` line near the top of each issue file (see `triage-labels.md` for the role strings)
 - Comments and conversation history append to the bottom of the file under a `## Comments` heading
 - Feature and ticket branches use dashes, `<spec>-NN-slug`, because a branch named `<spec>` blocks `<spec>/NN-slug` refs.
+- A spec or ticket that names a Vector Space path, label, toast, route or line number marks it `unverified until run` until a run on a local Space is recorded in the file. Line numbers drift, so the executor matches on text. `pnpm check:space` finds a label or toast that the Space no longer has.
 - `.scratch/` is gitignored, so a worktree has no copy of it. The prompt of a subagent in a worktree names the absolute path under the main checkout.
 
 ## When a skill says "publish to the issue tracker"
