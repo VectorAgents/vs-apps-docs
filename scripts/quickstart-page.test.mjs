@@ -214,8 +214,8 @@ for (const { tree, text } of trees) {
   t('the tree lists the files of the server flavour', () => {
     const [layout] = codeBlocks.filter((f) => f.lang === 'text' && /^hello-app\/$/m.test(f.body));
     const files = nest
-      ? ['app.module.ts', 'credential-store.ts', 'hello.controller.ts', 'main.ts', 'manifests.ts']
-      : ['auth.ts', 'credential-store.ts', 'dev-issuer.ts', 'main.ts', 'manifests.ts', 'platform.ts'];
+      ? ['app.module.ts', 'hello.controller.ts', 'main.ts', 'manifests.ts']
+      : ['auth.ts', 'dev-issuer.ts', 'main.ts', 'manifests.ts', 'platform.ts'];
     for (const file of files) assert.ok(layout.body.includes(file), file);
     for (const file of nest ? ['auth.ts', 'dev-issuer.ts', 'platform.ts'] : ['app.module.ts', 'hello.controller.ts']) assert.ok(!layout.body.includes(file), file);
   });
@@ -271,8 +271,8 @@ for (const { tree, text } of trees) {
     assert.deepEqual(
       shown,
       nest
-        ? ['server/src/hello.controller.ts', 'server/src/manifests.ts', 'server/src/credential-store.ts', 'server/src/app.module.ts', 'server/src/main.ts']
-        : ['server/src/auth.ts', 'server/src/main.ts', 'server/src/manifests.ts', 'server/src/credential-store.ts', 'server/src/platform.ts', 'server/src/main.ts'],
+        ? ['server/src/hello.controller.ts', 'server/src/manifests.ts', 'server/src/app.module.ts', 'server/src/main.ts']
+        : ['server/src/auth.ts', 'server/src/main.ts', 'server/src/manifests.ts', 'server/src/platform.ts', 'server/src/main.ts'],
     );
   });
 
@@ -282,7 +282,7 @@ for (const { tree, text } of trees) {
       assert.equal(mains.length, 1);
       assert.match(mains[0].body, /app\.setGlobalPrefix\('api'\);/);
       const module = codeBlocks.find((f) => /title="server\/src\/app\.module\.ts"/.test(f.meta));
-      assert.match(module.body, /devIssuer: process\.env\.VA_DEV_ISSUER === 'true',/);
+      assert.match(module.body, /devIssuer,$/m);
       assert.match(module.body, /AppPlatformModule\.forRoot/);
       return;
     }
@@ -291,7 +291,7 @@ for (const { tree, text } of trees) {
     assert.match(mains[1].body, /void platform\.pingManifests\(\);/);
     const platformBlock = codeBlocks.find((f) => /title="server\/src\/platform\.ts"/.test(f.meta));
     assert.match(platformBlock.body, /createAppPlatform\(\{/);
-    assert.match(platformBlock.body, /devIssuer: process\.env\.VA_DEV_ISSUER === 'true'/);
+    assert.match(platformBlock.body, /devIssuer: devIssuer \?/);
     assert.match(text, /`GET \/api\/client-config`/);
     assert.match(text, /`spaceApiUrl`/);
   });
@@ -301,7 +301,7 @@ for (const { tree, text } of trees) {
     const [, afterCheck] = step.split(/^\*\*Check\*\*/m);
     assert.match(
       afterCheck,
-      /^Verified in the browser: user dev-user in space 1\.\nCapabilities: hello:view\nVerified on the server: space 1, user dev-user$/m,
+      /^Verified in the browser: user dev-user in space 1\.\nPermissions: hello:view\nVerified on the server: space 1, user dev-user$/m,
     );
     const afterBlock = afterCheck.split(/^```$/m).at(-1);
     assert.match(afterBlock, /The run proves your app page and your server, but not your registration or Vector Space access\./);
@@ -320,7 +320,7 @@ for (const { tree, text } of trees) {
       assert.match(f.meta, /title="[\w./-]+"/);
       assert.match(f.meta.replace(/title="[^"]*"/, ''), /(^|\s)starter(\s|$)/);
       assert.doesNotMatch(f.meta, /\badd\b/);
-      assert.doesNotMatch(f.body, /\.\.\.|…/);
+      assert.doesNotMatch(f.body, /\.\.\.(?!\w)|…/);
     }
   });
 
@@ -336,12 +336,12 @@ for (const { tree, text } of trees) {
   });
 
   t('covers the client symbols and the server symbols of the flavour, and gates one page with one capability', () => {
-    for (const s of ['defineApp', 'buildManifests', 'AppProvider', 'BootGate', 'loadAppClientConfig', 'RequireCapability']) {
+    for (const s of ['defineApp', 'buildManifests', 'AppProvider', 'BootGate', 'loadAppClientConfig', 'RequirePermission']) {
       assert.match(text, new RegExp(s), s);
     }
     const serverSymbols = nest
-      ? ['AppPlatformModule', 'CurrentUser', 'AppCredentialStore', 'devIssuer']
-      : ['createAppPlatform', 'readBearer', 'assertCapability', 'verifyUserToken', 'AppCredentialStore', 'devIssuer'];
+      ? ['AppPlatformModule', 'CurrentUser', 'devIssuer']
+      : ['createAppPlatform', 'readBearer', 'assertPermission', 'verifyUserToken', 'devIssuer'];
     for (const s of serverSymbols) assert.match(text, new RegExp(s), s);
     if (nest) {
       assert.match(text, /@vectoragents\/vs-apps\/nest/);
@@ -385,7 +385,7 @@ for (const { tree, text } of trees) {
     assert.match(share.split(/^\*\*Check\*\*/m).at(-1), /Access saved/);
     assert.match(
       open,
-      /^Verified in the browser: user <id> in space <id>\.\nCapabilities: hello:view\nVerified on the server: space <id>, user <id>$/m,
+      /^Verified in the browser: user <id> in space <id>\.\nPermissions: hello:view\nVerified on the server: space <id>, user <id>$/m,
     );
     assert.doesNotMatch(steps(part2)[1], /Auto-apply/);
   });

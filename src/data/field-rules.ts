@@ -24,6 +24,7 @@ export const connectorProviders = [
   'UNIPILE',
   'APOLLO',
   'META',
+  'BRIGHTDATA',
 ] as const;
 
 const limits = (anchor: string, text: string): string => `[${text}](./reference/platform-limits.md#${anchor})`;

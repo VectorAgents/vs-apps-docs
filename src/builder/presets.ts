@@ -3,8 +3,16 @@ import { sdrDefinition } from '../examples/sdr.definition.ts';
 import type { Draft } from './index.ts';
 
 const fromDefinition = (def: unknown): Draft => {
-  const copy = structuredClone(def) as Partial<Draft>;
-  return { ...copy, resources: { modules: [], models: [], connectors: [], ...copy.resources } } as Draft;
+  const { permissions, pages, ...copy } = structuredClone(def) as Omit<Partial<Draft>, 'pages'> & {
+    permissions: Draft['capabilities'];
+    pages: { permission?: string }[];
+  };
+  return {
+    ...copy,
+    pages: pages.map(({ permission, ...page }) => ({ ...page, capability: permission })),
+    capabilities: permissions,
+    resources: { modules: [], models: [], connectors: [], ...copy.resources },
+  } as Draft;
 };
 
 export type PresetName = 'minimal' | 'sdr' | 'csr';

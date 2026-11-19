@@ -157,11 +157,11 @@ The card route needs no token, because the card holds no secret. The call route 
 In `server/src/main.ts`, import `handleA2aRoute` from `./a2a`.
 
 ```ts title="server/src/main.ts" showLineNumbers=3 excerpt
-import { CAPABILITY } from '@hello-app/shared';
+import { PERMISSION } from '@hello-app/shared';
 import { AppAuthError } from '@vectoragents/vs-apps/server';
 // added-next-line
 import { handleA2aRoute } from './a2a';
-import { requireCapability } from './auth';
+import { requirePermission } from './auth';
 import { platform } from './platform';
 ```
 
@@ -174,7 +174,7 @@ Then add the route as the first line inside the `try`, before the `platform.fetc
     const handled = await platform.fetch(toFetchRequest(req));
     if (handled) return await sendFetchResponse(res, handled);
     if (pathname !== '/api/hello') return send(res, 404, { error: 'Not found' });
-    const claims = await requireCapability(req, CAPABILITY);
+    const claims = await requirePermission(req, PERMISSION);
 ```
 
 ### 5. Check the routes

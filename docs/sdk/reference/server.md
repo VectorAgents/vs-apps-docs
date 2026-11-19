@@ -54,7 +54,7 @@ const definition = defineApp({
   key: 'hello-app',
   version: '0.1.0',
   pages: [{ key: 'home', label: 'Home', path: '/' }],
-  capabilities: [],
+  permissions: [],
 });
 
 const manifests = buildManifests([definition], {

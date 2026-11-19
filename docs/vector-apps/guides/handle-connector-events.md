@@ -38,6 +38,7 @@ export const supportSlot: AppConnectorRequirement = {
   provider: 'APOLLO',
   label: 'Support inbox',
   required: false,
+  binding: 'assigned',
   eventHandlers: [
     {
       key: 'inbound-message',
@@ -55,7 +56,7 @@ import { defineApp } from '@vectoragents/vs-apps';
 // added-next-line
 import { supportSlot } from './support-slot';
 
-export const CAPABILITY = 'hello:view';
+export const PERMISSION = 'hello:view';
 ```
 
 Then add `resources` to the object that `defineApp` takes.
@@ -82,7 +83,7 @@ A handler gets the event and no user token. To call the connector back, ask `Spa
 ```ts title="server/src/support-reply.service.ts"
 import { Injectable } from '@nestjs/common';
 import { SpaceActionsService, SpaceS2sService } from '@vectoragents/vs-apps/nest';
-import type { ConnectorEventDelivery, ConnectorExecuteResult } from '@vectoragents/vs-apps';
+import type { ConnectorAppEvent, ConnectorExecuteResult } from '@vectoragents/vs-apps';
 
 @Injectable()
 export class SupportReplyService {
@@ -91,11 +92,11 @@ export class SupportReplyService {
     private readonly s2s: SpaceS2sService,
   ) {}
 
-  async reply(appId: string, event: ConnectorEventDelivery, contactId: string, text: string): Promise<ConnectorExecuteResult> {
-    const token = await this.s2s.getToken(appId, event.spaceId);
+  async reply(appId: string, event: ConnectorAppEvent, contactId: string, text: string): Promise<ConnectorExecuteResult> {
+    const token = await this.s2s.getToken(appId, event.spaceid);
     return this.space.connectorExecute(token, {
-      spaceId: event.spaceId,
-      connectorId: event.connectorId,
+      spaceId: event.spaceid,
+      connectorId: event.data.connectorId,
       operationId: 'apollo.emails.createDraft',
       args: { body: { contact_id: contactId, body_html: text } },
     });
@@ -116,13 +117,13 @@ Vector Space delivers each event at least once, up to three times. It sends an e
 ```ts title="server/src/support-events.service.ts"
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConnectorEventsService } from '@vectoragents/vs-apps/nest';
-import type { ConnectorEventDelivery, EventsTokenClaims } from '@vectoragents/vs-apps';
+import type { ConnectorAppEvent, EventsTokenClaims } from '@vectoragents/vs-apps';
 import { SupportReplyService } from './support-reply.service';
 
 @Injectable()
 export class SupportEventsService implements OnModuleInit {
   private readonly logger = new Logger(SupportEventsService.name);
-  private readonly handled = new Set<number>();
+  private readonly handled = new Set<string>();
 
   constructor(
     private readonly events: ConnectorEventsService,
@@ -135,24 +136,24 @@ export class SupportEventsService implements OnModuleInit {
     );
   }
 
-  private async inboundMessage(event: ConnectorEventDelivery, claims: EventsTokenClaims): Promise<void> {
-    if (this.handled.has(event.eventId)) return;
-    this.logger.log(`Received event ${event.eventId} (${event.eventType})`);
-    const { contact_id: contactId } = event.payload as { contact_id?: string };
+  private async inboundMessage(event: ConnectorAppEvent, claims: EventsTokenClaims): Promise<void> {
+    if (this.handled.has(event.id)) return;
+    this.logger.log(`Received event ${event.id} (${event.data.eventType})`);
+    const { contact_id: contactId } = event.data.payload as { contact_id?: string };
     if (contactId) {
       const result = await this.replies.reply(claims.appId, event, contactId, 'Message received.');
       if (result.status >= 400) {
         throw new Error(`Reply failed with status ${result.status} (${result.errorCode ?? 'no error code'})`);
       }
     }
-    this.handled.add(event.eventId);
+    this.handled.add(event.id);
   }
 }
 ```
 
 The body of an Apollo webhook is whatever your Apollo workflow sends, so the handler replies only when the body holds a `contact_id`. A failed result makes the handler throw, the SDK answers `500` and Vector Space sends the event again. The set keeps its identifiers in memory, so a restart forgets them. Keep the identifiers in your own storage if a second reply is a problem.
 
-A delivery for a handler that no one registered gets `{ handled: false }` and is not sent again. `event.payload` is the body of the provider, unchanged.
+A delivery for a handler that no one registered gets `{ handled: false }` and is not sent again. `event.data.payload` is the body of the provider, unchanged.
 
 ### 4. Register the module
 
@@ -172,7 +173,7 @@ export class SupportEventsModule {}
 In `server/src/app.module.ts`, import `SupportEventsModule`.
 
 ```ts title="server/src/app.module.ts" showLineNumbers=3 excerpt
-import { MemoryCredentialStore } from './credential-store';
+import type { AppSigningKeys } from '@vectoragents/vs-apps/server';
 import { HelloController } from './hello.controller';
 import { manifests } from './manifests';
 // added-next-line
@@ -183,7 +184,7 @@ import { SupportEventsModule } from './support-events.module';
 
 Then add it to the `imports` array, after `AppPlatformModule.forRoot(...)`.
 
-```ts title="server/src/app.module.ts" showLineNumbers=21 excerpt
+```ts title="server/src/app.module.ts" showLineNumbers=39 excerpt
     }),
     // added-next-line
     SupportEventsModule,

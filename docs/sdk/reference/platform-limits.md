@@ -22,6 +22,7 @@ The value of `provider` in each entry of `resources.connectors[]`. A [connector 
 | `UNIPILE` | Unipile |
 | `APOLLO` | Apollo |
 | `META` | Meta messaging services, listed in the next section |
+| `BRIGHTDATA` | Bright Data |
 
 ## Meta messaging services
 

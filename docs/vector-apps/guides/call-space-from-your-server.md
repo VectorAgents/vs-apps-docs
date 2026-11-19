@@ -70,12 +70,12 @@ An app token carries no member, so Vector Space does not limit `connectorsList` 
 In `server/src/main.ts`, import `SpaceActionError` next to `AppAuthError`, and import the two handlers from `./space-calls`.
 
 ```ts title="server/src/main.ts" showLineNumbers=3 excerpt
-import { CAPABILITY } from '@hello-app/shared';
+import { PERMISSION } from '@hello-app/shared';
 // removed-next-line
 import { AppAuthError } from '@vectoragents/vs-apps/server';
 // added-next-line
 import { AppAuthError, SpaceActionError } from '@vectoragents/vs-apps/server';
-import { requireCapability } from './auth';
+import { requirePermission } from './auth';
 import { platform } from './platform';
 // added-next-line
 import { listConnectors, startConversation } from './space-calls';
@@ -86,13 +86,13 @@ Then add the two routes inside the `try`, before the `platform.fetch` call. The 
 ```ts title="server/src/main.ts" showLineNumbers=33 excerpt
   try {
     // added-start
-    if (pathname === '/api/space/agent') return send(res, 200, await startConversation(platform, req, await requireCapability(req, 'lead:manage')));
-    if (pathname === '/api/space/connectors') return send(res, 200, await listConnectors(platform, await requireCapability(req, 'lead:manage')));
+    if (pathname === '/api/space/agent') return send(res, 200, await startConversation(platform, req, await requirePermission(req, 'lead:manage')));
+    if (pathname === '/api/space/connectors') return send(res, 200, await listConnectors(platform, await requirePermission(req, 'lead:manage')));
     // added-end
     const handled = await platform.fetch(toFetchRequest(req));
     if (handled) return await sendFetchResponse(res, handled);
     if (pathname !== '/api/hello') return send(res, 404, { error: 'Not found' });
-    const claims = await requireCapability(req, CAPABILITY);
+    const claims = await requirePermission(req, PERMISSION);
     send(res, 200, { sub: claims.sub, spaceId: claims.spaceId });
   } catch (error) {
     if (error instanceof AppAuthError) return send(res, error.status, { error: error.message });
@@ -119,7 +119,7 @@ The agent route passes the request to `AppActionsService`, which sends the calle
 import { Body, Controller, Get, Post, Req } from '@nestjs/common';
 import {
   AppActionsService,
-  RequireCapability,
+  RequirePermission,
   SpaceActionsService,
   SpaceS2sService,
   appCaller,
@@ -135,13 +135,13 @@ export class SpaceCallsController {
   ) {}
 
   @Post('agent')
-  @RequireCapability('lead:manage')
+  @RequirePermission('lead:manage')
   startConversation(@Req() req: AppRequest, @Body() body: { message: string }) {
     return this.actions.agentInvoke(req, { message: body.message });
   }
 
   @Get('connectors')
-  @RequireCapability('lead:manage')
+  @RequirePermission('lead:manage')
   async listConnectors(@Req() req: AppRequest) {
     const { claims } = appCaller(req);
     const token = await this.s2s.getToken(claims.appId, claims.spaceId);
@@ -159,7 +159,7 @@ An app token carries no member, so Vector Space does not limit `connectorsList` 
 In `server/src/app.module.ts`, import `SpaceCallsController` from `./space-calls.controller`, then add it to the `controllers` array next to `HelloController`.
 
 ```ts title="server/src/app.module.ts" showLineNumbers=3 excerpt
-import { MemoryCredentialStore } from './credential-store';
+import type { AppSigningKeys } from '@vectoragents/vs-apps/server';
 import { HelloController } from './hello.controller';
 import { manifests } from './manifests';
 // added-next-line
@@ -168,7 +168,7 @@ import { SpaceCallsController } from './space-calls.controller';
 @Module({
 ```
 
-```ts title="server/src/app.module.ts" showLineNumbers=21 excerpt
+```ts title="server/src/app.module.ts" showLineNumbers=39 excerpt
     }),
   ],
   // removed-next-line
@@ -209,7 +209,7 @@ export async function callRoute(path: string, init: RequestInit = {}): Promise<s
 In `client/src/HelloPage.tsx`, import `callRoute` and hold one result line for each button in state.
 
 ```tsx title="client/src/HelloPage.tsx" showLineNumbers=3 excerpt
-import { RequireCapability, useApp } from '@vectoragents/vs-apps/react';
+import { RequirePermission, useApp } from '@vectoragents/vs-apps/react';
 // removed-next-line
 import { fetchHello } from './token';
 // added-next-line

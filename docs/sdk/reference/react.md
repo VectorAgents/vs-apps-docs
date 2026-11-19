@@ -85,8 +85,8 @@ function useApp(): AppSessionState;
 
 interface AppSessionState {
   claims: UserTokenClaims | null;
-  capabilities: ReadonlySet<string>;
-  hasCapability: (capability: string) => boolean;
+  permissions: ReadonlySet<string>;
+  hasPermission: (permission: string) => boolean;
   requestRefresh: () => void;
   directory: UserDirectory | null;
 }
@@ -119,12 +119,12 @@ interface AppSessionState {
 import { useApp } from '@vectoragents/vs-apps/react';
 
 export function Greeting() {
-  const { claims, hasCapability, requestRefresh } = useApp();
+  const { claims, hasPermission, requestRefresh } = useApp();
 
   return (
     <section>
       <p>Signed in as {claims?.name ?? claims?.sub}.</p>
-      {hasCapability('leads:read') ? <p>You can read leads.</p> : <p>You cannot read leads.</p>}
+      {hasPermission('leads:read') ? <p>You can read leads.</p> : <p>You cannot read leads.</p>}
       <button type="button" onClick={requestRefresh}>
         Refresh token
       </button>
@@ -229,9 +229,9 @@ Renders its children only when the current member holds a capability.
 ### Signature
 
 ```typescript
-function RequireCapability(props: {
-  capability: string;
-  fallback?: ReactNode | ((capability: string) => ReactNode);
+function RequirePermission(props: {
+  permission: string;
+  fallback?: ReactNode | ((permission: string) => ReactNode);
   children?: ReactNode;
 }): ReactElement | null;
 ```
@@ -247,16 +247,16 @@ function RequireCapability(props: {
 ### Example
 
 ```tsx title="src/LeadsPage.tsx"
-import { RequireCapability } from '@vectoragents/vs-apps/react';
+import { RequirePermission } from '@vectoragents/vs-apps/react';
 
 export function LeadsPage() {
   return (
-    <RequireCapability
-      capability="leads:read"
-      fallback={(capability) => <p>Ask the owner of the app to share {capability}.</p>}
+    <RequirePermission
+      permission="leads:read"
+      fallback={(permission) => <p>Ask the owner of the app to share {permission}.</p>}
     >
       <h1>Leads</h1>
-    </RequireCapability>
+    </RequirePermission>
   );
 }
 ```

@@ -11,12 +11,12 @@ export const sdrDefinition = defineApp({
   version: '0.1.0',
   defaultPageKey: 'sdr-dashboard',
   pages: [
-    { key: 'sdr-dashboard', label: 'Dashboard', path: '/dashboard', capability: 'sdr:read' },
-    { key: 'sdr-icp', label: 'ICP Library', path: '/icp', capability: 'icp:manage' },
-    { key: 'sdr-leads', label: 'Leads', path: '/leads', capability: 'lead:manage' },
-    { key: 'sdr-workflows', label: 'Workflows', path: '/workflows', capability: 'sdr:workflows' },
+    { key: 'sdr-dashboard', label: 'Dashboard', path: '/dashboard', permission: 'sdr:read' },
+    { key: 'sdr-icp', label: 'ICP Library', path: '/icp', permission: 'icp:manage' },
+    { key: 'sdr-leads', label: 'Leads', path: '/leads', permission: 'lead:manage' },
+    { key: 'sdr-workflows', label: 'Workflows', path: '/workflows', permission: 'sdr:workflows' },
   ],
-  capabilities: [
+  permissions: [
     { key: 'sdr:read', label: 'View SDR', effect: 'read' },
     { key: 'icp:manage', label: 'Manage ICPs', effect: 'write' },
     { key: 'lead:manage', label: 'Manage Leads', effect: 'write' },

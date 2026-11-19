@@ -29,14 +29,14 @@ cd leads-app
 import { useApp } from '@vectoragents/vs-apps/react';
 
 export function AppHeader() {
-  const { claims, hasCapability, requestRefresh } = useApp();
+  const { claims, hasPermission, requestRefresh } = useApp();
 
   return (
     <header>
       <p>
         {claims?.name ?? claims?.sub} in space {claims?.spaceId}
       </p>
-      {hasCapability('lead:manage') ? <p>You can manage leads.</p> : null}
+      {hasPermission('lead:manage') ? <p>You can manage leads.</p> : null}
       <button type="button" onClick={requestRefresh}>
         Refresh token
       </button>

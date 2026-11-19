@@ -120,8 +120,8 @@ interface AppSession {
 
 interface AppSessionState {
   claims: UserTokenClaims | null;
-  capabilities: ReadonlySet<string>;
-  hasCapability: (capability: string) => boolean;
+  permissions: ReadonlySet<string>;
+  hasPermission: (permission: string) => boolean;
   requestRefresh: () => void;
   directory: UserDirectory | null;
 }

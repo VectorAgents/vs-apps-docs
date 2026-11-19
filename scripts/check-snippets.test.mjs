@@ -5,6 +5,7 @@ import { dirname, join } from 'node:path';
 import { test } from 'node:test';
 import { checkSnippets as check, isExcerptCodeBlock, isStarterCodeBlock, removedLinesOut } from './check-snippets.mjs';
 import { generate } from './generate.mjs';
+import { installedSdkVersion } from './starter-sync.mjs';
 
 const ticks = '```';
 
@@ -35,7 +36,7 @@ test('passes a valid snippet and writes the stamp', () => {
   const result = checkSnippets({ docsDir: docs, stampFile: stamp });
   assert.equal(result.ok, true);
   assert.equal(result.count, 1);
-  assert.equal(JSON.parse(readFileSync(stamp, 'utf8')).package, '0.5.0');
+  assert.equal(JSON.parse(readFileSync(stamp, 'utf8')).package, installedSdkVersion());
 });
 
 test('fails a snippet that does not typecheck and writes no stamp', () => {
