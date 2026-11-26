@@ -389,10 +389,10 @@ for (const { tree, text } of trees) {
     assert.doesNotMatch(steps(part2)[1], /Auto-apply/);
   });
 
-  t('Part 2 says adding the app makes no request to the server, in step 4 only, and makes no 404 claim in steps 2 and 4', () => {
+  t('Part 2 links the Activate section for the add, in step 4 only, and makes no 404 claim in steps 2 and 4', () => {
     const [, register, , addApp] = steps(part2);
-    assert.equal((part2.match(/makes no request to your server/g) ?? []).length, 1);
-    assert.match(addApp, /makes no request to your server/);
+    assert.equal((part2.match(/how-a-vector-app-works\.md#activate/g) ?? []).length, 1);
+    assert.match(addApp, /how-a-vector-app-works\.md#activate/);
     assert.match(register, /verifies that token/);
     assert.doesNotMatch(part2, /serviceSecret|POST \/api\/provision|status outside 200 to 299/);
     assert.doesNotMatch(register, /\b404\b/);

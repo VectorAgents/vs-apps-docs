@@ -181,17 +181,17 @@ export default function Builder(): ReactElement {
             </button>
 
             <h2>Permissions</h2>
-            {draft.permissions.map((cap, i) => (
+            {draft.permissions.map((permission, i) => (
               <fieldset key={i}>
                 <legend>Permission {i + 1}</legend>
                 <Field label="Key" path={`permissions[${i}].key`} {...fieldProps}>
-                  {(id) => <input id={id} value={cap.key} onChange={(e) => set({ permissions: replace<PermissionDraft>(draft.permissions, i, { key: e.target.value }) })} />}
+                  {(id) => <input id={id} value={permission.key} onChange={(e) => set({ permissions: replace<PermissionDraft>(draft.permissions, i, { key: e.target.value }) })} />}
                 </Field>
                 <Field label="Label" path={`permissions[${i}].label`} {...fieldProps}>
-                  {(id) => <input id={id} value={cap.label} onChange={(e) => set({ permissions: replace<PermissionDraft>(draft.permissions, i, { label: e.target.value }) })} />}
+                  {(id) => <input id={id} value={permission.label} onChange={(e) => set({ permissions: replace<PermissionDraft>(draft.permissions, i, { label: e.target.value }) })} />}
                 </Field>
                 <Field label="Effect" path={`permissions[${i}].effect`} {...fieldProps}>
-                  {(id) => <Select id={id} value={cap.effect} options={['read', 'write']} onChange={(v) => set({ permissions: replace<PermissionDraft>(draft.permissions, i, { effect: v }) })} />}
+                  {(id) => <Select id={id} value={permission.effect} options={['read', 'write']} onChange={(v) => set({ permissions: replace<PermissionDraft>(draft.permissions, i, { effect: v }) })} />}
                 </Field>
                 <button type="button" onClick={() => set({ permissions: remove(draft.permissions, i) })}>
                   Remove permission

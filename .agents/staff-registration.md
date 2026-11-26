@@ -23,17 +23,17 @@ Check: toast `App saved`. The row shows **Enabled**. The Space server must reach
 
 ## 2. Allow the app for the organization
 
-**Add an app** lists the app only after the organization license includes Apps and an organization owner turned the app on.
+**Add an app** lists the app only after the organization license includes Apps and an organization admin turned the app on.
 
 1. Choose **Admin**, **Tenancy**, then **Organizations**. Choose **Edit license** on the organization.
 2. Switch on **Includes Apps**. Choose **Save**.
-3. Ask an organization owner to choose **Settings**, **Organization**, **App catalog**, then switch on the app.
+3. Ask an organization admin to choose **Settings**, **Organization**, **App catalog**, then switch on the app.
 
 Check: toasts `License saved` and `Saved`. The dialog under **Settings**, **Space**, **Installed apps**, **Install app**, **App** lists the app. Tell the developer to continue at quickstart Part 2 step 4.
 
 ## Replace an existing registration
 
-An existing registration blocks a new one. The Space refuses to delete it while any space holds the app. Open each space listed in the refusal, choose **Settings**, **Space**, **Context Hub**, **Resources**, and delete the app row. Then delete the registration under **Admin**, **Platform**, **Apps**.
+An existing registration blocks a new one. The Space refuses to delete it while any space holds the app. Open each space listed in the refusal, choose **Settings**, **Space**, **Installed apps**, and delete the app row. Then delete the registration under **Admin**, **Platform**, **Apps**.
 
 ## Open gap
 

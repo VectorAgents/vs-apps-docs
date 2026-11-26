@@ -96,7 +96,7 @@ export function validateDraft(draft: Draft): { errors: Issue[]; warnings: Issue[
   if (!draft.version) fail('version', ruleText('version'));
 
   if (draft.pages.length === 0) fail('pages', ruleText('pages'));
-  const permissionKeys = draft.permissions.map((c) => c.key);
+  const permissionKeys = draft.permissions.map((permission) => permission.key);
   draft.pages.forEach((page, i) => {
     if (!matches('pages[].key', page.key)) fail(`pages[${i}].key`, 'Lower kebab-case. Unique within the app.');
     if (!page.label) fail(`pages[${i}].label`, ruleText('pages[].label'));
@@ -116,10 +116,10 @@ export function validateDraft(draft: Draft): { errors: Issue[]; warnings: Issue[
     fail('defaultPageKey', ruleText('defaultPageKey'));
   }
 
-  draft.permissions.forEach((cap, i) => {
-    if (!matches('permissions[].key', cap.key)) fail(`permissions[${i}].key`, ruleText('permissions[].key'));
-    if (!cap.label) fail(`permissions[${i}].label`, ruleText('permissions[].label'));
-    if (!oneOf(cap.effect, ['read', 'write'])) fail(`permissions[${i}].effect`, ruleText('permissions[].effect'));
+  draft.permissions.forEach((permission, i) => {
+    if (!matches('permissions[].key', permission.key)) fail(`permissions[${i}].key`, ruleText('permissions[].key'));
+    if (!permission.label) fail(`permissions[${i}].label`, ruleText('permissions[].label'));
+    if (!oneOf(permission.effect, ['read', 'write'])) fail(`permissions[${i}].effect`, ruleText('permissions[].effect'));
   });
   checkUnique(permissionKeys, 'permissions', 'permission key', errors);
 
@@ -187,7 +187,7 @@ export function toDefinition(draft: Draft): Record<string, unknown> {
     version: draft.version,
     defaultPageKey: blank(draft.defaultPageKey),
     pages: draft.pages.map((p) => ({ ...p, permission: blank(p.permission) })),
-    permissions: draft.permissions.map((c) => ({ ...c, description: blank(c.description) })),
+    permissions: draft.permissions.map((permission) => ({ ...permission, description: blank(permission.description) })),
     resources: hasResources ? resources : undefined,
   }) as Record<string, unknown>;
 }

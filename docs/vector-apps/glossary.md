@@ -86,9 +86,7 @@ The token that Vector Space issues for one member in one space. It names the mem
 
 ### actions token
 
-A short-lived token that Vector Space issues when it accepts the signed proof of your server. Without a `userId` it acts as the app. With a `userId`, the exchange gives that member a user token with an `act` claim that names the app.
-
-Vector Space refuses a `userId` exchange unless the space admits that user. The actions token goes with the `/app/actions` routes of Vector Space, not with the actions of an agent.
+A short-lived token that Vector Space issues when it accepts the signed proof of your server. Without a `userId` it acts as the app. With a `userId` that the space admits, the exchange gives that member a user token with an `act` claim that names the app.
 
 - Maps to: `createSpaceS2s`, `SpaceS2sService` and `kind: "actions"`.
 - Owner: Vector Space issues it. The SDK requests it.
@@ -98,7 +96,7 @@ Vector Space refuses a `userId` exchange unless the space admits that user. The 
 The private key that your server keeps in its own environment. It signs the proof that your server sends to get an actions token. Vector Space reads the public half at the `jwksUrl` of the manifest.
 
 - Maps to: the `signingKeys` option of `createAppPlatform` and of the `/nest` module.
-- Owner: The app holds it. Vector Space reads the public half.
+- Owner: SDK signs with it. Vector Space reads the public half.
 
 ### binding
 

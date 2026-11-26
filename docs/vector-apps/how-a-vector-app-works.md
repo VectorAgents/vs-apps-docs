@@ -43,7 +43,7 @@ Registering does not add the app to any space.
 
 ### Activate
 
-A space admin adds the app to a space. Vector Space checks that the [organization](../vector-space/glossary.md#organization) may use the app and has turned it on. Then it adds the app to the space from the manifest it already holds. It makes no request to your server.
+A space admin adds the app to a space. Vector Space checks that the [organization](../vector-space/glossary.md#organization) may use the app and has turned it on. Then it adds the app to the space from the manifest it already holds. Your server receives no call when the app is added or removed.
 
 If a check fails, the activation fails. The space admin can try again.
 
@@ -67,13 +67,11 @@ After staff apply a manifest, Vector Space brings every space that has the app i
 
 A space admin removes the app from a space, or someone deletes the space. Vector Space removes the app from the space, and removes the agents and [MCP](../vector-space/glossary.md#mcp) servers that the app added to it.
 
-Vector Space does not call your server, so your server keeps no state for each space that it has to clean up. A space admin can add the app again later.
+Your server keeps no state for each space, so it has nothing to clean up. A space admin can add the app again later.
 
 ## The six token kinds
 
 Vector Space signs six kinds of token with one key set. Your app verifies five of them. It requests the sixth, the actions token, by sending a short proof that it signs with its [signing key](./glossary.md#signing-key). It never verifies the actions token. Each token carries the app it is for, and each one expires.
-
-These pages describe `@vectoragents/vs-apps` 0.7.0 and later. An app on 0.6.0 or an older version cannot sign in to a current Vector Space: upgrade the package.
 
 Two kinds go with interfaces that your app can offer: an [A2A](../vector-space/glossary.md#a2a) agent that other agents call, and an MCP server of tools that agents call.
 
