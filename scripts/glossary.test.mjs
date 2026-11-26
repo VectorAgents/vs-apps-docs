@@ -58,7 +58,7 @@ test('no glossary has a space manager entry, mention or link', () => {
 test('each entry has a definition and an owner, and a mapping only when a symbol exists', () => {
   for (const { name, body } of entries) {
     assert.match(body, /^[^\s-].*$/m, `${name}: definition`);
-    assert.match(body, /^- Owner: (SDK|Vector Space|SDK and Vector Space|docs|The app)\b/m, `${name}: owner`);
+    assert.match(body, /^- Owner: (SDK|Vector Space|SDK and Vector Space|docs)\b/m, `${name}: owner`);
     const ownerSentences = /^- Owner: (.*)$/m.exec(body)?.[1].split(/(?<=\.)\s+/) ?? [];
     assert.ok(ownerSentences.length <= 2, `${name}: owner is 2 sentences at most`);
     for (const sentence of ownerSentences) assert.ok(sentence.split(/\s+/).length <= 15, `${name}: owner sentence over 15 words`);

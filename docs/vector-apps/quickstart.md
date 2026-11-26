@@ -10,10 +10,9 @@ import DiagramControls from '@site/src/components/DiagramControls';
 ## Prerequisites
 
 - [ ] `npm` and [Node.js](https://nodejs.org/en/download) 22.12 or later.
+  An app built with an older SDK cannot sign in to a current Vector Space. Upgrade the SDK.
 - [ ] A GitHub personal access token (classic) with the `read:packages` scope. [Create a classic token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic).
 - [ ] For Part 2 only: staff who register the app.
-
-These pages describe `@vectoragents/vs-apps` 0.7.0 and later. An app on 0.6.0 or an older version cannot sign in to a current Vector Space: upgrade the package.
 
 ## Part 1: Run the app locally
 
@@ -379,7 +378,7 @@ bootstrap();
 ```
 <!-- /flavour -->
 
-`APP_SIGNING_KEY` holds the signing key of your server, a private key as a JWK JSON string with a `kid`. The platform signs a proof with it each time it asks Vector Space for an actions token. `npm run dev:space` makes a key on the first run and saves it to `.dev-signing-key.json`, which Git ignores. `npm run dev` needs no key. Vector Space reads the public half at `GET /api/jwks.json`, through the `jwksUrl` of the manifest.
+`APP_SIGNING_KEY` holds the signing key of your server, a private key as a JSON Web Key (JWK) string with a `kid`. The platform signs a proof with it each time it asks Vector Space for an actions token. `npm run dev:space` makes a key on the first run and saves it to `.dev-signing-key.json`, which Git ignores. `npm run dev` needs no key. Vector Space reads the public half at `GET /api/jwks.json`, through the `jwksUrl` of the manifest.
 
 In production, set `APP_SIGNING_KEY` from a secret manager and never commit it. This command prints a key:
 
@@ -556,14 +555,14 @@ After staff confirm step 2 of Part 2, turn the app on for the organization. A sp
 
 **Role**: space admin.
 
-Adding the app makes no request to your server. Vector Space checks that your organization may use the app and has turned it on. Then it adds the app to the space from the manifest it already holds.
+Vector Space checks that your organization may use the app and has turned it on. Then it adds the app to the space from the manifest it already holds.
 
 1. Choose **Settings**, **Space**, then **Installed apps**.
 2. Choose **Install app**, then **App**. In the **Add an app** dialog, choose **Add** next to **Hello app**.
 
 **Check**: Vector Space shows the toast `App added`. **Installed apps** lists a **Hello app** row with type **App** and status **Active**. Close the **Configure Hello app** sheet that opens.
 
-If the add fails, the toast gives the reason. A stopped server does not fail the add, because Vector Space does not call it. Check that staff enabled the registration in step 2 of Part 2 and that you turned the app on in step 3 of Part 2.
+If the add fails, the toast gives the reason. The add works with your server stopped: [Activate](./how-a-vector-app-works.md#activate) shows why. Check that staff enabled the registration in step 2 of Part 2 and that you turned the app on in step 3 of Part 2.
 
 ### 5. Share the app with a member
 
@@ -573,7 +572,7 @@ A member sees the app page only after the space admin shares the app with that m
 
 1. Choose **Settings**, **Space**, then **Access**. Under **Members**, choose **Add** and pick the member.
 2. Choose **Installed apps**. On the **Hello app** row, open the row menu and choose **Access**.
-3. In **Direct access**, choose **Add users or groups…** and pick the member. Keep the access level at **Can use**. It gives every permission the app declares, which is enough for the app page.Choose **Save changes**.
+3. In **Direct access**, choose **Add users or groups…** and pick the member. Keep the access level at **Can use**. It gives every permission the app declares, which is enough for the app page. Choose **Save changes**.
 
 **Check**: Vector Space shows the toasts `Member added` and `Access saved`. Open the row menu and choose **Access** again. **Direct access** lists the member.
 

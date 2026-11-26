@@ -119,7 +119,7 @@ Returns status `200` and the public key set of the dev issuer. The set verifies 
 
 The platform answers Fetch requests, so `handlePlatformRoute` bridges a `node:http` request to one. It returns `true` when the platform answered the request, and `false` for every other request.
 
-The harness needs `VA_DEV_ISSUER=true` and no signing key, so this platform passes none.
+The harness needs `VA_DEV_ISSUER=true` and no signing key, so the platform below sets no `signingKeys` option.
 
 ```ts title="server/src/platform.ts"
 import { createAppPlatform, createDevIssuer, type AppManifests } from '@vectoragents/vs-apps/server';

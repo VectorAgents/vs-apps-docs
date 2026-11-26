@@ -327,7 +327,7 @@ test('the Node.js Call Space tree calls Space through the platform clients of th
   assert.doesNotMatch(callSpace.node, /\bNest(\.js|JS)?\b|@nestjs\/|@Injectable|AppActionsService|SpaceActionsService|SpaceS2sService/);
 });
 
-test('both Call Space trees say the signing key signs the proof and no longer name the credential store', () => {
+test('both Call Space trees say the signing key signs the proof and name no credential store', () => {
   for (const text of [callSpace.node, callSpace.nest]) {
     assert.match(text, /signs a proof with the \[signing key\]\(\.\.\/glossary\.md#signing-key\) and trades it for an actions token/);
     assert.doesNotMatch(text, /service secret|MemoryCredentialStore|AppCredentialStore|rotated in Vector Space/);
@@ -497,7 +497,7 @@ test('the call-a-model trees call the model with the returned config, never a fi
   }
 });
 
-test('the call-a-model trees name APP_SIGNING_KEY and no longer name the service secret or the credential store', () => {
+test('the call-a-model trees name APP_SIGNING_KEY and name no service secret or credential store', () => {
   for (const text of Object.values(modelTrees)) {
     assert.match(text, /`APP_SIGNING_KEY`/);
     assert.doesNotMatch(text, /service secret|MemoryCredentialStore|AppCredentialStore/);
