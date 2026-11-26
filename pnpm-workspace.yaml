@@ -1,2 +1,4 @@
 minimumReleaseAgeExclude:
   - '@vectoragents/vs-apps'
+overrides:
+  webpack-dev-middleware@7: 7.4.5
